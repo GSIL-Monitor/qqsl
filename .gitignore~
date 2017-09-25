@@ -4,7 +4,7 @@ target/
 *.iml
 *.class
 classes/
-# build/
+build/
 .gradle/
 gradle/
 out/
