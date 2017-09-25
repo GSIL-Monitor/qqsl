@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<elementGroups> 
+  <!-- 业主通讯录 -->  
+  <elementGroup name="业主通讯录" alias="1"> 
+    <element name="建设单位" type="select_text" description="CONTACTS_OWN_MASTER,company" infoOrder="5" alias="1A"/>  
+    <element name="建设单位法人" type="select_text" description="CONTACTS_OWN_MASTER,name,NOTE" alias="1B"/>  
+    <element name="联系电话" type="tel" description="CONTACTS_OWN_MASTER,phone,NOTE" alias="1C"/>  
+    <element name="邮箱" type="email" description="CONTACTS_OWN_MASTER,email,NOTE" alias="1D"/> 
+  </elementGroup>  
+  <!-- 设计通讯录 -->  
+  <elementGroup name="设计通讯录" alias="11"> 
+    <element name="中标单位" type="select_text" description="CONTACTS_DESIGN,company,NOTE" infoOrder="4" alias="111"/>  
+    <element name="中标单位资质等级" type="select" select="甲级,乙级,丙级" description="CONTACTS_DESIGN,qualify" alias="112"/>  
+    <element name="项目承担部门" type="text" description="CONTACTS_DESIGN,depart,NOTE" alias="113"/>  
+    <element name="部门负责人" type="text" description="CONTACTS_DESIGN,master,NOTE" alias="114"/>  
+    <element name="部门负责人联系电话" type="tel" description="CONTACTS_DESIGN,master_phone,NOTE" alias="115"/>  
+    <element name="部门负责人邮箱" type="email" description="CONTACTS_DESIGN,master_email,NOTE" alias="116"/>  
+    <element name="项目负责" type="select_text" description="CONTACTS_DESIGN,name,NOTE" alias="117"/>  
+    <element name="项目负责联系电话" type="tel" description="CONTACTS_DESIGN,phone,NOTE" alias="118"/>  
+    <element name="项目负责人邮箱" type="email" description="CONTACTS_DESIGN,email,NOTE" alias="119"/> 
+  </elementGroup>  
+  <!-- 施工通讯录 -->  
+  <elementGroup name="施工通讯录" alias="12"> 
+    <element name="中标单位" type="select_text" description="CONTACTS_CON,company,NOTE" infoOrder="6" alias="121"/>  
+    <element name="中标单位资质等级" type="select" select="甲级,乙级,丙级" description="CONTACTS_CON,qualify" alias="122"/>  
+    <element name="项目承担部门" type="text" description="CONTACTS_CON,depart,NOTE" alias="123"/>  
+    <element name="部门负责人" type="text" description="CONTACTS_CON,master,NOTE" alias="124"/>  
+    <element name="部门负责人联系电话" type="tel" description="CONTACTS_CON,master_phone,NOTE" alias="125"/>  
+    <element name="部门负责人邮箱" type="email" description="CONTACTS_CON,master_email,NOTE" alias="111"/>  
+    <element name="项目负责" type="select_text" description="CONTACTS_CON,name,NOTE" alias="127"/>  
+    <element name="项目负责联系电话" type="tel" description="CONTACTS_CON,phone,NOTE" alias="128"/>  
+    <element name="项目负责人邮箱" type="email" description="CONTACTS_CON,email,NOTE" alias="129"/> 
+  </elementGroup>  
+  <!-- 监理通讯录 -->  
+  <elementGroup name="监理通讯录" alias="13"> 
+    <element name="中标单位" type="select_text" description="CONTACTS_SUP,company,NOTE" alias="131"/>  
+    <element name="中标单位资质等级" type="select" select="甲级,乙级,丙级" description="CONTACTS_SUP,qualify" alias="132"/>  
+    <element name="项目承担部门" type="text" description="CONTACTS_SUP,depart,NOTE" alias="133"/>  
+    <element name="部门负责人" type="text" description="CONTACTS_SUP,master,NOTE" alias="134"/>  
+    <element name="部门负责人联系电话" type="tel" description="CONTACTS_SUP,master_phone,NOTE" alias="135"/>  
+    <element name="部门负责人邮箱" type="email" description="CONTACTS_SUP,master_email,NOTE" alias="122"/>  
+    <element name="项目负责" type="select_text" description="CONTACTS_SUP,name,NOTE" alias="137"/>  
+    <element name="项目负责联系电话" type="tel" description="CONTACTS_SUP,phone,NOTE" alias="138"/>  
+    <element name="项目负责人邮箱" type="email" description="CONTACTS_SUP,email,NOTE" alias="139"/> 
+  </elementGroup>  
+  <!-- 质检通讯录 -->  
+  <elementGroup name="质检通讯录" alias="14"> 
+    <element name="中标单位" type="select_text" description="CONTACTS_QC,company,NOTE" alias="141"/>  
+    <element name="中标单位资质等级" type="select" select="甲级,乙级,丙级" description="CONTACTS_QC,qualify" alias="142"/>  
+    <element name="项目承担部门" type="text" description="CONTACTS_QC,depart,NOTE" alias="143"/>  
+    <element name="部门负责人" type="text" description="CONTACTS_QC,master,NOTE" alias="144"/>  
+    <element name="部门负责人联系电话" type="tel" description="CONTACTS_QC,master_phone,NOTE" alias="145"/>  
+    <element name="部门负责人邮箱" type="email" description="CONTACTS_QC,master_email,NOTE" alias="146"/>  
+    <element name="项目负责" type="select_text" description="CONTACTS_QC,name,NOTE" alias="147"/>  
+    <element name="项目负责联系电话" type="tel" description="CONTACTS_QC,phone,NOTE" alias="148"/>  
+    <element name="项目负责人邮箱" type="email" description="CONTACTS_QC,email,NOTE" alias="149"/> 
+  </elementGroup>  
+  <!-- 其他通讯录 -->  
+  <elementGroup name="其他通讯录" alias="15"> 
+    <element name="中标单位" type="select_text" description="CONTACTS_OTHER,company,NOTE" alias="151"/>  
+    <element name="中标单位资质等级" type="select" select="甲级,乙级,丙级" description="CONTACTS_OTHER,qualify" alias="152"/>  
+    <element name="项目承担部门" type="text" description="CONTACTS_OTHER,depart,NOTE" alias="153"/>  
+    <element name="部门负责人" type="text" description="CONTACTS_OTHER,master,NOTE" alias="154"/>  
+    <element name="部门负责人联系电话" type="tel" description="CONTACTS_OTHER,master_phone,NOTE" alias="155"/>  
+    <element name="部门负责人邮箱" type="email" description="CONTACTS_OTHER,master_email,NOTE" alias="156"/>  
+    <element name="项目负责" type="select_text" description="CONTACTS_OTHER,name,NOTE" alias="157"/>  
+    <element name="项目负责联系电话" type="tel" description="CONTACTS_OTHER,phone,NOTE" alias="158"/>  
+    <element name="项目负责人邮箱" type="email" description="CONTACTS_OTHER,email,NOTE" alias="159"/> 
+  </elementGroup>  
+  <!-- 招投标文件复合要素 -->  
+  <elementGroup name="招投标文件" alias="111"> 
+    <element name="招标单位" type="text" alias="1111"/>  
+    <element name="招投标代理机构" type="text" alias="1112"/>  
+    <element name="资质" type="select" select="甲级,乙级,丙级" alias="1113"/>  
+    <element name="招标编号" type="text" alias="1114"/>  
+    <element name="控制价(万元)" type="number" alias="1115"/>  
+    <element name="计划工期(d)" type="number" alias="1116"/>  
+    <element name="中标价格(万元)" type="number" alias="1117"/>  
+    <element name="中标通知书" type="text" alias="1118"/> 
+  </elementGroup>  
+  <!-- 委托书/合同复合要素 -->  
+  <elementGroup name="委托书/合同" alias="112"> 
+    <element name="委托日期" type="date" alias="1121"/>  
+    <element name="合同签订日期" type="date" alias="1122"/>  
+    <element name="合同编号" type="text" alias="1123"/>  
+    <element name="合同金额" type="number" alias="1124"/> 
+  </elementGroup>  
+  <!-- 招投标文件复合要素 -->  
+  <elementGroup name="招投标文件" alias="121"> 
+    <element name="招标单位" type="text" alias="1211"/>  
+    <element name="招投标代理机构" type="text" alias="1212"/>  
+    <element name="资质" type="select" select="甲级,乙级,丙级" alias="1213"/>  
+    <element name="招标编号" type="text" alias="1214"/>  
+    <element name="控制价(万元)" type="number" alias="1215"/>  
+    <element name="计划工期(d)" type="number" alias="1216"/>  
+    <element name="中标价格(万元)" type="number" alias="1217"/>  
+    <element name="中标通知书" type="text" alias="1218"/> 
+  </elementGroup>  
+  <!-- 委托书/合同复合要素 -->  
+  <elementGroup name="委托书/合同" alias="122"> 
+    <element name="委托日期" type="date" alias="1221"/>  
+    <element name="合同签订日期" type="date" alias="1222"/>  
+    <element name="合同编号" type="text" alias="1223"/>  
+    <element name="合同金额" type="number" alias="1224"/> 
+  </elementGroup>  
+  <!-- 招投标文件复合要素 -->  
+  <elementGroup name="招投标文件" alias="131"> 
+    <element name="招标单位" type="text" alias="1311"/>  
+    <element name="招投标代理机构" type="text" alias="1312"/>  
+    <element name="资质" type="select" select="甲级,乙级,丙级" alias="1313"/>  
+    <element name="招标编号" type="text" alias="1314"/>  
+    <element name="控制价(万元)" type="number" alias="1315"/>  
+    <element name="计划工期(d)" type="number" alias="1316"/>  
+    <element name="中标价格(万元)" type="number" alias="1317"/>  
+    <element name="中标通知书" type="text" alias="1318"/> 
+  </elementGroup>  
+  <!-- 委托书/合同复合要素 -->  
+  <elementGroup name="委托书/合同" alias="132"> 
+    <element name="委托日期" type="date" alias="1321"/>  
+    <element name="合同签订日期" type="date" alias="1322"/>  
+    <element name="合同编号" type="text" alias="1323"/>  
+    <element name="合同金额" type="number" alias="1324"/> 
+  </elementGroup>  
+  <!-- 招投标文件复合要素 -->  
+  <elementGroup name="招投标文件" alias="141"> 
+    <element name="招标单位" type="text" alias="1411"/>  
+    <element name="招投标代理机构" type="text" alias="1412"/>  
+    <element name="资质" type="select" select="甲级,乙级,丙级" alias="1413"/>  
+    <element name="招标编号" type="text" alias="1414"/>  
+    <element name="控制价(万元)" type="number" alias="1415"/>  
+    <element name="计划工期(d)" type="number" alias="1416"/>  
+    <element name="中标价格(万元)" type="number" alias="1417"/>  
+    <element name="中标通知书" type="text" alias="1418"/> 
+  </elementGroup>  
+  <!-- 委托书/合同复合要素 -->  
+  <elementGroup name="委托书/合同" alias="142"> 
+    <element name="委托日期" type="date" alias="1421"/>  
+    <element name="合同签订日期" type="date" alias="1422"/>  
+    <element name="合同编号" type="text" alias="1423"/>  
+    <element name="合同金额" type="number" alias="1424"/> 
+  </elementGroup>  
+  <!-- 招投标文件复合要素 -->  
+  <elementGroup name="招投标文件" alias="151"> 
+    <element name="招标单位" type="text" alias="1511"/>  
+    <element name="招投标代理机构" type="text" alias="1512"/>  
+    <element name="资质" type="select" select="甲级,乙级,丙级" alias="1513"/>  
+    <element name="招标编号" type="text" alias="1514"/>  
+    <element name="控制价(万元)" type="number" alias="1515"/>  
+    <element name="计划工期(d)" type="number" alias="1516"/>  
+    <element name="中标价格(万元)" type="number" alias="1517"/>  
+    <element name="中标通知书" type="text" alias="1518"/> 
+  </elementGroup>  
+  <!-- 委托书/合同复合要素 -->  
+  <elementGroup name="委托书/合同" alias="152"> 
+    <element name="委托日期" type="date" alias="1521"/>  
+    <element name="合同签订日期" type="date" alias="1522"/>  
+    <element name="合同编号" type="text" alias="1523"/>  
+    <element name="合同金额" type="number" alias="1524"/> 
+  </elementGroup>  
+  <!-- 项目前期复合要素 -->  
+  <elementGroup name="项目前期" alias="2"> 
+    <element name="建设单位项目负责" type="select_text" description="CONTACTS_OWN_NAME,name,NOTE" alias="21"/>  
+    <element name="联系电话" type="tel" description="CONTACTS_OWN_NAME,phone,NOTE" alias="22"/>  
+    <element name="邮箱" type="email" description="CONTACTS_OWN_NAME,email,NOTE" alias="23"/> 
+  </elementGroup>  
+  <!-- 项目建议书复合要素 -->  
+  <elementGroup name="项目建议书" alias="22"> 
+    <element name="编制单位名称" type="text" alias="211"/>  
+    <element name="编制单位资质等级" type="text" alias="212"/>  
+    <element name="建设内容" type="text_area" alias="213"/>  
+    <element name="工程等别" select="I等大-1型,II等大-2型,III等中型,IV等小-1型,V等小-2型" type="select" infoOrder="10" alias="214"/>  
+    <element name="工程性质" select="新建,维修" type="select" infoOrder="8" alias="215"/>  
+    <element name="工程投资(万元)" type="number" infoOrder="9" alias="216"/>  
+    <element name="批复单位" select="水利,发改,财政,国土资源,农牧,水保" type="select" alias="217"/>  
+    <element name="批复文号" type="text" alias="218"/>  
+    <element name="批复时间" type="date" alias="219"/> 
+  </elementGroup>  
+  <!-- 供水保障基本情况 -->  
+  <elementGroup name="基本情况" alias="23A"> 
+    <element name="项目区中心坐标" type="coordinate" alias="23A11"/>  
+    <element name="行政区" type="area" infoOrder="1" alias="23A1" description="introduce" introduce="本工程位于"/>  
+    <element name="流域" type="text" alias="23A2" description="introduce" introduce="所属流域为"/>  
+    <element name="工程等别" type="select" select="I等大-1型,II等大-2型,III等中型,IV等小-1型,V等小-2型" infoOrder="10" alias="23A3" description="introduce" introduce="工程等别
+
+为"/>  
+    <element name="工程任务" type="label" elementDataType="task" elementDataSelect="供水人口(人),灌溉面积(亩)" alias="23A4" description="introduce" introduce="工程任务"/>  
+    <element name="设计引水流量(m³/s)" type="number" infoOrder="2" alias="23A5" description="introduce" unit="m³/s" introduce="设计引水流量"/>  
+    <element name="工程占地(亩)" type="number" alias="23A6"> 
+      <element name="永久占地(亩)" type="number" alias="23A61"/>  
+      <element name="临时占地(亩)" type="number" alias="23A62"/> 
+    </element>  
+    <element name="工程移民(万人)" type="number" alias="23A7" description="introduce" unit="万人" introduce="工程移民"/> 
+  </elementGroup>  
+  <!-- 供水保障建设内容 -->  
+  <elementGroup name="建设内容" alias="23B"> 
+    <element name="坝型" type="select" select="重力坝,拱坝,支墩坝,砌石坝,碾压混凝土坝,土石坝" alias="23B1" description="introduce" introduce="坝型为"/>  
+    <element name="最大坝高(m)" type="number" alias="23B2" description="introduce" unit="m" introduce="最大坝高"/>  
+    <element name="总库容(万m³)" type="number" alias="23B3" description="introduce" unit="万m³" introduce="总库容"/>  
+    <element name="兴利库容(万m³)" type="number" alias="23B4" description="introduce" unit="万m³" introduce="兴利库容"/>  
+    <element name="防洪库容(万m³)" type="number" alias="23B5" description="introduce" unit="万m³" introduce="防洪库容"/>  
+    <element name="年供水能力(万m³)" type="number" alias="23B6" description="introduce" unit="万m³" introduce="年供水能力"/> 
+  </elementGroup>  
+  <!-- 供水保障工程造价 -->  
+  <elementGroup name="工程造价" alias="23C"> 
+    <element name="永久工程投资(万元)" type="number" alias="23C1"/>  
+    <element name="移民投资(万元)" type="number" alias="23C2"/>  
+    <element name="总投资(万元)" type="number" elementDataType="investment" elementDataSelect="中央投资(万元),省级投资(万元),社会投资(万元),地方自筹(万元)" infoOrder="9" 
+
+countType="add" alias="23C3" description="introduce" unit="万元" introduce="工程投资为"/> 
+  </elementGroup>  
+  <!-- 供水保障地理信息 -->  
+  <elementGroup name="地理信息" alias="23D"> 
+    <element name="坐标文件" type="coordinate_upload" alias="23D1"/> 
+  </elementGroup>  
+  <!-- 设计批复复合要素 -->  
+  <elementGroup name="设计批复" alias="232"> 
+    <element name="批复单位" select="水利,发改,财政,国土资源,农牧,水保" type="select" alias="2211"/>  
+    <element name="批复文号" type="text" alias="2212"/>  
+    <element name="批复时间" type="date" alias="2213"/>  
+    <element name="批复投资(万元)" type="number" alias="2214"/> 
+  </elementGroup>  
+  <!-- 供水保障基本情况 -->  
+  <elementGroup name="基本情况" alias="24A"> 
+    <element name="项目区中心坐标" type="coordinate" alias="24A11"/>  
+    <element name="行政区" type="area" infoOrder="1" alias="24A1" description="introduce" introduce="本工程位于"/>  
+    <element name="流域" type="text" alias="24A2" description="introduce" introduce="所属流域为"/>  
+    <element name="工程等别" type="select" select="I等大-1型,II等大-2型,III等中型,IV等小-1型,V等小-2型" infoOrder="10" alias="24A3" description="introduce" introduce="工程等别
+
+为"/>  
+    <element name="工程任务" type="label" elementDataType="task" elementDataSelect="供水人口(人),灌溉面积(亩)" alias="24A4" description="introduce" introduce="工程任务"/>  
+    <element name="设计引水流量(m³/s)" type="number" infoOrder="2" alias="24A5" description="introduce" unit="m³/s" introduce="设计引水流量"/>  
+    <element name="工程占地(亩)" type="number" alias="24A6"> 
+      <element name="永久占地(亩)" type="number" alias="24A61"/>  
+      <element name="临时占地(亩)" type="number" alias="24A62"/> 
+    </element>  
+    <element name="工程移民(万人)" type="number" alias="24A7" description="introduce" unit="万人" introduce="工程移民"/> 
+  </elementGroup>  
+  <!-- 供水保障建设内容 -->  
+  <elementGroup name="建设内容" alias="24B"> 
+    <element name="坝型" type="select" select="重力坝,拱坝,支墩坝,砌石坝,碾压混凝土坝,土石坝" alias="24B1" description="introduce" introduce="坝型为"/>  
+    <element name="最大坝高(m)" type="number" alias="24B2" description="introduce" unit="m" introduce="最大坝高"/>  
+    <element name="总库容(万m³)" type="number" alias="24B3" description="introduce" unit="万m³" introduce="总库容"/>  
+    <element name="兴利库容(万m³)" type="number" alias="24B4" description="introduce" unit="万m³" introduce="兴利库容"/>  
+    <element name="防洪库容(万m³)" type="number" alias="24B5" description="introduce" unit="万m³" introduce="防洪库容"/>  
+    <element name="年供水能力(万m³)" type="number" alias="24B6" description="introduce" unit="万m³" introduce="年供水能力"/> 
+  </elementGroup>  
+  <!-- 供水保障工程造价 -->  
+  <elementGroup name="工程造价" alias="24C"> 
+    <element name="永久工程投资(万元)" type="number" alias="24C1"/>  
+    <element name="移民投资(万元)" type="number" alias="24C2"/>  
+    <element name="总投资(万元)" type="number" elementDataType="investment" elementDataSelect="中央投资(万元),省级投资(万元),社会投资(万元),地方自筹(万元)" infoOrder="9" 
+
+countType="add" alias="24C3" description="introduce" unit="万元" introduce="工程投资为"/> 
+  </elementGroup>  
+  <!-- 供水保障地理信息 -->  
+  <elementGroup name="地理信息" alias="24D"> 
+    <element name="坐标文件" type="coordinate_upload" alias="24D1"/> 
+  </elementGroup>  
+  <!-- 设计批复复合要素 -->  
+  <elementGroup name="设计批复" alias="242"> 
+    <element name="批复单位" select="水利,发改,财政,国土资源,农牧,水保" type="select" alias="2311"/>  
+    <element name="批复文号" type="text" alias="2312"/>  
+    <element name="批复时间" type="date" alias="2313"/>  
+    <element name="批复投资(万元)" type="number" alias="2314"/> 
+  </elementGroup>  
+  <!-- 建设期复合要素 -->  
+  <elementGroup name="建设期" alias="3"> 
+    <element name="开工日期" type="date" infoOrder="0" description="CONTACTS_OWN_NAME" alias="31"/>  
+    <element name="建设单位项目负责" type="select_text" description="CONTACTS_OWN_NAME,name,NOTE" alias="32"/>  
+    <element name="联系电话" type="tel" description="CONTACTS_OWN_NAME,phone,NOTE" alias="33"/>  
+    <element name="邮箱" type="email" description="CONTACTS_OWN_NAME,email,NOTE" alias="34"/> 
+  </elementGroup>  
+  <!-- 施工阶段复合要素 -->  
+  <elementGroup name="施工阶段" alias="31"> 
+    <element name="施工期(d)" type="number" alias="311"/>  
+    <element name="竣工决算(万元)" type="number" alias="312"/> 
+  </elementGroup>  
+  <!-- 验收阶段复合要素 -->  
+  <elementGroup name="验收阶段" alias="32"> 
+    <element name="验收时间" type="date" alias="321"/>  
+    <element name="参加单位" type="text" alias="322"/>  
+    <element name="验收结论" select="优秀,良好,合格,不合格" type="select" alias="323"/> 
+  </elementGroup>  
+  <!-- 运营单位信息复合要素 -->  
+  <elementGroup name="运营单位信息" alias="4"> 
+    <element name="运营单位" type="text" description="CONTACTS_OWN_NAME" alias="41"/>  
+    <element name="运营类型" select="农户,村集体,企业,用水协会,水管单位,其他" type="select" description="CONTACTS_OWN_NAME" alias="42"/>  
+    <element name="负责人" type="select_text" description="CONTACTS_OWN_NAME,name" alias="43"/>  
+    <element name="电话" type="tel" description="CONTACTS_OWN_NAME,phone" alias="44"/>  
+    <element name="邮箱" type="email" description="CONTACTS_OWN_NAME,email" alias="45"/> 
+  </elementGroup>  
+  <!-- 运营信息-供水保障 -->  
+  <elementGroup name="运营信息" alias="41"> 
+    <element name="管理人员(人)" type="number" alias="411"/>  
+    <element name="运行状态" type="select" select="正常,停运" alias="412"/>  
+    <element name="年供水量(万m³)" type="number" alias="413"/>  
+    <element name="量测方式" type="select" select="自动,人工" alias="414"/>  
+    <element name="供水区人口(万人)" type="number" alias="415"/>  
+    <element name="供水区灌溉面积(亩)" type="number" alias="416"/>  
+    <element name="供水区工业产值(万元/年)" type="number" alias="417"/>  
+    <element name="水价(元/m³)" type="number" alias="418"/>  
+    <element name="年运维成本(万元)" type="number" alias="419"/>  
+    <element name="年收入(万元)" type="number" alias="4110"/> 
+  </elementGroup> 
+</elementGroups>

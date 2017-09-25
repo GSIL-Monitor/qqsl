@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" " http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+<!--水利运服务配置-->
+<serves>
+    <serve type="space" name="存储空间"  description="企业保存项目、图片、文件等所占用的存储空间大小，当前存储空间等于最大存储空间时，将不能进行上传，可以下载" />
+    <serve type="account" name="子帐号数量" description="企业内协同设计时，可以建立企业内子账户个数，只能新建不大于最大子账户个数的子账户" />
+    <serve type="project" name="项目数量" description="企业建立的项目时，建立项目个数不能大于项目数量限制" />
+    <serve type="pano" name="全景个数" description="企业建立全景，可以添加热点，建立全景个数不能大于全景数量限制" />
+    <serve type ="BIMServe" name="BIM服务" description="BIM协同设计" />
+    <serve type="findYaMi" name="千寻珪步(亚米级)" description="千寻珪步--提供亚米级精度的测量结果" />
+    <serve type="findCM" name="千寻知寸(厘米级)" description="千寻知寸--提供厘米级精度的测量结果" />
+    <serve type="findMM" name="千寻见微(毫米级)" description="千寻见微--提供毫米级精度的测量结果" />
+</serves>

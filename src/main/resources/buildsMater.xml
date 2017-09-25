@@ -1,0 +1,30 @@
+<!--材质属性-->
+<materGroups>
+    <attribeGroup alias="1" status="normal" name="材质属性">
+        <mater name="材质" alias="M11" type="select" select="混凝土,浆砌石"/>
+    </attribeGroup>
+    <attribeGroup alias="2" status="normal" name="材质属性">
+        <mater name="材质" alias="M21" type="select" select="混凝土"/>
+    </attribeGroup>
+    <attribeGroup alias="3" status="normal" name="材质属性">
+        <mater name="材质" alias="M31" type="select" select="混凝土,PE,钢管"/>
+    </attribeGroup>
+    <attribeGroup alias="4" status="normal" name="材质属性">
+        <mater name="材质" alias="M41" type="select" select="混凝土,浆砌石,钢管"/>
+    </attribeGroup>
+    <attribeGroup alias="5" status="normal" name="材质属性">
+        <mater name="材质" alias="M51" type="select" select="混凝土,砖砌,浆砌石,玻璃钢"/>
+    </attribeGroup>
+    <attribeGroup alias="6" status="normal" name="材质属性">
+        <mater name="材质" alias="M61" type="select" select="PE,PVC,混凝土,钢管"/>
+    </attribeGroup>
+    <attribeGroup alias="7" status="normal" name="材质属性">
+        <mater name="材质" alias="M71" type="select" select="混凝土,浆砌石,生态格网"/>
+    </attribeGroup>
+    <attribeGroup alias="8" status="normal" name="材质属性">
+        <mater name="材质" alias="M81" type="select" select="混凝土,浆砌石,土石"/>
+    </attribeGroup>
+    <attribeGroup alias="9" status="normal" name="材质属性">
+        <mater name="材质" alias="M91" type="select" select="砖混,混凝土,钢"/>
+    </attribeGroup>
+</materGroups>

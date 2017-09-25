@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" " http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+<qqsl>
+	<!-- run:正式运行状态 dev:开发状态 -->
+	<setting name="status" value="dev" />
+
+	<!-- 要素地址配置 -->
+	<setting name="agrProjectModel" value="agrProjectModel.xml" />
+	<setting name="watProjectModel" value="watProjectModel.xml" />
+	<setting name="conProjectModel" value="conProjectModel.xml" />
+	<setting name="hydProjectModel" value="hydProjectModel.xml" />
+	<setting name="driProjectModel" value="driProjectModel.xml" />
+	<setting name="floProjectModel" value="floProjectModel.xml" />
+	<setting name="agrElementGroupModel" value="agrElementGroup.xml" />
+	<setting name="conElementGroupModel" value="conElementGroup.xml" />
+	<setting name="watElementGroupModel" value="watElementGroup.xml" />
+	<setting name="hydElementGroupModel" value="hydElementGroup.xml" />
+	<setting name="driElementGroupModel" value="driElementGroup.xml" />
+	<setting name="floElementGroupModel" value="floElementGroup.xml" />
+	<setting name="info" value="info.xml" />goo
+	<setting name="elementDataModel" value="elementDataModel.xml" />
+	<setting name="elementDataSimpleModel" value="elementDataSimpleModel.xml" />
+	<setting name="waterIP" value="192.168.1.180" />
+	<!-- 建筑物 -->
+	<setting name="buildsModel" value="buildsModel.xml"/>
+	<setting name="buildsMater" value="buildsMater.xml"/>
+	<setting name="buildsDimension" value="buildsDimension.xml"/>
+	<setting name="buildsHydraulics" value="buildsHydraulics.xml"/>
+	<setting name="buildsGeology" value="buildsGeology.xml"/>
+	<setting name="buildsStructure" value="buildsStructure.xml"/>
+	<setting name="serveItem" value="serveItem.xml"/>
+	<setting name="packageModel" value="packageModel.xml"/>
+	<setting name="goods" value="goods.xml"/>
+	<setting name="station" value="station.xml"/>
+</qqsl>
+
+
+
+
+
+
+	
+	

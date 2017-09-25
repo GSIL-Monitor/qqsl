@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 项目信息 -->
+<infos>
+<info name="建设年份" />
+<info name="建设地点" />
+<info name="规模" />
+<info name="竣工时间" />
+<info name="设计单位" />
+<info name="建设单位" />
+<info name="施工单位" />
+<info name="工程类型" select="人畜饮水工程,灌溉工程,防洪减灾工程,水土保持工程,农村小水电工程,供水保障工程" />
+<info name="工程性质" select="新建,维修" />
+<info name="工程投资" select="100万以下,100万—500万,500万—1000万,1000万—5000万,5000万以上" />
+<info name="工程规模" select="I等大-1型,II等大-2型,III等中型,IV等小-1型,V等小-2型" />
+<info name="投资计划" select="十一五前,十一五规划,十二五规划,十三五规划,其他" />
+<info name="产权性质" select="国有,私有,混合" />
+<info name="项目进度" select="项目建议书,可研,初设(实施),施工阶段,验收阶段,运营阶段" />
+</infos>

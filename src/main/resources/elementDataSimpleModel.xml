@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" " http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+<elementDatas>
+    <elementData name="渠灌" type="agrStyleSelect" >
+        <element name="渠灌(亩)" unit="亩" description="渠灌"  />
+    </elementData>
+    <elementData name="管灌" type="agrStyleSelect" >
+        <element name="管灌(亩)" unit="亩" description="管灌" />
+    </elementData>
+    <elementData name="滴灌" type="agrStyleSelect" >
+        <element name="滴灌(亩)" unit="亩" description="滴灌"  />
+    </elementData>
+    <elementData name="喷灌" type="agrStyleSelect" >
+        <element name="喷灌(亩)" unit="亩" description="喷灌" />
+    </elementData>
+    <elementData name="泉室" type="getBuliding" >
+        <element name="泉室(座)" unit="座"  description="泉室"/>
+        <element name="容量(t)" unit="t" description="容量"  />
+    </elementData>
+    <elementData name="廊道" type="getBuliding" >
+        <element name="廊道(座)" unit="座" description="廊道" />
+        <element name="长度(m)" unit="m" description="长度" />
+    </elementData>
+    <elementData name="水闸" type="getBuliding" >
+        <element name="水闸(座)"  unit="座" description="水闸" />
+        <element name="出水量(m³/s)" unit="m³/s" description="出水量"  />
+    </elementData>
+    <elementData name="土井" type="getBuliding" >
+        <element name="土井(座)" unit="座" description="土井"  />
+        <element name="深度(m)" unit="m" description="深度" />
+    </elementData>
+    <elementData name="大口井" type="getBuliding" >
+        <element name="大口井(座)" unit="座" description="大口井"  />
+        <element name="出水量(m³/s)" unit="m³/s" description="出水量"  />
+    </elementData>
+    <elementData name="机井" type="getBuliding" >
+        <element name="机井(座)" unit="座" description="机井" />
+        <element name="出水量(m³/s)" unit="m³/s" description="出水量"  />
+    </elementData>
+    <elementData name="涝池" type="getBuliding" >
+        <element name="涝池(座)" unit="座" description="涝池" />
+        <element name="容量(m³)" unit="m³" description="容量"  />
+    </elementData>
+    <elementData type="agrDistrictSelect">
+        <element name="" unit="亩"  />
+    </elementData>
+    <elementData type="fence" >
+        <element name="" unit="km" />
+        <element name="左岸长度(km)" unit="km" description="左岸长度"/>
+        <element name="右岸长度(km)" unit="km" description="右岸长度" />
+    </elementData>
+    <elementData name="新增灌溉面积" type="agrAreaSelect">
+        <element name="新增灌溉面积(亩)" unit="亩" description="新增灌溉面积" />
+    </elementData>
+    <elementData name="改善/恢复灌溉面积" type="agrAreaSelect">
+        <element name="改善/恢复灌溉面积(亩)" unit="亩" description="改善/恢复灌溉面积" />
+    </elementData>
+    <elementData name="20T" type="reservair">
+        <element name="20T(座)" unit="座" description="20T" />
+    </elementData>
+    <elementData name="30T" type="reservair">
+        <element name="30T(座)" unit="座" description="30T" />
+    </elementData>
+    <elementData name="50T" type="reservair">
+        <element name="50T(座)" unit="座" description="50T" />
+    </elementData>
+    <elementData name="100T" type="reservair">
+        <element name="100T(座)" unit="座" description="100T" />
+    </elementData>
+    <elementData name="150T" type="reservair">
+        <element name="150T(座)" unit="座" description="150T" />
+    </elementData>
+    <elementData name="200T" type="reservair">
+        <element name="200T(座)" unit="座" description="200T" />
+    </elementData>
+    <elementData name="300T" type="reservair">
+        <element name="300T(座)" unit="座" description="300T" />
+    </elementData>
+    <elementData name="400T" type="reservair">
+        <element name="400T(座)" unit="座" description="400T" />
+    </elementData>
+    <elementData name="500T" type="reservair">
+        <element name="500T(座)" unit="座" description="500T" />
+    </elementData>
+    <elementData name="600T" type="reservair">
+        <element name="600T(座)" unit="座" description="600T" />
+    </elementData>
+    <elementData name="800T" type="reservair">
+        <element name="800T(座)" unit="座" description="800T" />
+    </elementData>
+    <elementData name="1000T" type="reservair">
+        <element name="1000T(座)" unit="座" description="1000T" />
+    </elementData>
+    <elementData name="2000T" type="reservair">
+        <element name="2000T(座)" unit="座" description="2000T" />
+    </elementData>
+    <elementData name="干管" type="pipeline">
+        <element name="干管(km)" unit="km" description="干管" />
+    </elementData>
+    <elementData name="分干管" type="pipeline">
+        <element name="分干管(km)" unit="km" description="分干管" />
+    </elementData>
+    <elementData name="支管" type="pipeline">
+        <element name="支管(km)" unit="km" description="支管" />
+    </elementData>
+    <elementData name="毛管" type="pipeline">
+        <element name="毛管(km)" unit="km" description="毛管" />
+    </elementData>
+    <elementData name="入户管" type="pipeline">
+        <element name="入户管(km)" unit="km" description="入户管" />
+    </elementData>
+    <elementData name="检查井" type="chamber">
+        <element name="检查井(座)" unit="座" description="检查井" />
+    </elementData>
+    <elementData name="入户井" type="chamber">
+        <element name="入户井(座)" unit="座" description="入户井" />
+    </elementData>
+    <elementData name="供水井" type="chamber">
+        <element name="供水井(座)" unit="座" description="供水井" />
+    </elementData>
+    <elementData name="分水井" type="chamber">
+        <element name="分水井(座)" unit="座" description="分水井" />
+    </elementData>
+    <elementData name="减压井" type="chamber">
+        <element name="减压井(座)" unit="座" description="减压井" />
+    </elementData>
+    <elementData name="排气井" type="chamber">
+        <element name="排气井(座)" unit="座" description="排气井" />
+    </elementData>
+    <elementData name="检查井" type="chamber">
+        <element name="检查井(座)" unit="座" description="检查井" />
+    </elementData>
+    <elementData name="放空井" type="chamber">
+        <element name="放空井(座)" unit="座" description="放空井" />
+    </elementData>
+    <elementData name="斗渠" type="channel">
+        <element name="斗渠(km)" unit="km" description="斗渠" />
+    </elementData>
+    <elementData name="支渠" type="channel">
+        <element name="支渠(km)" unit="km" description="支渠" />
+    </elementData>
+    <elementData  name="干渠" type="channel">
+        <element name="干渠(km)" unit="km" description="干渠" />
+    </elementData>
+    <elementData name="分水口" type="channelBuild">
+        <element name="分水口(座)" unit="座" description="分水口" />
+    </elementData>
+    <elementData name="渡槽" type="channelBuild">
+        <element name="渡槽(座)" unit="座" description="渡槽" />
+    </elementData>
+    <elementData name="跌水" type="channelBuild">
+        <element name="跌水(座)" unit="座" description="跌水" />
+    </elementData>
+    <elementData name="陡坡" type="channelBuild">
+        <element name="陡坡(座)" unit="座" description="陡坡" />
+    </elementData>
+    <elementData name="倒虹吸" type="channelBuild">
+        <element name="倒虹吸(座)" unit="座" description="倒虹吸" />
+    </elementData>
+    <elementData  name="涵洞" type="channelBuild">
+        <element name="涵洞(座)" unit="座" description="涵洞" />
+    </elementData>
+    <elementData name="车便桥" type="channelBuild">
+        <element name="车便桥(座)" unit="座" description="车便桥" />
+    </elementData>
+    <elementData name="水处理" type="other">
+        <element name="水处理(m³/h)" unit="m³/h" description="水处理" />
+    </elementData>
+    <elementData name="供水房" type="other">
+        <element name="供水房(座)" unit="座" description="供水房" />
+    </elementData>
+    <elementData name="机电设备" type="other">
+        <element name="机电设备(kw)" unit="kw" description="机电设备" />
+    </elementData>
+    <elementData name="井房" type="other">
+        <element name="井房(座)" unit="座" description="井房" />
+    </elementData>
+    <elementData name="泵房" type="other">
+        <element name="泵房(座)" unit="座" description="泵房" />
+    </elementData>
+    <elementData name="田间道路" type="other">
+        <element name="田间道路(km)" unit="km" description="田间道路" />
+    </elementData>
+    <elementData name="生产道路" type="other">
+        <element name="生产道路(km)" unit="km" description="生产道路" />
+    </elementData>
+    <elementData name="防护林" type="other">
+        <element name="防护林(亩)" unit="亩" description="防护林" />
+    </elementData>
+    <elementData name="其他" type="other">
+        <element name="其他" description="其他" />
+    </elementData>
+    <elementData name="减压池" type="other">
+        <element name="减压池(座)" unit="座" description="减压池" />
+    </elementData>
+    <elementData name="中央投资" type="investment">
+        <element name="中央投资(万元)" unit="万元" description="中央投资" />
+    </elementData>
+    <elementData name="省级投资" type="investment">
+        <element name="省级投资(万元)" unit="万元" description="省级投资" />
+    </elementData>
+    <elementData name="地方自筹" type="investment">
+        <element name="地方自筹(万元)" unit="万元" description="地方自筹" />
+    </elementData>
+    <elementData name="社会投资" type="investment">
+        <element name="社会投资(万元)" unit="万元" description="社会投资" />
+    </elementData>
+    <elementData type="diversion">
+        <element name="" unit="m³/s"  />
+    </elementData>
+    <elementData name="扰动土地整治率" type="treatment">
+        <element name="扰动土地整治率%" unit="%" description="扰动土地整治率" />
+    </elementData>
+    <elementData name="水土流失总治理度" type="treatment">
+        <element name="水土流失总治理度%" unit="%" description="水土流失总治理度" />
+    </elementData>
+    <elementData name="土壤流失控制比" type="treatment">
+        <element name="土壤流失控制比%" unit="%" description="土壤流失控制比" />
+    </elementData>
+    <elementData name="拦渣率" type="treatment">
+        <element name="拦渣率%" unit="%" description="拦渣率" />
+    </elementData>
+    <elementData name="林草植被恢复率" type="treatment">
+        <element name="林草植被恢复率%" unit="%" description="林草植被恢复率" />
+    </elementData>
+    <elementData name="林草覆盖率" type="treatment">
+        <element name="林草覆盖率%" unit="%" description="林草覆盖率" />
+    </elementData>
+    <elementData name="梯田" type="slope">
+        <element name="梯田(km²)" unit="km²" description="梯田" />
+    </elementData>
+    <elementData name="台地" type="slope">
+        <element name="台地(km²)" unit="km²" description="台地" />
+    </elementData>
+    <elementData name="水平沟" type="slope">
+        <element name="水平沟(m)" unit="m" description="水平沟" />
+    </elementData>
+    <elementData name="鱼鳞坑" type="slope">
+        <element name="鱼鳞坑(个)" unit="个" description="鱼鳞坑" />
+    </elementData>
+    <elementData name="淤泥坝" type="branch">
+        <element name="淤泥坝(座)" unit="座" description="淤泥坝" />
+    </elementData>
+    <elementData name="拦砂坝" type="branch">
+        <element name="拦砂坝(座)" unit="座" description="拦砂坝" />
+    </elementData>
+    <elementData name="谷坊" type="branch">
+        <element name="谷坊(座)" unit="座" description="谷坊" />
+    </elementData>
+    <elementData name="其他" type="branch">
+        <element name="其他" description="其他" />
+    </elementData>
+    <elementData name="水池" type="hyd">
+        <element name="水池(座)" unit="座" description="水池" />
+    </elementData>
+    <elementData name="水窖" type="hyd">
+        <element name="水窖(座)" unit="座" description="水窖" />
+    </elementData>
+    <elementData name="其他" type="hyd">
+        <element name="其他" description="其他" />
+    </elementData>
+    <elementData name="造林" type="vegetation">
+        <element name="造林(km²)" unit="km²" description="造林" />
+    </elementData>
+    <elementData name="种草" type="vegetation">
+        <element name="种草(km²)" unit="km²" description="种草" />
+    </elementData>
+    <elementData name="封山造林" type="vegetation">
+        <element name="封山造林(km²)" unit="km²" description="封山造林" />
+    </elementData>
+    <elementData name="封山植草" type="vegetation">
+        <element name="封山植草(km²)" unit="km²" description="封山植草" />
+    </elementData>
+    <elementData name="小麦" type="agricultural" >
+        <element name="小麦(亩)" unit="亩"  description="小麦"/>
+        <element name="灌水定额(m³)" unit="m³" description="灌水定额" />
+    </elementData>
+    <elementData name="青稞" type="agricultural">
+        <element name="青稞(亩)"  unit="亩" description="青稞"/>
+        <element name="灌水定额(m³)" unit="m³" description="灌水定额"/>
+    </elementData>
+    <elementData name="油菜" type="agricultural" >
+        <element name="油菜(亩)" unit="亩" description="油菜"/>
+        <element name="灌水定额(m³)" unit="m³" description="灌水定额"/>
+    </elementData>
+    <elementData name="马铃薯" type="agricultural" >
+        <element name="马铃薯(亩)"  unit="亩" description="马铃薯" />
+        <element name="灌水定额(m³)" unit="m³" description="灌水定额"/>
+    </elementData>
+    <elementData name="玉米" type="agricultural" >
+        <element name="玉米(亩)" unit="亩" description="玉米" />
+        <element name="灌水定额(m³)" unit="m³" description="灌水定额"/>
+    </elementData>
+    <elementData name="豆类" type="agricultural" >
+        <element name="豆类(亩)"  unit="亩"  description="豆类" />
+        <element name="灌水定额(m³)" unit="m³" description="灌水定额"/>
+    </elementData>
+    <elementData name="燕麦" type="agricultural" >
+        <element name="燕麦(亩)" unit="亩"  description="燕麦" />
+        <element name="灌水定额(m³)" unit="m³" description="灌水定额"/>
+    </elementData>
+    <elementData name="保护人口" type="protection">
+        <element name="保护人口(人)" unit="人" description="保护人口" />
+    </elementData>
+    <elementData name="耕地面积" type="protection">
+        <element name="耕地面积(亩)" unit="亩" description="耕地面积" />
+    </elementData>
+    <elementData name="其他" type="protection">
+        <element name="其他" description="其他" />
+    </elementData>
+    <elementData type="box">
+        <element name="" unit="km"  />
+    </elementData>
+    <elementData name="车便桥" type="bridge">
+        <element name="车便桥(座)" unit="座" description="车便桥" />
+    </elementData>
+    <elementData name="踏步" type="bridge">
+        <element name="踏步(座)" unit="座" description="踏步" />
+    </elementData>
+    <elementData name="谷坊" type="bridge">
+        <element name="谷坊(座)" unit="座" description="谷坊" />
+    </elementData>
+    <elementData name="其他" type="bridge">
+        <element name="其他" unit="座" description="其他" />
+    </elementData>
+    <elementData name="供水人口" type="task">
+        <element name="供水人口(人)" unit="人" description="供水人口" />
+    </elementData>
+    <elementData name="灌溉面积" type="task">
+        <element name="灌溉面积(亩)" unit="亩" description="灌溉面积" />
+    </elementData>
+    <elementData name="滴灌管/带" type="waterSaving">
+        <element name="滴灌管/带(km)" unit="km" description="滴灌管/带" />
+    </elementData>
+    <elementData name="喷头" type="waterSaving">
+        <element name="喷头(个)" unit="个" description="喷头" />
+    </elementData>
+    <elementData name="给水栓" type="waterSaving">
+        <element name="给水栓(个)" unit="个" description="给水栓" />
+    </elementData>
+    <elementData name="施肥设施" type="waterSaving">
+        <element name="施肥设施(套)" unit="套" description="施肥设施" />
+    </elementData>
+    <elementData name="过滤系统" type="waterSaving">
+        <element name="过滤系统(套)" unit="套" description="过滤系统" />
+    </elementData>
+</elementDatas>

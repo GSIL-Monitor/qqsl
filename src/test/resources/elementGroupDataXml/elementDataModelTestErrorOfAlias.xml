@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<elementDatas>
+	<!-- 按灌溉方式划分 -->
+	<elementData alias="agrStyleSelect">
+		<data name="渠灌(亩)" unit="亩" discription="渠灌" />
+
+		<data name="滴灌(亩)" unit="亩" discription="滴灌" />
+
+	</elementData>
+	<!-- 按灌区划分(不确定的要素数据 ) -->
+	<elementData alias="agrDistrictSelect">
+		<data name="" unit="亩" discription="" />
+	</elementData>
+	<!-- 按灌溉面积划分 -->
+	<elementData alias="agrAreaSelect">
+		<data name="新增灌溉面积(亩)" unit="亩" discription="新增灌溉面积" />
+		<data name="改善/恢复灌溉面积" unit="亩" discription="改善/恢复灌溉面积" />
+	</elementData>
+	<!-- 取水建筑物类型 -->
+	<elementData alias="getBuliding" size="1">
+		<data name="泉室(座)" attr1="容量(t)" unit1="吨" discription="泉室" unit="座" />
+		<data name="廊道(座)" attr1="长度(m)" unit1="米" discription="廊道" unit="座" />
+		<data name="水闸(座)" attr1="出水量(m³/s)" unit1="m³/s" discription="水闸"
+			unit="座" />
+		<data name="土井(座)" attr1="深度(m)" unit1="米" discription="土井" unit="座" />
+		<data name="大口井(座)" attr1="出水量(m³/s)" unit1="m³/s" discription="大口井"
+			unit="座" />
+		<data name="机井(座)" attr1="出水量(m³/s)" unit1="m³/s" discription="机井"
+			unit="座" />
+	</elementData>
+	<!-- 蓄水池 -->
+	<elementData alias="reservair">
+		<data name="20T(座)" unit="座" discription="20T" />
+		<data name="30T(座)" unit="座" discription="30T" />
+		<data name="50T(座)" unit="座" discription="50T" />
+		<data name="100T(座)" unit="座" discription="100T" />
+		<data name="150T(座)" unit="座" discription="150T" />
+		<data name="200T(座)" unit="座" discription="200T" />
+		<data name="300T(座)" unit="座" discription="300T" />
+		<data name="400T(座)" unit="座" discription="400T" />
+		<data name="500T(座)" unit="座" discription="500T" />
+		<data name="600T(座)" unit="座" discription="600T" />
+		<data name="800T(座)" unit="座" discription="800T" />
+		<data name="1000T(座)" unit="座" discription="1000T" />
+		<data name="2000T(座)" unit="座" discription="2000T" />
+	</elementData>
+	<!-- 管道(km) -->
+	<elementData alias="agrPipeline">
+		<data name="干管(km)" unit="km" discription="干管" />
+		<data name="分干管(km)" unit="km" discription="分干管" />
+		<data name="支管(km)" unit="km" discription="支管" />
+		<data name="毛管(km)" unit="km" discription="毛管" />
+	</elementData>
+	<!-- 管道(km) -->
+	<elementData alias="driPipeline">
+		<data name="干管(km)" unit="km" discription="干管" />
+		<data name="支管(km)" unit="km" discription="支管" />
+		<data name="入户管(km)" unit="km" discription="入户管" />
+	</elementData>
+	<!-- 阀门井(座) -->
+	<elementData alias="chamber">
+		<data name="检查井(座)" unit="座" discription="检查井" />
+		<data name="入户井(座)" unit="座" discription="入户井" />
+		<data name="供水井(座)" unit="座" discription="供水井" />
+		<data name="分水井(座)" unit="座" discription="分水井" />
+		<data name="减压井(座)" unit="座" discription="减压井" />
+		<data name="排气井(座)" unit="座" discription="排气井" />
+		<data name="检查井(座)" unit="座" discription="检查井" />
+		<data name="放空井(座)" unit="座" discription="放空井" />
+	</elementData>
+	<!-- 渠道 -->
+	<elementData alias="channel">
+		<data name="斗渠(km)" unit="km" discription="斗渠" />
+		<data name="支渠(km)" unit="km" discription="支渠" />
+		<data name="干渠(km)" unit="km" discription="干渠" />
+	</elementData>
+	<!-- 渠系建筑物(座) -->
+	<elementData alias="channelBuild">
+		<data name="分水口(座)" unit="座" discription="分水口" />
+		<data name="渡槽(座)" unit="座" discription="渡槽" />
+		<data name="跌水(座)" unit="座" discription="跌水" />
+		<data name="陡坡(座)" unit="座" discription="陡坡" />
+		<data name="倒虹吸(座)" unit="座" discription="倒虹吸" />
+		<data name="涵洞(座)" unit="座" discription="涵洞" />
+		<data name="车便桥(座)" unit="座" discription="车便桥" />
+	</elementData>
+	<!-- 其他 -->
+	<elementData alias="other">
+		<data name="水处理(m³/h)" unit="m³/h" discription="水处理" />
+		<data name="供水房(座)" unit="座" discription="供水房" />
+		<data name="机电设备(kw)" unit="kw" discription="机电设备" />
+		<data name="井房(座)" unit="座" discription="井房" />
+		<data name="泵房(座)" unit="座" discription="泵房" />
+		<data name="田间道路(km)" unit="km" discription="田间道路" />
+		<data name="生产道路(km)" unit="km" discription="生产道路" />
+		<data name="防护林(亩)" unit="亩" discription="防护林" />
+		<data name="其他" discription="其他" />
+		<data name="减压池(座)" unit="座" discription="减压池" />
+	</elementData>
+	<!-- 总投资 -->
+	<elemtentData alias="investment">
+		<data name="中央投资(万元)" unit="万元" discription="中央投资" />
+		<data name="省级投资(万元)" unit="万元" discription="省级投资" />
+		<data name="地方自筹(万元)" unit="万元" discription="地方自筹" />
+		<data name="社会投资(万元)" unit="万元" discription="社会投资" />
+	</elemtentData>
+	<!-- 引水流量(m³/s) -->
+	<elementData alias="diversion">
+		<data name="" unit="m³/s" discription="" />
+	</elementData>
+	<!-- 防治目标 -->
+	<elementData alias="treatment">
+		<data name="扰动土地整治率%" unit="%" discription="扰动土地整治率" />
+		<data name="水土流失总治理度%" unit="%" discription="水土流失总治理度" />
+		<data name="土壤流失控制比%" unit="%" discription="土壤流失控制比" />
+		<data name="拦渣率%" unit="%" discription="拦渣率" />
+		<data name="林草植被恢复率%" unit="%" discription="林草植被恢复率" />
+		<data name="林草覆盖率%" unit="%" discription="林草覆盖率" />
+	</elementData>
+	<!-- 治坡工程 -->
+	<elementData alias="slope">
+		<data name="梯田(km²)" unit="km²" discription="梯田" />
+		<data name="台地(km²)" unit="km²" discription="台地" />
+		<data name="水平沟(m)" unit="m" discription="水平沟" />
+		<data name="鱼鳞坑(个)" unit="个" discription="鱼鳞坑" />
+	</elementData>
+	<!-- 支沟工程 -->
+	<elementData alias="branch">
+		<data name="淤泥坝(座)" unit="座" discription="淤泥坝" />
+		<data name="拦砂坝(座)" unit="座" discription="拦砂坝" />
+		<data name="谷坊(座)" unit="座" discription="谷坊" />
+		<data name="其他" discription="其他" />
+	</elementData>
+	<!-- 小型水利工程 -->
+	<elementData alias="hyd">
+		<data name="水池(座)" unit="座" discription="水池" />
+		<data name="水窖(座)" unit="座" discription="水窖" />
+		<data name="其他" discription="其他" />
+	</elementData>
+	<!-- 植物措施 -->
+	<elementData alias="vegetation">
+		<data name="造林(km²)" unit="km²" discription="造林" />
+		<data name="种草(km²)" unit="km²" discription="种草" />
+		<data name="封山造林(km²)" unit="km²" discription="封山造林" />
+		<data name="封山植草(km²)" unit="km²" discription="封山植草" />
+	</elementData>
+	<!-- 总灌溉面积(亩) -->
+	<!-- <elementData alias="agricultural" size="1"> -->
+	<elementData alias="agrStyleSelect" size="1">
+		<data name="小麦(亩)" attr1="灌水定额(m³)" unit="亩" unit1="m³"
+			discription="小麦" />
+		<data name="青稞(亩)" attr1="灌水定额(m³)" unit="亩" unit1="m³"
+			discription="青稞" />
+		<data name="油菜(亩)" attr1="灌水定额(m³)" unit="亩" unit1="m³"
+			discription="油菜" />
+		<data name="马铃薯(亩)" attr1="灌水定额(m³)" unit="亩" unit1="m³"
+			discription="马铃薯" />
+		<data name="玉米(亩)" attr1="灌水定额(m³)" unit="亩" unit1="m³"
+			discription="玉米" />
+		<data name="豆类(亩)" attr1="灌水定额(m³)" unit="亩" unit1="m³"
+			discription="豆类" />
+		<data name="燕麦(亩)" attr1="灌水定额(m³)" unit="亩" unit1="m³"
+			discription="燕麦" />
+	</elementData>
+	<!-- 保护对象 -->
+	<elementData alias="protection">
+		<data name="保护人口(人)" unit="人" discription="保护人口" />
+		<data name="耕地面积(亩)" unit="亩" discription="耕地面积" />
+		<data name="其他" discription="其他" />
+	</elementData>
+	<!-- 防洪堤/护岸及其长度 -->
+	<elementData alias="fence" size="2">
+		<data name="" unit="km" attr1="左岸长度(km)" attr2="右岸长度(km)" unit1="km"
+			unit2="km" discription="" />
+	</elementData>
+	<!-- 排洪渠/箱涵及其长度 -->
+	<elementData alias="box">
+		<data name="" unit="km" discription="" />
+	</elementData>
+	<!-- "其他" -->
+	<elementData alias="bridge">
+		<data name="车便桥(座)" unit="座" discription="车便桥" />
+		<data name="踏步(座)" unit="座" discription="踏步" />
+		<data name="谷坊(座)" unit="座" discription="谷坊" />
+		<data name="其他" unit="座" discription="其他" />
+	</elementData>
+	<!-- 工程任务 -->
+	<elementData alias="task">
+		<data name="灌溉面积(亩)" unit="亩" discription="灌溉面积" />
+	</elementData>
+	<!-- 节水设施 -->
+	<elementData alias="waterSaving">
+		<data name="滴灌管/带(km)" unit="km" discription="滴灌管/带" />
+		<data name="喷头(个)" unit="个" discription="喷头" />
+		<data name="给水栓(个)" unit="个" discription="给水栓" />
+		<data name="施肥设施(套)" unit="套" discription="施肥设施" />
+		<data name="过滤系统(套)" unit="套" discription="过滤系统" />
+	</elementData>
+</elementDatas>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
