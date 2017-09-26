@@ -101,7 +101,7 @@ public class OssService extends BaseService<Oss,Long>{
 			String roleAccessKeySecret, String roleArn, String roleSessionName)
 			throws ClientException {
 		// 如何定制你的policy?
-		// 参考:
+		// 参考:getBucketAcl CreateBucket、deleteBucket
 		// https://docs.aliyun.com/#/pub/ram/ram-user-guide/policy_reference&struct_def
 		// OSS policy 例子:
 		// https://docs.aliyun.com/#/pub/oss/product-documentation/acl&policy-configure
@@ -124,6 +124,7 @@ public class OssService extends BaseService<Oss,Long>{
 				"            \"Resource\": [\n" +
 				"                \"acs:oss:*:30150706:*\",\n" +
 				"                \"acs:oss:*:30150706:*/*\"\n" +
+
 				"            ]\n" +
 				"        }\n" +
 				"    ]\n" +

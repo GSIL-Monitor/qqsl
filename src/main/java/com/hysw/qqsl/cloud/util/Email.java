@@ -111,12 +111,12 @@ public class Email {
 
     /**
      * 绑定邮箱验证码
-     * @param user
+     * @param email
      * @param verifyCode
      * @return
      */
-    public static MimeMessage getVerifyCodeBinding(User user, String verifyCode){
-        new Email(user.getEmail(), "水利云邮箱绑定验证码", "尊敬的水利云用户您好，您的邮箱绑定验证码为："+verifyCode+",5分钟内有效。");
+    public static MimeMessage getVerifyCodeBinding(String email, String verifyCode){
+        new Email(email, "水利云邮箱绑定验证码", "尊敬的水利云用户您好，您的邮箱绑定验证码为："+verifyCode+",5分钟内有效。");
         return mimeMessage;
     }
 

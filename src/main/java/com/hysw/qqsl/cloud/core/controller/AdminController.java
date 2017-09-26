@@ -89,7 +89,7 @@ public class AdminController {
         Verification verification = (Verification) session
                 .getAttribute("verification");
         String verifyCode = map.get("password").toString();
-        message = userService.checkCode(verifyCode, admin.getPhone(), verification);
+        message = userService.checkCode(verifyCode,verification);
         if (message.getType()!=Message.Type.OK) {
             return message;
         }
