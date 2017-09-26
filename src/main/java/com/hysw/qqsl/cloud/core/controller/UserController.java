@@ -546,7 +546,7 @@ public class UserController {
         if (SettingUtils.phoneRegex(code.toString())) {
             user = userService.findByPhone(code.toString());
         } else if (SettingUtils.emailRegex(code.toString())) {
-            user = userService.findByEmail(code.toString()) ;
+            user = userService.findByEmail(code.toString());
         }
         if (user == null) {
             return new Message(Message.Type.EXIST);
