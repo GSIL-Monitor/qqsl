@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 小水电工程 -->
+<project>
+	<unit name="招投标" alias="1" aliases="1" >
+		<unit name="设计" alias="11" aliases="11" >
+			<unit name="招投标文件" alias="111" aliases="111" >
+			</unit>
+			<unit name="委托书-合同" alias="112" aliases="112" >
+			</unit>
+		</unit>
+		<unit name="施工" alias="12" aliases="12">
+			<unit name="招投标文件" alias="121" aliases="121">
+			</unit>
+			<unit name="委托书-合同" alias="122" aliases="122">
+			</unit>
+		</unit>
+		<unit name="监理" alias="13" aliases="13">
+			<unit name="招投标文件" alias="131" aliases="131">
+			</unit>
+			<unit name="委托书-合同" alias="132" aliases="132">
+			</unit>
+		</unit>
+		<unit name="质检" alias="14" aliases="14">
+			<unit name="招投标文件" alias="141" aliases="141">
+			</unit>
+			<unit name="委托书-合同" alias="142" aliases="142">
+			</unit>
+		</unit>
+		<unit name="其他" alias="15" aliases="15">
+			<unit name="招投标文件" alias="151" aliases="151">
+			</unit>
+			<unit name="委托书-合同" alias="152" aliases="152">
+			</unit>
+		</unit>
+	</unit>
+	<unit name="项目前期" alias="2" aliases="2,23D">
+		<unit name="外业勘测" alias="21">
+		</unit>
+		<unit name="项目建议书" alias="22" aliases="22">
+		</unit>
+		<unit name="可研" alias="23" aliases="23A,23B,23C">
+			<unit name="设计文件" alias="231">
+				<unit name="报告" alias="2311">
+				</unit>
+				<unit name="估算书" alias="2312">
+				</unit>
+				<unit name="图册" alias="2313">
+				</unit>
+				<unit name="附件-地勘报告等" alias="2314">
+				</unit>
+			</unit>
+			<unit name="批复" alias="232" aliases="232">
+				<unit name="国土-水利-专项批复" alias="2321">
+				</unit>
+				<unit name="省发改委批复" alias="2322">
+				</unit>
+				<unit name="财政批复" alias="2323">
+				</unit>
+			</unit>
+		</unit>
+		<unit name="初设(实施)" alias="24" aliases="24A,24B,24C">
+			<unit name="设计文件" alias="241">
+				<unit name="报告" alias="2411">
+				</unit>
+				<unit name="概算书" alias="2412">
+				</unit>
+				<unit name="图册" alias="2413">
+				</unit>
+				<unit name="附件-地勘报告等" alias="2414">
+				</unit>
+			</unit>
+			<unit name="批复" alias="242" aliases="242">
+				<unit name="国土-水利-专项批复" alias="2421">
+				</unit>
+				<unit name="省发改委批复" alias="2422">
+				</unit>
+				<unit name="财政批复" alias="2423">
+				</unit>
+			</unit>
+		</unit>
+		<unit name="施工图" alias="25">
+			<unit name="施工图设计文件" alias="251">
+			</unit>
+			<unit name="审查文件" alias="252">
+			</unit>
+		</unit>
+	</unit>
+	<unit name="建设期" alias="3" aliases="3">
+		<unit name="施工阶段" alias="31" aliases="31">
+			<unit name="业主" alias="311">
+			</unit>
+			<unit name="设计" alias="312">
+			</unit>
+			<unit name="施工" alias="313">
+			</unit>
+			<unit name="监理" alias="314">
+			</unit>
+			<unit name="质检" alias="315">
+			</unit>
+		</unit>
+		<unit name="验收阶段" alias="32" aliases="32">
+		</unit>
+	</unit>
+	<unit name="运营维护期33" alias="4" aliases="4">
+		<unit name="运营阶段" alias="41" aliases="41">
+		</unit>
+	</unit>
+</project>

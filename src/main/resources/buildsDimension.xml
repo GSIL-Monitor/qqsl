@@ -1,0 +1,313 @@
+<!--控制尺寸-->
+<dimensionGroups>
+    <attribeGroup alias="1" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D1BG" unit="m" type="number"/>
+        <dimension name="长度a" alias="D11" unit="m" type="number"/>
+        <dimension name="宽度b" alias="D12" unit="m" type="number"/>
+        <dimension name="高度h" alias="D13" unit="m" type="number"/>
+        <dimension name="壁厚t" alias="D14" unit="m" type="number"/>
+        <dimension name="八字墙长度L" alias="D15" unit="m" type="number"/>
+        <dimension name="八字墙角度θ " alias="D16" unit="°" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="2" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D2BG" unit="m" type="number"/>
+        <dimension name="井深h" alias="D21" unit="m" type="number"/>
+        <dimension name="内径r" alias="D22" unit="m" type="number"/>
+        <dimension name="壁厚t" alias="D23" unit="m" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="3" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D3BG" unit="m" type="number"/>
+        <dimension name="长度a" alias="D31" unit="m" type="number"/>
+        <dimension name="宽度b" alias="D32" unit="m" type="number"/>
+        <dimension name="高度h" alias="D33" unit="m" type="number"/>
+        <dimension name="坡比" alias="D34" unit="" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="4" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D4BG" unit="m" type="number"/>
+        <attribeGroup name="闸孔" alias="41">
+            <dimension name="长度a" alias="D411" unit="个" type="number"/>
+            <dimension name="闸孔宽b" alias="D412" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="闸门" alias="42">
+            <dimension name="高度h1" alias="D421" unit="m" type="number"/>
+            <dimension name="宽度b1" alias="D422" unit="m" type="number"/>
+            <dimension name="厚度t1" alias="D423" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="闸墩" alias="43">
+            <dimension name="高度h" alias="D431" unit="m" type="number"/>
+            <dimension name="边墩厚度t1" alias="D432" unit="m" type="number"/>
+            <dimension name="边墩厚度t2" alias="D433" unit="m" type="number"/>
+            <dimension name="长度L" alias="D434" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="闸底板" alias="44">
+            <dimension name="厚度t" alias="D441" unit="m" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="5" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D5BG" unit="m" type="number"/>
+        <dimension name="长度a" alias="D51" unit="m" type="number"/>
+        <dimension name="宽度b" alias="D52" unit="m" type="number"/>
+        <dimension name="池深h1" alias="D53" unit="m" type="number"/>
+        <dimension name="消力坎高h2" alias="D54" unit="m" type="number"/>
+        <dimension name="底板厚度t" alias="D55" unit="m" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="6" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D6BG" unit="m" type="number"/>
+        <dimension name="长度a" alias="D61" unit="m" type="number"/>
+        <dimension name="宽度b" alias="D62" unit="m" type="number"/>
+        <dimension name="厚度t" alias="D63" unit="m" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="7" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D7BG" unit="m" type="number"/>
+        <dimension name="进出口落差H" alias="D71" unit="m" type="number"/>
+        <dimension name="进口距最低点高差h" alias="D72" unit="m" type="number"/>
+        <dimension name="跨度L" alias="D73" unit="m" type="number"/>
+        <dimension name="管径d" alias="D74" unit="m" type="number"/>
+        <dimension name="壁厚t" alias="D75" unit="m" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="8" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D8BG" unit="m" type="number"/>
+        <dimension name="落差H" alias="D81" unit="m" type="number"/>
+        <dimension name="长度a" alias="D82" unit="m" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="9" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D9BG" unit="m" type="number"/>
+        <dimension name="跨度L" alias="D91" unit="m" type="number"/>
+        <attribeGroup name="槽身" alias="92" status="select">
+            <dimension name="槽身" alias="D921" type="text" status="hide"/>
+            <attribeGroup name="矩形" alias="922">
+                <dimension name="宽度B" alias="D9221" unit="m" type="number"/>
+                <dimension name="高度H" alias="D9222" unit="m" type="number"/>
+                <dimension name="厚度t" alias="D9223" unit="m" type="number"/>
+            </attribeGroup>
+            <attribeGroup name="U形" alias="923">
+                <dimension name="渠深H" alias="D9231" unit="m" type="number"/>
+                <dimension name="宽度B" alias="D9232" unit="m" type="number"/>
+                <dimension name="反弧半径R" alias="D9233" unit="m" type="number"/>
+                <dimension name="壁厚t" alias="D9234" unit="m" type="number"/>
+            </attribeGroup>
+            <attribeGroup name="管道" alias="924">
+                <dimension name="管内径d" alias="D9241" unit="m" type="number"/>
+                <dimension name="壁厚t" alias="D9242" unit="m" type="number"/>
+            </attribeGroup>
+        </attribeGroup>
+        <attribeGroup name="排架" alias="93">
+            <dimension name="高度" alias="D931" unit="m" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="10" status="select" name="控制尺寸">
+        <dimension name="控制尺寸" alias="D101" type="text" status="hide"/>
+        <dimension name="设计标高" alias="D10BG" unit="m" type="number"/>
+        <attribeGroup name="管涵" alias="101">
+            <dimension name="管径R" alias="D1011" unit="m" type="number"/>
+            <dimension name="壁厚t" alias="D1012" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="拱涵" alias="102">
+            <dimension name="宽度B" alias="D1021" unit="m" type="number"/>
+            <dimension name="圆拱半径R" alias="D1022" unit="m" type="number"/>
+            <dimension name="拱高h" alias="D1023" unit="m" type="number"/>
+            <dimension name="高度H" alias="D1024" unit="m" type="number"/>
+            <dimension name="衬砌厚度t" alias="D1025" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="箱涵" alias="103">
+            <dimension name="高度H" alias="D1031" unit="m" type="number"/>
+            <dimension name="宽度B" alias="D1032" unit="m" type="number"/>
+            <dimension name="厚度t" alias="D1033" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="盖板涵" alias="104">
+            <dimension name="宽度B" alias="D1041" unit="m" type="number"/>
+            <dimension name="高度H" alias="D1042" unit="m" type="number"/>
+            <dimension name="厚度t1" alias="D1043" unit="m" type="number"/>
+            <dimension name="盖板厚度t2" alias="D1044" unit="m" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="11" status="select" name="控制尺寸">
+        <dimension name="控制尺寸" alias="D111" type="text" status="hide"/>
+        <dimension name="设计标高" alias="D11BG" unit="m" type="number"/>
+        <attribeGroup name="圆拱直墙形" alias="112">
+            <dimension name="宽度B" alias="D1121" unit="m" type="number"/>
+            <dimension name="高度H" alias="D1122" unit="m" type="number"/>
+            <dimension name="拱高h" alias="D1123" unit="m" type="number"/>
+            <dimension name="圆拱半径R" alias="D1124" unit="m" type="number"/>
+            <dimension name="衬砌厚度t" alias="D1125" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="圆形" alias="113">
+            <dimension name="半径R" alias="D1131" unit="m" type="number"/>
+            <dimension name="衬砌厚度t" alias="D1132" unit="m" type="number"/>
+            <dimension name="圆心角ψ" alias="D1133" unit="°" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="12" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D12BG" unit="m" type="number"/>
+        <dimension name="长度a" alias="D121" unit="m" type="number"/>
+        <dimension name="宽度b" alias="D122" unit="m" type="number"/>
+        <dimension name="高度h" alias="D123" unit="m" type="number"/>
+        <dimension name="厚度t" alias="D124" unit="m" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="13" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D13BG" unit="m" type="number"/>
+        <dimension name="跨度L" alias="D131" unit="m" type="number"/>
+        <dimension name="宽度b" alias="D132" unit="m" type="number"/>
+        <dimension name="面板厚度t" alias="D133" unit="m" type="number"/>
+        <dimension name="桥墩高H" alias="D134" unit="m" type="number"/>
+        <dimension name="桥墩厚度t1" alias="D135" unit="m" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="14" status="select" name="控制尺寸">
+        <dimension name="控制尺寸" alias="D141" type="text" status="hide"/>
+        <dimension name="设计标高" alias="D14BG" unit="m" type="number"/>
+        <attribeGroup name="矩形" alias="142">
+            <dimension name="宽度B" alias="D1421" unit="m" type="number"/>
+            <dimension name="高度H" alias="D1422" unit="m" type="number"/>
+            <dimension name="厚度t" alias="D1423" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="梯形" alias="143">
+            <dimension name="宽度B" alias="D1431" unit="m" type="number"/>
+            <dimension name="高度H" alias="D1432" unit="m" type="number"/>
+            <dimension name="厚度t" alias="D1433" unit="m" type="number"/>
+            <dimension name="坡比" alias="D1434" unit="" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="U形" alias="144">
+            <dimension name="渠深H" alias="D1441" unit="m" type="number"/>
+            <dimension name="宽度B" alias="D1442" unit="m" type="number"/>
+            <dimension name="反弧半径R" alias="D1443" unit="m" type="number"/>
+            <dimension name="壁厚t" alias="D1444" unit="m" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="15" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D15BG" unit="m" type="number"/>
+        <dimension name="井深h" alias="D151" unit="m" type="number"/>
+        <dimension name="直径d" alias="D152" unit="m" type="number"/>
+        <dimension name="壁厚t" alias="D153" unit="m" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="16" status="select" name="控制尺寸">
+        <dimension name="控制尺寸" alias="D161" type="text" status="hide"/>
+        <dimension name="设计标高" alias="D16BG" unit="m" type="number"/>
+        <attribeGroup name="圆形" alias="162">
+            <dimension name="高度h" alias="D1621" unit="m" type="number"/>
+            <dimension name="壁厚t" alias="D1622" unit="m" type="number"/>
+            <dimension name="外径D" alias="D1623" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="矩形" alias="163">
+            <dimension name="长度a" alias="D1631" unit="m" type="number"/>
+            <dimension name="宽度b" alias="D1632" unit="m" type="number"/>
+            <dimension name="高度h" alias="D1633" unit="m" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="17" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D17BG" unit="m" type="number"/>
+        <dimension name="管径D" alias="D171" unit="m" type="number"/>
+        <dimension name="壁厚t" alias="D172" unit="m" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="18" status="select" name="控制尺寸">
+        <dimension name="控制尺寸" alias="D181" type="text" status="hide"/>
+        <dimension name="设计标高" alias="D18BG" unit="m" type="number"/>
+        <attribeGroup name="矩形" alias="182">
+            <dimension name="宽度B" alias="D1821" unit="m" type="number"/>
+            <dimension name="高度H" alias="D1822" unit="m" type="number"/>
+            <dimension name="厚度t" alias="D1823" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="梯形" alias="183">
+            <dimension name="宽度B" alias="D1831" unit="m" type="number"/>
+            <dimension name="高度H" alias="D1832" unit="m" type="number"/>
+            <dimension name="厚度t" alias="D1833" unit="m" type="number"/>
+            <dimension name="坡比" alias="D1834" unit="" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="19" status="select" name="控制尺寸">
+        <dimension name="控制尺寸" alias="D191" type="text" status="hide"/>
+        <dimension name="设计标高" alias="D19BG" unit="m" type="number"/>
+        <attribeGroup name="直墙式" alias="192">
+            <dimension name="顶宽b1" alias="D1921" unit="m" type="number"/>
+            <dimension name="墙高h1" alias="D1922" unit="m" type="number"/>
+            <dimension name="基础宽度b2" alias="D1923" unit="m" type="number"/>
+            <dimension name="基础埋深h2" alias="D1924" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="仰斜式" alias="193">
+            <dimension name="顶宽b1" alias="D1931" unit="m" type="number"/>
+            <dimension name="墙高h1" alias="D1932" unit="m" type="number"/>
+            <dimension name="基础宽度b2" alias="D1933" unit="m" type="number"/>
+            <dimension name="基础埋深h2" alias="D1934" unit="m" type="number"/>
+            <dimension name="前坡比i1" alias="D1935" unit="" type="number"/>
+            <dimension name="后坡比i2" alias="D1936" unit="" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="斜坡式" alias="194">
+            <dimension name="护坡高度h1" alias="D1941" unit="m" type="number"/>
+            <dimension name="护坡厚度t" alias="D1942" unit="m" type="number"/>
+            <dimension name="基础埋深h2" alias="D1943" unit="m" type="number"/>
+            <dimension name="基础宽度b1" alias="D1944" unit="m" type="number"/>
+            <dimension name="坡比" alias="D1945" unit="" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="20" status="select" name="控制尺寸">
+        <dimension name="控制尺寸" alias="D201" type="text" status="hide"/>
+        <dimension name="设计标高" alias="D20BG" unit="m" type="number"/>
+        <attribeGroup name="重力式" alias="202">
+            <dimension name="顶宽b1" alias="D2021" unit="m" type="number"/>
+            <dimension name="墙高h1" alias="D2022" unit="m" type="number"/>
+            <dimension name="基础宽度b2" alias="D2023" unit="m" type="number"/>
+            <dimension name="基础埋深h2" alias="D2024" unit="m" type="number"/>
+            <dimension name="前坡比i1" alias="D2025" unit="" type="number"/>
+            <dimension name="后坡比i2" alias="D2026" unit="" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="扶臂式" alias="203">
+            <dimension name="顶宽b1" alias="D2031" unit="m" type="number"/>
+            <dimension name="墙高h1" alias="D2032" unit="m" type="number"/>
+            <dimension name="基础宽度b2" alias="D2033" unit="m" type="number"/>
+            <dimension name="基础埋深h2" alias="D2034" unit="m" type="number"/>
+            <dimension name="扶臂厚度t" alias="D2035" unit="m" type="number"/>
+            <dimension name="扶臂间隔l" alias="D2036" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="悬臂式" alias="204">
+            <dimension name="顶宽b1" alias="D2041" unit="m" type="number"/>
+            <dimension name="墙高h1" alias="D2042" unit="m" type="number"/>
+            <dimension name="前趾长度l" alias="D2043" unit="m" type="number"/>
+            <dimension name="基础埋深h2" alias="D2044" unit="m" type="number"/>
+            <dimension name="后趾长度l" alias="D2045" unit="m" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="21" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D21BG" unit="m" type="number"/>
+        <dimension name="顶宽B1" alias="D211" unit="m" type="number"/>
+        <dimension name="底宽B2" alias="D212" unit="m" type="number"/>
+        <dimension name="高度H" alias="D213" unit="m" type="number"/>
+        <dimension name="迎水面坡度i1" alias="D214" unit="" type="number"/>
+        <dimension name="背水面坡度i2" alias="D215" unit="" type="number"/>
+    </attribeGroup>
+    <attribeGroup alias="22" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D22BG" unit="m" type="number"/>
+        <dimension name="长度a" alias="D221" unit="m" type="number"/>
+        <dimension name="宽度b" alias="D222" unit="m" type="number"/>
+        <dimension name="高度h" alias="D223" unit="m" type="number"/>
+        <attribeGroup name="进水池" alias="224">
+            <dimension name="长度a1" alias="D2241" unit="m" type="number"/>
+            <dimension name="宽度b1" alias="D2242" unit="m" type="number"/>
+            <dimension name="高度h1" alias="D2243" unit="m" type="number"/>
+            <dimension name="厚度t" alias="D2244" unit="m" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="23" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D23BG" unit="m" type="number"/>
+        <attribeGroup name="墙体" alias="231">
+            <dimension name="墙高h1" alias="D2311" unit="m" type="number"/>
+            <dimension name="基础高h2" alias="D2312" unit="m" type="number"/>
+            <dimension name="顶宽b1" alias="D2313" unit="m" type="number"/>
+            <dimension name="底宽b1" alias="D2314" unit="m" type="number"/>
+            <dimension name="溢流口宽b3" alias="D2315" unit="m" type="number"/>
+            <dimension name="溢流口高h3" alias="D2316" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="铺盖" alias="232">
+            <dimension name="长度L3" alias="D2321" unit="m" type="number"/>
+            <dimension name="厚度t3" alias="D2322" unit="m" type="number"/>
+        </attribeGroup>
+        <attribeGroup name="消力池" alias="233">
+            <dimension name="长度L3" alias="D2331" unit="m" type="number"/>
+            <dimension name="厚度t3" alias="D2332" unit="m" type="number"/>
+        </attribeGroup>
+    </attribeGroup>
+    <attribeGroup alias="24" status="normal" name="控制尺寸">
+        <dimension name="设计标高" alias="D24BG" unit="m" type="number"/>
+        <dimension name="长度a" alias="D241" unit="m" type="number"/>
+        <dimension name="宽度b" alias="D242" unit="m" type="number"/>
+        <dimension name="高度h" alias="D243" unit="m" type="number"/>
+    </attribeGroup>
+</dimensionGroups>

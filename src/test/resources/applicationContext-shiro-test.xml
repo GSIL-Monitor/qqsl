@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
+	   default-lazy-init="true">
+	
+	<!--<bean id="customRealm" class="com.hysw.qqsl.cloud.shiro.CustomRealm" />-->
+    <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.MemorySessionDAO"/>
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <!-- session的失效时长，单位毫秒 -->
+        <property name="sessionDAO" ref="sessionDAO"/>
+        <!-- session的失效时长，单位毫秒 -->
+        <property name="globalSessionTimeout" value="1800000"/>
+        <!-- 删除失效的session -->
+        <property name="deleteInvalidSessions" value="true"/>
+        <!-- 相隔多久检查一次session的有效性 -->  
+        <property name="sessionValidationInterval" value="1800000"/>  
+    </bean>
+	<!-- securityManager安全管理器 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="authenticationRealm" />
+		<!-- 注入缓存管理器 -->
+		<property name="cacheManager" ref="cacheManager"/> 
+		<!-- 注入session管理器 -->
+		<property name="sessionManager" ref="sessionManager"/>
+		<!-- 记住我 -->
+		<!-- <property name="rememberMeManager" ref="rememberMeManager"/> -->
+	</bean>
+	<!-- web.xml中shiro的filter对应的bean -->
+	<!-- Shiro 的Web过滤器 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<!-- loginUrl认证提交地址，如果没有认证将会请求此地址进行认证，请求此地址将由formAuthenticationFilter进行表单认证 -->
+		<property name="loginUrl" value="/user/userLogin" />
+		<!-- 通过unauthorizedUrl指定没有权限操作时跳转页面 -->
+		<property name="unauthorizedUrl" value="/user/refuse" />
+		<!-- 过虑器链定义，从上向下顺序执行，一般将/**放在最下边 -->
+		<property name="filterChainDefinitions">
+			<value>
+				<!-- /project/**=authc-->
+				<!--/user/exit=logout-->
+				/user/queryArticles=anon
+				/**=anon
+				<!-- /user/exit=logout -->
+			</value>
+		</property>
+	</bean>
+	<!-- 缓存管理器 -->
+	<bean id="authenticationRealm" class="com.hysw.qqsl.cloud.shiro.UserRealm">
+		<property name="authorizationCacheName" value="authorization" />
+	</bean>
+      <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+    	<property name="cacheManager" ref="ehCacheManagerFactory"/>
+    </bean>
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.apache.shiro.authz.UnauthorizedException">/user/refuse</prop>
+                <prop key="org.apache.shiro.authz.AuthorizationException">/user/monitor</prop>
+            </props>
+        </property>
+    </bean>
+</beans>

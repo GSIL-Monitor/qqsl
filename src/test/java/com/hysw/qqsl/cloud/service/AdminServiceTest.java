@@ -1,0 +1,57 @@
+package com.hysw.qqsl.cloud.service;
+
+import com.hysw.qqsl.cloud.BaseTest;
+import com.hysw.qqsl.cloud.entity.data.Admin;
+import com.hysw.qqsl.cloud.entity.data.User;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
+
+import java.util.Date;
+
+/**
+ * Created by leinuo on 16-12-14.
+ */
+public class AdminServiceTest extends BaseTest{
+
+    @Autowired
+    private AdminService adminService;
+    @Test
+    public void testStr(){
+        String str = "web,mobile,system,admin";
+        str = StringUtils.replaceOnce(str,"web","mobile");
+       // org.apache.commons.lang.StringUtils;
+        System.out.println(str);
+    }
+
+    //添加用户
+    //@Test
+    public void testSave(){
+        Admin admin = new Admin();
+        admin.setPhone("18661925010");
+        admin.setDepartment("鸿源水务软件研发中心");
+        admin.setEmail("123456@qq.com");
+        admin.setEnabled(true);
+        admin.setLocked(false);
+        admin.setLoginDate(new Date());
+        admin.setLoginIp("192.168.1.117");
+        admin.setName("管理员");
+        admin.setRoles("admin");
+        admin.setUserName("admin");
+        adminService.save(admin);
+        Admin admin1 = adminService.find(admin.getId());
+        Assert.notNull(admin1);
+    }
+
+    @Test
+    public void testInstance(){
+       Object object = new User();
+       Object objecs = new Admin();
+       if(objecs instanceof Admin){
+           logger.info("true---");
+       }else{
+           logger.info("false--");
+       }
+    }
+}
