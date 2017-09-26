@@ -106,21 +106,50 @@ public class OssService extends BaseService<Oss,Long>{
 		// OSS policy 例子:
 		// https://docs.aliyun.com/#/pub/oss/product-documentation/acl&policy-configure
 		// OSS 授权相关问题的FAQ: https://docs.aliyun.com/#/pub/ram/faq/oss&basic
-		String policy = "{\n" + "    \"Version\": \"1\", \n"
-				+ "    \"Statement\": [\n" + "        {\n"
+
+		String policy ="{\n" +
+				"    \"Version\": \"1\",\n" +
+				"    \"Statement\": [\n" +
+				"        {\n" +
+				"            \"Effect\": \"Allow\",\n" +
+				"            \"Action\": \"ecs:Describe*\",\n" +
+				"            \"Resource\": \"acs:ecs:cn-hangzhou:*:*\"\n" +
+				"        },\n" +
+				"        {\n" +
+				"            \"Effect\": \"Allow\",\n" +
+				"            \"Action\": [\n" +
+				"                \"oss:ListObjects\",\n" +
+				"                \"oss:GetObject\"\n" +
+				"            ],\n" +
+				"            \"Resource\": [\n" +
+				"                \"acs:oss:*:30150706:*\",\n" +
+				"                \"acs:oss:*:30150706:*/*\"\n" +
+				"            ]\n" +
+				"        }\n" +
+				"    ]\n" +
+				"}";
+
+		String policy1 = "{\n"
+				+ "   \"Version\": \"1\", \n"
+				+ "    \"Statement\": [\n"
+				+ "        {\n"
 				+ "            \"Action\": [\n"
-			//	+ "                \"oss:GetBucket\", \n"
+				//	+ "                \"oss:GetBucket\", \n"
 				+ "                \" oss:ListObjects\",\n"
-				+ "                \"oss:*\" \n" + "          "
+				+ "                \"oss:*\" \n"
 				+                   "  ], \n"
 				+ "            \"Resource\": [\n"
 				+ "                 \"acs:oss:*:30150706:*\", \n"
 				+ "                 \"acs:oss:*:30150706:*/*\" \n"
-			//	+ "                \"acs:oss:*:30150706:qqslimage\", \n"
-			//	+ "                \"acs:oss:*:30150706:qqslimage/*\" \n"
-				+ "            ], \n" + "            \"Effect\": \"Allow\"\n"
-				+ "        }\n" + "    ]\n" + "}";
+				//	+ "                \"acs:oss:*:30150706:qqslimage\", \n"
+				//	+ "                \"acs:oss:*:30150706:qqslimage/*\" \n"
+				+ "            ], \n"
+				+ "            \"Effect\": \"Allow\"\n"
+				+ "        }\n"
+				+ "    ]\n"
+				+ "}";
 		// 此处必须为 HTTPS
+
 		ProtocolType protocolType = ProtocolType.HTTPS;
 		try {
 			// 创建一个 Aliyun Acs Client, 用于发起 OpenAPI 请求
