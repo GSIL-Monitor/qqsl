@@ -687,7 +687,7 @@ public class FieldService {
         JSONObject jsonObject = JSONObject.fromObject(str);
         JSONObject jsonObject11 = jsonObject;
         jsonObject11.put("id", coordinate.getId());
-        jsonObject11.put("description", coordinate.getDescription());
+//        jsonObject11.put("description", coordinate.getDescription());
         if (coordinate.getName() != null) {
             jsonObject11.put("name", coordinate.getName());
             jsonObject11.put("modifyDate", coordinate.getModifyDate());

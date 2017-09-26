@@ -1,7 +1,10 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.Note;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
+import com.hysw.qqsl.cloud.util.Email;
+import com.hysw.qqsl.cloud.util.EmailCache;
 import com.hysw.qqsl.cloud.util.HttpRequestUtil;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.ehcache.Cache;
@@ -32,6 +35,12 @@ public class CertifyCache {
     private HttpRequestUtil httpRequestUtil;
     @Autowired
     private CacheManager cacheManager;
+    @Autowired
+    private EmailCache emailCache;
+    @Autowired
+    private NoteCache noteCache;
+    @Autowired
+    private UserMessageService userMessageService;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     /**
      * 根据身份证图片组合body信息组
@@ -338,21 +347,35 @@ public class CertifyCache {
      * @param certify
      * @return
      */
-    private boolean passPersonalCertification(Certify certify){
+    private void passPersonalCertification(Certify certify){
         if (idAndIdentityImageIsSame(certify)) {
             certify.setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
             certifyService.save(certify);
-            return true;
+//            发送短信，邮件通知,站内信
+            emailCache.add(Email.personalCertifyFail(certify));
+            Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的实名认证由于==>"+certify.getIdentityAdvice()+"<==原因，导致认证失败，请重新进行认证。");
+            noteCache.add(certify.getUser().getPhone(),note);
+            userMessageService.personalCertifyFail(certify);
+            return;
         }
         if (nameAndIdIsSame(certify)) {
             certify.setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
             certifyService.save(certify);
-            return true;
+            //            发送短信，邮件通知
+            emailCache.add(Email.personalCertifyFail(certify));
+            Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的实名认证由于==>"+certify.getIdentityAdvice()+"<==原因，导致认证失败，请重新进行认证。");
+            noteCache.add(certify.getUser().getPhone(),note);
+            userMessageService.personalCertifyFail(certify);
+            return;
         }
         certify.setPersonalStatus(CommonEnum.CertifyStatus.PASS);
         certify.setIdentityAdvice(null);
         certifyService.save(certify);
-        return false;
+        //            发送短信，邮件通知
+        emailCache.add(Email.personalCertifySuccess(certify));
+        Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的实名认证已经通过认证，水利云将为您提供更多，更优质的服务。");
+        noteCache.add(certify.getUser().getPhone(),note);
+        userMessageService.personalCertifySuccess(certify);
     }
 
     /**
@@ -360,21 +383,35 @@ public class CertifyCache {
      * @param certify
      * @return
      */
-    private boolean passCompanyCertification(Certify certify){
+    private void passCompanyCertification(Certify certify){
         if (idAndCompanyImageIsSame(certify)) {
             certify.setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
             certifyService.save(certify);
-            return true;
+            //            发送短信，邮件通知
+            emailCache.add(Email.companyCertifyFail(certify));
+            Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的企业认证由于==>"+certify.getCompanyAdvice()+"<==原因，导致认证失败，请重新进行认证。");
+            noteCache.add(certify.getUser().getPhone(),note);
+            userMessageService.companyCertifyFail(certify);
+            return;
         }
         if (companyNameAndIdIsSame(certify)) {
             certify.setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
             certifyService.save(certify);
-            return true;
+            //            发送短信，邮件通知
+            emailCache.add(Email.companyCertifyFail(certify));
+            Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的企业认证由于==>"+certify.getCompanyAdvice()+"<==原因，导致认证失败，请重新进行认证。");
+            noteCache.add(certify.getUser().getPhone(),note);
+            userMessageService.companyCertifyFail(certify);
+            return;
         }
         certify.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         certify.setCompanyAdvice(null);
         certifyService.save(certify);
-        return false;
+        //            发送短信，邮件通知
+        emailCache.add(Email.companyCertifySuccess(certify));
+        Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。");
+        noteCache.add(certify.getUser().getPhone(),note);
+        userMessageService.companyCertifySuccess(certify);
     }
 
     /**

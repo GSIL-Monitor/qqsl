@@ -1,4 +1,4 @@
-package com.hysw.qqsl.cloud;
+package com.hysw.qqsl.cloud.util;
 
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -21,7 +21,7 @@ public class Email {
     private String receiveMail;
     private String subject;
     private String context;
-    private MimeMessage mimeMessage;
+    private static MimeMessage mimeMessage;
 
     // 发件人的 邮箱 和 密码（替换为自己的邮箱和密码）
     // PS: 某些邮箱服务器为了增加邮箱本身密码的安全性，给 SMTP 客户端设置了独立密码（有的邮箱称为“授权码”）,
@@ -47,38 +47,76 @@ public class Email {
         createMimeMessage();
     }
 
-    public MimeMessage personalCertifyFail(Certify certify){
-        Email email = new Email(certify.getUser().getEmail(), "水利云实名认证失败", "尊敬的水利云用户您好，您的实名认证由于==>"+certify.getIdentityAdvice()+"<==原因，导致认证失败，请重新进行认证。\\n水利云");
+    /**
+     * 实名认证失败
+     * @param certify
+     * @return
+     */
+    public static MimeMessage personalCertifyFail(Certify certify){
+        new Email(certify.getUser().getEmail(), "水利云实名认证失败", "尊敬的水利云用户您好，您的实名认证由于==>"+certify.getIdentityAdvice()+"<==原因，导致认证失败，请重新进行认证。");
         return mimeMessage;
     }
 
-    public MimeMessage companyCertifyFail(Certify certify){
-        Email email = new Email(certify.getUser().getEmail(), "水利云企业认证失败", "尊敬的水利云用户您好，您的企业认证由于==>"+certify.getCompanyAdvice()+"<==原因，导致认证失败，请重新进行认证。\\n水利云");
+    /**
+     * 企业认证失败
+     * @param certify
+     * @return
+     */
+    public static MimeMessage companyCertifyFail(Certify certify){
+        new Email(certify.getUser().getEmail(), "水利云企业认证失败", "尊敬的水利云用户您好，您的企业认证由于==>"+certify.getCompanyAdvice()+"<==原因，导致认证失败，请重新进行认证。");
         return mimeMessage;
     }
 
-    public MimeMessage personalCertifySuccess(Certify certify){
-        Email email = new Email(certify.getUser().getEmail(), "水利云实名认证成功", "尊敬的水利云用户您好，您的实名认证已经通过认证，水利云将为您提供更多，更优质的服务。\\n水利云");
+    /**
+     * 实名认证成功
+     * @param certify
+     * @return
+     */
+    public static MimeMessage personalCertifySuccess(Certify certify){
+        new Email(certify.getUser().getEmail(), "水利云实名认证成功", "尊敬的水利云用户您好，您的实名认证已经通过认证，水利云将为您提供更多，更优质的服务。");
         return mimeMessage;
     }
 
-    public MimeMessage companyCertifySuccess(Certify certify){
-        Email email = new Email(certify.getUser().getEmail(), "水利云企业认证成功", "尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。\\n水利云");
+    /**
+     * 企业认证成功
+     * @param certify
+     * @return
+     */
+    public static MimeMessage companyCertifySuccess(Certify certify){
+        new Email(certify.getUser().getEmail(), "水利云企业认证成功", "尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。");
         return mimeMessage;
     }
 
-    public MimeMessage getVerifyCodeLogin(User user, String verifyCode) {
-        Email email = new Email(user.getEmail(), "水利云登录验证码", "尊敬的水利云用户您好，您的登录验证码为："+verifyCode+",5分钟内有效。\\n水利云");
+    /**
+     * 登录验证码
+     * @param user
+     * @param verifyCode
+     * @return
+     */
+    public static MimeMessage getVerifyCodeLogin(User user, String verifyCode) {
+        new Email(user.getEmail(), "水利云登录验证码", "尊敬的水利云用户您好，您的登录验证码为："+verifyCode+",5分钟内有效。");
         return mimeMessage;
     }
 
-    public MimeMessage getVerifyCoderesetPassword(User user, String verifyCode){
-        Email email = new Email(user.getEmail(), "水利云重置密码验证码", "\"尊敬的水利云用户您好，您的重置密码验证码为："+verifyCode+",5分钟内有效。\\n水利云");
+    /**
+     * 重置密码验证码
+     * @param user
+     * @param verifyCode
+     * @return
+     */
+    public static MimeMessage getVerifyCoderesetPassword(User user, String verifyCode){
+        new Email(user.getEmail(), "水利云重置密码验证码", "尊敬的水利云用户您好，您的重置密码验证码为："+verifyCode+",5分钟内有效。");
         return mimeMessage;
     }
 
-    public MimeMessage getVerifyCodeBinding(User user, String verifyCode){
-        Email email = new Email(user.getEmail(), "水利云邮箱绑定验证码", "\"尊敬的水利云用户您好，您的邮箱绑定验证码为："+verifyCode+",5分钟内有效。\\n水利云");
+    /**
+     * 绑定邮箱验证码
+     * @param user
+     * @param verifyCode
+     * @return
+     */
+    public static MimeMessage getVerifyCodeBinding(User user, String verifyCode){
+        new Email(user.getEmail(), "水利云邮箱绑定验证码", "尊敬的水利云用户您好，您的邮箱绑定验证码为："+verifyCode+",5分钟内有效。");
         return mimeMessage;
     }
 
@@ -86,7 +124,7 @@ public class Email {
      * 创建邮件服务
      * @return
      */
-    private MimeMessage createMimeMessage(){
+    private void createMimeMessage(){
         Properties props = new Properties();
         //协议
         props.setProperty("mail.transport.protocol", "smtp");
@@ -119,7 +157,7 @@ public class Email {
         });
         //设置session的调试模式，发布时取消
         session.setDebug(true);
-        return createMimeMessage(session,myEmailAccount, receiveMail);
+        createMimeMessage(session,myEmailAccount);
 
     }
 
@@ -128,34 +166,32 @@ public class Email {
      *
      * @param session     和服务器交互的会话
      * @param sendMail    发件人邮箱
-     * @param receiveMail 收件人邮箱
      * @return
      * @throws Exception
      */
-    private MimeMessage createMimeMessage(Session session, String sendMail, String receiveMail){
+    private void createMimeMessage(Session session, String sendMail){
         // 1. 创建一封邮件
-        MimeMessage message = new MimeMessage(session);
+        mimeMessage = new MimeMessage(session);
         try{
             // 2. From: 发件人
-            message.setFrom(new InternetAddress(sendMail, "qqsl", "UTF-8"));
+            mimeMessage.setFrom(new InternetAddress(sendMail, "qqsl", "UTF-8"));
 
             // 3. To: 收件人（可以增加多个收件人、抄送、密送）
-            message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(this.receiveMail, "水利云", "UTF-8"));
+            mimeMessage.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(this.receiveMail, "水利云", "UTF-8"));
 
             // 4. Subject: 邮件主题
-            message.setSubject(this.subject, "UTF-8");
+            mimeMessage.setSubject(this.subject, "UTF-8");
 
             // 5. Content: 邮件正文（可以使用html标签）
-            message.setContent(this.context, "text/html;charset=UTF-8");
+            mimeMessage.setContent(this.context, "text/html;charset=UTF-8");
 
             // 6. 设置发件时间
-            message.setSentDate(new Date());
+            mimeMessage.setSentDate(new Date());
             // 7. 保存设置
-            message.saveChanges();
+            mimeMessage.saveChanges();
         }catch (Exception e){
-            return null;
+            return;
         }
-        return message;
     }
 
 //    public static void main(String[] args) throws Exception {

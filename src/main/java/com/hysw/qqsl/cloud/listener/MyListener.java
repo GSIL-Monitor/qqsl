@@ -1,11 +1,10 @@
 package com.hysw.qqsl.cloud.listener;
 
-import com.hysw.qqsl.cloud.core.entity.Setting;
+import com.hysw.qqsl.cloud.util.EmailManager;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.pay.service.GoodsService;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.util.ObjectJsonConvertUtils;
-import com.hysw.qqsl.cloud.util.SettingUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +53,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private UserService userService;
 	@Autowired
 	private CertifyService certifyService;
+	@Autowired
+	private EmailManager emailManager;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -65,6 +66,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			logger.info("发送短信的线程已启动");
 			new Thread(buildBelongService).start();
 			logger.info("建筑物线面归属线程启动");
+			new Thread(emailManager).start();
+			logger.info("邮件服务线程启动");
 			//将所有项目写入缓存
 			elementGroupService.getDriElementGroups();
 			elementGroupService.getConElementGroups();

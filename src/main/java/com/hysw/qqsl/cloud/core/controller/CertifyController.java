@@ -26,8 +26,6 @@ public class CertifyController {
     @Autowired
     private AuthentService authentService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private CertifyCache certifyCache;
 
     /**
@@ -37,9 +35,6 @@ public class CertifyController {
     @RequestMapping(value = "/getPersonalCertify", method = RequestMethod.GET)
     public @ResponseBody Message getPersonalCertify() {
         User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
-        }
         return certifyService.getPersonalCertify(user);
     }
 
@@ -50,9 +45,6 @@ public class CertifyController {
     @RequestMapping(value = "/getCompanyCertify", method = RequestMethod.GET)
     public @ResponseBody Message getCompanyCertify() {
         User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
-        }
         return certifyService.getCompanyCertify(user);
     }
 
@@ -68,9 +60,6 @@ public class CertifyController {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
-        }
         return certifyService.personalCertify(objectMap,user);
     }
 
@@ -87,77 +76,9 @@ public class CertifyController {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
-        }
         return certifyService.companyCertify(objectMap,user);
     }
 
-//    /**
-//     * 认证通过
-//     * @return
-//     */
-//    @RequestMapping(value = "/certifyPass", method = RequestMethod.POST)
-//    public @ResponseBody Message certifyPass(@RequestBody Map<String,Object> objectMap) {
-//        Message message = Message.parameterCheck(objectMap);
-//        if (message.getType() == Message.Type.FAIL) {
-//            return message;
-//        }
-//        User user = authentService.getUserFromSubject();
-//        if (user == null) {
-//            return new Message(Message.Type.EXIST);
-//        }
-//        return certifyService.certifyPass(objectMap);
-//    }
-
-//    /**
-//     * 认证不通过
-//     * @return
-//     */
-//    @RequestMapping(value = "/certifyNotPass", method = RequestMethod.POST)
-//    public @ResponseBody Message certifyNotPass(@RequestBody Map<String,Object> objectMap) {
-//        Message message = Message.parameterCheck(objectMap);
-//        if (message.getType() == Message.Type.FAIL) {
-//            return message;
-//        }
-//        User user = authentService.getUserFromSubject();
-//        if (user == null) {
-//            return new Message(Message.Type.EXIST);
-//        }
-//        return certifyService.certifyNotPass(objectMap);
-//    }
-
-//    /**
-//     * 返回实名认证是否通过
-//     * @param id
-//     * @return
-//     */
-//    @RequestMapping(value = "/identity", method = RequestMethod.GET)
-//    public @ResponseBody Message identity(@RequestParam Long id) {
-//        Certify certify;
-//        try {
-//            certify = certifyService.find(id);
-//        } catch (Exception e) {
-//            return new Message(Message.Type.FAIL);
-//        }
-//        return certifyService.identity(certify);
-//    }
-
-//    /**
-//     * 返回企业认证是否通过
-//     * @param id
-//     * @return
-//     */
-//    @RequestMapping(value = "/company", method = RequestMethod.GET)
-//    public @ResponseBody Message company(@RequestParam Long id) {
-//        Certify certify;
-//        try {
-//            certify = certifyService.find(id);
-//        } catch (Exception e) {
-//            return new Message(Message.Type.FAIL);
-//        }
-//        return certifyService.company(certify);
-//    }
 
     /**
      * 获取所有认证信息
@@ -173,58 +94,31 @@ public class CertifyController {
      *
      * @return
      */
-    @RequestMapping(value = "/admin/getCertify", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/certify/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    Message getCertifyByUser(@RequestParam Long id) {
-        User user;
+    Message getCertifyByUser(@PathVariable Long id) {
+        Certify certify;
         try {
-            user = userService.find(id);
+            certify = certifyService.find(id);
         } catch (Exception e) {
             return new Message(Message.Type.FAIL);
         }
-        if (user == null) {
+        if (certify == null) {
             return new Message(Message.Type.EXIST);
         }
-        return certifyService.getCertifyByUser(user);
+        return new Message(Message.Type.OK, certifyService.certifyToJson(certify));
     }
 
     /**
      * 手动调用认证流程
      * @return
      */
-    @RequestMapping(value = "/certification/admin", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/startCertify", method = RequestMethod.POST)
     public @ResponseBody
     Message certification() {
         certifyCache.certification();
         return new Message(Message.Type.OK);
     }
-//
-//    /**
-//     * 获取某条认证信息
-//     * @return
-//     */
-//    @RequestMapping(value = "/getCertify/admin/{id}", method = RequestMethod.GET)
-//    public @ResponseBody Message getCertify(@PathVariable Long id) {
-//        return certifyService.getCertify(id);
-//    }
-
-//    /**
-//     * 实名认证转企业认证
-//     * @param objectMap
-//     * @return
-//     */
-//    @RequestMapping(value = "/identityTranformCompany", method = RequestMethod.POST)
-//    public @ResponseBody Message identityTranformCompany(@RequestBody Map<String,Object> objectMap) {
-//        Message message = Message.parameterCheck(objectMap);
-//        if (message.getType() == Message.Type.FAIL) {
-//            return message;
-//        }
-//        User user = authentService.getUserFromSubject();
-//        if (user == null) {
-//            return new Message(Message.Type.EXIST);
-//        }
-//        return certifyService.identityTranformCompany(objectMap);
-//    }
 
 
 //    ?身份证认证

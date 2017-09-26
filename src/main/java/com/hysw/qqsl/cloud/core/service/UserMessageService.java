@@ -146,4 +146,36 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setStatus(UserMessage.Status.UNREAD);
 		userMessageDao.save(userMessage);
     }
+
+	/**
+	 * 实名认证失败
+	 * @param certify
+	 */
+	public void personalCertifyFail(Certify certify) {
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setContent("尊敬的水利云用户您好，您的实名认证由于==>"+certify.getIdentityAdvice()+"<==原因，导致认证失败，请重新进行认证。");
+		userMessage.setUser(certify.getUser());
+	}
+
+	public void companyCertifyFail(Certify certify) {
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setContent("尊敬的水利云用户您好，您的企业认证由于==>"+certify.getCompanyAdvice()+"<==原因，导致认证失败，请重新进行认证。");
+		userMessage.setUser(certify.getUser());
+	}
+
+	public void personalCertifySuccess(Certify certify) {
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setContent("尊敬的水利云用户您好，您的实名认证已经通过认证，水利云将为您提供更多，更优质的服务。");
+		userMessage.setUser(certify.getUser());
+	}
+
+	public void companyCertifySuccess(Certify certify) {
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setContent("尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。");
+		userMessage.setUser(certify.getUser());
+	}
 }

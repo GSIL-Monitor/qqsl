@@ -5,6 +5,7 @@ import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.CertifyDao;
+import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -68,7 +69,7 @@ public class CertifyService extends BaseService<Certify, Long> {
         }
         if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS) {
 //                认证已通过，不可更改
-            return new Message(Message.Type.OTHER);
+            return new Message(Message.Type.EXIST);
         }
         certify.setName(name.toString());
         certify.setIdentityId(identityId.toString());
@@ -95,6 +96,10 @@ public class CertifyService extends BaseService<Certify, Long> {
      */
     private JSONObject personalCertifyToJson(Certify certify) {
         JSONObject jsonObject = new JSONObject();
+        if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.UNAUTHEN) {
+            jsonObject.put("personalStatus", certify.getPersonalStatus());
+            return jsonObject;
+        }
         jsonObject.put("name", certify.getName());
         jsonObject.put("identityId", certify.getIdentityId());
         jsonObject.put("personalStatus", certify.getPersonalStatus());
@@ -149,6 +154,10 @@ public class CertifyService extends BaseService<Certify, Long> {
         }
         if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS) {
 //            认证已通过，不可更改
+            return new Message(Message.Type.EXIST);
+        }
+//        企业许可证编号
+        if (findByCompanyLicence(companyLicence.toString())) {
             return new Message(Message.Type.OTHER);
         }
         certify.setLegal(legal.toString());
@@ -160,6 +169,21 @@ public class CertifyService extends BaseService<Certify, Long> {
         certify.setCompanyStatus(CommonEnum.CertifyStatus.AUTHEN);
         save(certify);
         return new Message(Message.Type.OK);
+    }
+
+    /**
+     * 查询企业编号是否唯一
+     * @param licence
+     * @return false唯一    true不唯一
+     */
+    private boolean findByCompanyLicence(String licence){
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("companyLicence", licence));
+        List<Certify> list = certifyDao.findList(0, null, filters);
+        if (list == null || list.size() == 0) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -179,6 +203,10 @@ public class CertifyService extends BaseService<Certify, Long> {
      */
     private JSONObject companyCertifyToJson(Certify certify) {
         JSONObject jsonObject = new JSONObject();
+        if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.UNAUTHEN) {
+            jsonObject.put("companyStatus", certify.getCompanyStatus());
+            return jsonObject;
+        }
         jsonObject.put("legal", certify.getLegal());
         jsonObject.put("companyName",certify.getCompanyName());
         jsonObject.put("companyAddress", certify.getCompanyAddress());
@@ -298,7 +326,7 @@ public class CertifyService extends BaseService<Certify, Long> {
      * @param certify
      * @return
      */
-    private JSONObject certifyToJson(Certify certify) {
+    public JSONObject certifyToJson(Certify certify) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", certify.getId());
         if (certify.getName() != null) {
@@ -339,13 +367,4 @@ public class CertifyService extends BaseService<Certify, Long> {
         return jsonObject;
     }
 
-    /**
-     * 查询单个用户认证情况
-     * @param user
-     * @return
-     */
-    public Message getCertifyByUser(User user) {
-        Certify certify = findByUser(user);
-        return new Message(Message.Type.OK, certifyToJson(certify));
-    }
 }
