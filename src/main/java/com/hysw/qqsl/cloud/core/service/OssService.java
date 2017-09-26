@@ -101,12 +101,35 @@ public class OssService extends BaseService<Oss,Long>{
 			String roleAccessKeySecret, String roleArn, String roleSessionName)
 			throws ClientException {
 		// 如何定制你的policy?
-		// 参考:
+		// 参考:getBucketAcl CreateBucket、deleteBucket
 		// https://docs.aliyun.com/#/pub/ram/ram-user-guide/policy_reference&struct_def
 		// OSS policy 例子:
 		// https://docs.aliyun.com/#/pub/oss/product-documentation/acl&policy-configure
 		// OSS 授权相关问题的FAQ: https://docs.aliyun.com/#/pub/ram/faq/oss&basic
-		String policy = "{\n" + "    \"Version\": \"1\", \n"
+
+		String policy ="{\n" +
+				"    \"Version\": \"1\",\n" +
+				"    \"Statement\": [\n" +
+				"        {\n" +
+				"            \"Effect\": \"Allow\",\n" +
+				"            \"Action\": \"ecs:Describe*\",\n" +
+				"            \"Resource\": \"acs:ecs:cn-hangzhou:*:*\"\n" +
+				"        },\n" +
+				"        {\n" +
+				"            \"Effect\": \"Allow\",\n" +
+				"            \"Action\": [\n" +
+				"                \"oss:ListObjects\",\n" +
+				"                \"oss:GetObject\"\n" +
+				"            ],\n" +
+				"            \"Resource\": [\n" +
+				"                \"acs:oss:*:30150706:*\",\n" +
+				"                \"acs:oss:*:30150706:*/*\"\n" +
+				"            ],\n" +
+				"        }\n" +
+				"    ]\n" +
+				"}";
+
+		String policy1 = "{\n" + "    \"Version\": \"1\", \n"
 				+ "    \"Statement\": [\n" + "        {\n"
 				+ "            \"Action\": [\n"
 			//	+ "                \"oss:GetBucket\", \n"
