@@ -172,7 +172,7 @@ public class UserController {
      * @param objectMap
      * @return
      */
-    @RequestMapping(value = "/autoLogin", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/autoLogin1", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
     Message autoLogin(
