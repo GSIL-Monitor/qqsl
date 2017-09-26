@@ -74,7 +74,7 @@ public class AccountController {
         password = map.get("password").toString();
         phone = map.get("phone").toString();
         code = map.get("code").toString();
-        message = userService.checkCode(code,phone, verification);
+        message = userService.checkCode(code,verification);
         if (message.getType()!=Message.Type.OK) {
             return message;
         }
@@ -206,7 +206,7 @@ public class AccountController {
         }
         Verification verification = (Verification) session
                 .getAttribute("verification");
-        message = userService.checkCode(verifyIpCode, account.getPhone(), verification);
+        message = userService.checkCode(verifyIpCode, verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -260,7 +260,7 @@ public class AccountController {
         String password = map.get("password").toString();
         Verification verification = (Verification) session
                 .getAttribute("verification");
-        message = userService.checkCode(code, account.getPhone(), verification);
+        message = userService.checkCode(code, verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -374,7 +374,7 @@ public class AccountController {
         Verification verification = (Verification) session.getAttribute("verification");
         String code = map.get("code").toString();
         String phone = map.get("phone").toString();
-        message = userService.checkCode(code,phone, verification);
+        message = userService.checkCode(code,verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
