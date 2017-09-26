@@ -549,7 +549,7 @@ public class UserController {
             user = userService.findByEmail(code.toString());
         }
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return new Message(Message.Type.EXIST) ;
         }
         //判断是否被禁用
         if(user.getLocked()!=null&&user.getLocked()==true){
