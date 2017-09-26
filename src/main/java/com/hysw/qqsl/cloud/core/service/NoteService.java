@@ -242,9 +242,8 @@ public class NoteService{
 	 * 验证验证码
 	 * @throws QQSLException
 	 */
-	public String checkCode(String code, String phone, Verification verification){
-		if (verification.getCode().equals(code)
-				&& verification.getPhone().equals(phone)) {
+	public String checkCode(String code, Verification verification){
+		if (verification.getCode().equals(code)) {
 			return "0";
 		}
 		return "1";
@@ -372,7 +371,7 @@ public class NoteService{
 	}
 
 	/**
-	 * 封装发送短信的返回值
+	 * 发送验证码短信
 	 *
 	 * @param phone
 	 * @param session

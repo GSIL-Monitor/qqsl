@@ -18,6 +18,8 @@ public class Verification implements Serializable  {
 	private Long codeLife;
 	/**手机号码 */
 	private String phone;
+
+	private String email;
 	
 	public Verification() {
 		this.codeLife = System.currentTimeMillis();
@@ -45,5 +47,13 @@ public class Verification implements Serializable  {
 	
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

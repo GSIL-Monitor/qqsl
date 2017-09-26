@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.pay.entity.PackageItem;
@@ -149,13 +150,12 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
      */
 	public Message registerService(Map<String,Object> map,Verification verification){
-     	Message	message = checkCode(map.get("code").toString(), map.get("phone").toString(), verification);
+     	Message	message = checkCode(map.get("code").toString(), verification);
 		if (message.getType()!=Message.Type.OK) {
 			return message;
 		}
 		try {
-			message = register(map.get("userName").toString(),map.get("name").toString()
-					, map.get("phone").toString(),
+			message = register(map.get("userName").toString(), verification.getPhone(),
 					map.get("password").toString());
 		} catch (QQSLException e) {
 			logger.info(e.getMessage());
@@ -171,7 +171,7 @@ public class UserService extends BaseService<User, Long> {
 	 * 
 	 * @return
 	 */
-	public List<User> findUsers(User user) {
+	public List<User> findUsersNeOwn(User user) {
 		List<User> users = (List<User>) SettingUtils.objectCopy(findAll());
 		Iterator<User> it = users.iterator();
 		Certify certify;
@@ -195,6 +195,25 @@ public class UserService extends BaseService<User, Long> {
 	}
 
 	/**
+	 * 获取用户
+	 *
+	 * @return
+	 */
+	public List<User> findUsers() {
+		List<User> users = (List<User>) SettingUtils.objectCopy(findAll());
+		Iterator<User> it = users.iterator();
+		Certify certify;
+		User user;
+		while (it.hasNext()) {
+			user = it.next();
+			certify = certifyService.findByUser(user);
+			user.setPersonalStatus(certify.getPersonalStatus());
+			user.setCompanyStatus(certify.getCompanyStatus());
+		}
+		return users;
+	}
+
+	/**
 	 * 查看该手机号是否被注册
 	 * @param phone
 	 * @return
@@ -213,13 +232,12 @@ public class UserService extends BaseService<User, Long> {
 
 	/**
 	 * 企业用户注册
-	 * @param name
 	 * @param phone
 	 * @param password
 	 * @return
 	 * @throws QQSLException 
 	 */
-	public Message register(String userName,String name,String phone, String password) throws QQSLException {
+	public Message register(String userName,String phone, String password) throws QQSLException {
         if(phone.length()!=11||SettingUtils.phoneRegex(phone)==false){
         	throw new QQSLException(phone+":电话号码异常！");
 		}
@@ -234,7 +252,6 @@ public class UserService extends BaseService<User, Long> {
 			user = new User();
 		}
 		user.setUserName(userName);
-		user.setName(name);
 		user.setPhone(phone);
 		user.setPassword(password);
 //				user.setType(User.Type.USER);
@@ -253,12 +270,10 @@ public class UserService extends BaseService<User, Long> {
 	 * 验证验证码
 	 *
 	 * @param code
-	 * @param phone
 	 * @param verification
 	 * @return
 	 */
-	public Message checkCode(String code, String phone,
-							  Verification verification) {
+	public Message checkCode(String code, Verification verification) {
 		if (verification == null) {
 			return new Message(Message.Type.INVALID);
 		}
@@ -266,7 +281,7 @@ public class UserService extends BaseService<User, Long> {
 			// 验证码过期
 			return new Message(Message.Type.INVALID);
 		}
-		String result = noteService.checkCode(code, phone, verification);
+		String result = noteService.checkCode(code, verification);
 		if (!result.equals("0")) {
 			return new Message(Message.Type.INVALID);
 		}
@@ -379,6 +394,12 @@ public class UserService extends BaseService<User, Long> {
 			userJson.put("lockedDate", user.getLockedDate());
 			userJson.put("loginDate", user.getLoginDate());
 			userJson.put("loginType",user.getLoginType());
+			if (user.getPersonalStatus() != null) {
+				userJson.put("personalStatus", user.getPersonalStatus());
+			}
+			if (user.getCompanyStatus() != null) {
+				userJson.put("companyStatus", user.getCompanyStatus());
+			}
 			userJsons.add(userJson);
 		}
 		return userJsons;
@@ -587,5 +608,15 @@ public class UserService extends BaseService<User, Long> {
 		net.sf.ehcache.Element element = cache.get("user");
 		List<User> users=(List<User>) element.getValue();
 		return users;
+	}
+
+	public User findByEmail(String eamil) {
+		List<Filter> filters = new ArrayList<>();
+		filters.add(Filter.eq("email", eamil));
+		List<User> list = userDao.findList(0, null, filters);
+		if (list == null || list.size() == 0) {
+			return null;
+		}
+		return list.get(0);
 	}
 }
