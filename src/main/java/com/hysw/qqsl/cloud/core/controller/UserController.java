@@ -117,7 +117,7 @@ public class UserController {
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
-        if (!SettingUtils.phoneRegex(code) || !SettingUtils.emailRegex(code)) {
+        if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
             return new Message(Message.Type.FAIL);
         }
         User user=userService.findByPhoneOrEmial(code);
@@ -480,6 +480,9 @@ public class UserController {
         if (user.getLocked() != null && user.getLocked()) {
             return new Message(Message.Type.UNKNOWN);
         }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
         if (!user.getPassword().equals(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
         }
@@ -538,6 +541,9 @@ public class UserController {
         if (user.getLocked() != null && user.getLocked()) {
             return new Message(Message.Type.UNKNOWN);
         }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
         if (!user.getPassword().equals(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
         }
@@ -576,8 +582,11 @@ public class UserController {
             return new Message(Message.Type.EXIST);
         }
         //判断是否被禁用
-        if(user.getLocked()!=null&&user.getLocked()==true){
+        if (user.getLocked() != null && user.getLocked()) {
             return new Message(Message.Type.UNKNOWN);
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
         }
         if (!user.getPassword().equals(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
@@ -656,6 +665,12 @@ public class UserController {
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
             return new Message(Message.Type.UNKNOWN);
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        if (!user.getPassword().equals(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
         }
         message = userService.checkCode(verifyCode,verification);
         if (message.getType() != Message.Type.OK) {

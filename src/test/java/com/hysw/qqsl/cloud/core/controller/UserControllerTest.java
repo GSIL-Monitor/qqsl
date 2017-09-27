@@ -27,6 +27,8 @@ public class UserControllerTest extends BaseControllerTest{
 
 
     @Autowired
+    private UserController userController;
+    @Autowired
     private AuthentService authentService;
 
     /**
@@ -94,12 +96,23 @@ public class UserControllerTest extends BaseControllerTest{
     @Test
     public void testGetvericfy() throws Exception{
         MockHttpSession session = new MockHttpSession();
+        Message message = userController.sendBindVerify("1321404703@qq.com",session);
+        assertTrue(message.getType()== Message.Type.OK);
         MvcResult result = mockMvc.perform(get("/email/getBindVerify").contentType(MediaType.APPLICATION_JSON).param("email","1321404703@qq.com").session(session)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print()) //执行请求
                 .andReturn();
-       assertNotNull(session.getAttribute("verification"));
+        String res = result.getResponse().getContentAsString();
+        JSONObject resultJson= JSONObject.fromObject(res);
+        assertTrue(resultJson.getString("type")!=null);
     }
 
+
+    @Test
+    public void testGetLoginVerify() throws Exception{
+        MockHttpSession session = new MockHttpSession();
+        Message message = userController.getLoginVerify("18661925010",session);
+        assertTrue(message.getType()== Message.Type.OK);
+    }
 
 }

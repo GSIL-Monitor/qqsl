@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @author Administrator
  *
  */
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
+//@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 public class UserServiceTest extends BaseTest{
 	@Autowired
 	private UserService userService;
@@ -208,7 +208,14 @@ public class UserServiceTest extends BaseTest{
 		//更新用户
 	}
 
-    public void testRegisterErrorPassword(){
+	@Test
+	public void testChangePhone1(){
+		MockHttpSession session = new MockHttpSession();
+		Message message = noteService.isSend("18661925010",session);
+	}
+
+
+	public void testRegisterErrorPassword(){
     	//手机验证码验证
     	Verification verification = new Verification();
     	verification.setCode(code);

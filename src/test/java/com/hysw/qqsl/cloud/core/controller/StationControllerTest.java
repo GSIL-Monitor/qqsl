@@ -27,7 +27,7 @@ public class StationControllerTest extends BaseControllerTest {
     @Before
     public void userLogin() throws Exception {
         Map<String,Object> loginMap = new HashMap<>();
-        loginMap.put("phone","18661925010");
+        loginMap.put("code","18661925010");
         loginMap.put("password", DigestUtils.md5Hex("111111"));
         loginMap.put("loginType", "web");
         Message message =  userController.login(loginMap);

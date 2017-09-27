@@ -616,8 +616,9 @@ public class UserService extends BaseService<User, Long> {
 	public User findByEmail(String email) {
 		List<User> list = findAll();
 		for (User user : list) {
-			if (user.getEmail().endsWith(email)) {
-				return user;
+			if (user.getEmail() != null && user.getEmail().equals(email)) {
+				buildPackage(user);
+				return buildCertify(user);
 			}
 		}
 		return null;
