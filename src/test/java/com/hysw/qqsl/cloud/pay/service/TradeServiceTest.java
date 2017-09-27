@@ -117,7 +117,7 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "YOUTH");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.OK);
@@ -131,7 +131,7 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "SUN");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.UNKNOWN);
@@ -145,7 +145,7 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "SUN");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
         user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.OK);
@@ -159,7 +159,7 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "TEST");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.NO_ALLOW);
@@ -173,7 +173,7 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "TEST1");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
         Message message = tradeService.createPackageTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
     }
@@ -184,7 +184,7 @@ public class TradeServiceTest extends BaseTest {
      */
 //    @Test
     public void testCreatePackageTrade6() throws InterruptedException {
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
         Package aPackage = packageService.findByUser(user);
         CommonEnum.PackageType type = aPackage.getType();
         List<Trade> trades = tradeService.findByUser(user);
@@ -227,7 +227,7 @@ public class TradeServiceTest extends BaseTest {
     public void testCreateStationTrade() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("stationType", "HYDROLOGIC_STATION");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
         Message message = tradeService.createStationTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.OK);
     }
@@ -239,7 +239,7 @@ public class TradeServiceTest extends BaseTest {
     public void testCreateStationTrade1() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("stationType", "HYDROLOGIC_STATION1");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
         Message message = tradeService.createStationTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
     }
@@ -253,7 +253,7 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("goodsType", "PANORAMA");
         jsonObject.put("remark", "test");
         jsonObject.put("goodsNum", "2");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
         Message message = tradeService.createGoodsTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.OK);
     }
@@ -267,7 +267,7 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("goodsType", "PANORAMA1");
         jsonObject.put("remark", "test");
         jsonObject.put("goodsNum", "2");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
         Message message = tradeService.createGoodsTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
     }
@@ -281,7 +281,7 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("goodsType", "PANORAMA1");
         jsonObject.put("remark", "test");
         jsonObject.put("goodsNum", "");
-        User user = userService.findByPhoneOrUserName("13028710937");
+        User user = userService.findByPhoneOrEmial("13028710937");
         Message message = tradeService.createGoodsTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
         jsonObject = new JSONObject();

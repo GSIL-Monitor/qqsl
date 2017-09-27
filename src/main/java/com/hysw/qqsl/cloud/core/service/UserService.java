@@ -150,7 +150,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
      */
 	public Message registerService(Map<String,Object> map,Verification verification){
-     	Message	message = checkCode(map.get("code").toString(), verification);
+     	Message	message = checkCode(map.get("verification").toString(), verification);
 		if (message.getType()!=Message.Type.OK) {
 			return message;
 		}
@@ -281,8 +281,8 @@ public class UserService extends BaseService<User, Long> {
 			// 验证码过期
 			return new Message(Message.Type.INVALID);
 		}
-		String result = noteService.checkCode(code, verification);
-		if (!result.equals("0")) {
+		boolean result = noteService.checkCode(code, verification);
+		if (result) {
 			return new Message(Message.Type.INVALID);
 		}
 		return new Message(Message.Type.OK);
@@ -352,20 +352,6 @@ public class UserService extends BaseService<User, Long> {
 		userDao.save(user);
 		authentService.updateSession(user);
 		return new Message(Message.Type.OK,makeUserJson(user));
-	}
-	/**
-	 * 根据用户名或手机号码查找用户
-	 * @param argument
-	 * @return
-	 */
-	public User findByPhoneOrUserName(String argument){
-		User user;
-		 if(SettingUtils.phoneRegex(argument)){
-				user = findByPhone(argument);
-			}else{
-				user = findByUserName(argument);
-			}
-		return user;
 	}
 
 	/**

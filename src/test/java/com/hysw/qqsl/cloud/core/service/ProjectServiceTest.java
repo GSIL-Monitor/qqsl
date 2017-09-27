@@ -853,4 +853,10 @@ public class ProjectServiceTest extends BaseTest {
 		Assert.assertTrue(message.getType() == Message.Type.OK);
 	}
 
+	@Test
+	public void testDelete(){
+		Map<String, Object> map = new HashMap<>();
+		map.put("projectId", 29);
+		map.put("fileSize", 134567);
+	}
 }

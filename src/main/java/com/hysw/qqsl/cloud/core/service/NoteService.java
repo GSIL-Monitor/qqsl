@@ -241,27 +241,16 @@ public class NoteService{
 	/**
 	 * 验证验证码
 	 * @throws QQSLException
+	 * @return false ==   ture !=
 	 */
-	public String checkCode(String code, Verification verification){
+	public boolean checkCode(String code, Verification verification){
 		if (verification.getCode().equals(code)) {
-			return "0";
+			return false;
 		}
-		return "1";
+		return true;
 	}
 
-	/**
-	 * 手机获取的验证码
-	 * 
-	 * @return
-	 */
-	public String createRandomVcode() {
-		// 验证码
-		String vcode = "";
-		for (int i = 0; i < 6; i++) {
-			vcode = vcode + (int) (Math.random() * 10);
-		}
-		return vcode;
-	}
+
 
 	
 	/**
@@ -383,7 +372,7 @@ public class NoteService{
 			return new Message(Message.Type.FAIL, null);
 		}
 		Verification verification = new Verification();
-		String code = createRandomVcode();
+		String code = SettingUtils.createRandomVcode();
 		String result = sendCode(phone, code);
  		if (result.equals("0")) {
 			verification.setPhone(phone);

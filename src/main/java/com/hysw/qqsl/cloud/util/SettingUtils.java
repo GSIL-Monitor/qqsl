@@ -353,10 +353,25 @@ public class SettingUtils {
 		return jsonObject;
 	}
 
+	/**
+	 * 手机获取的验证码
+	 *
+	 * @return
+	 */
+	public static String createRandomVcode() {
+		// 验证码
+		String vcode = "";
+		for (int i = 0; i < 6; i++) {
+			vcode = vcode + (int) (Math.random() * 10);
+		}
+		return vcode;
+	}
+
 	public static void main(String[] args) {
 		String url = "rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd";
 		System.out.print(rtmpRegex(url));
 		Pattern pattern = Pattern.compile("[A-z0-9]+\\.(?!\\.)");
 		System.out.println(pattern.matcher("ba4b2fde89ab43739e3d3e74d8b08f4a.hd").find());
 	}
- }
+
+}

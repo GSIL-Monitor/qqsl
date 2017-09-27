@@ -45,7 +45,7 @@ public class CooperateServiceTest extends BaseTest {
      */
     @Test
     public void registViews() throws Exception{
-        User user = userService.findByPhoneOrUserName("qqsl");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Account account = userService.getAccountsByUserId(user.getId()).get(0);
         assertNotNull(account);
         List<Project> projects = projectService.findByUser(user);
@@ -71,7 +71,7 @@ public class CooperateServiceTest extends BaseTest {
      */
     @Test
     public void registEdits() throws Exception{
-        User user = userService.findByPhoneOrUserName("qqsl");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Account account = userService.getAccountsByUserId(user.getId()).get(0);
         assertNotNull(account);
         List<Project> projects = projectService.findByUser(user);
@@ -100,7 +100,7 @@ public class CooperateServiceTest extends BaseTest {
      */
     @Test
     public void registEdit() throws Exception{
-        User user = userService.findByPhoneOrUserName("qqsl");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Account account = userService.getAccountsByUserId(user.getId()).get(0);
         assertNotNull(account);
         List<Project> projects = projectService.findByUser(user);

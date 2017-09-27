@@ -26,8 +26,8 @@ public class EmailCacheTest extends BaseTest{
         User user=new User();
         user.setEmail("84781320@qq.com");
 //        Email email = new Email();
-        MimeMessage mimeMessage = Email.getVerifyCodeBinding(user,"123456");
-        emailCache.add(mimeMessage);
+       /* MimeMessage mimeMessage = Email.getVerifyCodeBinding(user,"123456");
+        emailCache.add(mimeMessage);*/
         MimeMessage mimeMessage2 = Email.getVerifyCoderesetPassword(user,"123456");
         emailCache.add(mimeMessage2);
     }

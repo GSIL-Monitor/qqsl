@@ -79,11 +79,11 @@ public class UserServiceTest extends BaseTest{
 		assertTrue(message.getType()== Message.Type.OK);
 		//手机验证码验证
 		Verification verification1 = (Verification) session.getAttribute("verification");
-		 message  = userService.checkCode(code,phone,verification1);
+		 message  = userService.checkCode(code,verification1);
 		assertTrue(message.getType()==Message.Type.OK);
 		//用户注册
     	try {
-			message = userService.register(userName,name, phone, DigestUtils.md5Hex(password));
+			message = userService.register(userName, phone, DigestUtils.md5Hex(password));
 			assertTrue(message.getType()==Message.Type.OK);
 		} catch (QQSLException e) {
 			return;
@@ -106,7 +106,7 @@ public class UserServiceTest extends BaseTest{
 		String userName = user.getUserName();
 		String password = user.getPassword();
 		//用户名密码是否正确
-		user = userService.findByPhoneOrUserName(userName);
+		user = userService.findByPhoneOrEmial("18661925010");
 		assertEquals(userName,user.getUserName());
 		assertEquals(password,user.getPassword());
 		//是否第一次登陆
@@ -146,7 +146,7 @@ public class UserServiceTest extends BaseTest{
 		assertTrue(message.getType()== Message.Type.OK);
 		//手机验证码验证
 		Verification verification1 = (Verification) session.getAttribute("verification");
-		message  = userService.checkCode(code,phone,verification1);
+		message  = userService.checkCode(code,verification1);
 		assertTrue(message.getType()==Message.Type.OK);
 		//更新用户
 		user.setPassword(newPassword);
@@ -202,7 +202,7 @@ public class UserServiceTest extends BaseTest{
 		assertTrue(message.getType()== Message.Type.OK);
 		//手机验证码验证
 		Verification verification1 = (Verification) session.getAttribute("verification");
-		message  = userService.checkCode(code,phone,verification1);
+		message  = userService.checkCode(code,verification1);
 		assertTrue(message.getType()==Message.Type.OK);
 		//更新用户
 	}
@@ -212,10 +212,10 @@ public class UserServiceTest extends BaseTest{
     	Verification verification = new Verification();
     	verification.setCode(code);
     	verification.setPhone(phone);
-		Message message  = userService.checkCode(errorCode,phone,verification);
+		Message message  = userService.checkCode(errorCode,verification);
 		assertTrue(message.getType()!=Message.Type.OK);
     	try {
-			userService.register(userName,name, phone,password);
+			userService.register(userName, phone,password);
 		} catch (QQSLException e) {
 			//logger.info(e.getMessage());
 			return;
@@ -253,7 +253,7 @@ public class UserServiceTest extends BaseTest{
    public void testiFindUsers(){
 	   User user=new User();
 	   user.setId(1l);
-	   List<User> users = userService.findUsers(user);
+	   List<User> users = userService.findUsersNeOwn(user);
 	   assertTrue(users.size()>0);
 //	   assertTrue(users.get(0).getType()== User.Type.USER);
    }
@@ -276,9 +276,9 @@ public class UserServiceTest extends BaseTest{
     */
    @Test
    public void testFindByPhoneOrUserName(){
-	   User user1 = userService.findByPhoneOrUserName("qqsl");
+	   User user1 = userService.findByPhoneOrEmial("18661925010");
 	   assertTrue(user1.getId()!=null);
-	   User user2 = userService.findByPhoneOrUserName("18661925555");
+	   User user2 = userService.findByPhoneOrEmial("18661925555");
 	   assertTrue(user2.getId()==null);
    }
 

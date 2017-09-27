@@ -224,9 +224,9 @@ public final class CommonAttributes {
     public static final int PROJECTLIMIT = 10;
 //    坐标数据条目限制，超过限制值将不能上传和替换
     public static final int COORDINATELIMIT = 2000;
-    //    购买成功提示
-    public static final String BUY = "您好！水利云提示您水利云TYPE--BASE已购买成功，相应功能已经开放，欢迎使用";
-    //    退款成功提示
-//    public static final String REFUND = "您好！水利云提示您提交的TYPE--BASETYPE已退款成功，欢迎您下次使用";
+    //    企业邮箱
+    public static String MYEMAILACCOUNT = "leinuo@qingqingshuili.cn";
+    //    企业邮箱密码
+    public static String MYEMAILPASSWORD = "Ljb608403";
 }
 

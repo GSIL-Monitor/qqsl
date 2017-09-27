@@ -39,7 +39,7 @@ public class ShareServiceTest extends BaseTest {
             projectService.save(projects.get(i));
             projectIds.add(Integer.valueOf( projects.get(i).getId().toString()));
         }
-        User user1 = userService.findByPhoneOrUserName("hyswljb");
+        User user1 = userService.findByPhoneOrEmial("18661925010");
         List<Integer> userIds = new ArrayList<>();
         userIds.add(Integer.valueOf(user1.getId().toString()));
         assertNotNull(user1);
