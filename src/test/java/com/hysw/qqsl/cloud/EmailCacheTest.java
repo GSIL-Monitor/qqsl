@@ -1,16 +1,7 @@
 package com.hysw.qqsl.cloud;
 
-import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.util.Email;
-import com.hysw.qqsl.cloud.util.EmailCache;
-import com.hysw.qqsl.cloud.util.EmailManager;
-import com.hysw.qqsl.cloud.util.EmailService;
-import org.junit.Test;
+import com.hysw.qqsl.cloud.core.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.mail.MessagingException;
-import javax.mail.Transport;
-import javax.mail.internet.MimeMessage;
 
 /**
  * 邮件服务

@@ -1,16 +1,12 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.hysw.qqsl.cloud.annotation.util.IsAllowCreateAccount;
-import com.hysw.qqsl.cloud.core.entity.QQSLException;
-import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.annotation.util.IsExpire;
-import com.hysw.qqsl.cloud.util.Email;
-import com.hysw.qqsl.cloud.util.EmailCache;
-import com.hysw.qqsl.cloud.util.EmailService;
+import com.hysw.qqsl.cloud.core.service.EmailService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import com.hysw.qqsl.cloud.wechat.entity.data.WeChat;
 import com.hysw.qqsl.cloud.wechat.service.GetAccessTokenService;

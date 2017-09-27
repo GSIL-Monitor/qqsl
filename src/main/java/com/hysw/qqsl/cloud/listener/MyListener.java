@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.listener;
 
-import com.hysw.qqsl.cloud.util.EmailManager;
+import com.hysw.qqsl.cloud.core.service.EmailManager;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.pay.service.GoodsService;
 import com.hysw.qqsl.cloud.pay.service.PackageService;

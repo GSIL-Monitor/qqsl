@@ -1,4 +1,4 @@
-package com.hysw.qqsl.cloud.util;
+package com.hysw.qqsl.cloud.core.entity;
 
 import com.hysw.qqsl.cloud.core.controller.*;
 import com.hysw.qqsl.cloud.core.entity.Verification;

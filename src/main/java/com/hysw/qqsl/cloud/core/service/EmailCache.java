@@ -1,4 +1,4 @@
-package com.hysw.qqsl.cloud.util;
+package com.hysw.qqsl.cloud.core.service;
 
 import org.springframework.stereotype.Component;
 
