@@ -5,6 +5,7 @@ import java.util.List;
 import com.hysw.qqsl.cloud.core.service.ContactService;
 import com.hysw.qqsl.cloud.core.service.NoteService;
 import com.hysw.qqsl.cloud.core.service.UserService;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Assert;
@@ -189,7 +190,7 @@ public class UserServiceTest extends BaseTest{
 	@Test
 	public void testChangePhone(){
 		String newPhone = "18661925010";
-		String code = noteService.createRandomVcode();
+		String code = SettingUtils.createRandomVcode();
 		//检查该手机号是否注册
 		User user = userService.findByPhone(newPhone);
 		assertTrue(user.getId()!=null);

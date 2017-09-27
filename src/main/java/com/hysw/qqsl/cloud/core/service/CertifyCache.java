@@ -3,10 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Note;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
-import com.hysw.qqsl.cloud.util.Email;
-import com.hysw.qqsl.cloud.util.EmailCache;
-import com.hysw.qqsl.cloud.util.HttpRequestUtil;
-import com.hysw.qqsl.cloud.util.SettingUtils;
+import com.hysw.qqsl.cloud.util.*;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.json.JSONArray;
@@ -36,7 +33,7 @@ public class CertifyCache {
     @Autowired
     private CacheManager cacheManager;
     @Autowired
-    private EmailCache emailCache;
+    private EmailService emailService;
     @Autowired
     private NoteCache noteCache;
     @Autowired
@@ -352,7 +349,7 @@ public class CertifyCache {
             certify.setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
             certifyService.save(certify);
 //            发送短信，邮件通知,站内信
-            emailCache.add(Email.personalCertifyFail(certify));
+            emailService.personalCertifyFail(certify);
             Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的实名认证由于==>"+certify.getIdentityAdvice()+"<==原因，导致认证失败，请重新进行认证。");
             noteCache.add(certify.getUser().getPhone(),note);
             userMessageService.personalCertifyFail(certify);
@@ -362,7 +359,7 @@ public class CertifyCache {
             certify.setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
             certifyService.save(certify);
             //            发送短信，邮件通知
-            emailCache.add(Email.personalCertifyFail(certify));
+            emailService.personalCertifyFail(certify);
             Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的实名认证由于==>"+certify.getIdentityAdvice()+"<==原因，导致认证失败，请重新进行认证。");
             noteCache.add(certify.getUser().getPhone(),note);
             userMessageService.personalCertifyFail(certify);
@@ -372,7 +369,7 @@ public class CertifyCache {
         certify.setIdentityAdvice(null);
         certifyService.save(certify);
         //            发送短信，邮件通知
-        emailCache.add(Email.personalCertifySuccess(certify));
+        emailService.personalCertifySuccess(certify);
         Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的实名认证已经通过认证，水利云将为您提供更多，更优质的服务。");
         noteCache.add(certify.getUser().getPhone(),note);
         userMessageService.personalCertifySuccess(certify);
@@ -388,7 +385,7 @@ public class CertifyCache {
             certify.setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
             certifyService.save(certify);
             //            发送短信，邮件通知
-            emailCache.add(Email.companyCertifyFail(certify));
+            emailService.companyCertifyFail(certify);
             Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的企业认证由于==>"+certify.getCompanyAdvice()+"<==原因，导致认证失败，请重新进行认证。");
             noteCache.add(certify.getUser().getPhone(),note);
             userMessageService.companyCertifyFail(certify);
@@ -398,7 +395,7 @@ public class CertifyCache {
             certify.setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
             certifyService.save(certify);
             //            发送短信，邮件通知
-            emailCache.add(Email.companyCertifyFail(certify));
+            emailService.companyCertifyFail(certify);
             Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的企业认证由于==>"+certify.getCompanyAdvice()+"<==原因，导致认证失败，请重新进行认证。");
             noteCache.add(certify.getUser().getPhone(),note);
             userMessageService.companyCertifyFail(certify);
@@ -408,7 +405,7 @@ public class CertifyCache {
         certify.setCompanyAdvice(null);
         certifyService.save(certify);
         //            发送短信，邮件通知
-        emailCache.add(Email.companyCertifySuccess(certify));
+        emailService.companyCertifySuccess(certify);
         Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。");
         noteCache.add(certify.getUser().getPhone(),note);
         userMessageService.companyCertifySuccess(certify);
