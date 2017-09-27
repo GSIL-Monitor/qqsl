@@ -91,4 +91,15 @@ public class UserControllerTest extends BaseControllerTest{
     }
 
 
+    @Test
+    public void testGetvericfy() throws Exception{
+        MockHttpSession session = new MockHttpSession();
+        MvcResult result = mockMvc.perform(get("/email/getBindVerify").contentType(MediaType.APPLICATION_JSON).param("email","1321404703@qq.com").session(session)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print()) //执行请求
+                .andReturn();
+       assertNotNull(session.getAttribute("verification"));
+    }
+
+
 }

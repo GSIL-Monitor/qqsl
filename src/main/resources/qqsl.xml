@@ -20,7 +20,7 @@
 	<setting name="info" value="info.xml" />goo
 	<setting name="elementDataModel" value="elementDataModel.xml" />
 	<setting name="elementDataSimpleModel" value="elementDataSimpleModel.xml" />
-	<setting name="waterIP" value="192.168.1.180" />
+	<setting name="waterIP" value="www.qingqingshuili.cn" />
 	<!-- 建筑物 -->
 	<setting name="buildsModel" value="buildsModel.xml"/>
 	<setting name="buildsMater" value="buildsMater.xml"/>

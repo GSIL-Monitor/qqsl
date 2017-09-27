@@ -184,26 +184,26 @@ public class UserController {
 
     /**
      * email找回密码时发送验证码
-     * @param eamil
+     * @param email
      * @param session
      * @return
      */
     @RequestMapping(value = "/email/getGetbackVerify", method = RequestMethod.GET)
     public
     @ResponseBody
-    Message sendGetbackVerifyEmail(@RequestParam String eamil, HttpSession session) {
-        Message message = Message.parametersCheck(eamil);
+    Message sendGetbackVerifyEmail(@RequestParam String email, HttpSession session) {
+        Message message = Message.parametersCheck(email);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        if(!SettingUtils.emailRegex(eamil)){
+        if(!SettingUtils.emailRegex(email)){
             return new Message(Message.Type.FAIL);
         }
-        User user = userService.findByEmail(eamil);
+        User user = userService.findByEmail(email);
         if (user == null) {
             return new Message(Message.Type.EXIST);
         }
-        return emailService.getVerifyCoderesetPassword(eamil,session);
+        return emailService.getVerifyCoderesetPassword(email,session);
     }
 
     /**
@@ -465,7 +465,7 @@ public class UserController {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
-        if (map.get("code") == null || StringUtils.hasText(map.get("code").toString())) {
+        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
             return new Message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
@@ -523,7 +523,7 @@ public class UserController {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
-        if (map.get("code") == null || StringUtils.hasText(map.get("code").toString())) {
+        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
             return new Message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
@@ -564,7 +564,7 @@ public class UserController {
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         Object openId = SecurityUtils.getSubject().getSession().getAttribute("openId");
-        if (map.get("code") == null || StringUtils.hasText(map.get("code").toString())) {
+        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
             return new Message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
@@ -604,7 +604,7 @@ public class UserController {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
-        if (map.get("code") == null||StringUtils.hasText(map.get("code").toString())) {
+        if (map.get("code") == null||!StringUtils.hasText(map.get("code").toString())) {
             return new Message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();

@@ -613,13 +613,13 @@ public class UserService extends BaseService<User, Long> {
 		return users;
 	}
 
-	public User findByEmail(String eamil) {
-		List<Filter> filters = new ArrayList<>();
-		filters.add(Filter.eq("email", eamil));
-		List<User> list = userDao.findList(0, null, filters);
-		if (list == null || list.size() == 0) {
-			return null;
+	public User findByEmail(String email) {
+		List<User> list = findAll();
+		for (User user : list) {
+			if (user.getEmail().endsWith(email)) {
+				return user;
+			}
 		}
-		return list.get(0);
+		return null;
 	}
 }
