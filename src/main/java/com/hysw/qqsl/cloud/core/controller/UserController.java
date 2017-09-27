@@ -479,7 +479,7 @@ public class UserController {
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         Object code = map.get("code");
-        if (code == null || StringUtils.hasText(code.toString())) {
+        if (code == null || !StringUtils.hasText(code.toString())) {
             return new Message(Message.Type.FAIL);
         }
         User user = null;
@@ -691,8 +691,81 @@ public class UserController {
         return subjectLogin(user,"web",null);
     }
 
+    /**
+     * 注册时发送手机验证码
+     * 参数：phone:手机号
+     * 返回：OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
+     * @param phone
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/phone/getRegistVerify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getRegistVerify(@RequestParam String phone,
+                              HttpSession session) {
+        return sendVerify(phone, session);
+    }
 
+    /**
+     * 修改密保手机发送验证码：/user/phone/getUpdateVeridy
+     * 参数：phone:手机号
+     * 返回：OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
+     */
+    @RequestMapping(value = "/phone/getUpdateVeridy", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getUpdateVeridy(@RequestParam String phone,
+                            HttpSession session) {
+        return sendVerify(phone, session);
+    }
 
+    /**
+     * 手机找回密码时发送验证码：/user/phone/getGetbackVerify
+     * 参数：phone:手机号
+     * 返回：OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
+     */
+    @RequestMapping(value = "/phone/getGetbackVerify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getGetbackVerify(@RequestParam String phone,
+                            HttpSession session) {
+        return sendVerify(phone, session);
+    }
+
+    /**
+     * web端登录发送验证码: /user/phone/getLoginVerify
+     */
+    @RequestMapping(value = "/login/getLoginVerify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getLoginVerify(@RequestParam String code,
+                             HttpSession session) {
+        Message message = Message.parametersCheck(code);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        if(!SettingUtils.phoneRegex(code)||!SettingUtils.emailRegex(code)){
+            return new Message(Message.Type.FAIL);
+        }
+        User user=userService.findByPhoneOrEmial(code);
+        if (user == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        if(SettingUtils.phoneRegex(code)){
+          message = noteService.isSend(user.getPhone(), session);
+        }else if(SettingUtils.emailRegex(code)){
+            emailCache.add(Email.getVerifyCodeLogin(user.getEmail(),session));
+            return new Message(Message.Type.OK);
+        }
+        return message;
+    }
+
+   /* 5. email绑定时发送验证码:/user/email/getBindVerify
+
+    参数：email:手机号
+    返回：OK:发送成功,FAIL:邮箱不合法，EXIST：邮箱已存在
+    */
 
     /**
      * 公众号与水利云账号是否绑定

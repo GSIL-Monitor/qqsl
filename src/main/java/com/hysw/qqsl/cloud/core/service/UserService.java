@@ -369,6 +369,23 @@ public class UserService extends BaseService<User, Long> {
 	}
 
 	/**
+	 * 根据用户名或手机号码查找用户
+	 * @param argument
+	 * @return
+	 */
+	public User findByPhoneOrEmial(String argument){
+		User user;
+		if(SettingUtils.phoneRegex(argument)){
+			user = findByPhone(argument);
+		}else if(SettingUtils.emailRegex(argument)){
+			user = findByEmail(argument);
+		}else {
+			user = null;
+		}
+		return user;
+	}
+
+	/**
 	 * 构建用户列表的json
 	 * @param users
 	 * @return

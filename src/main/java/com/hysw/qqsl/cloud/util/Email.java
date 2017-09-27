@@ -1,12 +1,19 @@
 package com.hysw.qqsl.cloud.util;
 
+import com.hysw.qqsl.cloud.core.controller.*;
+import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.service.NoteService;
+import com.hysw.qqsl.cloud.core.service.UserService;
 import com.sun.mail.util.MailSSLSocketFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.mail.*;
+import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpSession;
 import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.Properties;
@@ -17,6 +24,8 @@ import java.util.Properties;
  * qq:1321404703 https://github.com/leinuo2016
  */
 public class Email {
+    @Autowired
+    private NoteService noteService;
 
     private String receiveMail;
     private String subject;
@@ -88,13 +97,33 @@ public class Email {
     }
 
     /**
-     * 登录验证码
-     * @param user
-     * @param verifyCode
+     * 手机获取的验证码
+     *
      * @return
      */
-    public static MimeMessage getVerifyCodeLogin(User user, String verifyCode) {
-        new Email(user.getEmail(), "水利云登录验证码", "尊敬的水利云用户您好，您的登录验证码为："+verifyCode+",5分钟内有效。");
+    public static String createRandomVcode() {
+        // 验证码
+        String vcode = "";
+        for (int i = 0; i < 6; i++) {
+            vcode = vcode + (int) (Math.random() * 10);
+        }
+        return vcode;
+    }
+
+    /**
+     * 登录验证码
+     *
+     * @param email
+     * @param session
+     * @return
+     */
+    public static MimeMessage getVerifyCodeLogin(String email, HttpSession session) {
+        Verification verification = new Verification();
+        String code = createRandomVcode();
+        verification.setEmail(email);
+        verification.setCode(code);
+        session.setAttribute("verification", verification);
+        new Email(email, "水利云登录验证码", "尊敬的水利云用户您好，您的登录验证码为：" + code + ",5分钟内有效。");
         return mimeMessage;
     }
 
