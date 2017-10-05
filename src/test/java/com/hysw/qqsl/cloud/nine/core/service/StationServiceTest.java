@@ -1,13 +1,14 @@
-package com.hysw.qqsl.cloud.core.service;
+package com.hysw.qqsl.cloud.nine.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.StationModel;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.service.StationService;
+import com.hysw.qqsl.cloud.core.service.UserService;
 import net.sf.json.JSONObject;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

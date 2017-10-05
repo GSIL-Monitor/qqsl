@@ -6,12 +6,19 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 /**
- * Created by flysic on 2017/8/31.
+ * 运行测试用例监听
+ *
+ * @since 2017年10月5日
+ * @author 雪庭(flysic) qq: 119238122 github: https://github.com/flysic
  */
-public class MyCustomTestExecutionListener extends AbstractTestExecutionListener {
+public class TestExecutionListener extends AbstractTestExecutionListener {
 
+    /**
+     * 运行测试用例前，修改运行状态
+     * @param testContext
+     */
     @Override
-    public void beforeTestClass(TestContext testContext) throws Exception {
+    public void beforeTestClass(TestContext testContext) {
         Setting setting = SettingUtils.getInstance().getSetting();
         setting.setStatus("test");
     }
