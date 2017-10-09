@@ -1,4 +1,4 @@
-package com.hysw.qqsl.cloud.core.entity;
+package com.hysw.qqsl.cloud.core.entity.station;
 
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;

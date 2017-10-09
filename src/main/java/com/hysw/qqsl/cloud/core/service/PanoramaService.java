@@ -174,19 +174,12 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         if (name == null || coor == null || isShare == null) {
             return new Message(Message.Type.FAIL);
         }
-        String[] coordinates = coor.toString().split(",");
-        if (coordinates.length != 3) {
-            return new Message(Message.Type.FAIL);
-        }
-        if (!SettingUtils.coordinateParameterCheck(coordinates[0], coordinates[1], coordinates[2])) {
-            return new Message(Message.Type.FAIL);
+        Message message = SettingUtils.checkCoordinateIsInvalid(coor.toString());
+        if (!Message.Type.OK.equals(message.getType())) {
+            return message;
         }
         panorama.setName(name.toString());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("longitude", coordinates[0]);
-        jsonObject1.put("latitude", coordinates[1]);
-        jsonObject1.put("elevation", coordinates[2]);
-        panorama.setCoor(jsonObject1.toString());
+        panorama.setCoor(message.getData().toString());
        // panorama.setRegion(region.toString());
         panorama.setStatus(Review.valueOf(Integer.valueOf(status.toString())));
         panorama.setShare(Boolean.valueOf(isShare.toString()));

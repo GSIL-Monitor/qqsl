@@ -324,6 +324,32 @@ public class SettingUtils {
 	}
 
 	/**
+	 * 检查坐标格式有效性ing转换为json格式
+	 *
+	 * @return
+	 */
+	public static Message checkCoordinateIsInvalid(String coordinate) {
+		String[] coordinates = coordinate.split(",");
+		if (coordinates.length != 3) {
+			return new Message(Message.Type.FAIL);
+		}
+		if (Double.valueOf(coordinates[0]) > 180 || Double.valueOf(coordinates[0]) < 0) {
+			return new Message(Message.Type.FAIL);
+		}
+		if (Double.valueOf(coordinates[1]) > 90 || Double.valueOf(coordinates[1]) < 0) {
+			return new Message(Message.Type.FAIL);
+		}
+		if (Double.valueOf(coordinates[2]) < 0) {
+			return new Message(Message.Type.FAIL);
+		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("longitude", coordinates[0]);
+		jsonObject.put("latitude", coordinates[1]);
+		jsonObject.put("elevation", coordinates[2]);
+		return new Message(Message.Type.OK, jsonObject);
+	}
+
+	/**
 	 * excle 文件的读取
 	 * @param is
 	 * @param str

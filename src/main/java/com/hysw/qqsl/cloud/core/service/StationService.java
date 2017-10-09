@@ -7,7 +7,8 @@ import com.hysw.qqsl.cloud.core.entity.*;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.monitor.Share;
+import com.hysw.qqsl.cloud.core.entity.station.Camera;
+import com.hysw.qqsl.cloud.core.entity.station.Share;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -373,31 +374,7 @@ public class StationService extends BaseService<Station, Long> {
         return null;
     }
 
-    /**
-     * 检查坐标格式有效性ing转换为json格式
-     *
-     * @return
-     */
-    private Message checkCoordinateIsInvalid(String coordinate) {
-        String[] coordinates = coordinate.split(",");
-        if (coordinates.length != 3) {
-            return new Message(Message.Type.FAIL);
-        }
-        if (Double.valueOf(coordinates[0]) > 180 || Double.valueOf(coordinates[0]) < 0) {
-            return new Message(Message.Type.FAIL);
-        }
-        if (Double.valueOf(coordinates[1]) > 90 || Double.valueOf(coordinates[1]) < 0) {
-            return new Message(Message.Type.FAIL);
-        }
-        if (Double.valueOf(coordinates[2]) < 0) {
-            return new Message(Message.Type.FAIL);
-        }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("longitude", coordinates[0]);
-        jsonObject.put("latitude", coordinates[1]);
-        jsonObject.put("elevation", coordinates[2]);
-        return new Message(Message.Type.OK, jsonObject);
-    }
+
 
     /**
      * 测站编辑
@@ -419,11 +396,11 @@ public class StationService extends BaseService<Station, Long> {
             station.setAddress(map.get("address").toString());
         }
         if (map.get("coor") != null && StringUtils.hasText(map.get("coor").toString())) {
-            Message message = checkCoordinateIsInvalid(map.get("coor").toString());
+            Message message = SettingUtils.checkCoordinateIsInvalid(map.get("coor").toString());
             if (!Message.Type.OK.equals(message.getType())) {
                 return message;
             }
-            station.setCoor(map.get("coor").toString());
+            station.setCoor(message.getData().toString());
         }
         stationDao.save(station);
         return new Message(Message.Type.OK);

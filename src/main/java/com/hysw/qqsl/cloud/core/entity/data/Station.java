@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.Camera;
+import com.hysw.qqsl.cloud.core.entity.station.Camera;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 

@@ -1,4 +1,4 @@
-package com.hysw.qqsl.cloud.core.entity.monitor;
+package com.hysw.qqsl.cloud.core.entity.station;
 
 import java.io.Serializable;
 
