@@ -313,7 +313,7 @@ public class UserService extends BaseService<User, Long> {
 		user.setEmail(email);
 		user.setName(name);
 		user.setPassword(password);
-		userDao.save(user);
+		save(user);
 		authentService.updateSession(user);
 		return new Message(Message.Type.OK,makeUserJson(user));
 	}
@@ -325,12 +325,12 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
 	 */
 	public Message updatePassword(String newPassword, Long id) {
-		User user = userDao.find(id);
+		User user = find(id);
 		if(newPassword.length()!=32){
 			return new Message(Message.Type.OTHER);
 		}
 		user.setPassword(newPassword);
-		userDao.save(user);
+		save(user);
 		authentService.updateSession(user);
 		return new Message(Message.Type.OK,makeUserJson(user));
 	}
@@ -343,13 +343,13 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
 	 */
 	public Message updateInfo(String name, String email, Long id) {
-		User user = userDao.find(id);
+		User user = find(id);
 		if(!SettingUtils.emailRegex(email)){
 			return new Message(Message.Type.OTHER);
 		}
 		user.setName(name);
 		user.setEmail(email);
-		userDao.save(user);
+		save(user);
 		authentService.updateSession(user);
 		return new Message(Message.Type.OK,makeUserJson(user));
 	}
@@ -503,7 +503,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
 	 */
 	public List<Account> getAccountsByUserId(Long id) {
-		User user = userDao.find(id);
+		User user = find(id);
 		List<Account> accounts = user.getAccounts();
 		return  accounts;
 	}
@@ -559,7 +559,7 @@ public class UserService extends BaseService<User, Long> {
 			return new Message(Message.Type.UNKNOWN);
 		}
 		user.setAccounts(accounts);
-		userDao.save(user);
+		save(user);
 		//记录企业解绑子账号的消息
 		accountMessageService.bindMsessage(user,account,false);
 		return new Message(Message.Type.OK);

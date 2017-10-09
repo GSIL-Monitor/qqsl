@@ -740,9 +740,9 @@ public class ProjectService extends BaseService<Project, Long> {
         List<ElementDB> list = elementDBService.findByProjectAndAlias(project);
         if (list != null && list.size() != 0 && StringUtils.hasText(list.get(0).getValue())) {
             String s = getCenterJson(list.get(0).getValue());
-            if(s!=""){
+            if (!s.equals("")) {
                 centerJson = JSONObject.fromObject(s);
-            }else{
+            } else {
 //                logger.info("zuobiao:"+project.getId());
                 return centerJson;
             }
