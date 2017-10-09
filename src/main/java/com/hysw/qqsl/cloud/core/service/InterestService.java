@@ -186,21 +186,14 @@ public class InterestService extends BaseService<Interest, Long> {
         if (name == null || category == null || coordinate == null || region == null || business == null) {
             return new Message(Message.Type.FAIL);
         }
-        String[] coordinates = coordinate.toString().split(",");
-        if (coordinates.length != 3) {
-            return new Message(Message.Type.FAIL);
+        Message message = SettingUtils.checkCoordinateIsInvalid(coordinate.toString());
+        if (!Message.Type.OK.equals(message.getType())) {
+            return message;
         }
-        if (!SettingUtils.coordinateParameterCheck(coordinates[0], coordinates[1], coordinates[2])) {
-            return new Message(Message.Type.FAIL);
-        }
+        interest.setCoordinate(message.getData().toString());
         interest.setName(name.toString());
         interest.setType(Interest.Type.valueOf(Integer.valueOf(type.toString())));
         interest.setCategory(Interest.Category.valueOf(Integer.valueOf(category.toString())));
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("longitude", coordinates[0]);
-        jsonObject1.put("latitude", coordinates[1]);
-        jsonObject1.put("elevation", coordinates[2]);
-        interest.setCoordinate(jsonObject1.toString());
         interest.setRegion(region.toString());
         if (contact != null) {
             interest.setContact(contact.toString());

@@ -1,6 +1,5 @@
-package com.hysw.qqsl.cloud.core.entity.monitor;
+package com.hysw.qqsl.cloud.core.entity.station;
 
-import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import net.sf.json.JSONArray;

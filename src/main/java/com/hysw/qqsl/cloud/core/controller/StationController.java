@@ -54,7 +54,7 @@ public class StationController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/uploadModel" ,method = RequestMethod.POST)
-    public @ResponseBody Message uploadRiverModel(HttpServletRequest request){
+    public @ResponseBody Message uploadModel(HttpServletRequest request){
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         Long id = Long.valueOf(request.getParameter("id"));
         String fileName = request.getParameter("fileName");
@@ -88,7 +88,7 @@ public class StationController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/downloadModel",method = RequestMethod.GET)
-    public @ResponseBody Message uploadFlowModel(@RequestParam long id,HttpServletResponse response){
+    public @ResponseBody Message downloadModel(@RequestParam long id,HttpServletResponse response){
         Station station = stationService.find(id);
         if(station==null||station.getId()==null){
             return new Message(Message.Type.EXIST);
