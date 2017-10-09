@@ -74,7 +74,18 @@ public class UserController {
     @ResponseBody
     Message getRegistVerify(@RequestParam String phone,
                             HttpSession session) {
-        return sendVerify(phone, session);
+        Message message = Message.parametersCheck(phone);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        if(!SettingUtils.phoneRegex(phone)){
+            return new Message(Message.Type.FAIL);
+        }
+        User user = userService.findByPhone(phone);
+        if (user != null) {
+            return new Message(Message.Type.EXIST);
+        }
+        return noteService.isSend(phone, session);
     }
 
     /**
