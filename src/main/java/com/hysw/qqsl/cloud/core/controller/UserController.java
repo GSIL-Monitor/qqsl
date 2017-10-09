@@ -690,6 +690,31 @@ public class UserController {
         return subjectLogin(user,"web",null);
     }
 
+    /**
+     * 判断输入的用户密码是否正确
+     *
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/checkPassword", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Message checkPassword(
+            @RequestBody Map<String, String> map) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        User user = authentService.getUserFromSubject();
+        if (user.getPassword().equals(map.get("password"))) {
+            return new Message(Message.Type.OK);
+        }
+        return new Message(Message.Type.FAIL);
+    }
+
 
 //    =============================================================================================
 

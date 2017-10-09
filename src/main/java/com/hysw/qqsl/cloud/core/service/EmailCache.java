@@ -40,9 +40,9 @@ public class EmailCache {
      * 获取一个邮件实体
      */
     public MimeMessage getMimeMessage(){
-        if (list.size() == 0) {
+        if (this.list.size() == 0) {
             return null;
         }
-        return list.get(0);
+        return this.list.get(0);
     }
 }

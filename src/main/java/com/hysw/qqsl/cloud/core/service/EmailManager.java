@@ -27,20 +27,24 @@ public class EmailManager implements Runnable{
     public void run() {
         while (true) {
             try {
-                MimeMessage mimeMessage = emailCache.getMimeMessage();
-                if (mimeMessage == null) {
-                    continue;
-                }
-                Transport.send(mimeMessage);
-                emailCache.remove(mimeMessage);
-            } catch (MessagingException e) {
-                continue;
-            }
-            try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            MimeMessage mimeMessage = emailCache.getMimeMessage();
+            if (mimeMessage == null) {
+                continue;
+            }
+            sendEmail(mimeMessage);
+            emailCache.remove(mimeMessage);
+        }
+    }
+
+    private void sendEmail(MimeMessage mimeMessage) {
+        try {
+            Transport.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
     }
 }
