@@ -37,8 +37,8 @@ public class StationServiceTest extends BaseTest {
     private String jiefq03_instanceId = "0020000003";
     // 互助三源
     private String huzhsy = "BBA5D6FACFD8C8FDD4B4B5E7";
-    // 都兰县
-    private String dulxi = "CEDAC0BCCFD8000000000000";
+    // 乌兰都兰
+    private String wuldl = "CEDAC0BCCFD8000000000000";
     // 达日水电站
     private String darsdzh = "B9FBC2E5D6DDB8CAB5C2CFD8";
     // 甘德水电站
@@ -102,6 +102,36 @@ public class StationServiceTest extends BaseTest {
             build(jiefq03_instanceId);
             station = stationService.findByInstanceId(jiefq03_instanceId);
         }
+        // 互助三源
+        station = stationService.findByInstanceId(huzhsy);
+        if (station==null) {
+            build(huzhsy);
+            station = stationService.findByInstanceId(huzhsy);
+        }
+        // 乌兰都兰
+        station = stationService.findByInstanceId(wuldl);
+        if (station==null) {
+            build(wuldl);
+            station = stationService.findByInstanceId(wuldl);
+        }
+        // 达日
+        station = stationService.findByInstanceId(darsdzh);
+        if (station==null) {
+            build(darsdzh);
+            station = stationService.findByInstanceId(darsdzh);
+        }
+        // 甘德
+        station = stationService.findByInstanceId(gandsdzh);
+        if (station==null) {
+            build(gandsdzh);
+            station = stationService.findByInstanceId(gandsdzh);
+        }
+        // 玛沁
+        station = stationService.findByInstanceId(maqsdzh);
+        if (station==null) {
+            build(maqsdzh);
+            station = stationService.findByInstanceId(maqsdzh);
+        }
         Assert.assertNotNull(station);
     }
 
@@ -109,7 +139,7 @@ public class StationServiceTest extends BaseTest {
     public void testGetStations() {
         User user = userService.find(16l);
         List<JSONObject> stations = stationService.getStations(user);
-        Assert.assertTrue(stations.size()>0);
+        Assert.assertNotNull(stations);
     }
 
     /**
@@ -128,14 +158,14 @@ public class StationServiceTest extends BaseTest {
         station.setType(CommonEnum.StationType.WATER_LEVEL_STATION);
         station.setTransform(false);
         station.setParameter("{}");
+        station.setRiverModel(getRiverModel(instanceId));
+        station.setFlowModel(getFlowModel(instanceId));
         // 湟水河1#
         if (instanceId.equals(huangshh01_instanceId)==true) {
             station.setName("湟水河一号测点");
             station.setDescription("湟水河一号测点");
             station.setAddress("西宁市");
             station.setCoor("{\"longitude\":\"101.67822819977684\",\"latitude\":\"36.65375645069668\",\"elevation\":\"0\"}");
-            station.setRiverModel(getRiverModel(instanceId));
-            station.setFlowModel(getFlowModel(instanceId));
         }
         // 湟水河2#
         if (instanceId.equals(huangshh02_instanceId)==true) {
@@ -143,8 +173,6 @@ public class StationServiceTest extends BaseTest {
             station.setDescription("湟水河二号测点");
             station.setAddress("西宁市");
             station.setCoor("{\"longitude\":\"101.70140996276658\",\"latitude\":\"36.65429995072397\",\"elevation\":\"0\"}");
-            station.setRiverModel(getRiverModel(instanceId));
-            station.setFlowModel(getFlowModel(instanceId));
         }
         // 湟水河3#
         if (instanceId.equals(huangshh03_instanceId)==true) {
@@ -152,8 +180,6 @@ public class StationServiceTest extends BaseTest {
             station.setDescription("湟水河三号测点");
             station.setAddress("西宁市");
             station.setCoor("{\"longitude\":\"101.75777646850432\",\"latitude\":\"36.64124067972177\",\"elevation\":\"0\"}");
-            station.setRiverModel(getRiverModel(instanceId));
-            station.setFlowModel(getFlowModel(instanceId));
         }
         // 解放渠1#
         if (instanceId.equals(jiefq01_instanceId)==true) {
@@ -161,8 +187,6 @@ public class StationServiceTest extends BaseTest {
             station.setDescription("解放渠一号测点");
             station.setAddress("西宁市");
             station.setCoor("{\"longitude\":\"101.66680146228761\",\"latitude\":\"36.6472833310488\",\"elevation\":\"0\"}");
-            station.setRiverModel(getRiverModel(instanceId));
-            station.setFlowModel(getFlowModel(instanceId));
         }
         // 解放渠2#
         if(instanceId.equals(jiefq02_instanceId)==true) {
@@ -170,8 +194,6 @@ public class StationServiceTest extends BaseTest {
             station.setDescription("解放渠二号测点");
             station.setAddress("西宁市");
             station.setCoor("{\"longitude\":\"101.70956709457784\",\"latitude\":\"36.63710166807447\",\"elevation\":\"0\"}");
-            station.setRiverModel(getRiverModel(instanceId));
-            station.setFlowModel(getFlowModel(instanceId));
         }
         // 解放渠3#
         if(instanceId.equals(jiefq03_instanceId)==true) {
@@ -179,8 +201,41 @@ public class StationServiceTest extends BaseTest {
             station.setDescription("解放渠三号测点");
             station.setAddress("西宁市");
             station.setCoor("{\"longitude\":\"101.74519193239226\",\"latitude\":\"36.62518183074351\",\"elevation\":\"0\"}");
-            station.setRiverModel(getRiverModel(instanceId));
-            station.setFlowModel(getFlowModel(instanceId));
+        }
+        // 互助三源
+        if (instanceId.equals(huzhsy)) {
+            station.setName("互助三源电站");
+            station.setDescription("互助三源电站");
+            station.setAddress("中国青海省海东市互助土族自治县242县道");
+            station.setCoor("{\"longitude\":\"102.571235\",\"latitude\":\"36.869238\",\"elevation\":\"0\"}");
+        }
+        // 乌兰都兰
+        if (instanceId.equals(wuldl)) {
+            station.setName("乌兰县都兰河水电站");
+            station.setDescription("乌兰县都兰河水电站");
+            station.setAddress("中国青海省乌兰县");
+            station.setCoor("{\"longitude\":\"98.515411\",\"latitude\":\"36.964837\",\"elevation\":\"0\"}");
+        }
+        // 达日
+        if (instanceId.equals(darsdzh)) {
+            station.setName("达日县1#水位站");
+            station.setDescription("达日县1#水位站");
+            station.setAddress("中国青海省果洛藏族自治州达日县市场路73号 邮政编码: 814200");
+            station.setCoor("{\"longitude\":\"99.65446415287657\",\"latitude\":\"33.76272991528731\",\"elevation\":\"0\"}");
+        }
+        // 甘德
+        if (instanceId.equals(gandsdzh)) {
+            station.setName("甘德县1#水位站");
+            station.setDescription("甘德县1#水位站");
+            station.setAddress(" 甘德县果洛藏族自治州青海省中国");
+            station.setCoor("{\"longitude\":\"100.46299111925686\",\"latitude\":\"34.226925891683166\",\"elevation\":\"0\"}");
+        }
+        // 玛沁
+        if (instanceId.equals(maqsdzh)) {
+            station.setName("玛沁县1#水位站");
+            station.setDescription("玛沁县1#水位站");
+            station.setAddress("中国青海省果洛藏族自治州玛沁县702县道");
+            station.setCoor("{\"longitude\":\"100.24752321441764\",\"latitude\":\"34.70227363559634\",\"elevation\":\"0\"}");
         }
         user = userService.find(16l);
         station.setUser(user);
@@ -221,6 +276,22 @@ public class StationServiceTest extends BaseTest {
         if (instanceId.equals(huzhsy)) {
             return "[{x: 0, y: 2222.39},{x: 1.5, y: 2222.39},{x: 2.3, y: 2221.59},{x: 5.8, y: 2221.59},{x: 6.6, y: 2222.39},{x: 8, y: 2222.39}]";
         }
+        // 乌兰都兰
+        if (instanceId.equals(wuldl)) {
+            return "[{x: 0, y: 2974.169},{x: 2, y: 2974.169},{x: 2, y: 2973.269},{x: 3, y: 2973.269},{x: 3, y: 2974.169},{x: 5, y: 2974.169}]";
+        }
+        // 达日
+        if (instanceId.equals(darsdzh)) {
+            return "[{x: 0, y: 4001.6},{x: 1., y: 4001.6},{x: 2, y: 4001.6},{x: 2, y: 3997.1},{x: 3, y: 3997.1},{x: 4, y: 3997.1},{x: 5, y: 3997.1},{x: 6, y: 3997.1},{x: 7, y: 3997.1},{x: 8, y: 3997.1},{x: 9, y: 3997.1},{x: 10, y: 3997.1},{x: 11, y: 3997.1},{x: 12, y: 3997.1},{x: 12, y: 4001.6},{x: 13, y: 4001.6},{x: 14, y: 4001.6}]";
+        }
+        // 甘德
+        if (instanceId.equals(gandsdzh)) {
+            return "[{x: 0, y: 4037.499},{x: 1, y: 4036.822},{x: 2, y: 4036.557},{x: 3, y: 4036.48},{x: 4, y: 4036.464},{x: 5, y: 4036.461},{x: 6, y: 4036.47},{x: 7, y: 4036.448},{x: 8, y: 4036.44},{x: 9, y: 4036.445},{x: 10, y: 4036.448},{x: 11, y: 4036.45},{x: 12, y: 4036.44},{x: 13, y: 4036.445},{x: 14, y: 4036.442},{x: 15, y: 4036.446},{x: 16, y: 4036.42},{x: 17, y: 4036.415},{x: 18, y: 4036.373},{x: 19, y: 4036.364},{x: 20, y: 4036.3},{x: 21, y: 4036.271},{x: 22, y: 4036.251},{x: 23, y: 4036.24},{x: 24, y: 4036.221},{x: 25, y: 4036.208},{x: 26, y: 4036.181},{x: 27, y: 4036.179},{x: 28, y: 4036.164},{x: 29, y: 4036.15},{x: 30, y: 4036.194},{x: 31, y: 4037.056},{x: 32, y: 4037.499}]";
+        }
+        // 玛沁
+        if (instanceId.equals(maqsdzh)) {
+            return "[{x: 0, y: 3536.825},{x: 0.5, y: 3536.785},{x: 1, y: 3536.644},{x: 1.5, y: 3536.504},{x: 2, y: 3536.364},{x: 2.333, y: 3536.27},{x: 2.833, y: 3536.181},{x: 3.333, y: 3536.122},{x: 3.833, y: 3536.063},{x: 4.333, y: 3536.004},{x: 4.833, y: 3535.946},{x: 5.333, y: 3535.891},{x: 5.833, y: 3535.837},{x: 6.333, y: 3535.783},{x: 6.833, y: 3535.728},{x: 7.02, y: 3535.708},{x: 7.52, y: 3535.726},{x: 8.02, y: 3535.756},{x: 8.52, y: 3535.778},{x: 9.02, y: 3535.761},{x: 9.52, y: 3535.753},{x: 9.994, y: 3535.741},{x: 10.494, y: 3535.738},{x: 10.994, y: 3535.725},{x: 11.494, y: 3535.711},{x: 11.994, y: 3535.703},{x: 12.494, y: 3535.695},{x: 12.994, y: 3535.686},{x: 13.494, y: 3535.678},{x: 13.994, y: 3535.662},{x: 14.202, y: 3535.659},{x: 14.702, y: 3535.641},{x: 15.202, y: 3535.631},{x: 15.702, y: 3535.622},{x: 16.202, y: 3535.613},{x: 16.702, y: 3535.604},{x: 17.167, y: 3535.596},{x: 17.667, y: 3535.584},{x: 18.167, y: 3535.573},{x: 18.667, y: 3535.562},{x: 19.167, y: 3535.551},{x: 19.667, y: 3535.548},{x: 20.167, y: 3535.558},{x: 20.501, y: 3535.568},{x: 21.001, y: 3535.581},{x: 21.501, y: 3535.603},{x: 22.001, y: 3535.635},{x: 22.166, y: 3535.654},{x: 22.666, y: 3535.688},{x: 23.166, y: 3535.715},{x: 23.666, y: 3535.753},{x: 24.166, y: 3535.813},{x: 24.666, y: 3535.862},{x: 25.166, y: 3535.912},{x: 25.666, y: 3535.941},{x: 26.313, y: 3535.981},{x: 26.813, y: 3536.047},{x: 27.313, y: 3536.128},{x: 27.813, y: 3536.31},{x: 28.313, y: 3536.592},{x: 28.852, y: 3536.842}]";
+        }
         return "[]";
     }
 
@@ -253,6 +324,26 @@ public class StationServiceTest extends BaseTest {
         // 解放渠3#
         if (instanceId.equals(jiefq03_instanceId)) {
             return "[{x: 2244.835, y: 0},{x: 2245.035, y: 0.24},{x: 2245.235, y: 0.7},{x: 2245.435, y: 1.25},{x: 2245.635, y: 1.86},{x: 2245.835, y: 2.51},{x: 2246.035, y: 3.18},{x: 2246.235, y: 3.88},{x: 2246.435, y: 4.59},{x: 2246.635, y: 5.31},{x: 2246.835, y: 6.04},{x: 2247.035, y: 6.78},{x: 2247.235, y: 7.52},{x: 2247.435, y: 8.27}    ]";
+        }
+        // 互助三源
+        if (instanceId.equals(huzhsy)) {
+            return "[{x: 0, y: 0},{x: 0.1, y: 0.37},{x: 0.2, y: 1.17},{x: 0.3, y: 2.30},{x: 0.4, y: 3.72},{x: 0.5, y: 5.42},{x: 0.6, y: 7.38},{x: 0.7, y: 9.60},{x: 0.8, y: 12.07},{x: 0.9, y: 14.77}]";
+        }
+        // 乌兰都兰
+        if (instanceId.equals(wuldl)) {
+            return "[{x: 0, y: 0},{x: 0.1, y: 0.06},{x: 0.2, y: 0.17},{x: 0.3, y: 0.30},{x: 0.4, y: 0.45},{x: 0.5, y: 0.61},{x: 0.6, y: 0.77},{x: 0.7, y: 0.94},{x: 0.8, y: 1.11},{x: 0.9, y: 1.29}]";
+        }
+        // 达日
+        if (instanceId.equals(darsdzh)) {
+            return "[{x: 0, y: 0},{x: 0.5, y: 5.27},{x: 1, y: 15.83},{x: 1.5, y: 29.53},{x: 2, y: 45.43},{x: 2.5, y: 62.97},{x: 3, y: 81.77},{x: 3.5, y: 101.57},{x: 4, y: 122.18},{x: 4.5, y: 143.44}];";
+        }
+        // 甘德
+        if (instanceId.equals(gandsdzh)) {
+            return "[{x: 0, y: 0},{x: 0.2, y: 2.94},{x: 0.4, y: 8.16},{x: 0.6, y: 18.39},{x: 0.8, y: 29.14},{x: 1, y: 47.09},{x: 1.2, y: 64.28},{x: 1.4, y: 87.27}]";
+        }
+        // 玛沁
+        if (instanceId.equals(maqsdzh)) {
+            return "[{x: 0, y: 0},{x: 0.1, y: 0.10},{x: 0.2, y: 0.45},{x: 0.3, y: 1.49},{x: 0.4, y: 2.97},{x: 0.5, y: 5.09},{x: 0.6, y: 7.80},{x: 0.7, y: 10.82},{x: 0.8, y: 14.56},{x: 0.9, y: 18.90}]";
         }
         return "[]";
     }
