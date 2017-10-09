@@ -74,26 +74,15 @@ public class UserController {
     @ResponseBody
     Message getRegistVerify(@RequestParam String phone,
                             HttpSession session) {
-        Message message = Message.parametersCheck(phone);
-        if (message.getType() == Message.Type.FAIL) {
-            return message;
-        }
-        if(!SettingUtils.phoneRegex(phone)){
-            return new Message(Message.Type.FAIL);
-        }
-        User user = userService.findByPhone(phone);
-        if (user != null) {
-            return new Message(Message.Type.EXIST);
-        }
-        return noteService.isSend(phone, session);
+        return sendVerify(phone,session);
     }
 
     /**
-     * 修改密保手机发送验证码：/user/phone/getUpdateVeridy
+     * 修改密保手机发送验证码：/user/phone/getUpdateVerify
      * 参数：phone:手机号
      * 返回：OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
      */
-    @RequestMapping(value = "/phone/getUpdateVeridy", method = RequestMethod.GET)
+    @RequestMapping(value = "/phone/getUpdateVerify", method = RequestMethod.GET)
     public
     @ResponseBody
     Message getUpdateVeridy(@RequestParam String phone,
@@ -160,10 +149,10 @@ public class UserController {
             return new Message(Message.Type.FAIL);
         }
         User user = userService.findByPhone(phone);
-        if (user == null) {
+        if (user != null) {
             return new Message(Message.Type.EXIST);
         }
-        return noteService.isSend(user.getPhone(), session);
+        return noteService.isSend(phone, session);
     }
 
 
