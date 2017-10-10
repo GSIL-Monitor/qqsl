@@ -118,7 +118,7 @@ public class OssService extends BaseService<Oss,Long>{
 				+                   "  ], \n"
 				+ "            \"Resource\": [\n"
 			//	+ "                 \"acs:oss:*:30150706:*\", \n"
-				+ "                 \"acs:oss:*:30150706:*\" \n"
+				+ "                 \"acs:oss:*:30150706:qqsl\" \n"
 				//	+ "                \"acs:oss:*:30150706:qqslimage\", \n"
 				//	+ "                \"acs:oss:*:30150706:qqslimage/*\" \n"
 				+ "            ], \n"
