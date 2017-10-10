@@ -6,6 +6,9 @@ import com.hysw.qqsl.cloud.core.service.AuthentService;
 import com.hysw.qqsl.cloud.core.service.CertifyCache;
 import com.hysw.qqsl.cloud.core.service.CertifyService;
 import com.hysw.qqsl.cloud.core.service.UserService;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +35,8 @@ public class CertifyController {
      * 获取实名认证信息
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/getPersonalCertify", method = RequestMethod.GET)
     public @ResponseBody Message getPersonalCertify() {
         User user = authentService.getUserFromSubject();
@@ -42,6 +47,8 @@ public class CertifyController {
      * 获取企业认证信息
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/getCompanyCertify", method = RequestMethod.GET)
     public @ResponseBody Message getCompanyCertify() {
         User user = authentService.getUserFromSubject();
@@ -53,6 +60,8 @@ public class CertifyController {
      * @param objectMap
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/personalCertify", method = RequestMethod.POST)
     public @ResponseBody Message personalCertify(@RequestBody Map<String,Object> objectMap) {
         Message message = Message.parameterCheck(objectMap);
@@ -69,6 +78,8 @@ public class CertifyController {
      * @param objectMap
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/companyCertify", method = RequestMethod.POST)
     public @ResponseBody Message companyCertify(@RequestBody Map<String,Object> objectMap) {
         Message message = Message.parameterCheck(objectMap);
@@ -84,6 +95,8 @@ public class CertifyController {
      * 获取所有认证信息
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/lists", method = RequestMethod.GET)
     public @ResponseBody Message getAllCertifyList() {
         return certifyService.getAllCertifyList();
@@ -94,6 +107,8 @@ public class CertifyController {
      *
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/certify/{id}", method = RequestMethod.GET)
     public @ResponseBody
     Message getCertifyByUser(@PathVariable Long id) {
@@ -113,6 +128,8 @@ public class CertifyController {
      * 手动调用认证流程
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/startCertify", method = RequestMethod.POST)
     public @ResponseBody
     Message certification() {
