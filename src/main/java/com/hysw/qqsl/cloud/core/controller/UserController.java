@@ -74,7 +74,7 @@ public class UserController {
     @ResponseBody
     Message getRegistVerify(@RequestParam String phone,
                             HttpSession session) {
-        return sendVerify(phone,session);
+        return sendVerify(phone,session,false);
     }
 
     /**
@@ -87,7 +87,7 @@ public class UserController {
     @ResponseBody
     Message getUpdateVeridy(@RequestParam String phone,
                             HttpSession session) {
-        return sendVerify(phone, session);
+        return sendVerify(phone, session,false);
     }
 
 
@@ -101,7 +101,7 @@ public class UserController {
     @ResponseBody
     Message getGetbackVerify(@RequestParam String phone,
                              HttpSession session) {
-        return sendVerify(phone, session);
+        return sendVerify(phone, session,true);
     }
 
     /**
@@ -140,7 +140,7 @@ public class UserController {
      * @param session
      * @return
      */
-    private Message sendVerify(String phone, HttpSession session){
+    private Message sendVerify(String phone, HttpSession session,boolean flag){
         Message message = Message.parametersCheck(phone);
         if (message.getType() == Message.Type.FAIL) {
             return message;
@@ -149,8 +149,14 @@ public class UserController {
             return new Message(Message.Type.FAIL);
         }
         User user = userService.findByPhone(phone);
-        if (user != null) {
-            return new Message(Message.Type.EXIST);
+        if (flag) {
+            if (user == null) {
+                return new Message(Message.Type.EXIST);
+            }
+        }else{
+            if (user != null) {
+                return new Message(Message.Type.EXIST);
+            }
         }
         return noteService.isSend(phone, session);
     }
@@ -236,7 +242,7 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/phone/getbackPassord", method = RequestMethod.POST)
+    @RequestMapping(value = "/phone/getbackPassword", method = RequestMethod.POST)
     public
     @ResponseBody
     Message getbackPassord(@RequestBody Map<String, Object> map, HttpSession session) {
