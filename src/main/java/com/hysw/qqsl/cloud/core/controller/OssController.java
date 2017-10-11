@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.controller;
 
 import java.util.*;
 
+import com.aliyun.oss.model.ObjectMetadata;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.annotation.util.IsCoordinateFile;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
@@ -64,6 +65,29 @@ public class OssController {
 				.getFiles("project" + "/" + id,"qqsl");
 		return new Message(Message.Type.OK,objectFiles);
 	}
+
+	/**
+	 * 根据treePath(阿里云路径)得到文件url
+	 *
+	 * @param key
+	 * @return
+	 */
+	@RequiresAuthentication
+	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequestMapping(value = "/getFileUrl", method = RequestMethod.GET)
+	public @ResponseBody Message getFileUrl(
+			@RequestParam("key") String key,@RequestParam("bucketName") String bucketName) {
+		try {
+			ossService.getObjectMetadata(key);
+		} catch (Exception e) {
+			return new Message(Message.Type.OK);
+		}
+		String url = ossService.getObjectUrl(key, bucketName);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("url", url);
+		return new Message(Message.Type.OK,jsonObject);
+	}
+
 
 	/**
 	 * 坐标文件上传
