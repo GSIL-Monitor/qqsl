@@ -80,7 +80,7 @@ public class OssController {
 		try {
 			ossService.getObjectMetadata(key);
 		} catch (Exception e) {
-			return new Message(Message.Type.OK);
+			return new Message(Message.Type.FAIL);
 		}
 		String url = ossService.getObjectUrl(key, bucketName);
 		JSONObject jsonObject = new JSONObject();
