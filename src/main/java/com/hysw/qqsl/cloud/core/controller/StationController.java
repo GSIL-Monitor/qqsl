@@ -192,9 +192,6 @@ public class StationController {
         if(!isOperate(station)){
             return new Message(Message.Type.NO_AUTHORIZE);
         }
-        if(message.getType()==Message.Type.FAIL){
-            return message;
-        }
         return stationService.addSensor((Map<String, Object>) map.get("sensor"),station);
     }
 
