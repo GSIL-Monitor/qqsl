@@ -683,7 +683,7 @@ public class StationService extends BaseService<Station, Long> {
             }
         }
         JSONObject jsonObject = SettingUtils.convertMapToJson(map);
-        station.setParameter(jsonObject.toString());
+        station.setParameter(jsonObject.isEmpty()?null:jsonObject.toString());
         station.setTransform(true);
         stationDao.save(station);
         return new Message(Message.Type.OK);

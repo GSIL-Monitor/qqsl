@@ -5,10 +5,7 @@ import com.hysw.qqsl.cloud.annotation.util.IsExpire;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.service.AuthentService;
-import com.hysw.qqsl.cloud.core.service.MonitorService;
-import com.hysw.qqsl.cloud.core.service.SensorService;
-import com.hysw.qqsl.cloud.core.service.StationService;
+import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONObject;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.shiro.authz.annotation.Logical;
@@ -46,6 +43,19 @@ public class StationController {
     private AuthentService authentService;
     @Autowired
     private SensorService sensorService;
+    @Autowired
+    private ApplicationTokenService applicationTokenService;
+    /**
+     * 获取token
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/token", method = RequestMethod.GET)
+    public @ResponseBody Message getToken() {
+        return new Message(Message.Type.OK, applicationTokenService.getToken());
+    }
+
 
     /**
      * 河道模型和水位流量关系曲线上传
