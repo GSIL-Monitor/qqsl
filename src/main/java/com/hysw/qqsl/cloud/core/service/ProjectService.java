@@ -125,8 +125,6 @@ public class ProjectService extends BaseService<Project, Long> {
         cache9.removeAll();
         Cache cache0 = cacheManager.getCache("elementDataGroupsCache");
         cache0.removeAll();
-        Cache cache10 = cacheManager.getCache("fieldCache");
-        cache10.removeAll();
         elementGroupService.getDriElementGroups();
         elementGroupService.getConElementGroups();
         elementGroupService.getFloElementGroups();
