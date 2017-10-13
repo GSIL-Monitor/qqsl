@@ -1158,4 +1158,17 @@ public class FieldService {
         }
         return jsonArray1;
     }
+
+    public Message isAllowUploadCoordinateFile(Long id) {
+        Project project = projectService.find(Long.valueOf(id));
+        if (project == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        List<Coordinate> coordinates = coordinateService.findByProject(project);
+        if (coordinates.size()< CommonAttributes.COORDINATELIMIT) {
+            return new Message(Message.Type.OK);
+        }
+//        超过限制数量，返回已达到最大限制数量
+        return new Message(Message.Type.OTHER);
+    }
 }

@@ -2,13 +2,9 @@ package com.hysw.qqsl.cloud.core.controller;
 
 import java.util.*;
 
-import com.aliyun.oss.model.ObjectMetadata;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.annotation.util.IsCoordinateFile;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
-import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.service.*;
-import com.hysw.qqsl.cloud.annotation.util.IsExpire;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
@@ -17,14 +13,9 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 阿里云ossController
@@ -89,44 +80,7 @@ public class OssController {
 	}
 
 
-	/**
-	 * 坐标文件上传
-	 *
-	 * @param request
-	 * @return
-	 */
-	@IsExpire
-	@IsCoordinateFile
-	@RequiresAuthentication
-	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-	@RequestMapping(value = "/coordinateFile", method = RequestMethod.POST)
-	public @ResponseBody Message uploadCoordinate(HttpServletRequest request) {
-		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-		String id = request.getParameter("id");
-		Message me;
-		JSONObject jsonObject = new JSONObject();
-		if (id == null) {
-			return new Message(Message.Type.FAIL);
-		}
-		Project project = projectService.find(Long.valueOf(id));
-		if (project == null) {
-			return new Message(Message.Type.FAIL);
-		}
-		String central = coordinateService.getCoordinateBasedatum(project);
-		if (central == null) {
-			return new Message(Message.Type.EXIST);
-		}
-		if(multipartResolver.isMultipart(request)) {
-			//转换成多部分request
-			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-			Map<String, MultipartFile> map = multiRequest.getFileMap();
-			for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-				me = coordinateService.uploadCoordinate(entry.getValue(), project,central);
-				jsonObject.put(entry.getKey(), me.getType());
-			}
-		}
-		return new Message(Message.Type.OK,jsonObject);
-	}
+
 
 	/**
 	 * 获取sts

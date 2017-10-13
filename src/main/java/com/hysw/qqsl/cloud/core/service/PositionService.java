@@ -8,6 +8,12 @@ import com.hysw.qqsl.cloud.core.entity.data.DiffConnPoll;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.entity.element.Position;
+import com.hysw.qqsl.cloud.pay.entity.PackageItem;
+import com.hysw.qqsl.cloud.pay.entity.PackageModel;
+import com.hysw.qqsl.cloud.pay.entity.ServeItem;
+import com.hysw.qqsl.cloud.pay.entity.data.Package;
+import com.hysw.qqsl.cloud.pay.service.PackageService;
+import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.util.RSACoderUtil;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
@@ -27,6 +33,10 @@ import java.util.Random;
 public class PositionService {
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private PackageService packageService;
+    @Autowired
+    private TradeService tradeService;
 
     private List<Position> unuseds = new ArrayList<>();
     private List<Position> useds = new ArrayList<>();
@@ -346,6 +356,27 @@ public class PositionService {
             }
         }
         return i;
+    }
+
+    /**
+     * 是否允许连接千寻位置(含限制数)
+     * @param projectId
+     * @return
+     */
+    public Message isAllowConnectQXWZ(Long projectId){
+        Project project = projectService.find(Long.valueOf(projectId));
+        int i = findByUserInUseds(project.getUser());
+        Package aPackage = packageService.findByUser(project.getUser());
+        if (aPackage == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.FINDCM && i < packageItem.getLimitNum()) {
+                return new Message(Message.Type.OK);
+            }
+        }
+        return new Message(Message.Type.NO_ALLOW);
     }
 
 }
