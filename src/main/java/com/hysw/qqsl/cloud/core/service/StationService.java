@@ -187,7 +187,7 @@ public class StationService extends BaseService<Station, Long> {
        // List<JSONObject> sensorJsons = sensorService.makeSensorJsons(station.getSensors());
         JSONObject sensorJson = sensorService.makeSensorJson(sensor);
         jsonObject.put("sensor", sensorJson.isEmpty()?null:sensorJson);
-        jsonObject.put("user", station.getUser().getId());
+        jsonObject.put("userId", station.getUser().getId());
         return jsonObject;
 
     }
