@@ -71,7 +71,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
                 if (aPackage.getExpireDate().getTime() > System.currentTimeMillis()) {
                     return new Message(Message.Type.OK);
                 } else {
-                    return new Message(Message.Type.EXPIRE);
+                    return new Message(Message.Type.EXPIRED);
                 }
             }
         }

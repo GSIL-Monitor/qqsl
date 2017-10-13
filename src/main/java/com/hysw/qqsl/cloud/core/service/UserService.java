@@ -623,4 +623,24 @@ public class UserService extends BaseService<User, Long> {
 		}
 		return null;
 	}
+
+	/**
+	 * 是否允许创建子账号
+	 * @param user1
+	 * @return  false  允许创建 true  不允许创建
+	 */
+	public boolean isAllowCreateAccount(User user1) {
+		User user = find(user1.getId());
+		Package aPackage = packageService.findByUser(user);
+		if (aPackage == null) {
+			return true;
+		}
+		PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+		for (PackageItem packageItem : packageModel.getPackageItems()) {
+			if (packageItem.getServeItem().getType() == ServeItem.Type.ACCOUNT && user.getAccounts().size() < packageItem.getLimitNum()) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

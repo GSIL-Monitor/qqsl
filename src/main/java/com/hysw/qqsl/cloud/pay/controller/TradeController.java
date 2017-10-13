@@ -36,8 +36,6 @@ public class TradeController {
      * @param objectMap
      * @return
      */
-    @IsExpired
-    @IsCertify
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -58,7 +56,6 @@ public class TradeController {
      * @param objectMap
      * @return
      */
-    @IsCertify
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -79,7 +76,6 @@ public class TradeController {
      * @param objectMap
      * @return
      */
-    @IsCertify
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -101,7 +97,6 @@ public class TradeController {
      * @return
      */
     @IsExpire
-    @IsCertify
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -126,7 +121,6 @@ public class TradeController {
      * @param objectMap
      * @return
      */
-    @IsCertify
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -151,7 +145,6 @@ public class TradeController {
      * @return
      */
     @IsExpire
-    @IsCertify
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
