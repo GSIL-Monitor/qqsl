@@ -715,7 +715,7 @@ public class ProjectController {
      * @return
      */
     @IsExpire
-    @RequestMapping(value = "/uploadFileSize", method = RequestMethod.POST)
+    @RequestMapping(value = "/reportUploadFileInfo", method = RequestMethod.POST)
     public @ResponseBody Message uploadFileSize(@RequestBody Map<String, Object> map) {
         Message message = Message.parameterCheck(map);
         if (message.getType() == Message.Type.FAIL) {
@@ -730,7 +730,7 @@ public class ProjectController {
      * @param map
      * @return
      */
-    @RequestMapping(value = "/downloadFileSize", method = RequestMethod.POST)
+    @RequestMapping(value = "/reportDownloadFileInfo", method = RequestMethod.POST)
     public @ResponseBody Message downloadFileSize(@RequestBody Map<String, Object> map) {
         Message message = Message.parameterCheck(map);
         if (message.getType() == Message.Type.FAIL) {
@@ -780,6 +780,16 @@ public class ProjectController {
     public @ResponseBody Message isAllowDownload() {
         User user = authentService.getUserFromSubject();
         return projectService.isAllowDownload(user);
+    }
+    /**
+     * 是否允许下载
+     * @return
+     */
+    @IsExpire
+    @RequestMapping(value = "/isAllowBim", method = RequestMethod.GET)
+    public @ResponseBody Message isAllowBim() {
+        User user = authentService.getUserFromSubject();
+        return projectService.isAllowBim(user);
     }
 
 //    ?创建子账户限制条件(是否允许创建)

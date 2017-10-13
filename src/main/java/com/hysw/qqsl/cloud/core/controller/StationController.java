@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.aliyun.oss.common.utils.IOUtils;
+import com.hysw.qqsl.cloud.annotation.util.IsExpire;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -61,6 +62,7 @@ public class StationController {
      * @param request
      * @return
      */
+    @IsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/uploadModel" ,method = RequestMethod.POST)
@@ -154,6 +156,7 @@ public class StationController {
      * @param map
      * @return
      */
+    @IsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/edit",method = RequestMethod.POST)
@@ -183,6 +186,7 @@ public class StationController {
      * @param map
      * @return
      */
+    @IsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/addSensor",method = RequestMethod.POST)
@@ -210,6 +214,7 @@ public class StationController {
      * @param map
      * @return
      */
+    @IsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/addCamera",method = RequestMethod.POST)
@@ -276,6 +281,7 @@ public class StationController {
      * @param map
      * @return
      */
+    @IsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editSensor",method = RequestMethod.POST)
@@ -309,6 +315,7 @@ public class StationController {
      * @param map
      * @return
      */
+    @IsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editCamera",method = RequestMethod.POST)
@@ -342,6 +349,7 @@ public class StationController {
      * @param map
      * @return
      */
+    @IsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editParameter",method = RequestMethod.POST)

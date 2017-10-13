@@ -1235,9 +1235,17 @@ public class UserController {
     @IsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/invite",method = RequestMethod.GET)
-    public @ResponseBody Message invite(@RequestParam String phone) {
-        Message message = Message.parametersCheck(phone);
+    @RequestMapping(value = "/account/invite",method = RequestMethod.POST)
+    public @ResponseBody Message invite(@RequestBody Map<String, Object> map) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        if (map.get("phone") == null || !StringUtils.hasText(map.get("phone").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        String phone = map.get("phone").toString();
+        message = Message.parametersCheck(phone);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
@@ -1255,14 +1263,26 @@ public class UserController {
 
     /**
      * 企业解绑子账号
-     * @param id
+     * @param map
      * @return
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/unbind/{id}", method = RequestMethod.GET)
-    public @ResponseBody Message unbind(@PathVariable("id") Long id){
-        Account account = accountService.find(id);
+    @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
+    public @ResponseBody Message unbind(@RequestBody Map<String, Object> map){
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        if (map.get("id") == null || !StringUtils.hasText(map.get("id").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        Account account;
+        try {
+            account = accountService.find(Long.valueOf(map.get("id").toString()));
+        } catch (Exception e) {
+            return new Message(Message.Type.FAIL);
+        }
         if(account==null){
             return new Message(Message.Type.EXIST);
         }

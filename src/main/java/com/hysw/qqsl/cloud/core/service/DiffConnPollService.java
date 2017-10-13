@@ -55,12 +55,12 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
 
 
     /**
-     * 套餐是否含有千寻功能，套餐是否过期
+     * 套餐是否含有千寻功能（不判断限制数）
      * @param id
      * @return
      */
-    public Message isFindCM(String id) {
-        Project project = projectService.find(Long.valueOf(id));
+    public Message isAllowConnectQXWZ(Long id) {
+        Project project = projectService.find(id);
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
             return new Message(Message.Type.EXIST);
@@ -68,14 +68,10 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.FINDCM) {
-                if (aPackage.getExpireDate().getTime() > System.currentTimeMillis()) {
-                    return new Message(Message.Type.OK);
-                } else {
-                    return new Message(Message.Type.EXPIRED);
-                }
+                return new Message(Message.Type.OK);
             }
         }
-        return new Message(Message.Type.FAIL);
+        return new Message(Message.Type.NO_ALLOW);
     }
 
 

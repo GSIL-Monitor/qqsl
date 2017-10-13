@@ -108,7 +108,7 @@ public class AspectService {
         if (aPackage == null) {
             return new Message(Message.Type.EXIST);
         }
-        if (aPackage.getExpireDate().getTime() > new Date().getTime()) {
+        if (aPackage.getExpireDate().getTime() > System.currentTimeMillis()) {
             try {
                 return (Message) joinPoint.proceed();
             } catch (Throwable e) {
@@ -118,62 +118,6 @@ public class AspectService {
         return new Message(Message.Type.EXPIRED);
     }
 
-    /**
-     * 是否有千寻账户权限
-     * @param joinPoint
-     * @return
-     */
-    @Around(value = "@annotation(com.hysw.qqsl.cloud.annotation.util.IsFindCM)")
-    public Message isFindCM(ProceedingJoinPoint joinPoint){
-        User user = authentService.getUserFromSubject();
-        Package aPackage = packageService.findByUser(user);
-        if (aPackage == null) {
-            return new Message(Message.Type.EXIST);
-        }
-        List<Object> list = Arrays.asList(joinPoint.getArgs());
-        String id = list.get(2).toString();
-        Project project = projectService.find(Long.valueOf(id));
-        int i = positionService.findByUserInUseds(project.getUser());
-        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
-        for (PackageItem packageItem : packageModel.getPackageItems()) {
-            if (packageItem.getServeItem().getType() == ServeItem.Type.FINDCM && i < packageItem.getLimitNum()) {
-                try {
-                    return (Message) joinPoint.proceed();
-                } catch (Throwable e) {
-                    return new Message(Message.Type.FAIL);
-                }
-            }
-        }
-//        没有权限(套餐不包含此功能)
-        return new Message(Message.Type.NO_ALLOW);
-    }
-
-
-    /**
-     * 是否达到坐标文件限制数
-     * @param joinPoint
-     * @return
-     */
-    @Around(value = "@annotation(com.hysw.qqsl.cloud.annotation.util.IsCoordinateFile)")
-    public Message isCoordinateFile(ProceedingJoinPoint joinPoint){
-        Object[] args = joinPoint.getArgs();
-        HttpServletRequest request= (HttpServletRequest) args[0];
-        String id = request.getParameter("id");
-        Project project = projectService.find(Long.valueOf(id));
-        if (project == null) {
-            return new Message(Message.Type.EXIST);
-        }
-        List<Coordinate> coordinates = coordinateService.findByProject(project);
-        if (coordinates.size()< CommonAttributes.COORDINATELIMIT) {
-            try {
-                return (Message) joinPoint.proceed();
-            } catch (Throwable e) {
-                return new Message(Message.Type.FAIL);
-            }
-        }
-//        超过限制数量，返回已达到最大限制数量
-        return new Message(Message.Type.OTHER);
-    }
 
     /**
      * 是否有未支付订单
@@ -193,31 +137,6 @@ public class AspectService {
         return new Message(Message.Type.UNKNOWN);
     }
 
-    /**
-     * 是否拥有BIM功能
-     * @param joinPoint
-     * @return
-     */
-    @Around(value = "@annotation(com.hysw.qqsl.cloud.annotation.util.IsBIM)")
-    public Message isBIM(ProceedingJoinPoint joinPoint) {
-        User user = authentService.getUserFromSubject();
-        Package aPackage = packageService.findByUser(user);
-        if (aPackage == null) {
-            return new Message(Message.Type.EXIST);
-        }
-        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
-        for (PackageItem packageItem : packageModel.getPackageItems()) {
-            if (packageItem.getServeItem().getType() == ServeItem.Type.BIMSERVE) {
-                try {
-                    return (Message) joinPoint.proceed();
-                } catch (Throwable e) {
-                    return new Message(Message.Type.FAIL);
-                }
-            }
-        }
-//        没有权限(套餐不包含此功能)
-        return new Message(Message.Type.NO_ALLOW);
-    }
 
     //配置后置返回通知,使用在方法aspect()上注册的切入点
 //    @AfterReturning("aspect()")

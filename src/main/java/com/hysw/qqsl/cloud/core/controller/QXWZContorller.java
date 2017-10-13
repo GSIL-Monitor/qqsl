@@ -1,7 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.hysw.qqsl.cloud.annotation.util.IsExpire;
-import com.hysw.qqsl.cloud.annotation.util.IsFindCM;
 import com.hysw.qqsl.cloud.core.service.ApplicationTokenService;
 import com.hysw.qqsl.cloud.core.service.DiffConnPollService;
 import com.hysw.qqsl.cloud.core.service.PositionService;
@@ -36,21 +35,43 @@ public class QXWZContorller {
      * @param token
      * @return
      */
-//    @IsExpire
-//    @IsFindCM
+    @IsExpire
     @RequestMapping(value = "/getAccount", method = RequestMethod.GET)
     public @ResponseBody
     Message account(@RequestParam String token, @RequestParam String mac, @RequestParam String projectId) {
+        //是否可以获取千寻账号
+        Message message;
         if (token.length() == 0) {
             return new Message(Message.Type.FAIL);
         }
         if (mac == null || mac.trim().length() == 0 || mac.equals("null")|| projectId == null || projectId.trim().length() == 0 || projectId.equals("null")) {
             return new Message(Message.Type.FAIL);
         }
+        try {
+            message = positionService.isAllowConnectQXWZ(Long.valueOf(projectId));
+        } catch (Exception e) {
+            return new Message(Message.Type.FAIL);
+        }
+        if(message.getType()==Message.Type.NO_ALLOW){
+            return message;
+        }
         if (applicationTokenService.decrypt(token)) {
             return positionService.randomPosition(mac.trim(),projectId);
         }
         return new Message(Message.Type.FAIL);
+    }
+
+    /**
+     * 是否拥有千寻连接权限
+     * @param projectId
+     * @return
+     */
+    @IsExpire
+    @RequestMapping(value = "/isAllowQxwz", method = RequestMethod.GET)
+    public @ResponseBody
+    Message isAllowQxwz(@RequestParam Long projectId) {
+        //是否可以获取千寻账号
+        return diffConnPollService.isAllowConnectQXWZ(projectId);
     }
 
     /**
@@ -91,29 +112,6 @@ public class QXWZContorller {
     public @ResponseBody Message list(){
         return diffConnPollService.accountList();
     }
-
-
-    /**
-     * 套餐是否含有千寻功能，套餐是否过期
-     * @param token
-     * @param projectId
-     * @return
-     */
-    @RequestMapping(value = "/canConnect", method = RequestMethod.GET)
-    public @ResponseBody
-    Message canConnect(@RequestParam String token, @RequestParam String projectId) {
-        if (token.length() == 0) {
-            return new Message(Message.Type.FAIL);
-        }
-        if (projectId == null || projectId.trim().length() == 0 || projectId.equals("null")) {
-            return new Message(Message.Type.FAIL);
-        }
-        if (applicationTokenService.decrypt(token)) {
-            return diffConnPollService.isFindCM(projectId);
-        }
-        return new Message(Message.Type.FAIL);
-    }
-
 
 
     /**

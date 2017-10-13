@@ -1065,7 +1065,8 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message uploadFileSize(Map<String, Object> map, User user) {
         Object projectId = map.get("projectId");
         Object fileSize = map.get("fileSize");
-        if (projectId == null || fileSize == null) {
+        Object fileNames = map.get("fileNames");//用于记录日志
+        if (projectId == null || fileSize == null || fileNames == null) {
             return new Message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
@@ -1095,7 +1096,8 @@ public class ProjectService extends BaseService<Project, Long> {
      */
     public Message downloadFileSize(Map<String, Object> map, User user) {
         Object fileSize = map.get("fileSize");
-        if (fileSize == null) {
+        Object fileName = map.get("fileName");//用于记录日志
+        if (fileSize == null || fileName == null) {
             return new Message(Message.Type.FAIL);
         }
         Package aPackage = packageService.findByUser(user);
@@ -1199,4 +1201,17 @@ public class ProjectService extends BaseService<Project, Long> {
         return new Message(Message.Type.NO_ALLOW);
     }
 
+    public Message isAllowBim(User user) {
+        Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return new Message(Message.Type.NO_ALLOW);
+        }
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.BIMSERVE) {
+                return new Message(Message.Type.OK);
+            }
+        }
+        return new Message(Message.Type.NO_ALLOW);
+    }
 }
