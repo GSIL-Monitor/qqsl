@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.core.controller;
 
-import com.hysw.qqsl.cloud.annotation.util.IsAllowCreateAccount;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
@@ -1234,7 +1233,6 @@ public class UserController {
      * @return
      */
     @IsExpire
-    @IsAllowCreateAccount
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/invite",method = RequestMethod.GET)
@@ -1248,6 +1246,10 @@ public class UserController {
             return message;
         }
         User user = authentService.getUserFromSubject();
+        //        是否允许创建子账号
+        if (userService.isAllowCreateAccount(user)) {
+            return new Message(Message.Type.NO_ALLOW);
+        }
         return  accountService.invite(phone,user);
     }
 

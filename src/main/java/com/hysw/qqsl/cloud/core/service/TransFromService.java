@@ -265,7 +265,7 @@ public class TransFromService {
 		double[] d = new double[3];
 		if(coordinateSystem.toLowerCase().equals("Beijing54".toLowerCase())){
 			d[0] = 6378245d;
-			d[1] = 6356863d;
+			d[1] = 6356863.0188d;
 			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
 		}else if(coordinateSystem.toLowerCase().equals("Xian80".toLowerCase())){
 			d[0]=6378140d;//长轴
@@ -328,10 +328,10 @@ public class TransFromService {
 	 * @return
 	 */
 	public double[] transFromRectangularSpaceCoordinate(double[] d,ProjCoordinate projCoordinate) {
-		double N = d[0] / (Math.sqrt(1 - d[2] * Math.sin(projCoordinate.x*Math.PI/180) * Math.sin(projCoordinate.x*Math.PI/180)));
-		double x=(N+projCoordinate.z)* Math.cos(projCoordinate.x * Math.PI / 180) * Math.cos(projCoordinate.y * Math.PI / 180);
-		double y=(N+projCoordinate.z)* Math.cos(projCoordinate.x * Math.PI / 180) * Math.sin(projCoordinate.y * Math.PI / 180);
-		double z=((1-d[2])*N+projCoordinate.z)*Math.sin(projCoordinate.x * Math.PI / 180);
+		double N = d[0] / (Math.sqrt(1 - d[2] * Math.sin(projCoordinate.y*Math.PI/180) * Math.sin(projCoordinate.y*Math.PI/180)));
+		double x=(N+projCoordinate.z)* Math.cos(projCoordinate.y * Math.PI / 180) * Math.cos(projCoordinate.x * Math.PI / 180);
+		double y=(N+projCoordinate.z)* Math.cos(projCoordinate.y * Math.PI / 180) * Math.sin(projCoordinate.x * Math.PI / 180);
+		double z=((1-d[2])*N+projCoordinate.z)*Math.sin(projCoordinate.y * Math.PI / 180);
 		double[] coordinate = new double[3];
 		coordinate[0] = x;
 		coordinate[1] = y;
@@ -363,9 +363,9 @@ public class TransFromService {
 	 */
 	public Matrix calculate7Param(double[][] param54, double[][] param84){
 		//将平面坐标转换为大地坐标
-		ProjCoordinate projCoordinate1 = transFrom54PlaneTo54Ground("96",param54[0][1],param54[0][0], param54[0][2]);
-		ProjCoordinate projCoordinate2 = transFrom54PlaneTo54Ground("96",param54[1][1],param54[1][0], param54[1][2]);
-		ProjCoordinate projCoordinate3 = transFrom54PlaneTo54Ground("96",param54[2][1],param54[2][0], param54[2][2]);
+		ProjCoordinate projCoordinate1 = transFrom54PlaneTo54Ground("111",param54[0][1],param54[0][0], param54[0][2]);
+		ProjCoordinate projCoordinate2 = transFrom54PlaneTo54Ground("111",param54[1][1],param54[1][0], param54[1][2]);
+		ProjCoordinate projCoordinate3 = transFrom54PlaneTo54Ground("111",param54[2][1],param54[2][0], param54[2][2]);
 		//转换空间直接坐标
 		double[] fg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate1);
 		double[] sg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate2);
@@ -381,13 +381,13 @@ public class TransFromService {
 
 		double [][] C ={
 				{1,0,0,fg84[0],0,-fg84[2],fg84[1]},
-				{0,1,0,fg84[1],fg84[1],0,-fg84[0]},
+				{0,1,0,fg84[1],fg84[2],0,-fg84[0]},
 				{0,0,1,fg84[2],-fg84[1],fg84[0],0},
 				{1,0,0,sg84[0],0,-sg84[2],sg84[1]},
 				{0,1,0,sg84[1],sg84[2],0,-sg84[0]},
 				{0,0,1,sg84[2],-sg84[1],sg84[0],0},
 				{1,0,0,tg84[0],0,-tg84[2],tg84[1]},
-				{0,1,0,tg84[1],tg84[1],0,-tg84[0]},
+				{0,1,0,tg84[1],tg84[2],0,-tg84[0]},
 				{0,0,1,tg84[2],-tg84[1],tg84[0],0},
 		};
 		double [][] b={

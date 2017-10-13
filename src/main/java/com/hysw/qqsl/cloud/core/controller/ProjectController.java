@@ -93,7 +93,6 @@ public class ProjectController {
      * @return
      */
     @IsExpire
-    @IsAllowCreateProject
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/new", method = RequestMethod.POST)
@@ -107,6 +106,11 @@ public class ProjectController {
         }
         Map<String,Object> map= (Map<String,Object>)message.getData();
         User user = authentService.getUserFromSubject();
+        //是否可以创建项目
+        message=projectService.isAllowCreateProject(user);
+        if(message.getType()==Message.Type.NO_ALLOW){
+            return message;
+        }
         try {
             Project project = projectService.convertMap(map,user,false);
             message = projectService.createProject(project);
@@ -493,7 +497,6 @@ public class ProjectController {
      * @return
      */
     @IsExpire
-    @IsPersonalCertify
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/share", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
@@ -712,7 +715,6 @@ public class ProjectController {
      * @return
      */
     @IsExpire
-    @IsAllowUploadFile
     @RequestMapping(value = "/uploadFileSize", method = RequestMethod.POST)
     public @ResponseBody Message uploadFileSize(@RequestBody Map<String, Object> map) {
         Message message = Message.parameterCheck(map);
@@ -728,7 +730,6 @@ public class ProjectController {
      * @param map
      * @return
      */
-    @IsAllowDownLoadFile
     @RequestMapping(value = "/downloadFileSize", method = RequestMethod.POST)
     public @ResponseBody Message downloadFileSize(@RequestBody Map<String, Object> map) {
         Message message = Message.parameterCheck(map);
@@ -758,6 +759,27 @@ public class ProjectController {
             return new Message(Message.Type.EXIST);
         }
         return projectService.deleteFileSize(map,user);
+    }
+
+    /**
+     * 是否允许上传
+     * @return
+     */
+    @IsExpire
+    @RequestMapping(value = "/isAllowUpload", method = RequestMethod.GET)
+    public @ResponseBody Message isAllowUpload() {
+        User user = authentService.getUserFromSubject();
+        return projectService.isAllowUpload(user);
+    }
+
+    /**
+     * 是否允许下载
+     * @return
+     */
+    @RequestMapping(value = "/isAllowDownload", method = RequestMethod.GET)
+    public @ResponseBody Message isAllowDownload() {
+        User user = authentService.getUserFromSubject();
+        return projectService.isAllowDownload(user);
     }
 
 //    ?创建子账户限制条件(是否允许创建)

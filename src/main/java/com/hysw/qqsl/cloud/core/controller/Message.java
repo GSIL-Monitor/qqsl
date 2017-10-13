@@ -53,7 +53,7 @@ public class Message {
 		/** 未认证 */
 		NO_CERTIFY,
 		/** 过期 */
-		EXPIRE,
+		EXPIRED,
 		NO_ALLOW
 	}
 	

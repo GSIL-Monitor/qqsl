@@ -16,6 +16,9 @@ import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.project.Cooperate;
 import com.hysw.qqsl.cloud.core.entity.project.Share;
 import com.hysw.qqsl.cloud.core.entity.project.Stage;
+import com.hysw.qqsl.cloud.pay.entity.PackageItem;
+import com.hysw.qqsl.cloud.pay.entity.PackageModel;
+import com.hysw.qqsl.cloud.pay.entity.ServeItem;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
@@ -1136,6 +1139,64 @@ public class ProjectService extends BaseService<Project, Long> {
         save(project);
         packageService.save(aPackage);
         return new Message(Message.Type.OK);
+    }
+
+    /**
+     * 判断计入次文件大小后是否满足限制条件
+     * @param user
+     * @return
+     */
+    public Message isAllowUpload(User user) {
+        Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return new Message(Message.Type.NO_ALLOW);
+        }
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.SPACE && aPackage.getCurSpaceNum() <= packageItem.getLimitNum() && aPackage.getCurTrafficNum() <= packageItem.getLimitNum() * 10l) {
+                return new Message(Message.Type.OK);
+            }
+        }
+        return new Message(Message.Type.NO_ALLOW);
+    }
+
+    /**
+     * 是否允许下载
+     * @param user
+     * @return
+     */
+    public Message isAllowDownload(User user) {
+        Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return new Message(Message.Type.NO_ALLOW);
+        }
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.SPACE && aPackage.getCurTrafficNum() <= packageItem.getLimitNum() * 10) {
+                return new Message(Message.Type.OK);
+            }
+        }
+        return new Message(Message.Type.NO_ALLOW);
+    }
+
+    /**
+     * 是否允许创建项目，如果允许，套餐内增加项目创建初始大小
+     * @param user
+     * @return
+     */
+    public Message isAllowCreateProject(User user) {
+        Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return new Message(Message.Type.NO_ALLOW);
+        }
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        long l = findByUser(user).size();
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.PROJECT && l < packageItem.getLimitNum()) {
+                return new Message(Message.Type.OK);
+            }
+        }
+        return new Message(Message.Type.NO_ALLOW);
     }
 
 }

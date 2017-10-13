@@ -1,8 +1,6 @@
 package com.hysw.qqsl.cloud.pay.controller;
 
-import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.controller.Message;
-import com.hysw.qqsl.cloud.core.entity.Note;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
 import com.hysw.qqsl.cloud.core.service.NoteCache;
@@ -12,7 +10,6 @@ import com.hysw.qqsl.cloud.pay.service.TurnoverService;
 import com.hysw.qqsl.cloud.pay.service.wxPay.WXPayConfigImpl;
 import com.hysw.qqsl.cloud.pay.service.wxPay.WXPayService;
 import com.hysw.qqsl.cloud.pay.service.wxPay.WXPayUtil;
-import com.hysw.qqsl.cloud.annotation.util.IsPersonalCertify;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -78,7 +75,6 @@ public class WXPayController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @IsPersonalCertify
     @RequestMapping(value = "/refund/{outTradeNo}", method = RequestMethod.GET)
     public @ResponseBody Message refund(@PathVariable("outTradeNo") String outTradeNo) {
         if (outTradeNo == null) {

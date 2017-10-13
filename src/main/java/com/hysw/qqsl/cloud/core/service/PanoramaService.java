@@ -7,6 +7,12 @@ import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.entity.Review;
+import com.hysw.qqsl.cloud.pay.entity.PackageItem;
+import com.hysw.qqsl.cloud.pay.entity.PackageModel;
+import com.hysw.qqsl.cloud.pay.entity.ServeItem;
+import com.hysw.qqsl.cloud.pay.entity.data.Package;
+import com.hysw.qqsl.cloud.pay.service.PackageService;
+import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -29,6 +35,10 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     private OssService ossService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PackageService packageService;
+    @Autowired
+    private TradeService tradeService;
 
     @Autowired
     public void setBaseDao(PanoramaDao panoramaDao) {
@@ -223,5 +233,25 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         jsonObject.put("pictures", objectFiles);
         jsonObject.put("user", userJson(panorama.getUserId()));
         return jsonObject;
+    }
+
+    /**
+     * 是否允许保存全景
+     * @param user
+     * @Return Message
+     */
+    public Message isAllowSavePanorma(User user) {
+        Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        int size = findByuser(user).size();
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.PANO && size < packageItem.getLimitNum()) {
+                return new Message(Message.Type.OK);
+            }
+        }
+        return new Message(Message.Type.NO_ALLOW);
     }
 }

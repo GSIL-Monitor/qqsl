@@ -110,8 +110,10 @@ public class InterestController {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
+        //是否可以保存全景
+        message=panoramaService.isAllowSavePanorma(user);
+        if(message.getType()==Message.Type.NO_ALLOW){
+            return message;
         }
         map.put("status", Review.PENDING.ordinal());
         map.put("userId", user.getId());
@@ -129,15 +131,13 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/savePanoramas", method = RequestMethod.POST)
     public @ResponseBody Message savePanoramas(@RequestBody Object object){
-       /* Message message = Message.parameterCheck(object);
-        if(message.getType()==Message.Type.FAIL){
-            return message;
-        }*/
         User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
-        }
+        //是否可以保存全景
         Message message;
+        message=panoramaService.isAllowSavePanorma(user);
+        if(message.getType()==Message.Type.NO_ALLOW){
+            return message;
+        }
         List<Map<String,Object>> panoramas = (List<Map<String,Object>>) object;
         Map<String,Object> panoramaMap,objectMap;
         List<JSONObject> jsonObjects = new ArrayList<>();
