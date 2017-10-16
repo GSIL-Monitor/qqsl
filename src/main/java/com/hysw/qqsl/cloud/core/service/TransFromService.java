@@ -57,8 +57,8 @@ public class TransFromService {
 		}
 		return crs;
 	}
-	
-	
+
+
 	/**
 	 * 根据获取的经度确认其参数值(80)
 	 * @param lon
@@ -66,54 +66,54 @@ public class TransFromService {
 	 */
 	public final String checkCode80(String lon){
 		switch (Integer.valueOf(lon)) {
-		case 75:
-			return "ESRI:2370";
-		case 78:
-			return "ESRI:2371";
-		case 81:
-			return "ESRI:2372";
-		case 84:
-			return "ESRI:2373";
-		case 87:
-			return "ESRI:2374";
-		case 90:
-			return "ESRI:2375";
-		case 93:
-			return "ESRI:2376";
-		case 96:
-			return "ESRI:2377";
-		case 99:
-			return "ESRI:2378";
-		case 102:
-			return "ESRI:2379";
-		case 105:
-			return "ESRI:2380";
-		case 108:
-			return "ESRI:2381";
-		case 111:
-			return "ESRI:2382";
-		case 114:
-			return "ESRI:2383";
-		case 117:
-			return "ESRI:2384";
-		case 120:
-			return "ESRI:2385";
-		case 123:
-			return "ESRI:2386";
-		case 126:
-			return "ESRI:2387";
-		case 129:
-			return "ESRI:2388";
-		case 132:
-			return "ESRI:2389";
-		case 135:
-			return "ESRI:2390";
-		default:
-			return "ESRI:2379";
+			case 75:
+				return "ESRI:2370";
+			case 78:
+				return "ESRI:2371";
+			case 81:
+				return "ESRI:2372";
+			case 84:
+				return "ESRI:2373";
+			case 87:
+				return "ESRI:2374";
+			case 90:
+				return "ESRI:2375";
+			case 93:
+				return "ESRI:2376";
+			case 96:
+				return "ESRI:2377";
+			case 99:
+				return "ESRI:2378";
+			case 102:
+				return "ESRI:2379";
+			case 105:
+				return "ESRI:2380";
+			case 108:
+				return "ESRI:2381";
+			case 111:
+				return "ESRI:2382";
+			case 114:
+				return "ESRI:2383";
+			case 117:
+				return "ESRI:2384";
+			case 120:
+				return "ESRI:2385";
+			case 123:
+				return "ESRI:2386";
+			case 126:
+				return "ESRI:2387";
+			case 129:
+				return "ESRI:2388";
+			case 132:
+				return "ESRI:2389";
+			case 135:
+				return "ESRI:2390";
+			default:
+				return "ESRI:2379";
 		}
-		
+
 	}
-	
+
 	/**
 	 * 根据获取的经度确认其参数值(54)
 	 * @param lon
@@ -121,54 +121,54 @@ public class TransFromService {
 	 */
 	public final String checkCode54(String lon){
 		switch (Integer.valueOf(lon)) {
-		case 75:
-			return "ESRI:2422";
-		case 78:
-			return "ESRI:2423";
-		case 81:
-			return "ESRI:2424";
-		case 84:
-			return "ESRI:2425";
-		case 87:
-			return "ESRI:2426";
-		case 90:
-			return "ESRI:2427";
-		case 93:
-			return "ESRI:2428";
-		case 96:
-			return "ESRI:2429";
-		case 99:
-			return "ESRI:2430";
-		case 102:
-			return "ESRI:2431";
-		case 105:
-			return "ESRI:2432";
-		case 108:
-			return "ESRI:2433";
-		case 111:
-			return "ESRI:2434";
-		case 114:
-			return "ESRI:2435";
-		case 117:
-			return "ESRI:2436";
-		case 120:
-			return "ESRI:2437";
-		case 123:
-			return "ESRI:2438";
-		case 126:
-			return "ESRI:2439";
-		case 129:
-			return "ESRI:2440";
-		case 132:
-			return "ESRI:2441";
-		case 135:
-			return "ESRI:2442";
-		default:
-			return "ESRI:2431";
+			case 75:
+				return "ESRI:2422";
+			case 78:
+				return "ESRI:2423";
+			case 81:
+				return "ESRI:2424";
+			case 84:
+				return "ESRI:2425";
+			case 87:
+				return "ESRI:2426";
+			case 90:
+				return "ESRI:2427";
+			case 93:
+				return "ESRI:2428";
+			case 96:
+				return "ESRI:2429";
+			case 99:
+				return "ESRI:2430";
+			case 102:
+				return "ESRI:2431";
+			case 105:
+				return "ESRI:2432";
+			case 108:
+				return "ESRI:2433";
+			case 111:
+				return "ESRI:2434";
+			case 114:
+				return "ESRI:2435";
+			case 117:
+				return "ESRI:2436";
+			case 120:
+				return "ESRI:2437";
+			case 123:
+				return "ESRI:2438";
+			case 126:
+				return "ESRI:2439";
+			case 129:
+				return "ESRI:2440";
+			case 132:
+				return "ESRI:2441";
+			case 135:
+				return "ESRI:2442";
+			default:
+				return "ESRI:2431";
 		}
-		
+
 	}
-	
+
 	/**
 	 * 根据获取的经度确认其参数值(84)
 	 * @param lon
@@ -176,50 +176,50 @@ public class TransFromService {
 	 */
 	public final String checkCode84(String lon){
 		switch (Integer.valueOf(lon)) {
-		case 75:
-			return "ESRI:10000001";
-		case 78:
-			return "ESRI:10000002";
-		case 81:
-			return "ESRI:10000003";
-		case 84:
-			return "ESRI:10000004";
-		case 87:
-			return "ESRI:10000005";
-		case 90:
-			return "ESRI:10000006";
-		case 93:
-			return "ESRI:10000007";
-		case 96:
-			return "ESRI:10000008";
-		case 99:
-			return "ESRI:10000009";
-		case 102:
-			return "ESRI:10000010";
-		case 105:
-			return "ESRI:10000011";
-		case 108:
-			return "ESRI:10000012";
-		case 111:
-			return "ESRI:10000013";
-		case 114:
-			return "ESRI:10000014";
-		case 117:
-			return "ESRI:10000015";
-		case 120:
-			return "ESRI:10000016";
-		case 123:
-			return "ESRI:10000017";
-		case 126:
-			return "ESRI:10000018";
-		case 129:
-			return "ESRI:10000019";
-		case 132:
-			return "ESRI:10000020";
-		case 135:
-			return "ESRI:10000021";
-		default:
-			return "ESRI:10000010";
+			case 75:
+				return "ESRI:10000001";
+			case 78:
+				return "ESRI:10000002";
+			case 81:
+				return "ESRI:10000003";
+			case 84:
+				return "ESRI:10000004";
+			case 87:
+				return "ESRI:10000005";
+			case 90:
+				return "ESRI:10000006";
+			case 93:
+				return "ESRI:10000007";
+			case 96:
+				return "ESRI:10000008";
+			case 99:
+				return "ESRI:10000009";
+			case 102:
+				return "ESRI:10000010";
+			case 105:
+				return "ESRI:10000011";
+			case 108:
+				return "ESRI:10000012";
+			case 111:
+				return "ESRI:10000013";
+			case 114:
+				return "ESRI:10000014";
+			case 117:
+				return "ESRI:10000015";
+			case 120:
+				return "ESRI:10000016";
+			case 123:
+				return "ESRI:10000017";
+			case 126:
+				return "ESRI:10000018";
+			case 129:
+				return "ESRI:10000019";
+			case 132:
+				return "ESRI:10000020";
+			case 135:
+				return "ESRI:10000021";
+			default:
+				return "ESRI:10000010";
 		}
 
 	}
@@ -265,16 +265,16 @@ public class TransFromService {
 		double[] d = new double[3];
 		if(coordinateSystem.toLowerCase().equals("Beijing54".toLowerCase())){
 			d[0] = 6378245d;
-			d[1] = 6356863.0187730472493815043759606d;
-			d[2] = 0.006693421622965949d;
+			d[1] = 6356863d;
+			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
 		}else if(coordinateSystem.toLowerCase().equals("Xian80".toLowerCase())){
 			d[0]=6378140d;//长轴
-			d[1]=6356755.288157528d;//短轴
-			d[2] = 0.006694384999587952d;
+			d[1]=6356755.2882d;//短轴
+			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
 		}else if(coordinateSystem.toLowerCase().equals("WGS84".toLowerCase())){
 			d[0]=6378137d;//长轴
-			d[1]=6356752.3145294536605338449813751d;//短轴
-			d[2] = 0.0066943799013d;
+			d[1]=6356752.314d;//短轴
+			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
 		}
 		return d;
 	}
@@ -363,9 +363,9 @@ public class TransFromService {
 	 */
 	public Matrix calculate7Param(double[][] param54, double[][] param84){
 		//将平面坐标转换为大地坐标
-		ProjCoordinate projCoordinate1 = transFrom54PlaneTo54Ground("102",param54[0][1],param54[0][0], param54[0][2]);
-		ProjCoordinate projCoordinate2 = transFrom54PlaneTo54Ground("102",param54[1][1],param54[1][0], param54[1][2]);
-		ProjCoordinate projCoordinate3 = transFrom54PlaneTo54Ground("102",param54[2][1],param54[2][0], param54[2][2]);
+		ProjCoordinate projCoordinate1 = transFrom54PlaneTo54Ground("96",param54[0][1],param54[0][0], param54[0][2]);
+		ProjCoordinate projCoordinate2 = transFrom54PlaneTo54Ground("96",param54[1][1],param54[1][0], param54[1][2]);
+		ProjCoordinate projCoordinate3 = transFrom54PlaneTo54Ground("96",param54[2][1],param54[2][0], param54[2][2]);
 		//转换空间直接坐标
 		double[] fg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate1);
 		double[] sg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate2);
@@ -381,13 +381,13 @@ public class TransFromService {
 
 		double [][] C ={
 				{1,0,0,fg84[0],0,-fg84[2],fg84[1]},
-				{0,1,0,fg84[1],fg84[2],0,-fg84[0]},
+				{0,1,0,fg84[1],fg84[1],0,-fg84[0]},
 				{0,0,1,fg84[2],-fg84[1],fg84[0],0},
 				{1,0,0,sg84[0],0,-sg84[2],sg84[1]},
 				{0,1,0,sg84[1],sg84[2],0,-sg84[0]},
 				{0,0,1,sg84[2],-sg84[1],sg84[0],0},
 				{1,0,0,tg84[0],0,-tg84[2],tg84[1]},
-				{0,1,0,tg84[1],tg84[2],0,-tg84[0]},
+				{0,1,0,tg84[1],tg84[1],0,-tg84[0]},
 				{0,0,1,tg84[2],-tg84[1],tg84[0],0},
 		};
 		double [][] b={
