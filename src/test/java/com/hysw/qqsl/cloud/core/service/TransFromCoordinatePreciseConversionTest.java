@@ -18,31 +18,31 @@ public class TransFromCoordinatePreciseConversionTest extends BaseTest {
     @Test
     public void testTransFromCoordinate(){
         double[][] param54 = new double[3][3];
-        param54[0][0] = 4380209.665;//x
-        param54[0][1] = 174088.142;//y
-        param54[0][2] = 1564.500;//z
-        param54[1][0] = 4368684.639;
-        param54[1][1] = 204362.488;
-        param54[1][2] = 1473.300;
-        param54[2][0] = 4413189.680;
-        param54[2][1] = 294345.440;
-        param54[2][2] = 1382.600;
+        param54[0][0] = 3973264.495;//x
+        param54[0][1] = 576999.863;//y
+        param54[0][2] = 1805.985;//z
+        param54[1][0] = 3973263.304;
+        param54[1][1] = 576994.637;
+        param54[1][2] = 1805.891;
+        param54[2][0] = 3973260.166;
+        param54[2][1] = 576987.273;
+        param54[2][2] = 1805.861;
 
         double[][] param84 = new double[3][3];
-        param84[0][0] = 39.293729248;//纬度
-        param84[0][1] = 107.124414629;//经度
-        param84[0][2] = 1524.162;//高程
-        param84[1][0] = 39.240359947;
-        param84[1][1] = 107.340707641;
-        param84[1][2] = 1433.161;
-        param84[2][0] = 39.493944301;
-        param84[2][1] = 108.355403200;
-        param84[2][2] = 1346.888;
+        param84[0][0] = 35.8856820505556;//B
+        param84[0][1] = 102.852747449722;//L
+        param84[0][2] = 1805.979;//H
+        param84[1][0] = 35.8856716627778;
+        param84[1][1] = 102.852689645556;
+        param84[1][2] = 1805.932;
+        param84[2][0] = 35.8856440841667;
+        param84[2][1] = 102.852607821111;
+        param84[2][2] = 1805.851;
 
         double[][] param = new double[1][3];
-        param[0][0] = 39.512664223;
-        param[0][1] = 108.300870965;
-        param[0][2] = 1243.493;
+        param[0][0] = 35.8856092102778;
+        param[0][1] = 102.852845316111;
+        param[0][2] = 1805.685;
         transfrom(param54,param84,param);
     }
     public void transfrom(double[][] param54,double[][] param84,double[][] param){
