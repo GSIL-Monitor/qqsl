@@ -7,6 +7,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.StationService;
 import com.hysw.qqsl.cloud.core.service.UserService;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -348,4 +349,12 @@ public class StationServiceTest extends BaseTest {
         return "[]";
     }
 
+    /**
+     * 测试获取参数
+     */
+    @Test
+    public void testGetParamters(){
+        JSONArray jsonArray = stationService.getParamters();
+        Assert.assertNotNull(jsonArray);
+    }
 }

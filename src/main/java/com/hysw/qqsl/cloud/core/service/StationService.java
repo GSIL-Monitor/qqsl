@@ -171,7 +171,6 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("description", station.getDescription());
         //jsonObject.put("exprieDate",station.getExprieDate());
         jsonObject.put("createDate", station.getCreateDate());
-        jsonObject.put("flowModel", station.getFlowModel());
         jsonObject.put("instanceId", station.getInstanceId());
         jsonObject.put("picture", station.getPicture());
         jsonObject.put("riverModel", station.getRiverModel()==null?null:JSONArray.fromObject(station.getRiverModel()));
@@ -384,21 +383,24 @@ public class StationService extends BaseService<Station, Long> {
             return null;
         }
         JSONArray paramters = new JSONArray();
-        JSONObject paramter;
-        List<String> codes;
+        JSONObject paramter,code;
+        JSONArray sensorsJson;
         Station station;
         List<Sensor> sensors;
         for(int i = 0;i<stations.size();i++){
             station = stations.get(i);
             paramter = new JSONObject();
-            paramter.put("instanceId",stations.get(i).getInstanceId());
-            paramter.put("paramters",stations.get(i).getParameter());
+            paramter.put("instanceId",station.getInstanceId());
+            paramter.put("name",station.getName());
+            paramter.put("paramters",station.getParameter());
             sensors = station.getSensors();
-            codes = new ArrayList<>();
+            sensorsJson = new JSONArray();
             for(int k =0;k<sensors.size();k++){
-                codes.add(sensors.get(k).getCode());
+                code = new JSONObject();
+                code.put("code",sensors.get(k).getCode());
+                sensorsJson.add(code);
             }
-            paramter.put("codes",codes);
+            paramter.put("sensors",sensorsJson);
             paramters.add(paramter);
         }
         return paramters;
@@ -802,7 +804,7 @@ public class StationService extends BaseService<Station, Long> {
             jsonObject = (JSONObject) jsonArray.get(i);
             user = new User();
             user.setId(jsonObject.getLong("id"));
-            user.setName(jsonObject.getString("name"));
+            user.setName(jsonObject.get("name")==null?null:jsonObject.getString("name"));
             user.setPhone(jsonObject.getString("phone"));
             share.register(user);
         }
