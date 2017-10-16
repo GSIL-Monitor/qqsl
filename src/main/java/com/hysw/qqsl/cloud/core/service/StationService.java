@@ -374,6 +374,45 @@ public class StationService extends BaseService<Station, Long> {
         return null;
     }
 
+    /**
+     * 监测系统取得所有已改变的参数列表
+     * @return
+     */
+    public JSONArray getParamters() {
+        List<Station> stations = getStationsByTransform();
+        if(stations==null||stations.size()==0){
+            return null;
+        }
+        JSONArray paramters = new JSONArray();
+        JSONObject paramter;
+        List<String> codes;
+        Station station;
+        List<Sensor> sensors;
+        for(int i = 0;i<stations.size();i++){
+            station = stations.get(i);
+            paramter = new JSONObject();
+            paramter.put("instanceId",stations.get(i).getInstanceId());
+            paramter.put("paramters",stations.get(i).getParameter());
+            sensors = station.getSensors();
+            codes = new ArrayList<>();
+            for(int k =0;k<sensors.size();k++){
+                codes.add(sensors.get(k).getCode());
+            }
+            paramter.put("codes",codes);
+            paramters.add(paramter);
+        }
+        return paramters;
+    }
+
+    /**
+     * 监测系统取得所有已改变的测站列表
+     */
+    private List<Station> getStationsByTransform() {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("transform",true));
+        List<Station> stations = stationDao.findList(0,null,filters);
+        return stations;
+    }
 
 
     /**
@@ -806,4 +845,6 @@ public class StationService extends BaseService<Station, Long> {
         station.setShares(shareJsons.isEmpty() ? null : shareJsons.toString());
         stationDao.save(station);
     }
+
+
 }
