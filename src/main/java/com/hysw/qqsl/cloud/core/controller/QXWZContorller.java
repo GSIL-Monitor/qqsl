@@ -35,7 +35,7 @@ public class QXWZContorller {
      * @param token
      * @return
      */
-    @IsExpire
+//    @IsExpire
     @RequestMapping(value = "/getAccount", method = RequestMethod.GET)
     public @ResponseBody
     Message account(@RequestParam String token, @RequestParam String mac, @RequestParam String projectId) {
@@ -66,7 +66,7 @@ public class QXWZContorller {
      * @param projectId
      * @return
      */
-    @IsExpire
+//    @IsExpire
     @RequestMapping(value = "/isAllowQxwz", method = RequestMethod.GET)
     public @ResponseBody
     Message isAllowQxwz(@RequestParam Long projectId) {
