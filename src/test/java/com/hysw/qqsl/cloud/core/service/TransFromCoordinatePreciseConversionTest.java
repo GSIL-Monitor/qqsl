@@ -3,9 +3,23 @@ package com.hysw.qqsl.cloud.core.service;
 import Jama.Matrix;
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.core.service.TransFromService;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.osgeo.proj4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/8/17.
@@ -59,7 +73,7 @@ public class TransFromCoordinatePreciseConversionTest extends BaseTest {
         double Z54 = R.get(2, 0) + (1 + R.get(3, 0)) * wgs84s[2] - R.get(4, 0) * wgs84s[1] + R.get(5, 0) * wgs84s[0];
 
         double[] doubles = transFromService.transFromgeodeticCoordinate(transFromService.selcetTransFromParam("Beijing54"),X54, Y54, Z54);
-        ProjCoordinate projCoordinate1 = transFromService.transFrom54GroundTo54Plane("108", doubles[0], doubles[1], doubles[2]);
+        ProjCoordinate projCoordinate1 = transFromService.transFrom54GroundTo54Plane("102", doubles[0], doubles[1], doubles[2]);
         System.out.println(projCoordinate1.x);
         System.out.println(projCoordinate1.y);
         System.out.println(projCoordinate1.z);
@@ -83,6 +97,96 @@ public class TransFromCoordinatePreciseConversionTest extends BaseTest {
     public void testaaaaa(){
         ProjCoordinate projCoordinate = transFromService.transFrom54PlaneTo54Ground("114",  274820.104, 4372952.906,1381.393);
         System.out.println(projCoordinate.x+"-->"+projCoordinate.y+"-->"+projCoordinate.z);
+    }
+
+    @Test
+    public void readExcel() throws IOException {
+        File file = new ClassPathResource("/coordinateDautm.xlsx").getFile();
+        FileInputStream is = new FileInputStream(file);
+        String str = file.getName().substring(file.getName().lastIndexOf(".") + 1);
+        Workbook wb = null;
+        if (str.trim().toLowerCase().equals("xls")) {
+            wb = new HSSFWorkbook(is);
+        } else if (str.trim().toLowerCase().equals("xlsx")) {
+            wb = new XSSFWorkbook(is);
+        }
+        List<double[]> blh = new ArrayList<>();
+        List<double[]> xyh = new ArrayList<>();
+        for (int numSheet = 0; numSheet < wb.getNumberOfSheets(); numSheet++) {
+            Sheet sheet = wb.getSheetAt(numSheet);
+            if (sheet == null) {
+                continue;
+            }
+            for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
+                Row row = sheet.getRow(rowNum);
+                if (row != null) {
+                    String B = null, L = null, H = null, y = null, x = null, h = null;
+                    if (row.getCell(0) != null) {
+                        row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+                        B = row.getCell(0).getStringCellValue();
+                    }
+                    if (row.getCell(1) != null) {
+                        row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
+                        L = row.getCell(1).getStringCellValue();
+                    }
+                    if (row.getCell(2) != null) {
+                        row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
+                        H = row.getCell(2).getStringCellValue();
+                    }
+                    if (row.getCell(3) != null) {
+                        row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
+                        y = row.getCell(3).getStringCellValue();
+                    }
+                    if (row.getCell(4) != null) {
+                        row.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
+                        x = row.getCell(4).getStringCellValue();
+                    }
+                    if (row.getCell(5) != null) {
+                        row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
+                        h = row.getCell(5).getStringCellValue();
+                    }
+                    if (B.equals("B")) {
+                        continue;
+                    }
+                    double[] blh1 = {Double.valueOf(B), Double.valueOf(L), Double.valueOf(H)};
+                    double[] xyh1 = {Double.valueOf(x), Double.valueOf(y), Double.valueOf(h)};
+                    blh.add(blh1);
+                    xyh.add(xyh1);
+                }
+            }
+
+        }
+        int[][] jiesuandian = {/*{1, 2, 3}, *//*{1,5,8},*/ /*{1,5,10},*/ /*{1,7,10},*//*{1,6,9},*/{3,6,9}};
+        for (int[] ints : jiesuandian) {
+            double[][] param54 = {{xyh.get(ints[0]-1)[0], xyh.get(ints[0]-1)[1], xyh.get(ints[0]-1)[2]}, {xyh.get(ints[1]-1)[0], xyh.get(ints[1]-1)[1], xyh.get(ints[1]-1)[2]}, {xyh.get(ints[2]-1)[0], xyh.get(ints[2]-1)[1], xyh.get(ints[2]-1)[2]}};
+            double[][] param84 = {{blh.get(ints[0]-1)[0], blh.get(ints[0]-1)[1], blh.get(ints[0]-1)[2]}, {blh.get(ints[1]-1)[0], blh.get(ints[1]-1)[1], blh.get(ints[1]-1)[2]}, {blh.get(ints[2]-1)[0], blh.get(ints[2]-1)[1], blh.get(ints[2]-1)[2]}};
+            Matrix R = transFromService.calculate7Param(param54, param84);
+
+            for (int i = 0; i <blh.size() ; i++) {
+                ProjCoordinate projCoordinate1 = new ProjCoordinate();
+                projCoordinate1.x = blh.get(i)[0];
+                projCoordinate1.y = blh.get(i)[1];
+                projCoordinate1.z = blh.get(i)[2];
+
+                double[] wgs84s = transFromService.transFromRectangularSpaceCoordinate(transFromService.selcetTransFromParam("WGS84"), projCoordinate1);
+                double X54 = R.get(0, 0) + (1 + R.get(3, 0)) * wgs84s[0] - R.get(5, 0) * wgs84s[2] + R.get(6, 0) * wgs84s[1];
+                double Y54 = R.get(1, 0) + (1 + R.get(3, 0)) * wgs84s[1] + R.get(4, 0) * wgs84s[2] - R.get(6, 0) * wgs84s[0];
+                double Z54 = R.get(2, 0) + (1 + R.get(3, 0)) * wgs84s[2] - R.get(4, 0) * wgs84s[1] + R.get(5, 0) * wgs84s[0];
+
+                double[] doubles = transFromService.transFromgeodeticCoordinate(transFromService.selcetTransFromParam("Beijing54"),X54, Y54, Z54);
+                ProjCoordinate projCoordinate2 = transFromService.transFrom54GroundTo54Plane("102", doubles[0], doubles[1], doubles[2]);
+                System.out.println(projCoordinate2.x);
+                System.out.println(projCoordinate2.y);
+                System.out.println(projCoordinate2.z);
+            }
+            break;
+        }
+
+    }
+
+    @Test
+    public void matrix0(){
+
     }
 
 }
