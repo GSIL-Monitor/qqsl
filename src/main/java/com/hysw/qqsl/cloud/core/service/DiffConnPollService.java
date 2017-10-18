@@ -61,6 +61,9 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
      */
     public Message isAllowConnectQXWZ(Long id) {
         Project project = projectService.find(id);
+        if (project == null) {
+            return new Message(Message.Type.EXIST);
+        }
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
             return new Message(Message.Type.EXIST);
