@@ -378,11 +378,11 @@ public class StationService extends BaseService<Station, Long> {
      * @return
      */
     public JSONArray getParamters() {
+        JSONArray paramters = new JSONArray();
         List<Station> stations = getStationsByTransform();
         if(stations==null||stations.size()==0){
-            return null;
+            return paramters;
         }
-        JSONArray paramters = new JSONArray();
         JSONObject paramter,code;
         JSONArray sensorsJson;
         Station station;
