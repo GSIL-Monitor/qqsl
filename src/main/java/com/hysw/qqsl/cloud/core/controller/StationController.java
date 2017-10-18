@@ -6,6 +6,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.shiro.authz.annotation.Logical;
@@ -432,4 +433,24 @@ public class StationController {
         }
         return false;
     }
+
+    /**
+     * 监测取得仪表参数：getParamters，GET
+     * 监测系统取得所有已改变的参数列表
+     * @param token
+     * @return
+     */
+    @RequestMapping(value = "/getParamters", method = RequestMethod.GET)
+    public @ResponseBody Message getParamters(@RequestParam String token){
+       Message message = Message.parametersCheck(token);
+       if(Message.Type.FAIL.equals(message.getType())){
+           return message;
+       }
+       if(!applicationTokenService.decrypt(token)){
+           return new Message(Message.Type.FAIL);
+       }
+        JSONArray paramters = stationService.getParamters();
+        return new Message(Message.Type.OK,paramters);
+    }
+
 }

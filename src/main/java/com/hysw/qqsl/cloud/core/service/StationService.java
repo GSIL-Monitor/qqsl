@@ -171,7 +171,6 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("description", station.getDescription());
         jsonObject.put("exprieDate",station.getExpireDate().getTime());
         jsonObject.put("createDate", station.getCreateDate());
-        jsonObject.put("flowModel", station.getFlowModel());
         jsonObject.put("instanceId", station.getInstanceId());
         jsonObject.put("picture", station.getPicture());
         jsonObject.put("riverModel", station.getRiverModel()==null?null:JSONArray.fromObject(station.getRiverModel()));
@@ -187,7 +186,7 @@ public class StationService extends BaseService<Station, Long> {
        // List<JSONObject> sensorJsons = sensorService.makeSensorJsons(station.getSensors());
         JSONObject sensorJson = sensorService.makeSensorJson(sensor);
         jsonObject.put("sensor", sensorJson.isEmpty()?null:sensorJson);
-        jsonObject.put("user", station.getUser().getId());
+        jsonObject.put("userId", station.getUser().getId());
         return jsonObject;
 
     }
@@ -374,6 +373,48 @@ public class StationService extends BaseService<Station, Long> {
         return null;
     }
 
+    /**
+     * 监测系统取得所有已改变的参数列表
+     * @return
+     */
+    public JSONArray getParamters() {
+        JSONArray paramters = new JSONArray();
+        List<Station> stations = getStationsByTransform();
+        if(stations==null||stations.size()==0){
+            return paramters;
+        }
+        JSONObject paramter,code;
+        JSONArray sensorsJson;
+        Station station;
+        List<Sensor> sensors;
+        for(int i = 0;i<stations.size();i++){
+            station = stations.get(i);
+            paramter = new JSONObject();
+            paramter.put("instanceId",station.getInstanceId());
+            paramter.put("name",station.getName());
+            paramter.put("paramters",station.getParameter());
+            sensors = station.getSensors();
+            sensorsJson = new JSONArray();
+            for(int k =0;k<sensors.size();k++){
+                code = new JSONObject();
+                code.put("code",sensors.get(k).getCode());
+                sensorsJson.add(code);
+            }
+            paramter.put("sensors",sensorsJson);
+            paramters.add(paramter);
+        }
+        return paramters;
+    }
+
+    /**
+     * 监测系统取得所有已改变的测站列表
+     */
+    private List<Station> getStationsByTransform() {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("transform",true));
+        List<Station> stations = stationDao.findList(0,null,filters);
+        return stations;
+    }
 
 
     /**
@@ -763,7 +804,7 @@ public class StationService extends BaseService<Station, Long> {
             jsonObject = (JSONObject) jsonArray.get(i);
             user = new User();
             user.setId(jsonObject.getLong("id"));
-            user.setName(jsonObject.getString("name"));
+            user.setName(jsonObject.get("name")==null?null:jsonObject.getString("name"));
             user.setPhone(jsonObject.getString("phone"));
             share.register(user);
         }
@@ -806,4 +847,6 @@ public class StationService extends BaseService<Station, Long> {
         station.setShares(shareJsons.isEmpty() ? null : shareJsons.toString());
         stationDao.save(station);
     }
+
+
 }
