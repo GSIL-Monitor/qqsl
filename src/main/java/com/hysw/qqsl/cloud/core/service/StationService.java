@@ -377,7 +377,7 @@ public class StationService extends BaseService<Station, Long> {
      * 监测系统取得所有已改变的参数列表
      * @return
      */
-    public JSONArray getParamters() {
+    public JSONArray getParameters() {
         JSONArray paramters = new JSONArray();
         List<Station> stations = getStationsByTransform();
         if(stations==null||stations.size()==0){
@@ -392,7 +392,7 @@ public class StationService extends BaseService<Station, Long> {
             paramter = new JSONObject();
             paramter.put("instanceId",station.getInstanceId());
             paramter.put("name",station.getName());
-            paramter.put("paramters",station.getParameter());
+            paramter.put("parameters",StringUtils.hasText(station.getParameter())?station.getParameter():"");
             sensors = station.getSensors();
             sensorsJson = new JSONArray();
             for(int k =0;k<sensors.size();k++){

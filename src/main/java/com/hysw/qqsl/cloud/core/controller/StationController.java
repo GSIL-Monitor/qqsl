@@ -440,8 +440,8 @@ public class StationController {
      * @param token
      * @return
      */
-    @RequestMapping(value = "/getParamters", method = RequestMethod.GET)
-    public @ResponseBody Message getParamters(@RequestParam String token){
+    @RequestMapping(value = "/getParameters", method = RequestMethod.GET)
+    public @ResponseBody Message getParameters(@RequestParam String token){
        Message message = Message.parametersCheck(token);
        if(Message.Type.FAIL.equals(message.getType())){
            return message;
@@ -449,7 +449,7 @@ public class StationController {
        if(!applicationTokenService.decrypt(token)){
            return new Message(Message.Type.FAIL);
        }
-        JSONArray paramters = stationService.getParamters();
+        JSONArray paramters = stationService.getParameters();
         return new Message(Message.Type.OK,paramters);
     }
 
