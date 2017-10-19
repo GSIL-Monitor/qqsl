@@ -354,7 +354,7 @@ public class StationServiceTest extends BaseTest {
      */
     @Test
     public void testGetParamters(){
-        JSONArray jsonArray = stationService.getParamters();
+        JSONArray jsonArray = stationService.getParameters();
         Assert.assertNotNull(jsonArray);
     }
 }
