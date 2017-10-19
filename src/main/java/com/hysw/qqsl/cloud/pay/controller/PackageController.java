@@ -32,7 +32,7 @@ public class PackageController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/getPackage", method = RequestMethod.GET)
     public @ResponseBody
     Message getPackage() {
