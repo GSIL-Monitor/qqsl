@@ -38,7 +38,7 @@ public class TradeController {
      */
     @IsHaveTradeNoPay
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/createPackage", method = RequestMethod.POST)
     public @ResponseBody
     Message createPackage(@RequestBody Map<String, Object> objectMap) {
@@ -58,7 +58,7 @@ public class TradeController {
      */
     @IsHaveTradeNoPay
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/createStation", method = RequestMethod.POST)
     public @ResponseBody
     Message createStation(@RequestBody Map<String, Object> objectMap) {
@@ -78,7 +78,7 @@ public class TradeController {
      */
     @IsHaveTradeNoPay
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/createGoods", method = RequestMethod.POST)
     public @ResponseBody
     Message createGoods(@RequestBody Map<String, Object> objectMap) {
@@ -99,7 +99,7 @@ public class TradeController {
     @IsExpire
     @IsHaveTradeNoPay
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/renewPackage", method = RequestMethod.POST)
     public @ResponseBody
     Message renewPackage(@RequestBody Map<String, Object> objectMap) {
@@ -123,7 +123,7 @@ public class TradeController {
      */
     @IsHaveTradeNoPay
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/renewStation", method = RequestMethod.POST)
     public @ResponseBody Message renewStation(@RequestBody Map<String, Object> objectMap) {
         User user = authentService.getUserFromSubject();
@@ -147,7 +147,7 @@ public class TradeController {
     @IsExpire
     @IsHaveTradeNoPay
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePackage", method = RequestMethod.POST)
     public @ResponseBody
     Message updatePackage(@RequestBody Map<String, Object> objectMap) {
@@ -164,7 +164,7 @@ public class TradeController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/lists", method = RequestMethod.GET)
     public @ResponseBody Message getTradeList() {
         User user = authentService.getUserFromSubject();
@@ -177,7 +177,7 @@ public class TradeController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/trade/{outTradeNo}", method = RequestMethod.GET)
     public @ResponseBody Message getTrade(@PathVariable("outTradeNo") String outTradeNo) {
         if (outTradeNo == null) {
@@ -218,7 +218,7 @@ public class TradeController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/remove/{outTradeNo}", method = RequestMethod.POST)
     public @ResponseBody Message detele(@PathVariable("outTradeNo") String outTradeNo) {
         if (outTradeNo == null) {
@@ -257,7 +257,7 @@ public class TradeController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify,user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/close", method = RequestMethod.POST)
     public @ResponseBody Message close(@RequestBody Map<String, Object> objectMap) {
         Message message = Message.parameterCheck(objectMap);
