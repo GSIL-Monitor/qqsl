@@ -220,34 +220,34 @@ public class AdminController {
         return new Message(Message.Type.OK);
     }
 
-    /**
-     * 角色分配
-     * @param roleMap
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"admin:simple"})
-    @RequestMapping(value = "/editRoles", method = RequestMethod.POST)
-    public @ResponseBody Message editRoles(@RequestBody Map<String,String> roleMap){
-        Long id = Long.valueOf(roleMap.get("id"));
-        User user = userService.find(id);
-        String roles = roleMap.get("roles");
-        //检查角色是否合法
-        if(roles != null&&StringUtils.hasText(roles.toString())){
-            List<String> realRoles = Arrays.asList(CommonAttributes.ROLES);
-            List<String> roleList = new ArrayList<>();
-            String rolesStr = roles.toString();
-            if(rolesStr.indexOf(",")==-1){
-                roleList.add(rolesStr);
-            }else{
-                roleList = Arrays.asList(rolesStr.split(","));
-            }
-            if(!realRoles.containsAll(roleList)){
-                return new Message(Message.Type.OTHER);
-            }
-        }
-        return adminService.editRoles(user,roles);
-    }
+//    /**
+//     * 角色分配
+//     * @param roleMap
+//     * @return
+//     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"admin:simple"})
+//    @RequestMapping(value = "/editRoles", method = RequestMethod.POST)
+//    public @ResponseBody Message editRoles(@RequestBody Map<String,String> roleMap){
+//        Long id = Long.valueOf(roleMap.get("id"));
+//        User user = userService.find(id);
+//        String roles = roleMap.get("roles");
+//        //检查角色是否合法
+//        if(roles != null&&StringUtils.hasText(roles.toString())){
+//            List<String> realRoles = Arrays.asList(CommonAttributes.ROLES);
+//            List<String> roleList = new ArrayList<>();
+//            String rolesStr = roles.toString();
+//            if(rolesStr.indexOf(",")==-1){
+//                roleList.add(rolesStr);
+//            }else{
+//                roleList = Arrays.asList(rolesStr.split(","));
+//            }
+//            if(!realRoles.containsAll(roleList)){
+//                return new Message(Message.Type.OTHER);
+//            }
+//        }
+//        return adminService.editRoles(user,roles);
+//    }
 
     /**
      * 编辑用户是否禁用

@@ -370,6 +370,9 @@ public class PositionService {
         if (aPackage == null) {
             return new Message(Message.Type.EXIST);
         }
+        if (aPackage.getExpireDate().getTime() < System.currentTimeMillis()) {
+            return new Message(Message.Type.EXPIRED);
+        }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.FINDCM && i < packageItem.getLimitNum()) {

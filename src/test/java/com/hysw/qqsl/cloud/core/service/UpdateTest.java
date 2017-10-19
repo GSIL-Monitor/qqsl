@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.listener.TestExecutionListener;
@@ -80,6 +81,27 @@ public class UpdateTest {
                 certify = new Certify(user);
             }
             certifyService.save(certify);
+        }
+    }
+
+    /**
+     * 重置权限
+     */
+    @Test
+    public void testChangeUserRoles(){
+        List<User> all = userService.findAll();
+        String roles="user:simple";
+        Certify certify;
+        for (User user : all) {
+            certify = certifyService.findByUser(user);
+            if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+                roles = roles + ",user:identify";
+            }
+            if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || certify.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+                roles = roles + ",user:company";
+            }
+            user.setRoles(roles);
+            userService.save(user);
         }
     }
 }

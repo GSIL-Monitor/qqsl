@@ -120,32 +120,32 @@ public class AdminService extends BaseService<Admin,Long>{
         return userJsons;
     }
 
-    /**
-     * 用户角色编辑
-     * @param user
-     * @param roles
-     * @return
-     */
-    public Message editRoles(User user,Object roles){
-        //roles为null或空字符串为取消角色
-        if(roles == null||!StringUtils.hasText(roles.toString())){
-           user.setRoles("user:simple");
-        //不为空添加角色
-        }else{
-           String roleStr = "user:simple"+","+roles.toString();
-           List<String> list1 = Arrays.asList(roleStr.split(","));
-           List<String> list2 = new ArrayList<>();
-           for(int i = 0;i<list1.size();i++){
-               if(!list2.contains(list1.get(i))){
-                   list2.add(list1.get(i));
-               }
-           }
-           roleStr = list2.toString().substring(1,list2.toString().length()-1);
-           String role = roleStr.replaceAll(" ", "");
-           user.setRoles(role);
-        }
-        userService.save(user);
-        return new Message(Message.Type.OK);
-    }
-
+//    /**
+//     * 用户角色编辑
+//     * @param user
+//     * @param roles
+//     * @return
+//     */
+//    public Message editRoles(User user,Object roles){
+//        //roles为null或空字符串为取消角色
+//        if(roles == null||!StringUtils.hasText(roles.toString())){
+//           user.setRoles("user:simple");
+//        //不为空添加角色
+//        }else{
+//           String roleStr = "user:simple"+","+roles.toString();
+//           List<String> list1 = Arrays.asList(roleStr.split(","));
+//           List<String> list2 = new ArrayList<>();
+//           for(int i = 0;i<list1.size();i++){
+//               if(!list2.contains(list1.get(i))){
+//                   list2.add(list1.get(i));
+//               }
+//           }
+//           roleStr = list2.toString().substring(1,list2.toString().length()-1);
+//           String role = roleStr.replaceAll(" ", "");
+//           user.setRoles(role);
+//        }
+//        userService.save(user);
+//        return new Message(Message.Type.OK);
+//    }
+//
 }

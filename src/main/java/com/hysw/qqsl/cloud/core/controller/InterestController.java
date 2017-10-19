@@ -41,8 +41,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/saveBaseInterest", method = RequestMethod.POST)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/saveBaseInterest", method = RequestMethod.POST)
     public @ResponseBody Message saveBaseInterest(@RequestBody Map<String, Object> objectMap){
         Message message = Message.parameterCheck(objectMap);
         if(message.getType()==Message.Type.FAIL){
@@ -165,8 +165,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/updateBaseInterest", method = RequestMethod.POST)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/updateBaseInterest", method = RequestMethod.POST)
     public @ResponseBody Message updateBaseInterest(@RequestBody Map<String, Object> objectMap){
         Message message = Message.parameterCheck(objectMap);
         if(message.getType()==Message.Type.FAIL){
@@ -268,8 +268,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteBaseInterest/{id}", method = RequestMethod.DELETE)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/deleteBaseInterest/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message deteleBaseInterest(@PathVariable("id") Long id){
         Message message = Message.parametersCheck(id);
         if(message.getType()==Message.Type.FAIL){
@@ -379,8 +379,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/baseInterestList", method = RequestMethod.GET)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/baseInterestList", method = RequestMethod.GET)
     public @ResponseBody Message baseInterestList(){
         List<Interest> interests = interestService.findAllBase();
         List<JSONObject> interestsJson = interestService.interestsToJson(interests);
@@ -469,8 +469,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/interestReview", method = RequestMethod.GET)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/interestReview", method = RequestMethod.GET)
     public @ResponseBody Message interestReview(){
         List<Interest> interests = interestService.findAllPending();
         JSONArray interestsJson = interestService.interestsToJson(interests);
@@ -482,8 +482,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/panoramaReview", method = RequestMethod.GET)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/panoramaReview", method = RequestMethod.GET)
     public @ResponseBody Message panoramaReview(){
         List<Panorama> panoramas = panoramaService.findAllPending();
         JSONArray panoramasJson = panoramaService.panoramasToJson(panoramas);
@@ -500,8 +500,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/interestReviewSuccess", method = RequestMethod.POST)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/interestReviewSuccess", method = RequestMethod.POST)
     public @ResponseBody Message interestReviewSuccess(@RequestBody Map<String, Object> objectMap){
         Message message = Message.parameterCheck(objectMap);
         if(message.getType()== Message.Type.FAIL){
@@ -520,8 +520,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/panoramaReviewSuccess", method = RequestMethod.POST)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/panoramaReviewSuccess", method = RequestMethod.POST)
     public @ResponseBody Message panoramaReviewSuccess(@RequestBody Map<String, Object> objectMap){
         Message message = Message.parameterCheck(objectMap);
         if(message.getType()== Message.Type.FAIL){
@@ -540,8 +540,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/interestReviewFail", method = RequestMethod.POST)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/interestReviewFail", method = RequestMethod.POST)
     public @ResponseBody Message interestReviewFail(@RequestBody Map<String, Object> objectMap){
         Message message = Message.parameterCheck(objectMap);
         if(message.getType()== Message.Type.FAIL){
@@ -567,8 +567,8 @@ public class InterestController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:system"}, logical = Logical.OR)
-    @RequestMapping(value = "/panoramaReviewFail", method = RequestMethod.POST)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/panoramaReviewFail", method = RequestMethod.POST)
     public @ResponseBody Message panoramaReviewFail(@RequestBody Map<String, Object> objectMap){
         Message message = Message.parameterCheck(objectMap);
         if(message.getType()== Message.Type.FAIL){

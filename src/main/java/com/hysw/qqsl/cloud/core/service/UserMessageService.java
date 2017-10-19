@@ -178,4 +178,11 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setContent("尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。");
 		userMessage.setUser(certify.getUser());
 	}
+
+	public void emailNotice(User user,String message) {
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setContent(message);
+		userMessage.setUser(user);
+	}
 }

@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Note;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
+import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.util.*;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -10,6 +11,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.shiro.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,8 @@ public class CertifyCache {
     private NoteCache noteCache;
     @Autowired
     private UserMessageService userMessageService;
+    @Autowired
+    private UserService userService;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     /**
      * 根据身份证图片组合body信息组
@@ -368,11 +372,27 @@ public class CertifyCache {
         certify.setPersonalStatus(CommonEnum.CertifyStatus.PASS);
         certify.setIdentityAdvice(null);
         certifyService.save(certify);
+        setRolesPass(certify.getUser(),"user:identify");
         //            发送短信，邮件通知
         emailService.personalCertifySuccess(certify);
         Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的实名认证已经通过认证，水利云将为您提供更多，更优质的服务。");
         noteCache.add(certify.getUser().getPhone(),note);
         userMessageService.personalCertifySuccess(certify);
+    }
+
+    /**
+     * 认证通过,添加相应权限
+     * @param user
+     * @param s
+     */
+    private void setRolesPass(User user, String s) {
+        String roles = user.getRoles();
+        if(roles == null||!StringUtils.hasText(roles.toString())){
+            roles="user:simple";
+        }
+        roles = roles + "," + s;
+        user.setRoles(roles);
+        userService.save(user);
     }
 
     /**
@@ -404,6 +424,7 @@ public class CertifyCache {
         certify.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         certify.setCompanyAdvice(null);
         certifyService.save(certify);
+        setRolesPass(certify.getUser(),"user:company");
         //            发送短信，邮件通知
         emailService.companyCertifySuccess(certify);
         Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。");
@@ -493,8 +514,19 @@ public class CertifyCache {
 
             } else if (certify.getValidTill().getTime() - System.currentTimeMillis() <= 90 * 24 * 3600 * 1000l && certify.getValidTill().getTime() - System.currentTimeMillis() > 0) {
                 certify.setPersonalStatus(CommonEnum.CertifyStatus.EXPIRING);
+                String message = "尊敬的水利云用户您好，您的实名认证即将过期，为了方便您继续使用水利云功能，请您重新进行认证。";
+                emailService.emailNotice(certify.getUser().getEmail(),"水利云实名认证即将过期",message);
+                Note note = new Note(certify.getUser().getPhone(),message);
+                noteCache.add(certify.getUser().getPhone(),note);
+                userMessageService.emailNotice(certify.getUser(),message);
             } else if (certify.getValidTill().getTime() - System.currentTimeMillis() <= 0) {
                 certify.setPersonalStatus(CommonEnum.CertifyStatus.EXPIRED);
+                rolesExpired(certify.getUser(),"user:identify");
+                String message = "尊敬的水利云用户您好，您的实名认证已过期，为了方便您继续使用水利云功能，请您重新进行认证。";
+                emailService.emailNotice(certify.getUser().getEmail(),"水利云实名认证已过期",message);
+                Note note = new Note(certify.getUser().getPhone(),message);
+                noteCache.add(certify.getUser().getPhone(),note);
+                userMessageService.emailNotice(certify.getUser(),message);
             }
             if (certify.getValidPeriod() == null) {
                 continue;
@@ -503,12 +535,41 @@ public class CertifyCache {
 
             } else if (certify.getValidPeriod().getTime() - System.currentTimeMillis() <= 90 * 24 * 3600 * 1000l && certify.getValidPeriod().getTime() - System.currentTimeMillis() > 0) {
                 certify.setCompanyStatus(CommonEnum.CertifyStatus.EXPIRING);
+                String message = "尊敬的水利云用户您好，您的企业认证即将过期，为了方便您继续使用水利云功能，请您重新进行认证。";
+                emailService.emailNotice(certify.getUser().getEmail(),"水利云企业认证即将过期",message);
+                Note note = new Note(certify.getUser().getPhone(),message);
+                noteCache.add(certify.getUser().getPhone(),note);
+                userMessageService.emailNotice(certify.getUser(),message);
             } else if (certify.getValidPeriod().getTime() - System.currentTimeMillis() <= 0) {
                 certify.setCompanyStatus(CommonEnum.CertifyStatus.EXPIRED);
+                rolesExpired(certify.getUser(),"user:company");
+                String message = "尊敬的水利云用户您好，您的企业认证已过期，为了方便您继续使用水利云功能，请您重新进行认证。";
+                emailService.emailNotice(certify.getUser().getEmail(),"水利云企业认证已过期",message);
+                Note note = new Note(certify.getUser().getPhone(),message);
+                noteCache.add(certify.getUser().getPhone(),note);
+                userMessageService.emailNotice(certify.getUser(),message);
             }
             certifyService.save(certify);
         }
         refresh();
+    }
+
+    /**
+     * 认证过期删除相应权限
+     * @param user
+     * @param s
+     */
+    private void rolesExpired(User user,String s){
+        String roles = user.getRoles();
+        String[] split = roles.split(",");
+        String roles1 = "";
+        for (int i = 0; i < split.length; i++) {
+            if (!split[i].equals(s)) {
+                roles1 = roles1 + split[i];
+            }
+        }
+        user.setRoles(roles);
+        userService.save(user);
     }
 
 }

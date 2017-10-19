@@ -112,6 +112,11 @@ public class EmailService {
         emailCache.add(createMimeMessage(email));
     }
 
+    public void emailNotice(String emailAddress,String subject,String message){
+        Email email = new Email(emailAddress, subject, message);
+        emailCache.add(createMimeMessage(email));
+    }
+
 
     /**
      * 登录验证码

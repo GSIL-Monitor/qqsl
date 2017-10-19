@@ -552,9 +552,9 @@ public class UserController {
         if (!user.getPassword().equals(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
         }
-        if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
+       /* if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
             return subjectLogin(user, "web",null);
-        }
+        }*/
         return subjectLogin(user, "phone",null);
     }
 
