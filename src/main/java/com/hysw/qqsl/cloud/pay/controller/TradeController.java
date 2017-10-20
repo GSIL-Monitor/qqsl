@@ -39,6 +39,7 @@ public class TradeController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:identify"}, logical = Logical.OR)
     @IsHaveTradeNoPay
+
     @RequestMapping(value = "/createPackage", method = RequestMethod.POST)
     public @ResponseBody
     Message createPackage(@RequestBody Map<String, Object> objectMap) {
