@@ -51,7 +51,7 @@ public class WXPayController {
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequiresAuthentication
-//    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/unifiedOrderPay/{outTradeNo}", method = RequestMethod.GET)
     public @ResponseBody Message unifiedOrderPay(@PathVariable("outTradeNo") String outTradeNo) {
         if (outTradeNo == null) {
@@ -74,7 +74,7 @@ public class WXPayController {
      * @return
      */
     @RequiresAuthentication
-//    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/refund/{outTradeNo}", method = RequestMethod.GET)
     public @ResponseBody Message refund(@PathVariable("outTradeNo") String outTradeNo) {
         if (outTradeNo == null) {

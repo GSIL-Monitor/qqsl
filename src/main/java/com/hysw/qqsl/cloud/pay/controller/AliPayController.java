@@ -172,7 +172,7 @@ public class AliPayController {
      * @throws IOException
      */
     @RequiresAuthentication
-//    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/pcPay/{out_trade_no}", method = RequestMethod.GET)
     public void doPost(@PathVariable("out_trade_no") String out_trade_no,
                        HttpServletResponse httpResponse) throws ServletException, IOException {
@@ -251,7 +251,7 @@ public class AliPayController {
      * @throws AlipayApiException
      */
     @RequiresAuthentication
-//    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/refund/{out_trade_no}", method = RequestMethod.GET)
     public
     @ResponseBody

@@ -42,7 +42,7 @@ public class AuthentController {
      *
      * @return
      */
-    @RequestMapping(value = "/refuse", method = RequestMethod.GET)
+    @RequestMapping(value = "/refuse", method = {RequestMethod.GET, RequestMethod.POST})
     public
     @ResponseBody
     Message refuse() {
@@ -54,7 +54,7 @@ public class AuthentController {
      *
      * @return
      */
-    @RequestMapping(value = "/monitor", method = RequestMethod.GET)
+    @RequestMapping(value = "/monitor", method = {RequestMethod.GET, RequestMethod.POST})
     public
     @ResponseBody
     Message checkSession() {

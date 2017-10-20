@@ -36,7 +36,7 @@ public class InterestController {
     @Autowired
     private AuthentService authentService;
     /**
-     * 保存兴趣点
+     * 保存基础兴趣点
      * @param objectMap
      * @return
      */
@@ -160,7 +160,7 @@ public class InterestController {
     }
 
     /**
-     * 编辑兴趣点
+     * 编辑基础兴趣点
      * @param objectMap
      * @return
      */
@@ -263,7 +263,7 @@ public class InterestController {
 
 
     /**
-     * 删除兴趣点
+     * 删除基础兴趣点
      * @param id
      * @return
      */
@@ -495,7 +495,7 @@ public class InterestController {
      */
 
     /**
-     * 兴趣点审核通过
+     * 个人兴趣点审核通过
      * @param objectMap
      * @return
      */
@@ -535,7 +535,7 @@ public class InterestController {
     }
 
     /**
-     * 兴趣点审核未通过
+     * 个人兴趣点审核未通过
      * @param objectMap
      * @return
      */
