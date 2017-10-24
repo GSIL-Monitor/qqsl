@@ -139,7 +139,7 @@ public class InterestService extends BaseService<Interest, Long> {
             jsonObject.put("status", interests.get(i).getStatus());
             jsonObject.put("advice", interests.get(i).getAdvice());
             jsonObject.put("reviewDate", interests.get(i).getReviewDate());
-            if (interests.get(i) != null) {
+            if (interests.get(i).getUserId() != null) {
                 jsonObject.put("user", userJson(interests.get(i).getUserId()));
             }
             jsonArray.add(jsonObject);

@@ -48,10 +48,6 @@ public class InterestController {
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
-        User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
-        }
         Map<String,Object> map = (Map<String, Object>) objectMap.get("interest");
         Object type = map.get("type");
         if (type == null) {
