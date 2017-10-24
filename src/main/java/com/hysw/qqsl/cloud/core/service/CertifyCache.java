@@ -50,8 +50,18 @@ public class CertifyCache {
     private String getIdentityBodys(Certify certify) {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = new JSONObject();
-        String identity1 = certifyService.getAliImage(certify.getUser().getId(), "identity1.jpg");
-        String identity2 = certifyService.getAliImage(certify.getUser().getId(), "identity2.jpg");
+        String identity1;
+        String identity2;
+        try{
+            identity1 = certifyService.getAliImage(certify.getUser().getId(), "identity1.jpg");
+        }catch (Exception e){
+            identity1 = "";
+        }
+        try{
+            identity2 = certifyService.getAliImage(certify.getUser().getId(), "identity2.jpg");
+        }catch (Exception e){
+            identity2 = "";
+        }
         if (identity1.equals("") || identity2.equals("")) {
             return "";
         }
@@ -70,7 +80,12 @@ public class CertifyCache {
     private String getCompanyBodys(Certify certify) {
         JSONObject image = new JSONObject();
         image.put("dataType", 50);
-        String licence = certifyService.getAliImage(certify.getUser().getId(), "licence.jpg");
+        String licence;
+        try {
+            licence = certifyService.getAliImage(certify.getUser().getId(), "licence.jpg");
+        } catch (Exception e) {
+            licence = "";
+        }
         if (licence.equals("")) {
             return "";
         }

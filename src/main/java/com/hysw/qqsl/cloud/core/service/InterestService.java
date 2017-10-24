@@ -139,8 +139,9 @@ public class InterestService extends BaseService<Interest, Long> {
             jsonObject.put("status", interests.get(i).getStatus());
             jsonObject.put("advice", interests.get(i).getAdvice());
             jsonObject.put("reviewDate", interests.get(i).getReviewDate());
-            jsonObject.put("user", userJson(interests.get(i).getUserId()));
-
+            if (interests.get(i) != null) {
+                jsonObject.put("user", userJson(interests.get(i).getUserId()));
+            }
             jsonArray.add(jsonObject);
         }
         return jsonArray;
@@ -182,7 +183,6 @@ public class InterestService extends BaseService<Interest, Long> {
         Object status=map.get("status");
 //        Object advice=map.get("advice");
 //        Object reviewDate=map.get("reviewDate");
-        Object userId=map.get("userId");
         if (name == null || category == null || coordinate == null || region == null || business == null) {
             return new Message(Message.Type.FAIL);
         }
@@ -211,7 +211,6 @@ public class InterestService extends BaseService<Interest, Long> {
         if (pictures != null) {
             interest.setPictures(pictures.toString());
         }
-        interest.setUserId(Long.valueOf(userId.toString()));
         interest.setStatus(Review.valueOf(Integer.valueOf(status.toString())));
         save(interest);
         JSONObject jsonObject = new JSONObject();

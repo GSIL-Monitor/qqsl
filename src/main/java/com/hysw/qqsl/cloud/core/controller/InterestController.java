@@ -62,7 +62,6 @@ public class InterestController {
         } else {
             return new Message(Message.Type.FAIL);
         }
-        map.put("userId", user.getId());
         return interestService.saveInterest(map,new Interest());
 //        interestService.reflectSaveProprety(map, new Interest());
 //        return new Message(Message.Type.OK);
@@ -172,10 +171,6 @@ public class InterestController {
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
-        User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
-        }
         Map<String,Object> map = (Map<String, Object>) objectMap.get("interest");
         Object type = map.get("type");
         if (type == null) {
@@ -186,7 +181,6 @@ public class InterestController {
         } else {
             return new Message(Message.Type.FAIL);
         }
-        map.put("userId", user.getId());
         Interest interest = interestService.find(Long.valueOf(map.get("id").toString()));
         if(interest==null){
             return new Message(Message.Type.FAIL);
