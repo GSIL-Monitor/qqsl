@@ -81,13 +81,8 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	@SuppressWarnings("resource")
 	public Message readExcel(String central, Workbook wb, Project project) {
 		String code = transFromService.checkCode84(central);
-		Graph graph = null;
-		CoordinateBase coordinateBase = null;
-		List<CoordinateBase> list = null;
 		List<Graph> graphs = new ArrayList<Graph>();
 		List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
-		Build build2 = null;
-		JSONObject jsonObject = null;
 		List<Build> builds1 = new ArrayList<>();
 		// Read the Sheet
 		for (int numSheet = 0; numSheet < wb.getNumberOfSheets(); numSheet++) {
@@ -96,13 +91,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				continue;
 			}
 //			读取建筑物及其属性数据
-			Message me = readBuild(sheet, code, builds, build2, builds1, jsonObject, project);
+			Message me = readBuild(sheet, code, builds, builds1, project);
 			if (me != null) {
                 return me;
             }
             try {
 //				读取线面数据
-				readLineOrAera(sheet, code, graph, coordinateBase, list, graphs, wb, numSheet);
+				readLineOrAera(sheet, code, graphs, wb, numSheet);
 			} catch (OfficeXmlFileException e) {
 				logger.info("坐标文件03-07相互拷贝异常");
 				continue;
@@ -121,14 +116,14 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param sheet
 	 * @param code
 	 * @param builds
-	 * @param build2
 	 * @param builds2
-	 * @param jsonObject
 	 * @param project
 	 */
-	private Message readBuild(Sheet sheet, String code, List<Build> builds, Build build2, List<Build> builds2, JSONObject jsonObject, Project project) {
+	private Message readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project) {
 		Build build = null;
+		Build build2 = null;
 		JSONObject jsonObject1;
+		JSONObject jsonObject;
 		for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
 			if (sheet.getSheetName().trim().equals(CommonAttributes.BASETYPEC[i])) {
 				String s = CommonAttributes.BASETYPEE[i];
@@ -289,14 +284,14 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * 读取线面数据
 	 * @param sheet
 	 * @param code
-	 * @param graph
-	 * @param coordinateBase
-	 * @param list
 	 * @param graphs
 	 * @param wb
 	 * @param numSheet
 	 */
-	private void readLineOrAera(Sheet sheet, String code, Graph graph, CoordinateBase coordinateBase, List<CoordinateBase> list, List<Graph> graphs, Workbook wb, int numSheet) {
+	private void readLineOrAera(Sheet sheet, String code, List<Graph> graphs, Workbook wb, int numSheet) {
+		CoordinateBase coordinateBase;
+		Graph graph;
+		List<CoordinateBase> list;
 		// Read the Row
 		for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
 			Row row = sheet.getRow(rowNum);
