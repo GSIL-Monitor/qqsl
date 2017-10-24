@@ -75,7 +75,7 @@
         <property name="exceptionMappings">
             <props>
                 <prop key="org.apache.shiro.authz.UnauthorizedException">/authent/refuse</prop>
-                <prop key="org.apache.shiro.authz.AuthorizationException">/authent/monitor</prop>
+                <prop key="org.apache.shiro.authz.AuthorizationException">/authent/session</prop>
             </props>
         </property>
     </bean>

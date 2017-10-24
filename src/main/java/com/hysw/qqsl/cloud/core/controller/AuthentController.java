@@ -54,7 +54,7 @@ public class AuthentController {
      *
      * @return
      */
-    @RequestMapping(value = "/monitor", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/session", method = {RequestMethod.GET, RequestMethod.POST})
     public
     @ResponseBody
     Message checkSession() {
