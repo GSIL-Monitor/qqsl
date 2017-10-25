@@ -121,7 +121,7 @@ public class TradeService extends BaseService<Trade, Long> {
             return new Message(Message.Type.FAIL);
         }
 //        空间大小以及子账户数是否满足套餐限制,套餐是否已过期
-        if (packageService.isRequirementPackage(user, packageModel)) {
+        if (packageService.isRequirementPackage(user.getId(), packageModel)) {
             return new Message(Message.Type.UNKNOWN);
         }
 //        未通过企业认证的用户不能购买套餐等级大于10的套餐

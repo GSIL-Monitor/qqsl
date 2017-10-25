@@ -231,11 +231,12 @@ public class PackageService extends BaseService<Package,Long>{
 
     /**
      * 是否满足套餐购买要求
-     * @param user
+     * @param userId
      * @param packageModel
      * @return false 满足要求  true 不满足要求
      */
-    public Boolean isRequirementPackage(User user,PackageModel packageModel){
+    public Boolean isRequirementPackage(Long userId,PackageModel packageModel){
+        User user = userService.find(userId);
         Package aPackage = findByUser(user);
         if (aPackage == null) {
             return false;
