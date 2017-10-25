@@ -314,6 +314,7 @@ public class CertifyService extends BaseService<Certify, Long> {
         for (Certify certify : certifies) {
             jsonObject = new JSONObject();
             jsonObject.put("id", certify.getId());
+            jsonObject.put("phone", certify.getUser().getPhone());
             jsonObject.put("personalStatus", certify.getPersonalStatus());
             jsonObject.put("companyStatus", certify.getCompanyStatus());
             jsonArray.add(jsonObject);
