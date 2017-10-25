@@ -7,6 +7,7 @@ import java.io.Serializable;
  * Created by chenl on 17-4-7.
  */
 public class Position implements Serializable{
+    private Long id;
     private String userName;
     private String password;
     /** 心跳 */
@@ -18,7 +19,8 @@ public class Position implements Serializable{
 
     private Long userId;
 
-    public Position(String userName, String password, long date, long timeout) {
+    public Position(Long id,String userName, String password, long date, long timeout) {
+        this.id = id;
         this.userName = userName;
         this.password = password;
         this.date = date;
@@ -71,5 +73,13 @@ public class Position implements Serializable{
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

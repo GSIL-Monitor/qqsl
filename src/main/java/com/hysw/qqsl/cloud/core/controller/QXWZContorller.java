@@ -103,16 +103,15 @@ public class QXWZContorller {
     }
 
     /**
-     * 千寻账户列表
+     * 千寻账户列表（使用情况）
      * @return
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
     @RequestMapping(value = "/admin/lists", method = RequestMethod.GET)
-    public @ResponseBody Message list(){
+    public @ResponseBody Message lists(){
         return diffConnPollService.accountList();
     }
-
 
     /**
      * 心跳

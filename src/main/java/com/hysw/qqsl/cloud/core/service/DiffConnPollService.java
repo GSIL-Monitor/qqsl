@@ -100,7 +100,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
         }
         DiffConnPoll diffConnPoll = new DiffConnPoll(userName.toString(),password.toString(),Long.valueOf(timeout.toString()));
         diffConnPollService.save(diffConnPoll);
-        Position position = new Position(userName.toString(), password.toString(), System.currentTimeMillis(),Long.valueOf(timeout.toString()));
+        Position position = new Position(diffConnPoll.getId(), diffConnPoll.getUserName(), diffConnPoll.getPassword(), System.currentTimeMillis(), diffConnPoll.getTimeout());
         positionService.setPosition(position);
         return new Message(Message.Type.OK);
     }
@@ -126,6 +126,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < positionService.getUnuseds().size(); i++) {
             jsonObject = new JSONObject();
+            jsonObject.put("id", positionService.getUnuseds().get(i).getId());
             jsonObject.put("userName", positionService.getUnuseds().get(i).getUserName());
             jsonObject.put("timeout", positionService.getUnuseds().get(i).getTimeout());
             jsonObject.put("using", false);
@@ -133,6 +134,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
         }
         for (int i = 0; i < positionService.getUseds().size(); i++) {
             jsonObject = new JSONObject();
+            jsonObject.put("id", positionService.getUseds().get(i).getId());
             jsonObject.put("userName", positionService.getUseds().get(i).getUserName());
             jsonObject.put("timeout", positionService.getUseds().get(i).getTimeout());
             jsonObject.put("using", true);
@@ -140,6 +142,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
         }
         for (int i = 0; i < positionService.getTimeout().size(); i++) {
             jsonObject = new JSONObject();
+            jsonObject.put("id", positionService.getTimeout().get(i).getId());
             jsonObject.put("userName", positionService.getTimeout().get(i).getUserName());
             jsonObject.put("timeout", positionService.getTimeout().get(i).getTimeout());
             jsonObject.put("using", false);

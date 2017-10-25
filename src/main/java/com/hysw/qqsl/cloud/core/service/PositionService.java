@@ -62,7 +62,7 @@ public class PositionService {
 //        if (setting.getStatus().equals("run")) {
         List<DiffConnPoll> diffConnPolls = diffConnPollService.findAll();
         for (DiffConnPoll diffConnPoll : diffConnPolls) {
-            position = new Position(diffConnPoll.getUserName(), diffConnPoll.getPassword(), System.currentTimeMillis(),diffConnPoll.getTimeout());
+            position = new Position(diffConnPoll.getId(), diffConnPoll.getUserName(), diffConnPoll.getPassword(), System.currentTimeMillis(), diffConnPoll.getTimeout());
             unuseds.add(position);
         }
 //            return;
