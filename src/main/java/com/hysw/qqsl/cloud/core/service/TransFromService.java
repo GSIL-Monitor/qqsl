@@ -427,16 +427,16 @@ public class TransFromService {
 		double[] sg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"),projCoordinate5);
 
 		double [][] C ={
-				{1,0,-0,0},
-				{0,1,0,0},
-				{1,0,-0,0},
-				{0,1,0,0},
+                {-1,-0,fg84[1],-fg84[0]},
+                {-0,-1,-fg84[0],-fg84[1]},
+                {-1,-0,sg84[1],-sg84[0]},
+                {-0,-1,-sg84[0],-sg84[1]},
 		};
 		double [][] b={
 				{fg54[0]-fg84[0]},
 				{fg54[1]-fg84[1]},
-				{fg54[2]-fg84[2]},
 				{sg54[0]-sg84[0]},
+				{sg54[1]-sg84[1]},
 		};
 		Matrix A = new Matrix(C);
 		Matrix B = new Matrix(b);

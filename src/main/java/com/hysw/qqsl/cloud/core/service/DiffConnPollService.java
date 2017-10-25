@@ -129,7 +129,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
             jsonObject.put("userName", positionService.getUnuseds().get(i).getUserName());
             jsonObject.put("timeout", positionService.getUnuseds().get(i).getTimeout());
             jsonObject.put("using", false);
-            jsonArray.add(jsonArray);
+            jsonArray.add(jsonObject);
         }
         for (int i = 0; i < positionService.getUseds().size(); i++) {
             jsonObject = new JSONObject();
@@ -143,7 +143,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
             jsonObject.put("userName", positionService.getTimeout().get(i).getUserName());
             jsonObject.put("timeout", positionService.getTimeout().get(i).getTimeout());
             jsonObject.put("using", false);
-            jsonArray.add(jsonArray);
+            jsonArray.add(jsonObject);
         }
         return new Message(Message.Type.OK,jsonArray);
     }
