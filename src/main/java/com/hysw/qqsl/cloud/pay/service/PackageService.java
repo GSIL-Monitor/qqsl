@@ -193,6 +193,8 @@ public class PackageService extends BaseService<Package,Long>{
         aPackage.setExpireDate(new Date(c.getTimeInMillis()));
         aPackage.setInstanceId(trade.getInstanceId());
         aPackage.setUser(trade.getUser());
+        aPackage.setCurSpaceNum(0);
+        aPackage.setCurTrafficNum(0);
         save(aPackage);
     }
 

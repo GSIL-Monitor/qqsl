@@ -323,7 +323,7 @@ public class AliPayController {
         if (tradeState.equalsIgnoreCase("TRADE_SUCCESS")) {
             if (trade.getStatus() == Trade.Status.NOPAY) {
                 trade.setPayDate(new Date());
-                trade.setPayType(Trade.PayType.WX);
+                trade.setPayType(Trade.PayType.ALI);
                 trade.setStatus(Trade.Status.PAY);
                 tradeService.save(trade);
 //                激活业务

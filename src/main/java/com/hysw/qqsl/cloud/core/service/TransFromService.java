@@ -409,6 +409,43 @@ public class TransFromService {
 	}
 
 	/**
+	 * 计算4参数
+	 * @param param54
+	 */
+	public Matrix calculate4Param(double[][] param54, double[][] param84){
+		//将平面坐标转换为大地坐标
+		ProjCoordinate projCoordinate1 = transFrom54PlaneTo54Ground("102",param54[0][1],param54[0][0], param54[0][2]);
+		ProjCoordinate projCoordinate2 = transFrom54PlaneTo54Ground("102",param54[1][1],param54[1][0], param54[1][2]);
+		//转换空间直接坐标
+		double[] fg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate1);
+		double[] sg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate2);
+		//将坐标放入projcoordinate
+		ProjCoordinate projCoordinate4 = setParamToProjcoordinate(param84[0][0], param84[0][1], param84[0][2]);
+		ProjCoordinate projCoordinate5 = setParamToProjcoordinate(param84[1][0], param84[1][1], param84[1][2]);
+		//转换空间直接坐标
+		double[] fg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"),projCoordinate4);
+		double[] sg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"),projCoordinate5);
+
+		double [][] C ={
+				{1,0,-0,0},
+				{0,1,0,0},
+				{1,0,-0,0},
+				{0,1,0,0},
+		};
+		double [][] b={
+				{fg54[0]-fg84[0]},
+				{fg54[1]-fg84[1]},
+				{fg54[2]-fg84[2]},
+				{sg54[0]-sg84[0]},
+		};
+		Matrix A = new Matrix(C);
+		Matrix B = new Matrix(b);
+		Matrix AT = A.transpose();
+		Matrix R = (AT.times(A)).inverse().times(AT).times(B);
+		return R;
+	}
+
+	/**
 	 * 将坐标放入projcoordinate
 	 * @param x
 	 * @param y
