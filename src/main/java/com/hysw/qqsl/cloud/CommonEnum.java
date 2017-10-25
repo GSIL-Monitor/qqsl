@@ -341,6 +341,9 @@ public class CommonEnum {
 
     }
 
+    /**
+     * 套餐类型
+     */
     public enum PackageType{
         TEST,
 //        EXPERIENCE,
@@ -349,6 +352,9 @@ public class CommonEnum {
         SUNRISE
     }
 
+    /**
+     * 数据服务类型
+     */
     public enum GoodsType{
         PANORAMA,
         AIRSURVEY
