@@ -30,25 +30,63 @@ public class Coordinate extends BaseEntity {
 		}
 	}
 
+	/**
+	 * 坐标转换基准面类型
+	 */
+	public enum BaseLevelType {
+		WGS84, BEIJING54, XIAN80, CHIAN2000;
+		public static BaseLevelType valueOf(int ordinal) {
+			if (ordinal < 0 || ordinal >= values().length) {
+				throw new IndexOutOfBoundsException("Invalid ordinal");
+			}
+			return values()[ordinal];
+		}
+	}
+
+	/**
+	 * WGS84坐标格式
+	 */
+	public enum WGS84Type {
+		// 35.1287934
+		FLOAT,
+		// 35.429^o
+		DEGREE,
+		// 35:23
+		DEGREE_MINUTE_1,
+		// 35^o23'
+		DEGREE_MINUTE_2,
+		// 35:23:45
+		DEGREE_MINUTE_SECOND_1,
+		// 35^o23'45''
+		DEGREE_MINUTE_SECOND_2;
+		public static WGS84Type valueOf(int ordinal) {
+			if (ordinal < 0 || ordinal >= values().length) {
+				throw new IndexOutOfBoundsException("Invalid ordinal");
+			}
+			return values()[ordinal];
+		}
+	}
+
 	public Coordinate(){
 		this.source = Build.Source.DESIGN;
 	}
 
-	/** 点线面字符串 */
+	// 点线面json
 	private String coordinateStr;
 	private Project project;
 	private Build.Source source;
-
-	/** 坐标类型 */
-//	private Type type;
-//	private CommonEnum.CommonType baseType;
 	private String TreePath;
 	private String description;
-	/** caijiyonghu*/
+	// 采集用户
 	private long userId;
 	private String name;
 	private String deviceMac;
-
+	// 基准面类型
+	private BaseLevelType baseLevelType;
+	// WGS84格式
+	private WGS84Type wgs84Type;
+	// 公共点json
+	private String commonPointStr;
 
 	@JsonIgnore
 	//@Lob
@@ -81,24 +119,6 @@ public class Coordinate extends BaseEntity {
 		this.source = source;
 	}
 
-	//	@Transient
-//	public Type getType() {
-//		return type;
-//	}
-//
-//	public void setType(Type type) {
-//		this.type = type;
-//	}
-//
-//	@Transient
-//	public CommonEnum.CommonType getBaseType() {
-//		return baseType;
-//	}
-//
-//	public void setBaseType(CommonEnum.CommonType baseType) {
-//		this.baseType = baseType;
-//	}
-//
 	@JsonIgnore
 	public String getTreePath() {
 		return TreePath;
@@ -139,5 +159,30 @@ public class Coordinate extends BaseEntity {
 
 	public void setDeviceMac(String deviceMac) {
 		this.deviceMac = deviceMac;
+	}
+
+	public BaseLevelType getBaseLevelType() {
+		return baseLevelType;
+	}
+
+	public void setBaseLevelType(BaseLevelType baseLevelType) {
+		this.baseLevelType = baseLevelType;
+	}
+
+	public WGS84Type getWgs84Type() {
+		return wgs84Type;
+	}
+
+	public void setWgs84Type(WGS84Type wgs84Type) {
+		this.wgs84Type = wgs84Type;
+	}
+
+	@Column(length = 2048)
+	public String getCommonPointStr() {
+		return commonPointStr;
+	}
+
+	public void setCommonPointStr(String commonPointStr) {
+		this.commonPointStr = commonPointStr;
 	}
 }
