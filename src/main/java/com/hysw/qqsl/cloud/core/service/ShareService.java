@@ -4,6 +4,7 @@ import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.entity.project.Share;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class ShareService {
     public List<Share> getShares(User user) {
         List<Share> shares = new ArrayList<>();
         Share share;
-        List<Project> projects = projectService.findAll();
+        List<Project> projects = (List<Project>) SettingUtils.objectCopy(projectService.findAll());
         for (int i = 0; i < projects.size(); i++) {
             share = makeShare(projects.get(i));
             if (projects.get(i).getUser().getId().equals(user.getId()) || isShare(projects.get(i), user)) {
