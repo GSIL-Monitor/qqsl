@@ -7,6 +7,7 @@ import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.listener.TestExecutionListener;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -111,11 +112,11 @@ public class UpdateTest {
      */
     @Test
     public void testAddIconType(){
-        List<Project> all = projectService.findAll();
+        List<Project> all = (List<Project>) SettingUtils.objectCopy(projectService.findAll());
         for (int i = 0; i < all.size(); i++) {
-            all.get(i).setIconType(Project.IconType.STYLE_0);
-            projectService.save(all.get(i));
-            projectService.flush();
+            Project project = projectService.find(all.get(i).getId());
+            project.setIconType(Project.IconType.STYLE_0);
+            projectService.save(project);
         }
     }
 }

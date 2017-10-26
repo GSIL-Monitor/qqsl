@@ -128,6 +128,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
             jsonObject = new JSONObject();
             jsonObject.put("id", positionService.getUnuseds().get(i).getId());
             jsonObject.put("userName", positionService.getUnuseds().get(i).getUserName());
+            jsonObject.put("password", positionService.getUnuseds().get(i).getPassword());
             jsonObject.put("timeout", positionService.getUnuseds().get(i).getTimeout());
             jsonObject.put("using", false);
             jsonArray.add(jsonObject);
@@ -136,6 +137,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
             jsonObject = new JSONObject();
             jsonObject.put("id", positionService.getUseds().get(i).getId());
             jsonObject.put("userName", positionService.getUseds().get(i).getUserName());
+            jsonObject.put("password", positionService.getUseds().get(i).getPassword());
             jsonObject.put("timeout", positionService.getUseds().get(i).getTimeout());
             jsonObject.put("using", true);
             jsonArray.add(jsonObject);
@@ -144,6 +146,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
             jsonObject = new JSONObject();
             jsonObject.put("id", positionService.getTimeout().get(i).getId());
             jsonObject.put("userName", positionService.getTimeout().get(i).getUserName());
+            jsonObject.put("password", positionService.getTimeout().get(i).getPassword());
             jsonObject.put("timeout", positionService.getTimeout().get(i).getTimeout());
             jsonObject.put("using", false);
             jsonArray.add(jsonObject);
