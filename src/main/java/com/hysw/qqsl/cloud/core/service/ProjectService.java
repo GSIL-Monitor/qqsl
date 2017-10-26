@@ -1214,4 +1214,34 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         return new Message(Message.Type.NO_ALLOW);
     }
+
+    /**
+     * 项目图标类型定制
+     *
+     * @param user
+     * @param map
+     * @return
+     */
+    public Message iconTypeUpdate(User user, Map<String, Object> map) {
+        Object id = map.get("id");
+        Object iconType = map.get("iconType");
+        if (id == null || iconType == null) {
+            return new Message(Message.Type.FAIL);
+        }
+        Project project;
+        try {
+            project = find(Long.valueOf(id.toString()));
+        } catch (Exception e) {
+            return new Message(Message.Type.FAIL);
+        }
+        if (project == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        if (!project.getUser().getId().equals(user.getId())) {
+            return new Message(Message.Type.FAIL);
+        }
+        project.setIconType(Project.IconType.valueOf(iconType.toString()));
+        save(project);
+        return new Message(Message.Type.OK);
+    }
 }

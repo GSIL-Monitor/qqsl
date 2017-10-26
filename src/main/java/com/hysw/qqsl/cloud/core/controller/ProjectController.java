@@ -792,6 +792,23 @@ public class ProjectController {
         return projectService.isAllowBim(user);
     }
 
+    /**
+     * 项目图标类型定制
+     * @param map
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/iconType/update", method = RequestMethod.POST)
+    public @ResponseBody Message iconTypeUpdate(@RequestBody Map<String, Object> map) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        User user = authentService.getUserFromSubject();
+        return projectService.iconTypeUpdate(user,map);
+    }
+
 //    ?创建子账户限制条件(是否允许创建)
 //    ?每年最后一天套餐流量统计归0  管理员手动初始化套餐流量
 //    ?用户一旦创建就永久拥有测试版套餐
