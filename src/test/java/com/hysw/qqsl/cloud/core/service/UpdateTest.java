@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
+import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.listener.TestExecutionListener;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
@@ -25,10 +26,10 @@ import java.util.List;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners(value = {TestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+//@TestExecutionListeners(value = {TestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ContextConfiguration(locations = {"classpath*:/applicationContext-test.xml", "classpath*:/applicationContext-cache-test.xml"})
 @Transactional(transactionManager = "transactionManager")
-@Rollback(value = true)
+@Rollback(value = false)
 public class UpdateTest {
 
     @Autowired
@@ -102,6 +103,19 @@ public class UpdateTest {
             }
             user.setRoles(roles);
             userService.save(user);
+        }
+    }
+
+    /**
+     * 兼容原项目列表，为所有项目增加项目图标类型
+     */
+    @Test
+    public void testAddIconType(){
+        List<Project> all = projectService.findAll();
+        for (int i = 0; i < all.size(); i++) {
+            all.get(i).setIconType(Project.IconType.STYLE_0);
+            projectService.save(all.get(i));
+            projectService.flush();
         }
     }
 }

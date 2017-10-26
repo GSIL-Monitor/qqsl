@@ -143,6 +143,7 @@ public class Project extends BaseEntity {
     }
 
     public Project() {
+        this.iconType = IconType.STYLE_0;
     }
 
     public String getTreePath() {
