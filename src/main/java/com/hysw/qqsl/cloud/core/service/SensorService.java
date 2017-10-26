@@ -52,7 +52,9 @@ public class SensorService extends BaseService<Sensor,Long>{
         filters.add(Filter.eq("code", code));
         List<Sensor> sensors = sensorDao.findList(0, null, filters);
         if (sensors.size() == 1) {
-            return sensors.get(0);
+            Sensor sensor = sensors.get(0);
+            sensor.getStation().getType();
+            return sensor;
         }
         return null;
     }
