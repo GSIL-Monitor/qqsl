@@ -50,7 +50,7 @@ public class AliPayController {
     private TurnoverService turnoverService;
 
     //private static final String RETURN_URL = "http://4107ce0a.all123.net/qqsl.web/tpls/productModule/paySuccess.html";
-    private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/paySuccess.html";
+    private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/aliPaySuccess.html";
     private static final String NOTIFY_URL = "http://5007c0d2.nat123.cc/qqsl/aliPay/notify";
 
 
