@@ -322,6 +322,23 @@ public class TransFromService {
 	}
 
 	/**
+	 * 将大地坐标转换为平面坐标
+	 * @param central
+	 * @param lat
+	 * @param lon
+	 * @return
+	 */
+	public double[] transFromGroundToPlane(String central, double lat, double lon) {
+		if(Double.valueOf(central)%3!=0){
+			return null;
+		}
+		String code = checkCode54(central);
+		ProjCoordinate projCoordinate = BLHToXYZ(code, lon, lat);
+		double[] d = {projCoordinate.y,projCoordinate.x};
+		return d;
+	}
+
+	/**
 	 * 转换空间直接坐标
 	 * @param d
 	 * @param projCoordinate
@@ -413,30 +430,21 @@ public class TransFromService {
 	 * @param param54
 	 */
 	public Matrix calculate4Param(double[][] param54, double[][] param84){
-		//将平面坐标转换为大地坐标
-		ProjCoordinate projCoordinate1 = transFrom54PlaneTo54Ground("102",param54[0][1],param54[0][0], param54[0][2]);
-		ProjCoordinate projCoordinate2 = transFrom54PlaneTo54Ground("102",param54[1][1],param54[1][0], param54[1][2]);
-		//转换空间直接坐标
-		double[] fg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate1);
-		double[] sg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate2);
-		//将坐标放入projcoordinate
-		ProjCoordinate projCoordinate4 = setParamToProjcoordinate(param84[0][0], param84[0][1], param84[0][2]);
-		ProjCoordinate projCoordinate5 = setParamToProjcoordinate(param84[1][0], param84[1][1], param84[1][2]);
-		//转换空间直接坐标
-		double[] fg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"),projCoordinate4);
-		double[] sg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"),projCoordinate5);
+		//将大地坐标转换为平面坐标
+		double[] fg84 = transFromGroundToPlane("102", param84[0][0], param84[0][1]);
+		double[] sg84 = transFromGroundToPlane("102", param84[1][0], param84[1][1]);
 
 		double [][] C ={
-                {1,0,508508.852246,4030791.573954},
-                {0,1,4030791.573954,-508508.852246},
-                {1,0,508514.236141,4030791.021059},
-                {0,1,4030791.021059,-508514.236141},
+                {1,0,-fg84[1],fg84[0]},
+                {0,1,fg84[0],fg84[1]},
+                {1,0,-sg84[1],sg84[0]},
+                {0,1,sg84[0],sg84[1]},
 		};
 		double [][] b={
-				{3973264.495-4030791.573954},
-				{576999.863+508508.852246},
-				{3973263.304-4030791.021059},
-				{576994.637+508514.236141},
+				{param54[0][0]-fg84[0]},
+				{param54[0][1]-fg84[1]},
+				{param54[1][0]-sg84[0]},
+				{param54[1][1]-sg84[1]},
 		};
 		Matrix A = new Matrix(C);
 		Matrix B = new Matrix(b);

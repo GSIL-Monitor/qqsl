@@ -191,15 +191,15 @@ public class TransFromCoordinatePreciseConversionTest extends BaseTest {
 
     @Test
     public void testTransFromCoordinate1(){
-        double[][] param54 = new double[2][3];
+        double[][] param54 = new double[2][2];
         param54[0][0] = 3973264.495;//x
         param54[0][1] = 576999.863;//y
-        param54[0][2] = 1805.985;//z
+//        param54[0][2] = 1805.985;//z
         param54[1][0] = 3973263.304;
         param54[1][1] = 576994.637;
-        param54[1][2] = 1805.891;
+//        param54[1][2] = 1805.891;
 
-        double[][] param84 = new double[2][3];
+        double[][] param84 = new double[2][2];
         param84[0][0] = 35.8856820505556;//B
         param84[0][1] = 102.852747449722;//L
 //        param84[0][2] = 1805.979;//H
@@ -207,7 +207,7 @@ public class TransFromCoordinatePreciseConversionTest extends BaseTest {
         param84[1][1] = 102.852689645556;
 //        param84[1][2] = 1805.932;
 
-        double[][] param = new double[1][3];
+        double[][] param = new double[1][2];
         param[0][0] = 35.8856092102778;
         param[0][1] = 102.852845316111;
 //        param[0][2] = 1805.685;
@@ -215,8 +215,19 @@ public class TransFromCoordinatePreciseConversionTest extends BaseTest {
     }
     public void transfrom1(double[][] param54,double[][] param84,double[][] param){
         Matrix R = transFromService.calculate4Param(param54, param84);
-
-        System.out.println("-----------------");
+        double[] fg84 = transFromService.transFromGroundToPlane("102", param[0][0], param[0][1]);
+        double [][] C ={
+                {1,0,-fg84[1],fg84[0]},
+                {0,1,fg84[0],fg84[1]},
+        };
+        double [][] b={
+                {fg84[0]},
+                {fg84[1]},
+        };
+        Matrix A = new Matrix(C);
+        Matrix B = new Matrix(b);
+        Matrix plus = A.times(R).plus(B);
+        System.out.println(plus.get(0,0)+":"+plus.get(1,0));
     }
 
 }

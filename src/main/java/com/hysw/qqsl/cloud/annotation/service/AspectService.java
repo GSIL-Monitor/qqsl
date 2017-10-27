@@ -134,7 +134,7 @@ public class AspectService {
                 return new Message(Message.Type.FAIL);
             }
         }
-        return new Message(Message.Type.UNKNOWN);
+        return new Message(Message.Type.EXIST);
     }
 
 
