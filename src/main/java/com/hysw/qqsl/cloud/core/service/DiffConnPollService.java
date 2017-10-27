@@ -62,11 +62,11 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
     public Message isAllowConnectQXWZ(Long id) {
         Project project = projectService.find(id);
         if (project == null) {
-            return new Message(Message.Type.EXIST);
+            return new Message(Message.Type.FAIL);
         }
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
-            return new Message(Message.Type.EXIST);
+            return new Message(Message.Type.FAIL);
         }
         if (aPackage.getExpireDate().getTime() < System.currentTimeMillis()) {
             return new Message(Message.Type.EXPIRED);
@@ -77,7 +77,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
                 return new Message(Message.Type.OK);
             }
         }
-        return new Message(Message.Type.NO_ALLOW);
+        return new Message(Message.Type.FAIL);
     }
 
 
