@@ -67,6 +67,22 @@ public class Coordinate extends BaseEntity {
 		}
 	}
 
+	/**
+	 * 四参数或七参数
+	 */
+	public enum ParameterType {
+		// 四参数
+		FOUR,
+		// 七参数
+		SEVEN;
+		public static ParameterType valueOf(int ordinal) {
+			if (ordinal < 0 || ordinal >= values().length) {
+				throw new IndexOutOfBoundsException("Invalid ordinal");
+			}
+			return values()[ordinal];
+		}
+	}
+
 	public Coordinate(){
 		this.source = Build.Source.DESIGN;
 	}
