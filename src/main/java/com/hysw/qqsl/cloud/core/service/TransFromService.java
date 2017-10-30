@@ -291,10 +291,6 @@ public class TransFromService {
 		if(Double.valueOf(central)%3!=0){
 			return null;
 		}
-		BigDecimal bd = new BigDecimal(x);
-		if(bd.toString().substring(0,bd.toString().lastIndexOf(".")).length()==8){
-			x=Double.valueOf(bd.toString().substring(2));
-		}
 		String code = checkCode54(central);
 		ProjCoordinate projCoordinate =XYZToBLH(code, x, y);
 		ProjCoordinate projCoordinate1 = new ProjCoordinate();
@@ -376,47 +372,48 @@ public class TransFromService {
 
 	/**
 	 * 计算7参数
+	 *
 	 * @param param54
 	 */
-	public Matrix calculate7Param(double[][] param54, double[][] param84){
+	public Matrix calculate7Param(String central,String baseLevelType, double[][] param, double[][] param84) {
 		//将平面坐标转换为大地坐标
-		ProjCoordinate projCoordinate1 = transFrom54PlaneTo54Ground("102",param54[0][1],param54[0][0], param54[0][2]);
-		ProjCoordinate projCoordinate2 = transFrom54PlaneTo54Ground("102",param54[1][1],param54[1][0], param54[1][2]);
-		ProjCoordinate projCoordinate3 = transFrom54PlaneTo54Ground("102",param54[2][1],param54[2][0], param54[2][2]);
+		ProjCoordinate projCoordinate1 = transFrom54PlaneTo54Ground(central, param[0][1], param[0][0], param[0][2]);
+		ProjCoordinate projCoordinate2 = transFrom54PlaneTo54Ground(central, param[1][1], param[1][0], param[1][2]);
+		ProjCoordinate projCoordinate3 = transFrom54PlaneTo54Ground(central, param[2][1], param[2][0], param[2][2]);
 		//转换空间直接坐标
-		double[] fg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate1);
-		double[] sg54 = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate2);
-		double[] tg54= transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"),projCoordinate3);
+		double[] fg = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"), projCoordinate1);
+		double[] sg = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"), projCoordinate2);
+		double[] tg = transFromRectangularSpaceCoordinate(selcetTransFromParam("Beijing54"), projCoordinate3);
 		//将坐标放入projcoordinate
 		ProjCoordinate projCoordinate4 = setParamToProjcoordinate(param84[0][0], param84[0][1], param84[0][2]);
 		ProjCoordinate projCoordinate5 = setParamToProjcoordinate(param84[1][0], param84[1][1], param84[1][2]);
 		ProjCoordinate projCoordinate6 = setParamToProjcoordinate(param84[2][0], param84[2][1], param84[2][2]);
 		//转换空间直接坐标
-		double[] fg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"),projCoordinate4);
-		double[] sg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"),projCoordinate5);
-		double[] tg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"),projCoordinate6);
+		double[] fg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"), projCoordinate4);
+		double[] sg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"), projCoordinate5);
+		double[] tg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam("WGS84"), projCoordinate6);
 
-		double [][] C ={
-				{1,0,0,fg84[0],0,-fg84[2],fg84[1]},
-				{0,1,0,fg84[1],fg84[2],0,-fg84[0]},
-				{0,0,1,fg84[2],-fg84[1],fg84[0],0},
-				{1,0,0,sg84[0],0,-sg84[2],sg84[1]},
-				{0,1,0,sg84[1],sg84[2],0,-sg84[0]},
-				{0,0,1,sg84[2],-sg84[1],sg84[0],0},
-				{1,0,0,tg84[0],0,-tg84[2],tg84[1]},
-				{0,1,0,tg84[1],tg84[2],0,-tg84[0]},
-				{0,0,1,tg84[2],-tg84[1],tg84[0],0},
+		double[][] C = {
+				{1, 0, 0, fg[0], 0, -fg[2], fg[1]},
+				{0, 1, 0, fg[1], fg[2], 0, -fg[0]},
+				{0, 0, 1, fg[2], -fg[1], fg[0], 0},
+				{1, 0, 0, sg[0], 0, -sg[2], sg[1]},
+				{0, 1, 0, sg[1], sg[2], 0, -sg[0]},
+				{0, 0, 1, sg[2], -sg[1], sg[0], 0},
+				{1, 0, 0, tg[0], 0, -tg[2], tg[1]},
+				{0, 1, 0, tg[1], tg[2], 0, -tg[0]},
+				{0, 0, 1, tg[2], -tg[1], tg[0], 0},
 		};
-		double [][] b={
-				{fg54[0]-fg84[0]},
-				{fg54[1]-fg84[1]},
-				{fg54[2]-fg84[2]},
-				{sg54[0]-sg84[0]},
-				{sg54[1]-sg84[1]},
-				{sg54[2]-sg84[2]},
-				{tg54[0]-tg84[0]},
-				{tg54[1]-tg84[1]},
-				{tg54[2]-tg84[2]},
+		double[][] b = {
+				{fg84[0] - fg[0]},
+				{fg84[1] - fg[1]},
+				{fg84[2] - fg[2]},
+				{sg84[0] - sg[0]},
+				{sg84[1] - sg[1]},
+				{sg84[2] - sg[2]},
+				{tg84[0] - tg[0]},
+				{tg84[1] - tg[1]},
+				{tg84[2] - tg[2]},
 		};
 		Matrix A = new Matrix(C);
 		Matrix B = new Matrix(b);
@@ -427,24 +424,25 @@ public class TransFromService {
 
 	/**
 	 * 计算4参数
+	 *
 	 * @param param54
 	 */
-	public Matrix calculate4Param(double[][] param54, double[][] param84){
+	public Matrix calculate4Param(String central, double[][] param54, double[][] param84) {
 		//将大地坐标转换为平面坐标
-		double[] fg84 = transFromGroundToPlane("102", param84[0][0], param84[0][1]);
-		double[] sg84 = transFromGroundToPlane("102", param84[1][0], param84[1][1]);
+		double[] fg84 = transFromGroundToPlane(central, param84[0][0], param84[0][1]);
+		double[] sg84 = transFromGroundToPlane(central, param84[1][0], param84[1][1]);
 
-		double [][] C ={
-                {1,0,-fg84[1],fg84[0]},
-                {0,1,fg84[0],fg84[1]},
-                {1,0,-sg84[1],sg84[0]},
-                {0,1,sg84[0],sg84[1]},
+		double[][] C = {
+				{1, 0, -fg84[1], fg84[0]},
+				{0, 1, fg84[0], fg84[1]},
+				{1, 0, -sg84[1], sg84[0]},
+				{0, 1, sg84[0], sg84[1]},
 		};
-		double [][] b={
-				{param54[0][0]-fg84[0]},
-				{param54[0][1]-fg84[1]},
-				{param54[1][0]-sg84[0]},
-				{param54[1][1]-sg84[1]},
+		double[][] b = {
+				{param54[0][0] - fg84[0]},
+				{param54[0][1] - fg84[1]},
+				{param54[1][0] - sg84[0]},
+				{param54[1][1] - sg84[1]},
 		};
 		Matrix A = new Matrix(C);
 		Matrix B = new Matrix(b);
