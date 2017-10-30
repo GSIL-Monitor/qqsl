@@ -56,8 +56,26 @@ public class Coordinate extends BaseEntity {
 		// 35:23:45
 		DEGREE_MINUTE_SECOND_1,
 		// 35^o23'45''
-		DEGREE_MINUTE_SECOND_2;
+		DEGREE_MINUTE_SECOND_2,
+		// 平面坐标
+		PLANE_COORDINATE;
 		public static WGS84Type valueOf(int ordinal) {
+			if (ordinal < 0 || ordinal >= values().length) {
+				throw new IndexOutOfBoundsException("Invalid ordinal");
+			}
+			return values()[ordinal];
+		}
+	}
+
+	/**
+	 * 四参数或七参数
+	 */
+	public enum ParameterType {
+		// 四参数
+		FOUR,
+		// 七参数
+		SEVEN;
+		public static ParameterType valueOf(int ordinal) {
 			if (ordinal < 0 || ordinal >= values().length) {
 				throw new IndexOutOfBoundsException("Invalid ordinal");
 			}
