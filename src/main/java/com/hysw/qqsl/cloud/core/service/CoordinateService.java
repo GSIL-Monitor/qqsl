@@ -349,7 +349,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				coordinateBase.setElevation(elevation);
 				list.add(coordinateBase);
 				graph.setCoordinates(list);
-				if (type != null&&type.toString().trim()!= "") {
+				if (type != null&&!type.trim().equals("")) {
 					for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
 						graph.setBaseType(CommonEnum.CommonType.TSD);
 						if (CommonAttributes.BASETYPEC[i]
@@ -375,6 +375,137 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @return
 	 */
 	private JSONObject coordinateXYZToBLH(String longitude, String latitude, String code) {
+		Coordinate.WGS84Type wgs84Type = null;
+		if (wgs84Type == null) {
+			return null;
+		}
+		switch (wgs84Type) {
+			case DEGREE:
+				return degree(longitude,latitude);
+			case DEGREE_MINUTE_1:
+				return degreeMinute1(longitude,latitude);
+			case DEGREE_MINUTE_2:
+				return degreeMinute2(longitude,latitude);
+			case DEGREE_MINUTE_SECOND_1:
+				return degreeMinuteSecond1(longitude, latitude);
+			case DEGREE_MINUTE_SECOND_2:
+				return degreeMinuteSecond2(longitude, latitude);
+			case PLANE_COORDINATE:
+				return planeCoordinate(longitude,latitude,code);
+		}
+		return null;
+	}
+
+	private JSONObject degreeMinuteSecond2(String longitude, String latitude) {
+		if (longitude.length() == 0 || latitude.length() == 0
+				|| SettingUtils.parameterRegex(longitude)
+				|| SettingUtils.parameterRegex(latitude)) {
+			return null;
+		}
+		String a = longitude.substring(0,longitude.indexOf("°"));
+		String b = longitude.substring(longitude.indexOf("°") + 1, longitude.indexOf("'"));
+		String c = longitude.substring(longitude.indexOf("'") + 1, longitude.length() - 1);
+		longitude = String.valueOf(Double.valueOf(a) + Double.valueOf(b) / 60+Double.valueOf(c) / 3600);
+		a = latitude.substring(0,latitude.indexOf("°"));
+		b = latitude.substring(latitude.indexOf("°") + 1, latitude.indexOf("'"));
+		c = latitude.substring(latitude.indexOf("'") + 1, latitude.length() - 1);
+		latitude = String.valueOf(Double.valueOf(a) + Double.valueOf(b) / 60+Double.valueOf(c) / 3600);
+		if (Float.valueOf(longitude) > 180
+				|| Float.valueOf(longitude) < 0) {
+			return null;
+		}
+		if (Float.valueOf(latitude) > 90
+				|| Float.valueOf(latitude) < 0) {
+			return null;
+		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("longitude", longitude);
+		jsonObject.put("latitude", latitude);
+		return jsonObject;
+	}
+
+	private JSONObject degreeMinuteSecond1(String longitude, String latitude) {
+		if (longitude.length() == 0 || latitude.length() == 0
+				|| SettingUtils.parameterRegex(longitude)
+				|| SettingUtils.parameterRegex(latitude)) {
+			return null;
+		}
+		String[] str=longitude.split(":");
+		longitude = String.valueOf(Double.valueOf(str[0]) + Double.valueOf(str[1]) / 60+Double.valueOf(str[2]) / 3600);
+		str=latitude.split(":");
+		latitude = String.valueOf(Double.valueOf(str[0]) + Double.valueOf(str[1]) / 60+Double.valueOf(str[2])/3600);
+		if (Float.valueOf(longitude) > 180
+				|| Float.valueOf(longitude) < 0) {
+			return null;
+		}
+		if (Float.valueOf(latitude) > 90
+				|| Float.valueOf(latitude) < 0) {
+			return null;
+		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("longitude", longitude);
+		jsonObject.put("latitude", latitude);
+		return jsonObject;
+	}
+
+	private JSONObject degreeMinute2(String longitude, String latitude) {
+		if (longitude.length() == 0 || latitude.length() == 0
+				|| SettingUtils.parameterRegex(longitude)
+				|| SettingUtils.parameterRegex(latitude)) {
+			return null;
+		}
+		String a = longitude.substring(0,longitude.indexOf("°"));
+		String b = longitude.substring(longitude.indexOf("°") + 1, longitude.indexOf("'"));
+		longitude = String.valueOf(Double.valueOf(a) + Double.valueOf(b) / 60);
+		a = latitude.substring(0,latitude.indexOf("°"));
+		b = latitude.substring(latitude.indexOf("°") + 1, latitude.indexOf("'"));
+		latitude = String.valueOf(Double.valueOf(a) + Double.valueOf(b) / 60);
+		if (Float.valueOf(longitude) > 180
+				|| Float.valueOf(longitude) < 0) {
+			return null;
+		}
+		if (Float.valueOf(latitude) > 90
+				|| Float.valueOf(latitude) < 0) {
+			return null;
+		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("longitude", longitude);
+		jsonObject.put("latitude", latitude);
+		return jsonObject;
+	}
+
+	private JSONObject degreeMinute1(String longitude, String latitude) {
+		if (longitude.length() == 0 || latitude.length() == 0
+				|| SettingUtils.parameterRegex(longitude)
+				|| SettingUtils.parameterRegex(latitude)) {
+			return null;
+		}
+		String[] str=longitude.split(":");
+		longitude = String.valueOf(Double.valueOf(str[0]) + Double.valueOf(str[1]) / 60);
+		str=latitude.split(":");
+		latitude = String.valueOf(Double.valueOf(str[0]) + Double.valueOf(str[1]) / 60);
+		if (Float.valueOf(longitude) > 180
+				|| Float.valueOf(longitude) < 0) {
+			return null;
+		}
+		if (Float.valueOf(latitude) > 90
+				|| Float.valueOf(latitude) < 0) {
+			return null;
+		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("longitude", longitude);
+		jsonObject.put("latitude", latitude);
+		return jsonObject;
+	}
+
+	/**
+	 * 平面坐标转经纬度
+	 * @param longitude
+	 * @param latitude
+	 * @param code
+	 * @return
+	 */
+	private JSONObject planeCoordinate(String longitude, String latitude, String code) {
 		double lon = 0.0f;
 		double lat = 0.0f;
 		if (longitude.length() == 0 || latitude.length() == 0
@@ -382,41 +513,49 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				|| SettingUtils.parameterRegex(latitude)) {
 			return null;
 		}
+		String str = longitude;
+		String str1 = str.substring(0, str.indexOf("."));
+		if (str1.length() == 6) {
+			lon = Double.valueOf(str);
+		} else {
+			return null;
+		}
+		str = latitude;
+		str1 = str.substring(0, str.indexOf("."));
+		if (str1.length() == 7) {
+			lat = Double.valueOf(str);
+		} else {
+			return null;
+		}
+		ProjCoordinate pc = transFromService.XYZToBLH(code,
+				lon, lat);
+		longitude = String.valueOf(pc.x);
+		latitude = String.valueOf(pc.y);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("longitude", longitude);
+		jsonObject.put("latitude", latitude);
+		return jsonObject;
+	}
+
+	/**
+	 * 度
+	 * @param longitude
+	 * @param latitude
+	 * @return
+	 */
+	private JSONObject degree(String longitude, String latitude) {
+		if (longitude.length() == 0 || latitude.length() == 0
+				|| SettingUtils.parameterRegex(longitude)
+				|| SettingUtils.parameterRegex(latitude)) {
+			return null;
+		}
 		if (Float.valueOf(longitude) > 180
 				|| Float.valueOf(longitude) < 0) {
-			if (Float.valueOf(longitude) > 180) {
-				String str = longitude;
-				String str1 = str.substring(0, str.indexOf("."));
-				if (str1.length() == 6) {
-					lon = Double.valueOf(str);
-				} else {
-					return null;
-				}
-			}
-			if (Float.valueOf(longitude) < 0) {
-				return null;
-			}
+			return null;
 		}
 		if (Float.valueOf(latitude) > 90
 				|| Float.valueOf(latitude) < 0) {
-			if (Float.valueOf(latitude) > 90) {
-				String str = latitude;
-				String str1 = str.substring(0, str.indexOf("."));
-				if (str1.length() == 7) {
-					lat = Double.valueOf(str);
-				} else {
-					return null;
-				}
-			}
-			if (Float.valueOf(latitude) < 0) {
-				return null;
-			}
-		}
-		if (lon != 0.0f && lat != 0.0f) {
-			ProjCoordinate pc = transFromService.XYZToBLH(code,
-					lon, lat);
-			longitude = String.valueOf(pc.x);
-			latitude = String.valueOf(pc.y);
+			return null;
 		}
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("longitude", longitude);

@@ -256,116 +256,116 @@ public class TransFromService {
 		return p2;
 	}
 
-	/**
-	 * 根据不同坐标系选择参数
-	 * @param baseLevelType
-	 *                    参数 beijing54 xian80 WGS84
-	 * @return
-	 */
-	public double[] selcetTransFromParam(Coordinate.BaseLevelType baseLevelType){
-		double[] d = new double[3];
-		if(baseLevelType== Coordinate.BaseLevelType.BEIJING54){
-			d[0] = 6378245d;
-			d[1] = 6356863d;
-			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
-		}else if(baseLevelType== Coordinate.BaseLevelType.XIAN80){
-			d[0]=6378140d;//长轴
-			d[1]=6356755.2882d;//短轴
-			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
-		}else if(baseLevelType== Coordinate.BaseLevelType.WGS84){
-			d[0]=6378137d;//长轴
-			d[1]=6356752.314d;//短轴
-			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
-		} else if (baseLevelType == Coordinate.BaseLevelType.CGCS2000) {
-			d[0]=6378137d;//长轴
-			d[1]=6356752.31414d;//短轴
-			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
-		}
-		return d;
-	}
+//	/**
+//	 * 根据不同坐标系选择参数
+//	 * @param baseLevelType
+//	 *                    参数 beijing54 xian80 WGS84
+//	 * @return
+//	 */
+//	public double[] selcetTransFromParam(Coordinate.BaseLevelType baseLevelType){
+//		double[] d = new double[3];
+//		if(baseLevelType== Coordinate.BaseLevelType.BEIJING54){
+//			d[0] = 6378245d;
+//			d[1] = 6356863d;
+//			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
+//		}else if(baseLevelType== Coordinate.BaseLevelType.XIAN80){
+//			d[0]=6378140d;//长轴
+//			d[1]=6356755.2882d;//短轴
+//			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
+//		}else if(baseLevelType== Coordinate.BaseLevelType.WGS84){
+//			d[0]=6378137d;//长轴
+//			d[1]=6356752.314d;//短轴
+//			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.CGCS2000) {
+//			d[0]=6378137d;//长轴
+//			d[1]=6356752.31414d;//短轴
+//			d[2] = (d[0] * d[0] - d[1] * d[1]) / (d[0] * d[0]);
+//		}
+//		return d;
+//	}
 
-	/**
-	 * 将平面坐标转换为大地坐标
-	 * @param central
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 */
-	public ProjCoordinate transFromPlaneToGround(Coordinate.BaseLevelType baseLevelType, String central, double x, double y, double z) {
-		if(Double.valueOf(central)%3!=0){
-			return null;
-		}
-		String code = null;
-		if (baseLevelType == Coordinate.BaseLevelType.BEIJING54) {
-			code = checkCode54(central);
-		} else if (baseLevelType == Coordinate.BaseLevelType.XIAN80) {
-			code = checkCode80(central);
-		} else if (baseLevelType == Coordinate.BaseLevelType.WGS84) {
-			code = checkCode84(central);
-		} else if (baseLevelType == Coordinate.BaseLevelType.CGCS2000) {
-//			code=checkCode2000(central)
-		}
-		ProjCoordinate projCoordinate =XYZToBLH(code, x, y);
-		ProjCoordinate projCoordinate1 = new ProjCoordinate();
-		projCoordinate1.setValue(projCoordinate.y, projCoordinate.x, z);
-		return projCoordinate1;
-	}
+//	/**
+//	 * 将平面坐标转换为大地坐标
+//	 * @param central
+//	 * @param x
+//	 * @param y
+//	 * @param z
+//	 * @return
+//	 */
+//	public ProjCoordinate transFromPlaneToGround(Coordinate.BaseLevelType baseLevelType, String central, double x, double y, double z) {
+//		if(Double.valueOf(central)%3!=0){
+//			return null;
+//		}
+//		String code = null;
+//		if (baseLevelType == Coordinate.BaseLevelType.BEIJING54) {
+//			code = checkCode54(central);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.XIAN80) {
+//			code = checkCode80(central);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.WGS84) {
+//			code = checkCode84(central);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.CGCS2000) {
+////			code=checkCode2000(central)
+//		}
+//		ProjCoordinate projCoordinate =XYZToBLH(code, x, y);
+//		ProjCoordinate projCoordinate1 = new ProjCoordinate();
+//		projCoordinate1.setValue(projCoordinate.y, projCoordinate.x, z);
+//		return projCoordinate1;
+//	}
+
+//	/**
+//	 * 将大地坐标转换为平面坐标
+//	 *
+//	 * @param central
+//	 * @param lat
+//	 * @param lon
+//	 * @param ele
+//	 * @return
+//	 */
+//	public ProjCoordinate transFromGroundToPlane(Coordinate.BaseLevelType baseLevelType, String central, double lat, double lon, double ele) {
+//		if (Double.valueOf(central) % 3 != 0) {
+//			return null;
+//		}
+//		String code = null;
+//		if (baseLevelType == Coordinate.BaseLevelType.BEIJING54) {
+//			code = checkCode54(central);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.XIAN80) {
+//			code = checkCode80(central);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.WGS84) {
+//			code = checkCode84(central);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.CGCS2000) {
+////			code=checkCode2000(central)
+//		}
+//		ProjCoordinate projCoordinate = BLHToXYZ(code, lon, lat);
+//		ProjCoordinate projCoordinate1 = new ProjCoordinate();
+//		projCoordinate1.setValue(projCoordinate.y, projCoordinate.x, ele);
+//		return projCoordinate1;
+//	}
 
 	/**
 	 * 将大地坐标转换为平面坐标
-	 *
-	 * @param central
-	 * @param lat
-	 * @param lon
-	 * @param ele
-	 * @return
-	 */
-	public ProjCoordinate transFromGroundToPlane(Coordinate.BaseLevelType baseLevelType, String central, double lat, double lon, double ele) {
-		if (Double.valueOf(central) % 3 != 0) {
-			return null;
-		}
-		String code = null;
-		if (baseLevelType == Coordinate.BaseLevelType.BEIJING54) {
-			code = checkCode54(central);
-		} else if (baseLevelType == Coordinate.BaseLevelType.XIAN80) {
-			code = checkCode80(central);
-		} else if (baseLevelType == Coordinate.BaseLevelType.WGS84) {
-			code = checkCode84(central);
-		} else if (baseLevelType == Coordinate.BaseLevelType.CGCS2000) {
-//			code=checkCode2000(central)
-		}
-		ProjCoordinate projCoordinate = BLHToXYZ(code, lon, lat);
-		ProjCoordinate projCoordinate1 = new ProjCoordinate();
-		projCoordinate1.setValue(projCoordinate.y, projCoordinate.x, ele);
-		return projCoordinate1;
-	}
-
-	/**
-	 * 将大地坐标转换为平面坐标
 	 * @param central
 	 * @param lat
 	 * @param lon
 	 * @return
 	 */
-	public double[] transFromGroundToPlane(Coordinate.BaseLevelType baseLevelType, String central, double lat, double lon) {
-		if(Double.valueOf(central)%3!=0){
-			return null;
-		}
-		String code = null;
-		if (baseLevelType == Coordinate.BaseLevelType.BEIJING54) {
-			code = checkCode54(central);
-		} else if (baseLevelType == Coordinate.BaseLevelType.XIAN80) {
-			code = checkCode80(central);
-		} else if (baseLevelType == Coordinate.BaseLevelType.WGS84) {
-			code = checkCode84(central);
-		} else if (baseLevelType == Coordinate.BaseLevelType.CGCS2000) {
-//			code=checkCode2000(central)
-		}
-		ProjCoordinate projCoordinate = BLHToXYZ(code, lon, lat);
-		double[] d = {projCoordinate.y,projCoordinate.x};
-		return d;
-	}
+//	public double[] transFromGroundToPlane(Coordinate.BaseLevelType baseLevelType, String central, double lat, double lon) {
+//		if(Double.valueOf(central)%3!=0){
+//			return null;
+//		}
+//		String code = null;
+//		if (baseLevelType == Coordinate.BaseLevelType.BEIJING54) {
+//			code = checkCode54(central);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.XIAN80) {
+//			code = checkCode80(central);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.WGS84) {
+//			code = checkCode84(central);
+//		} else if (baseLevelType == Coordinate.BaseLevelType.CGCS2000) {
+////			code=checkCode2000(central)
+//		}
+//		ProjCoordinate projCoordinate = BLHToXYZ(code, lon, lat);
+//		double[] d = {projCoordinate.y,projCoordinate.x};
+//		return d;
+//	}
 
 	/**
 	 * 转换空间直接坐标
@@ -410,81 +410,81 @@ public class TransFromService {
 	 * @param param
 	 * @param param84
 	 */
-	public Matrix calculate7Param(String central, Coordinate.BaseLevelType baseLevelType, double[][] param, double[][] param84) {
-		//将平面坐标转换为大地坐标
-		ProjCoordinate projCoordinate1 = transFromPlaneToGround(baseLevelType,central, param[0][1], param[0][0], param[0][2]);
-		ProjCoordinate projCoordinate2 = transFromPlaneToGround(baseLevelType,central, param[1][1], param[1][0], param[1][2]);
-		ProjCoordinate projCoordinate3 = transFromPlaneToGround(baseLevelType,central, param[2][1], param[2][0], param[2][2]);
-		//转换空间直接坐标
-		double[] fg = transFromRectangularSpaceCoordinate(selcetTransFromParam(baseLevelType), projCoordinate1);
-		double[] sg = transFromRectangularSpaceCoordinate(selcetTransFromParam(baseLevelType), projCoordinate2);
-		double[] tg = transFromRectangularSpaceCoordinate(selcetTransFromParam(baseLevelType), projCoordinate3);
-		//将坐标放入projcoordinate
-		ProjCoordinate projCoordinate4 = setParamToProjcoordinate(param84[0][0], param84[0][1], param84[0][2]);
-		ProjCoordinate projCoordinate5 = setParamToProjcoordinate(param84[1][0], param84[1][1], param84[1][2]);
-		ProjCoordinate projCoordinate6 = setParamToProjcoordinate(param84[2][0], param84[2][1], param84[2][2]);
-		//转换空间直接坐标
-		double[] fg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam(Coordinate.BaseLevelType.WGS84), projCoordinate4);
-		double[] sg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam(Coordinate.BaseLevelType.WGS84), projCoordinate5);
-		double[] tg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam(Coordinate.BaseLevelType.WGS84), projCoordinate6);
-
-		double[][] C = {
-				{1, 0, 0, fg[0], 0, -fg[2], fg[1]},
-				{0, 1, 0, fg[1], fg[2], 0, -fg[0]},
-				{0, 0, 1, fg[2], -fg[1], fg[0], 0},
-				{1, 0, 0, sg[0], 0, -sg[2], sg[1]},
-				{0, 1, 0, sg[1], sg[2], 0, -sg[0]},
-				{0, 0, 1, sg[2], -sg[1], sg[0], 0},
-				{1, 0, 0, tg[0], 0, -tg[2], tg[1]},
-				{0, 1, 0, tg[1], tg[2], 0, -tg[0]},
-				{0, 0, 1, tg[2], -tg[1], tg[0], 0},
-		};
-		double[][] b = {
-				{fg84[0] - fg[0]},
-				{fg84[1] - fg[1]},
-				{fg84[2] - fg[2]},
-				{sg84[0] - sg[0]},
-				{sg84[1] - sg[1]},
-				{sg84[2] - sg[2]},
-				{tg84[0] - tg[0]},
-				{tg84[1] - tg[1]},
-				{tg84[2] - tg[2]},
-		};
-		Matrix A = new Matrix(C);
-		Matrix B = new Matrix(b);
-		Matrix AT = A.transpose();
-		Matrix R = (AT.times(A)).inverse().times(AT).times(B);
-		return R;
-	}
+//	public Matrix calculate7Param(String central, Coordinate.BaseLevelType baseLevelType, double[][] param, double[][] param84) {
+//		//将平面坐标转换为大地坐标
+//		ProjCoordinate projCoordinate1 = transFromPlaneToGround(baseLevelType,central, param[0][1], param[0][0], param[0][2]);
+//		ProjCoordinate projCoordinate2 = transFromPlaneToGround(baseLevelType,central, param[1][1], param[1][0], param[1][2]);
+//		ProjCoordinate projCoordinate3 = transFromPlaneToGround(baseLevelType,central, param[2][1], param[2][0], param[2][2]);
+//		//转换空间直接坐标
+//		double[] fg = transFromRectangularSpaceCoordinate(selcetTransFromParam(baseLevelType), projCoordinate1);
+//		double[] sg = transFromRectangularSpaceCoordinate(selcetTransFromParam(baseLevelType), projCoordinate2);
+//		double[] tg = transFromRectangularSpaceCoordinate(selcetTransFromParam(baseLevelType), projCoordinate3);
+//		//将坐标放入projcoordinate
+//		ProjCoordinate projCoordinate4 = setParamToProjcoordinate(param84[0][0], param84[0][1], param84[0][2]);
+//		ProjCoordinate projCoordinate5 = setParamToProjcoordinate(param84[1][0], param84[1][1], param84[1][2]);
+//		ProjCoordinate projCoordinate6 = setParamToProjcoordinate(param84[2][0], param84[2][1], param84[2][2]);
+//		//转换空间直接坐标
+//		double[] fg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam(Coordinate.BaseLevelType.WGS84), projCoordinate4);
+//		double[] sg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam(Coordinate.BaseLevelType.WGS84), projCoordinate5);
+//		double[] tg84 = transFromRectangularSpaceCoordinate(selcetTransFromParam(Coordinate.BaseLevelType.WGS84), projCoordinate6);
+//
+//		double[][] C = {
+//				{1, 0, 0, fg[0], 0, -fg[2], fg[1]},
+//				{0, 1, 0, fg[1], fg[2], 0, -fg[0]},
+//				{0, 0, 1, fg[2], -fg[1], fg[0], 0},
+//				{1, 0, 0, sg[0], 0, -sg[2], sg[1]},
+//				{0, 1, 0, sg[1], sg[2], 0, -sg[0]},
+//				{0, 0, 1, sg[2], -sg[1], sg[0], 0},
+//				{1, 0, 0, tg[0], 0, -tg[2], tg[1]},
+//				{0, 1, 0, tg[1], tg[2], 0, -tg[0]},
+//				{0, 0, 1, tg[2], -tg[1], tg[0], 0},
+//		};
+//		double[][] b = {
+//				{fg84[0] - fg[0]},
+//				{fg84[1] - fg[1]},
+//				{fg84[2] - fg[2]},
+//				{sg84[0] - sg[0]},
+//				{sg84[1] - sg[1]},
+//				{sg84[2] - sg[2]},
+//				{tg84[0] - tg[0]},
+//				{tg84[1] - tg[1]},
+//				{tg84[2] - tg[2]},
+//		};
+//		Matrix A = new Matrix(C);
+//		Matrix B = new Matrix(b);
+//		Matrix AT = A.transpose();
+//		Matrix R = (AT.times(A)).inverse().times(AT).times(B);
+//		return R;
+//	}
 
 	/**
 	 * 计算4参数
 	 *
 	 * @param param54
 	 */
-	public Matrix calculate4Param(String central, double[][] param54, double[][] param84) {
-		//将大地坐标转换为平面坐标
-		double[] fg84 = transFromGroundToPlane(Coordinate.BaseLevelType.WGS84,central, param84[0][0], param84[0][1]);
-		double[] sg84 = transFromGroundToPlane(Coordinate.BaseLevelType.WGS84,central, param84[1][0], param84[1][1]);
-
-		double[][] C = {
-				{1, 0, -fg84[1], fg84[0]},
-				{0, 1, fg84[0], fg84[1]},
-				{1, 0, -sg84[1], sg84[0]},
-				{0, 1, sg84[0], sg84[1]},
-		};
-		double[][] b = {
-				{param54[0][0] - fg84[0]},
-				{param54[0][1] - fg84[1]},
-				{param54[1][0] - sg84[0]},
-				{param54[1][1] - sg84[1]},
-		};
-		Matrix A = new Matrix(C);
-		Matrix B = new Matrix(b);
-		Matrix AT = A.transpose();
-		Matrix R = (AT.times(A)).inverse().times(AT).times(B);
-		return R;
-	}
+//	public Matrix calculate4Param(String central, double[][] param54, double[][] param84) {
+//		//将大地坐标转换为平面坐标
+//		double[] fg84 = transFromGroundToPlane(Coordinate.BaseLevelType.WGS84,central, param84[0][0], param84[0][1]);
+//		double[] sg84 = transFromGroundToPlane(Coordinate.BaseLevelType.WGS84,central, param84[1][0], param84[1][1]);
+//
+//		double[][] C = {
+//				{1, 0, -fg84[1], fg84[0]},
+//				{0, 1, fg84[0], fg84[1]},
+//				{1, 0, -sg84[1], sg84[0]},
+//				{0, 1, sg84[0], sg84[1]},
+//		};
+//		double[][] b = {
+//				{param54[0][0] - fg84[0]},
+//				{param54[0][1] - fg84[1]},
+//				{param54[1][0] - sg84[0]},
+//				{param54[1][1] - sg84[1]},
+//		};
+//		Matrix A = new Matrix(C);
+//		Matrix B = new Matrix(b);
+//		Matrix AT = A.transpose();
+//		Matrix R = (AT.times(A)).inverse().times(AT).times(B);
+//		return R;
+//	}
 
 	/**
 	 * 将坐标放入projcoordinate

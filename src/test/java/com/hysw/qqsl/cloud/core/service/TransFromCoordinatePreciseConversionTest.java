@@ -62,28 +62,28 @@ public class TransFromCoordinatePreciseConversionTest extends BaseTest {
 //        param[0] = 35.8856092102778;
 //        param[1] = 102.852845316111;
 //        param[2] = 1805.685;
-        transfrom(param54,param84,param);
+//        transfrom(param54,param84,param);
     }
-    public void transfrom(double[][] param54,double[][] param84,double[] param){
-        Matrix R = transFromService.calculate7Param("102", Coordinate.BaseLevelType.BEIJING54,param54, param84);
-
-        ProjCoordinate projCoordinate = transFromService.transFromPlaneToGround(Coordinate.BaseLevelType.BEIJING54,"102",param[1],param[0],param[2]);
-        double[] wgs84s = transFromService.transFromRectangularSpaceCoordinate(transFromService.selcetTransFromParam(Coordinate.BaseLevelType.BEIJING54), projCoordinate);
-
-        double X54 = R.get(0, 0) + (1 + R.get(3, 0)) * wgs84s[0] - R.get(5, 0) * wgs84s[2] + R.get(6, 0) * wgs84s[1];
-        double Y54 = R.get(1, 0) + (1 + R.get(3, 0)) * wgs84s[1] + R.get(4, 0) * wgs84s[2] - R.get(6, 0) * wgs84s[0];
-        double Z54 = R.get(2, 0) + (1 + R.get(3, 0)) * wgs84s[2] - R.get(4, 0) * wgs84s[1] + R.get(5, 0) * wgs84s[0];
-
-        double[] doubles = transFromService.transFromgeodeticCoordinate(transFromService.selcetTransFromParam(Coordinate.BaseLevelType.WGS84),X54, Y54, Z54);
-        ProjCoordinate projCoordinate1 = transFromService.transFromGroundToPlane(Coordinate.BaseLevelType.WGS84,"102", doubles[0], doubles[1], doubles[2]);
-        System.out.println(projCoordinate1.x);
-        System.out.println(projCoordinate1.y);
-        System.out.println(projCoordinate1.z);
-        ProjCoordinate projCoordinate2 = new ProjCoordinate();
-        projCoordinate2.x=3973186.10081396;
-        projCoordinate2.y = 577007.450439509;
-        projCoordinate2.z=1804.87561882657;
-    }
+//    public void transfrom(double[][] param54,double[][] param84,double[] param){
+//        Matrix R = transFromService.calculate7Param("102", Coordinate.BaseLevelType.BEIJING54,param54, param84);
+//
+//        ProjCoordinate projCoordinate = transFromService.transFromPlaneToGround(Coordinate.BaseLevelType.BEIJING54,"102",param[1],param[0],param[2]);
+//        double[] wgs84s = transFromService.transFromRectangularSpaceCoordinate(transFromService.selcetTransFromParam(Coordinate.BaseLevelType.BEIJING54), projCoordinate);
+//
+//        double X54 = R.get(0, 0) + (1 + R.get(3, 0)) * wgs84s[0] - R.get(5, 0) * wgs84s[2] + R.get(6, 0) * wgs84s[1];
+//        double Y54 = R.get(1, 0) + (1 + R.get(3, 0)) * wgs84s[1] + R.get(4, 0) * wgs84s[2] - R.get(6, 0) * wgs84s[0];
+//        double Z54 = R.get(2, 0) + (1 + R.get(3, 0)) * wgs84s[2] - R.get(4, 0) * wgs84s[1] + R.get(5, 0) * wgs84s[0];
+//
+//        double[] doubles = transFromService.transFromgeodeticCoordinate(transFromService.selcetTransFromParam(Coordinate.BaseLevelType.WGS84),X54, Y54, Z54);
+//        ProjCoordinate projCoordinate1 = transFromService.transFromGroundToPlane(Coordinate.BaseLevelType.WGS84,"102", doubles[0], doubles[1], doubles[2]);
+//        System.out.println(projCoordinate1.x);
+//        System.out.println(projCoordinate1.y);
+//        System.out.println(projCoordinate1.z);
+//        ProjCoordinate projCoordinate2 = new ProjCoordinate();
+//        projCoordinate2.x=3973186.10081396;
+//        projCoordinate2.y = 577007.450439509;
+//        projCoordinate2.z=1804.87561882657;
+//    }
 
     @Test
     //平面 plane  大地ground
@@ -99,11 +99,11 @@ public class TransFromCoordinatePreciseConversionTest extends BaseTest {
         System.out.println(projCoordinate.x);
     }
 
-    @Test
-    public void testaaaaa(){
-        ProjCoordinate projCoordinate = transFromService.transFromPlaneToGround(Coordinate.BaseLevelType.BEIJING54,"114",  274820.104, 4372952.906,1381.393);
-        System.out.println(projCoordinate.x+"-->"+projCoordinate.y+"-->"+projCoordinate.z);
-    }
+//    @Test
+//    public void testaaaaa(){
+//        ProjCoordinate projCoordinate = transFromService.transFromPlaneToGround(Coordinate.BaseLevelType.BEIJING54,"114",  274820.104, 4372952.906,1381.393);
+//        System.out.println(projCoordinate.x+"-->"+projCoordinate.y+"-->"+projCoordinate.z);
+//    }
 
 //    @Test
 //    public void readExcel() throws IOException {
@@ -217,24 +217,24 @@ public class TransFromCoordinatePreciseConversionTest extends BaseTest {
         param[0][0] = 35.8856092102778;
         param[0][1] = 102.852845316111;
 //        param[0][2] = 1805.685;
-        transfrom1(param54,param84,param);
+//        transfrom1(param54,param84,param);
     }
-    public void transfrom1(double[][] param54,double[][] param84,double[][] param){
-        Matrix R = transFromService.calculate4Param("102",param54, param84);
-        double[] fg84 = transFromService.transFromGroundToPlane(Coordinate.BaseLevelType.WGS84,"102", param[0][0], param[0][1]);
-        double [][] C ={
-                {1,0,-fg84[1],fg84[0]},
-                {0,1,fg84[0],fg84[1]},
-        };
-        double [][] b={
-                {fg84[0]},
-                {fg84[1]},
-        };
-        Matrix A = new Matrix(C);
-        Matrix B = new Matrix(b);
-        Matrix plus = A.times(R).plus(B);
-        System.out.println(plus.get(0,0)+":"+plus.get(1,0));
-    }
+//    public void transfrom1(double[][] param54,double[][] param84,double[][] param){
+//        Matrix R = transFromService.calculate4Param("102",param54, param84);
+//        double[] fg84 = transFromService.transFromGroundToPlane(Coordinate.BaseLevelType.WGS84,"102", param[0][0], param[0][1]);
+//        double [][] C ={
+//                {1,0,-fg84[1],fg84[0]},
+//                {0,1,fg84[0],fg84[1]},
+//        };
+//        double [][] b={
+//                {fg84[0]},
+//                {fg84[1]},
+//        };
+//        Matrix A = new Matrix(C);
+//        Matrix B = new Matrix(b);
+//        Matrix plus = A.times(R).plus(B);
+//        System.out.println(plus.get(0,0)+":"+plus.get(1,0));
+//    }
 
 }
 
