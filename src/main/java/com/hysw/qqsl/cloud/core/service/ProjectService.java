@@ -773,6 +773,7 @@ public class ProjectService extends BaseService<Project, Long> {
         projectJson.put("shares", project.getShares());
         projectJson.put("views", project.getViews());
         projectJson.put("cooperate", project.getCooperate());
+        projectJson.put("iconType", project.getIconType());
         userJson.put("id", project.getUser().getId());
         userJson.put("name", project.getUser().getName());
         userJson.put("userName", project.getUser().getUserName());

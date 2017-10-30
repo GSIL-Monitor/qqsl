@@ -34,7 +34,7 @@ public class Coordinate extends BaseEntity {
 	 * 坐标转换基准面类型
 	 */
 	public enum BaseLevelType {
-		WGS84, BEIJING54, XIAN80, CHINA2000;
+		WGS84, BEIJING54, XIAN80, CGCS2000;
 		public static BaseLevelType valueOf(int ordinal) {
 			if (ordinal < 0 || ordinal >= values().length) {
 				throw new IndexOutOfBoundsException("Invalid ordinal");
