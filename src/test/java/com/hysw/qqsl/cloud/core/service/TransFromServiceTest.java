@@ -10,7 +10,7 @@ import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
+//@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 public class TransFromServiceTest extends BaseTest {
 	Log logger = LogFactory.getLog(getClass());
 	@Autowired
@@ -96,5 +96,11 @@ public class TransFromServiceTest extends BaseTest {
 			ProjCoordinate projCoordinate=transFromService.BLHToXYZ(code, lon, lat);
 			Assert.assertTrue(projCoordinate!=null);
 		}
+	}
+
+	@Test
+	public void test11111(){
+		ProjCoordinate projCoordinate=transFromService.XYZToBLH("ESRI:10000010",  576998.567,3973194.082);
+		System.out.println();
 	}
 }

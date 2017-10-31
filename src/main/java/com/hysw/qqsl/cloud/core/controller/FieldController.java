@@ -62,15 +62,23 @@ public class FieldController {
     @RequestMapping(value = "/coordinateFile", method = RequestMethod.POST)
     public @ResponseBody Message uploadCoordinate(HttpServletRequest request) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-        String id = request.getParameter("id");
+        String id = request.getParameter("projectId");
+        String baseLevelType = request.getParameter("baseLevelType");
+        String WGS84Type = request.getParameter("WGS84Type");
         Message message;
         JSONObject jsonObject = new JSONObject();
-        if (id == null) {
+        if (id == null || baseLevelType == null) {
             return new Message(Message.Type.FAIL);
         }
         Project project;
+        Coordinate.WGS84Type wgs84Type = null;
+        Coordinate.BaseLevelType levelType;
         try {
             message=fieldService.isAllowUploadCoordinateFile(Long.valueOf(id));
+            levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+            if (!WGS84Type.equals("")) {
+                wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+            }
             project = projectService.find(Long.valueOf(id));
         } catch (Exception e) {
             return new Message(Message.Type.FAIL);
@@ -81,6 +89,9 @@ public class FieldController {
         if (project == null) {
             return new Message(Message.Type.FAIL);
         }
+        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
+            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+        }
         String central = coordinateService.getCoordinateBasedatum(project);
         if (central == null) {
             return new Message(Message.Type.EXIST);
@@ -90,7 +101,7 @@ public class FieldController {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
             Map<String, MultipartFile> map = multiRequest.getFileMap();
             for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-                message = coordinateService.uploadCoordinate(entry.getValue(), project,central);
+                message = coordinateService.uploadCoordinate(entry.getValue(), project,central,wgs84Type);
                 jsonObject.put(entry.getKey(), message.getType());
             }
         }

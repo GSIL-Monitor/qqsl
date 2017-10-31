@@ -60,26 +60,28 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 *
 	 * @param is
 	 * @param central
+	 * @param wgs84Type
 	 * @return
 	 * @throws IOException
 	 */
-	public Message readExcels(InputStream is, String central, String s, Project project) throws IOException {
+	public Message readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type) throws IOException {
 		Workbook wb = SettingUtils.readExcel(is,s);
 		if(wb==null){
 			return new Message(Message.Type.FAIL);
 		}
-		return readExcel(central, wb, project);
+		return readExcel(central, wb, project,wgs84Type);
 	}
 
 	/**
 	 * Read the Excel 2010
 	 *
 	 * @param central the path of the excel file
+	 * @param wgs84Type
 	 * @return
 	 * @throws IOException
 	 */
 	@SuppressWarnings("resource")
-	public Message readExcel(String central, Workbook wb, Project project) {
+	public Message readExcel(String central, Workbook wb, Project project, Coordinate.WGS84Type wgs84Type) {
 		String code = transFromService.checkCode84(central);
 		List<Graph> graphs = new ArrayList<Graph>();
 		List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
@@ -91,13 +93,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				continue;
 			}
 //			读取建筑物及其属性数据
-			Message me = readBuild(sheet, code, builds, builds1, project);
+			Message me = readBuild(sheet, code, builds, builds1, project,wgs84Type);
 			if (me != null) {
                 return me;
             }
             try {
 //				读取线面数据
-				readLineOrAera(sheet, code, graphs, wb, numSheet);
+				readLineOrAera(sheet, code, graphs, wb, numSheet,wgs84Type);
 			} catch (OfficeXmlFileException e) {
 				logger.info("坐标文件03-07相互拷贝异常");
 				continue;
@@ -118,8 +120,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param builds
 	 * @param builds2
 	 * @param project
+	 * @param wgs84Type
 	 */
-	private Message readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project) {
+	private Message readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project, Coordinate.WGS84Type wgs84Type) {
 		Build build = null;
 		Build build2 = null;
 		JSONObject jsonObject1;
@@ -212,7 +215,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 						if (split.length != 3) {
                             return new Message(Message.Type.OTHER);
 						}
-						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code);
+						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
 						if (jsonObject1 == null) {
 							return new Message(Message.Type.OTHER);
 						}
@@ -237,7 +240,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 						if (split.length != 3) {
                             return new Message(Message.Type.OTHER);
 						}
-						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code);
+						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
 						if (jsonObject1 == null) {
 							return new Message(Message.Type.OTHER);
 						}
@@ -287,8 +290,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param graphs
 	 * @param wb
 	 * @param numSheet
+	 * @param wgs84Type
 	 */
-	private void readLineOrAera(Sheet sheet, String code, List<Graph> graphs, Workbook wb, int numSheet) {
+	private void readLineOrAera(Sheet sheet, String code, List<Graph> graphs, Workbook wb, int numSheet, Coordinate.WGS84Type wgs84Type) {
 		CoordinateBase coordinateBase;
 		Graph graph;
 		List<CoordinateBase> list;
@@ -337,7 +341,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 						|| elevation == null||longitude.trim().equals("经度")) {
 					continue;
 				}
-				JSONObject jsonObject = coordinateXYZToBLH(longitude, latitude, code);
+				JSONObject jsonObject = coordinateXYZToBLH(longitude, latitude, code,wgs84Type);
 				if (jsonObject == null) {
 					continue;
 				}
@@ -374,8 +378,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param code
 	 * @return
 	 */
-	private JSONObject coordinateXYZToBLH(String longitude, String latitude, String code) {
-		Coordinate.WGS84Type wgs84Type = null;
+	private JSONObject coordinateXYZToBLH(String longitude, String latitude, String code,Coordinate.WGS84Type wgs84Type) {
 		if (wgs84Type == null) {
 			return null;
 		}
@@ -668,16 +671,17 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param is
 	 * @param central
 	 * @param fileName
+	 * @param wgs84Type
 	 * @return
 	 * @throws IOException
 	 */
 	public Message uploadCoordinateToData(InputStream is,
-										  Project project, String central, String fileName) {
+										  Project project, String central, String fileName, Coordinate.WGS84Type wgs84Type) {
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
 		Message me;
 		try {
-			me = readExcels(is, central, s, project);
+			me = readExcels(is, central, s, project,wgs84Type);
 		} catch (IOException e) {
 			logger.info("坐标文件或格式异常");
 			return new Message(Message.Type.FAIL);
@@ -888,12 +892,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 
 	/**
 	 * 上传坐标文件并保存至数据库
-	 * @param project
-     * @param mFile
-     * @param central
+	 * @param mFile
+     * @param project
+* @param central
+* @param wgs84Type
 	 * @return
      */
-	public Message uploadCoordinate(MultipartFile mFile, Project project, String central) {
+	public Message uploadCoordinate(MultipartFile mFile, Project project, String central, Coordinate.WGS84Type wgs84Type) {
 		Message me;
 		String fileName;
 		fileName = mFile.getOriginalFilename();
@@ -910,7 +915,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			logger.info("坐标文件或格式异常");
 			return new Message(Message.Type.FAIL);
 		}
-		me = uploadCoordinateToData(is,project,central,fileName);
+		me = uploadCoordinateToData(is,project,central,fileName,wgs84Type);
 		if (me != null) {
 			return me;
 		}
