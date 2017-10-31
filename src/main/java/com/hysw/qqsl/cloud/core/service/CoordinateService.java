@@ -372,7 +372,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	}
 
 	/**
-	 * 将平面坐标转换为大地坐标
+	 * 将各类坐标转换为大地坐标
 	 * @param longitude
 	 * @param latitude
 	 * @param code

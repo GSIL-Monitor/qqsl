@@ -192,20 +192,36 @@ public class FieldController {
 
     /**
      * 将外业内业坐标数据及建筑物写入excel
-     * @param id
+     *
+     * @param baseLevelType
+     * @param projectId
+     * @param WGS84Type
+     * @param response
      * @param type
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/writeExcel", method = RequestMethod.GET)
-    public @ResponseBody Message writeExcel(@RequestParam long id,@RequestParam String type,HttpServletResponse response) {
-        Project project = projectService.find(id);
+    public @ResponseBody
+    Message writeExcel(@RequestParam long projectId, @RequestParam String type, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
+        Project project = projectService.find(projectId);
+        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+        Coordinate.WGS84Type wgs84Type = null;
+        if (!WGS84Type.equals("")) {
+            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+        }
+        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
+            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+        }
+        if (wgs84Type == null) {
+            return new Message(Message.Type.FAIL);
+        }
         Workbook wb;
         if (Build.Source.DESIGN.toString().toLowerCase().equals(type.trim().toLowerCase())) {
-            wb = fieldService.writeExcel(project, Build.Source.DESIGN);
+            wb = fieldService.writeExcel(project, Build.Source.DESIGN,wgs84Type);
         } else if (Build.Source.FIELD.toString().toLowerCase().equals(type.trim().toLowerCase())) {
-            wb = fieldService.writeExcel(project, Build.Source.FIELD);
+            wb = fieldService.writeExcel(project, Build.Source.FIELD,wgs84Type);
         } else {
             return new Message(Message.Type.FAIL);
         }
@@ -218,7 +234,7 @@ public class FieldController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName()+"--"+type.trim()+".xls" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + "--" + type.trim() + ".xls" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {
@@ -231,7 +247,7 @@ public class FieldController {
         } catch (Exception e) {
             e.fillInStackTrace();
             return new Message(Message.Type.FAIL);
-        }finally {
+        } finally {
             IOUtils.safeClose(bos);
             IOUtils.safeClose(is);
             IOUtils.safeClose(output);

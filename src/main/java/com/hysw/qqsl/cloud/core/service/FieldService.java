@@ -19,6 +19,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
+import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,8 @@ public class FieldService {
     private CoordinateService coordinateService;
     @Autowired
     private AttribeService attribeService;
+    @Autowired
+    private TransFromService transFromService;
 
 
     public Message saveField(Map<String, Object> objectMap) {
@@ -443,7 +446,7 @@ public class FieldService {
      * @param source
      * @return
      */
-    public Workbook writeExcel(Project project, Build.Source source) {
+    public Workbook writeExcel(Project project, Build.Source source, Coordinate.WGS84Type wgs84Type) {
         List<Coordinate> coordinates = coordinateService.findByProjectAndSource(project,source);
         JSONArray jsonArray=matchCoordinate(coordinates);
         List<Build> builds2 = buildService.findByProjectAndSource(project,source);
@@ -451,22 +454,26 @@ public class FieldService {
         Map<CommonEnum.CommonType,List<Build>>map=groupBuild(list);
         putBuildOntheLine(jsonArray, list);
         Workbook wb = new HSSFWorkbook();
-        writeCoordinateToExcel(jsonArray,wb,source);
-        writeBuildToExcel(map,wb);
+        String central = coordinateService.getCoordinateBasedatum(project);
+        String code = transFromService.checkCode84(central);
+        writeCoordinateToExcel(jsonArray,wb,source,code,wgs84Type);
+        writeBuildToExcel(map,wb,code,wgs84Type);
         return wb;
     }
 
     /**
      * 将坐标数据输出到excel
+     * @param code
      * @param jsonArray1
      * @param wb
      * @param source
+     * @param wgs84Type
      */
-    private void writeCoordinateToExcel(JSONArray jsonArray1, Workbook wb, Build.Source source) {
+    private void writeCoordinateToExcel(JSONArray jsonArray1, Workbook wb, Build.Source source, String code, Coordinate.WGS84Type wgs84Type) {
         if (source == Build.Source.DESIGN) {
-            writeCoordinateToExcelDesign(jsonArray1, wb);
+            writeCoordinateToExcelDesign(jsonArray1, wb, code,wgs84Type);
         }else{
-            writeCoordinateToExcelField(jsonArray1, wb);
+            writeCoordinateToExcelField(jsonArray1, wb, code,wgs84Type);
         }
     }
 
@@ -474,8 +481,10 @@ public class FieldService {
      * 将外业坐标数据输出到excel
      * @param jsonArray1
      * @param wb
+     * @param code
+     * @param wgs84Type
      */
-    private void writeCoordinateToExcelField(JSONArray jsonArray1, Workbook wb) {
+    private void writeCoordinateToExcelField(JSONArray jsonArray1, Workbook wb, String code, Coordinate.WGS84Type wgs84Type) {
         JSONArray jsonArray2 = new JSONArray();
         for (Object o : jsonArray1) {
             JSONObject jsonObject = JSONObject.fromObject(o);
@@ -492,8 +501,7 @@ public class FieldService {
         Cell cell = null;
         WriteExecl we = new WriteExecl();
         writeToCell(sheet,row,cell,style,we,"经度","纬度","高程","类型","描述");
-        String baseType = null;
-        String description = null;
+        String baseType = null,description = null,longitude,latitude;
         for (Object o : jsonArray2) {
             JSONObject jsonObject = JSONObject.fromObject(o);
             if (jsonObject.get("baseType") != null) {
@@ -506,16 +514,21 @@ public class FieldService {
             if (jsonObject.get("description") != null) {
                 description = jsonObject.get("description").toString();
             }
-            writeToCell(sheet,row,cell,style,we,jsonObject.get("longitude").toString(),jsonObject.get("latitude").toString(),jsonObject.get("elevation").toString(),baseType,description);
+            longitude = jsonObject.get("longitude").toString();
+            latitude = jsonObject.get("latitude").toString();
+            JSONObject jsonObject1 = coordinateBLHToXYZ(longitude, latitude, code, wgs84Type);
+            writeToCell(sheet,row,cell,style,we,jsonObject1.get("longitude").toString(),jsonObject1.get("latitude").toString(),jsonObject.get("elevation").toString(),baseType,description);
         }
     }
 
     /**
      * 将设计数据输出到excel
+     * @param code
      * @param jsonArray1
      * @param wb
+     * @param wgs84Type
      */
-    private void writeCoordinateToExcelDesign(JSONArray jsonArray1, Workbook wb) {
+    private void writeCoordinateToExcelDesign(JSONArray jsonArray1, Workbook wb, String code, Coordinate.WGS84Type wgs84Type) {
         Map<CommonEnum.CommonType, JSONArray> map = new LinkedHashMap<>();
         JSONObject jsonObject;
         for (Object o : jsonArray1) {
@@ -531,15 +544,17 @@ public class FieldService {
                 map.put(CommonEnum.CommonType.valueOf(baseType),jsonArray2);
             }
         }
-        writeDesignCoordinateToExcel(map, wb);
+        writeDesignCoordinateToExcel(map, wb, code,wgs84Type);
     }
 
     /**
      * 设计数据写入excel
+     * @param code
      * @param map
      * @param wb
+     * @param wgs84Type
      */
-    private void writeDesignCoordinateToExcel(Map<CommonEnum.CommonType, JSONArray> map, Workbook wb) {
+    private void writeDesignCoordinateToExcel(Map<CommonEnum.CommonType, JSONArray> map, Workbook wb, String code, Coordinate.WGS84Type wgs84Type) {
         for (Map.Entry<CommonEnum.CommonType, JSONArray> entry : map.entrySet()) {
             Sheet sheet = null;
             Row row = null;
@@ -568,6 +583,9 @@ public class FieldService {
                     jsonObject1 = JSONObject.fromObject(o1);
                     longitude = jsonObject1.get("longitude");
                     latitude = jsonObject1.get("latitude");
+                    JSONObject jsonObject2 = coordinateBLHToXYZ(longitude.toString(), latitude.toString(), code, wgs84Type);
+                    longitude = jsonObject2.get("longitude");
+                    latitude = jsonObject2.get("latitude");
                     elevation = jsonObject1.get("elevation");
                     baseType = jsonObject1.get("baseType");
                     description = jsonObject1.get("description");
@@ -756,8 +774,10 @@ public class FieldService {
      * 将建筑物写入excel
      * @param map
      * @param wb
+     * @param code
+     * @param wgs84Type
      */
-    void writeBuildToExcel(Map<CommonEnum.CommonType, List<Build>> map, Workbook wb) {
+    void writeBuildToExcel(Map<CommonEnum.CommonType, List<Build>> map, Workbook wb, String code, Coordinate.WGS84Type wgs84Type) {
         Row row = null;
         Cell cell = null;
         boolean flag;
@@ -805,6 +825,9 @@ public class FieldService {
                 JSONObject jsonObject1 = JSONObject.fromObject(builds.get(i).getCenterCoor());
                 String longitude = jsonObject1.get("longitude").toString();
                 String latitude = jsonObject1.get("latitude").toString();
+                JSONObject jsonObject2 = coordinateBLHToXYZ(longitude, latitude, code, wgs84Type);
+                longitude = jsonObject2.get("longitude").toString();
+                latitude = jsonObject2.get("latitude").toString();
                 String elevation = jsonObject1.get("elevation").toString();
                 writeToCell(sheet,row,cell,style,we,"1","中心点","经度,纬度,高程",longitude+ "," + latitude + "," + elevation,"coor1",true);
 
@@ -812,6 +835,9 @@ public class FieldService {
                     jsonObject1 = JSONObject.fromObject(builds.get(i).getPositionCoor());
                     longitude = jsonObject1.get("longitude").toString();
                     latitude = jsonObject1.get("latitude").toString();
+                    jsonObject2 = coordinateBLHToXYZ(longitude, latitude, code, wgs84Type);
+                    longitude = jsonObject2.get("longitude").toString();
+                    latitude = jsonObject2.get("latitude").toString();
                     elevation = jsonObject1.get("elevation").toString();
                     writeToCell(sheet,row,cell,style,we,"2","定位点","经度,纬度,高程",longitude + "," + latitude + "," + elevation,"coor2",true);
                 }
@@ -1170,5 +1196,108 @@ public class FieldService {
         }
 //        超过限制数量，返回已达到最大限制数量
         return new Message(Message.Type.OTHER);
+    }
+
+    /**
+     * 将大地坐标转换为各类坐标
+     * @param longitude
+     * @param latitude
+     * @param code
+     * @return
+     */
+    private JSONObject coordinateBLHToXYZ(String longitude, String latitude, String code,Coordinate.WGS84Type wgs84Type) {
+        if (wgs84Type == null) {
+            return null;
+        }
+        switch (wgs84Type) {
+            case DEGREE:
+                return degree(longitude,latitude);
+            case DEGREE_MINUTE_1:
+                return degreeMinute1(longitude,latitude);
+            case DEGREE_MINUTE_2:
+                return degreeMinute2(longitude,latitude);
+            case DEGREE_MINUTE_SECOND_1:
+                return degreeMinuteSecond1(longitude, latitude);
+            case DEGREE_MINUTE_SECOND_2:
+                return degreeMinuteSecond2(longitude, latitude);
+            case PLANE_COORDINATE:
+                return planeCoordinate(longitude,latitude,code);
+        }
+        return null;
+    }
+
+    private JSONObject planeCoordinate(String longitude, String latitude, String code) {
+        ProjCoordinate projCoordinate = transFromService.BLHToXYZ(code, Double.valueOf(longitude), Double.valueOf(latitude));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("longitude", projCoordinate.x);
+        jsonObject.put("latitude", projCoordinate.y);
+        return jsonObject;
+    }
+
+    private JSONObject degreeMinuteSecond2(String longitude, String latitude) {
+        JSONObject jsonObject = new JSONObject();
+        String a = longitude.substring(0, longitude.indexOf("."));
+        String b = String.valueOf(Double.valueOf("0" + longitude.substring(longitude.indexOf("."), longitude.length())) * 60);
+        String c = b.substring(0, b.indexOf("."));
+        String d = String.valueOf(Double.valueOf("0" + b.substring(b.indexOf("."), b.length())) * 60);
+        longitude = a + "°" + c + "'" + d + "\"";
+        jsonObject.put("longitude", longitude);
+        a = latitude.substring(0, latitude.indexOf("."));
+        b = String.valueOf(Double.valueOf("0" + latitude.substring(latitude.indexOf("."), latitude.length())) * 60);
+        c = b.substring(0, b.indexOf("."));
+        d = String.valueOf(Double.valueOf("0" + b.substring(b.indexOf("."), b.length())) * 60);
+        latitude = a + "°" + c + "'" + d + "\"";
+        jsonObject.put("latitude", latitude);
+        return jsonObject;
+    }
+
+    private JSONObject degreeMinuteSecond1(String longitude, String latitude) {
+        JSONObject jsonObject = new JSONObject();
+        String a = longitude.substring(0, longitude.indexOf("."));
+        String b = String.valueOf(Double.valueOf("0" + longitude.substring(longitude.indexOf("."), longitude.length())) * 60);
+        String c = b.substring(0, b.indexOf("."));
+        String d = String.valueOf(Double.valueOf("0" + b.substring(b.indexOf("."), b.length())) * 60);
+        longitude = a + ":" + c + ":" + d;
+        jsonObject.put("longitude", longitude);
+        a = latitude.substring(0, latitude.indexOf("."));
+        b = String.valueOf(Double.valueOf("0" + latitude.substring(latitude.indexOf("."), latitude.length())) * 60);
+        c = b.substring(0, b.indexOf("."));
+        d = String.valueOf(Double.valueOf("0" + b.substring(b.indexOf("."), b.length())) * 60);
+        latitude = a + ":" + c + ":" + d;
+        jsonObject.put("latitude", latitude);
+        return jsonObject;
+    }
+
+    private JSONObject degreeMinute2(String longitude, String latitude) {
+        JSONObject jsonObject = new JSONObject();
+        String a = longitude.substring(0, longitude.indexOf("."));
+        String b = String.valueOf(Double.valueOf("0" + longitude.substring(longitude.indexOf("."), longitude.length())) * 60);
+        longitude = a + "°" + b + "'";
+        jsonObject.put("longitude", longitude);
+        a = latitude.substring(0, latitude.indexOf("."));
+        b = String.valueOf(Double.valueOf("0" + latitude.substring(latitude.indexOf("."), latitude.length())) * 60);
+        latitude = a + "°" + b + "'";
+        jsonObject.put("latitude", latitude);
+        return jsonObject;
+    }
+
+    private JSONObject degreeMinute1(String longitude,String latitude) {
+        JSONObject jsonObject = new JSONObject();
+        String a = longitude.substring(0, longitude.indexOf("."));
+        String b = String.valueOf(Double.valueOf("0" + longitude.substring(longitude.indexOf("."), longitude.length())) * 60);
+        longitude = a + ":" + b;
+        jsonObject.put("longitude", longitude);
+        a = latitude.substring(0, latitude.indexOf("."));
+        b = String.valueOf(Double.valueOf("0" + latitude.substring(latitude.indexOf("."), latitude.length())) * 60);
+        latitude = a + ":" + b;
+        jsonObject.put("latitude", latitude);
+        return jsonObject;
+    }
+
+    private JSONObject degree(String longitude, String latitude) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("longitude", longitude);
+        jsonObject.put("latitude", latitude);
+        return jsonObject;
     }
 }
