@@ -128,15 +128,15 @@ public class OssController {
 	 */
 	@RequestMapping(value = "/list",method = RequestMethod.GET,produces = "application/json")
 	public @ResponseBody
-	JSONArray getOss(@RequestParam String token){
+	Message getOss(@RequestParam String token){
 		if(!applicationTokenService.decrypt(token)){
-			return new JSONArray();
+			return new Message(Message.Type.FAIL);
 		}
 		List<Oss> ossList = ossService.getOssList();
-		if(ossList==null||ossList.size()==0){
-			return new JSONArray();
+		if(ossList==null) {
+			return new Message(Message.Type.FAIL);
 		}
-		return ossService.ossListToJsonArray(ossList);
+		return new Message(Message.Type.OK, ossService.ossListToJsonArray(ossList));
 	}
 
 	/**
