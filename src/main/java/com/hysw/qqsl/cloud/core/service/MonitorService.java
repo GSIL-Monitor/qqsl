@@ -60,7 +60,7 @@ public class MonitorService {
      */
     public JSONArray getApplicationList() {
         String url = "http://" + setting.getWaterIP() + ":8080/";
-        String method = "sensor";
+        String method = "sensors";
         String token = applicationTokenService.getToken();
         JSONArray applicationList = httpRequestUtil.jsonArrayHttpRequest(url + method + "?token=" + token, "GET", null);
         return applicationList;
