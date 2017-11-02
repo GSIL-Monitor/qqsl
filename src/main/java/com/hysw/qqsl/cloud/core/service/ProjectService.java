@@ -93,6 +93,8 @@ public class ProjectService extends BaseService<Project, Long> {
     private PackageService packageService;
     @Autowired
     private TradeService tradeService;
+    @Autowired
+    private CertifyService certifyService;
 
     @Autowired
     public void setBaseDao(ProjectDao projectDao) {
@@ -125,6 +127,12 @@ public class ProjectService extends BaseService<Project, Long> {
         cache9.removeAll();
         Cache cache0 = cacheManager.getCache("elementDataGroupsCache");
         cache0.removeAll();
+        Cache cache11 = cacheManager.getCache("packageAllCache");
+        cache11.removeAll();
+        Cache cache12 = cacheManager.getCache("userAllCache");
+        cache12.removeAll();
+        Cache cache13 = cacheManager.getCache("certifyAllCache");
+        cache13.removeAll();
         elementGroupService.getDriElementGroups();
         elementGroupService.getConElementGroups();
         elementGroupService.getFloElementGroups();
@@ -150,6 +158,12 @@ public class ProjectService extends BaseService<Project, Long> {
         objectJsonConvertUtils.getFloJsonTree();
         objectJsonConvertUtils.getWatJsonTree();
         objectJsonConvertUtils.getHydJsonTree();
+        userService.userCache();
+        logger.info("加载用户缓存");
+        certifyService.certifyCache();
+        logger.info("加载认证缓存");
+        packageService.packageCache();
+        logger.info("加载套餐缓存");
         //将所有项目写入缓存
         projectCache();
         logger.info("项目总数为：" + findAll().size());
