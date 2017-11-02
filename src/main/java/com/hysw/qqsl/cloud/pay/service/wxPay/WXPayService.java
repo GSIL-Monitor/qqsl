@@ -92,7 +92,7 @@ public class WXPayService {
                 jsonObject.put("tradeState",r.get("trade_state"));
                 return new Message(Message.Type.OK,jsonObject);
             }else{
-                jsonObject.put("tradeState",r.get("err_code_des"));
+                jsonObject.put("tradeState",r.get("err_code"));
                 System.out.println(jsonObject);
                 return new Message(Message.Type.OK,jsonObject);
             }

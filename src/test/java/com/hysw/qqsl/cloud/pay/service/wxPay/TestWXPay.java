@@ -84,7 +84,7 @@ public class TestWXPay {
     public void doOrderQuery() {
         System.out.println("查询订单");
         HashMap<String, String> data = new HashMap<String, String>();
-        data.put("out_trade_no", "150233505951411277");
+        data.put("out_trade_no", "1502335059514112771");
 //        data.put("transaction_id", "4008852001201608221962061594");
         try {
             Map<String, String> r = wxpay.orderQuery(data);
@@ -256,7 +256,7 @@ public class TestWXPay {
         // dodo.doDownloadBill();
         // dodo.doShortUrl();
         // dodo.test001();
-        // dodo.doOrderQuery();
+         dodo.doOrderQuery();
         // dodo.doOrderClose();
         // dodo.doRefund();
         // dodo.doRefundQuery();
@@ -269,7 +269,7 @@ public class TestWXPay {
 //        dodo.doOrderQuery();
 //        dodo.doOrderReverse();
 //        dodo.doOrderQuery();
-        dodo.doUnifiedOrder();
+//        dodo.doUnifiedOrder();
 //        dodo.doOrderClose();
 //        dodo.doRefund();
 //        dodo.test002();.
