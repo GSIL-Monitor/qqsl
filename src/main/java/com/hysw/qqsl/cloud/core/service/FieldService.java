@@ -455,6 +455,9 @@ public class FieldService {
         putBuildOntheLine(jsonArray, list);
         Workbook wb = new HSSFWorkbook();
         String central = coordinateService.getCoordinateBasedatum(project);
+        if (central == null || central.equals("null") || central.equals("")) {
+            return null;
+        }
         String code = transFromService.checkCode84(central);
         writeCoordinateToExcel(jsonArray,wb,source,code,wgs84Type);
         writeBuildToExcel(map,wb,code,wgs84Type);
