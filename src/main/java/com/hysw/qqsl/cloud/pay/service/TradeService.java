@@ -559,7 +559,8 @@ public class TradeService extends BaseService<Trade, Long> {
      */
     private double diffPrice(Package aPackage, PackageModel newPackageModel, PackageModel oldPackageModel) {
         Calendar c = Calendar.getInstance();
-        long now = c.getTimeInMillis();
+        long now = System.currentTimeMillis() + 196 * 24 * 60 * 60 * 1000l;
+//        long now = c.getTimeInMillis();
         Calendar c1 = Calendar.getInstance();
         c1.setTime(aPackage.getExpireDate());
         long expireDate = c1.getTimeInMillis();
