@@ -23,7 +23,7 @@
         <!-- 全景数量 -->
         <packageItem type="pano" limitNum="200"/>
     </package>
-    <package name="朝阳版" type="sun" description="中小型设计单位使用，提供厘米级测量，BIM协同" price="1" level="11">
+    <package name="朝阳版" type="sun" description="中小型设计单位使用，提供厘米级测量，BIM协同" price="100" level="11">
         <!-- 500G -->
         <packageItem type="space" limitNum="500000000"/>
         <packageItem type="project" limitNum="500" />
