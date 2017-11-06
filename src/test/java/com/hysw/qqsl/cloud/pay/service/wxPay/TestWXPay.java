@@ -25,7 +25,7 @@ public class TestWXPay {
     public void doUnifiedOrder() {
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("body", "青清水利在线服务-XX服务购买");
-        data.put("out_trade_no", out_trade_no);//商户支付的订单号由商户自定义生成，微信支付要求商户订单号保持唯一性（建议根据当前系统时间加随机序列来生成订单号）。重新发起一笔支付要使用原订单号，避免重复支付；已支付过或已调用关单、撤销（请见后文的API列表）的订单号不能重新发起支付
+        data.put("out_trade_no", "150898582682752997");//商户支付的订单号由商户自定义生成，微信支付要求商户订单号保持唯一性（建议根据当前系统时间加随机序列来生成订单号）。重新发起一笔支付要使用原订单号，避免重复支付；已支付过或已调用关单、撤销（请见后文的API列表）的订单号不能重新发起支付
         data.put("device_info", "web");//自定义参数，可以为终端设备号(门店号或收银设备ID)，PC网页或公众号内支付可以传"WEB"
         data.put("fee_type", "CNY");//符合ISO 4217标准的三位字母代码，默认人民币：CNY
         data.put("total_fee", "1");//订单总金额，单位为分
@@ -84,7 +84,7 @@ public class TestWXPay {
     public void doOrderQuery() {
         System.out.println("查询订单");
         HashMap<String, String> data = new HashMap<String, String>();
-        data.put("out_trade_no", "1502335059514112771");
+        data.put("out_trade_no", "150898582682752997");
 //        data.put("transaction_id", "4008852001201608221962061594");
         try {
             Map<String, String> r = wxpay.orderQuery(data);
@@ -251,12 +251,12 @@ public class TestWXPay {
         TestWXPay dodo = new TestWXPay();
         // dodo.doGetSandboxSignKey();
 
-        // dodo.doUnifiedOrder();
+         dodo.doUnifiedOrder();
         // dodo.doOrderQuery();
         // dodo.doDownloadBill();
         // dodo.doShortUrl();
         // dodo.test001();
-         dodo.doOrderQuery();
+//         dodo.doOrderQuery();
         // dodo.doOrderClose();
         // dodo.doRefund();
         // dodo.doRefundQuery();
