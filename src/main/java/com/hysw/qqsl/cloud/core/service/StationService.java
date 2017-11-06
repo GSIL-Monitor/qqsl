@@ -85,7 +85,7 @@ public class StationService extends BaseService<Station, Long> {
             stationModel.setName(element.attributeValue("name"));
             stationModel.setType(CommonEnum.StationType.valueOf(element.attributeValue("type").toUpperCase()));
             stationModel.setDescription(element.attributeValue("description"));
-            stationModel.setPrice(Long.valueOf(element.attributeValue("price")));
+            stationModel.setPrice(Double.valueOf(element.attributeValue("price")));
             stationModels.add(stationModel);
         }
         return stationModels;

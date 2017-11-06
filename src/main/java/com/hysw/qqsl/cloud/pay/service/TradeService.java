@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service("tradeService")
@@ -507,7 +508,7 @@ public class TradeService extends BaseService<Trade, Long> {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
-        long diff=diffPrice((Package) (map.get("aPackage")),(PackageModel)(map.get("newPackageModel")),(PackageModel)(map.get("oldPackageModel")));
+        double diff=diffPrice((Package) (map.get("aPackage")),(PackageModel)(map.get("newPackageModel")),(PackageModel)(map.get("oldPackageModel")));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("diff", diff);
         return new Message(Message.Type.OK, jsonObject);
@@ -556,15 +557,21 @@ public class TradeService extends BaseService<Trade, Long> {
      * @param oldPackageModel
      * @return
      */
-    private long diffPrice(Package aPackage, PackageModel newPackageModel, PackageModel oldPackageModel) {
+    private double diffPrice(Package aPackage, PackageModel newPackageModel, PackageModel oldPackageModel) {
         Calendar c = Calendar.getInstance();
-        long now = c.getTimeInMillis();
+        long now = System.currentTimeMillis()+196*24*60*60*1000l;
         Calendar c1 = Calendar.getInstance();
         c1.setTime(aPackage.getExpireDate());
         long expireDate = c1.getTimeInMillis();
-//        已使用天数
-        long day= (int) (365-(expireDate-now)/1000/60/60/24);
-        return newPackageModel.getPrice() - day / 30 * oldPackageModel.getPrice();
+//        未使用天数
+        long day=(expireDate-now)/1000/60/60/24;
+        long year=day/365;
+        long days=day%365;
+        double money = Double.valueOf(365 - days) / 365 * oldPackageModel.getPrice();
+        double money1 = Double.valueOf(365 - days) / 365 * newPackageModel.getPrice();
+        BigDecimal bg = new BigDecimal(newPackageModel.getPrice()*(year+1)-money1-(oldPackageModel.getPrice()*(year+1)-money));
+        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return f1;
     }
 
     /**

@@ -17,7 +17,7 @@ public class PackageModel implements Serializable{
     /** 描述 */
     private String description;
     /** 套餐价格 */
-    private long price;
+    private double price;
     /** 套餐等级 */
     private int level;
     /** 套餐项目 */
@@ -47,11 +47,11 @@ public class PackageModel implements Serializable{
         this.description = description;
     }
 
-    public long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

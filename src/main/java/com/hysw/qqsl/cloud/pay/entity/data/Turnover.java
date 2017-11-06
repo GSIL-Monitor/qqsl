@@ -19,15 +19,15 @@ public class Turnover extends BaseEntity{
     /** 支付状态 */
     private Type type;
     /** 价格 */
-    private long price;
+    private double price;
     /** 余额 */
-    private long balance;
+    private double balance;
 
     public Turnover() {
         this.balance = 0;
     }
 
-    public Turnover(String turboverNo, String outTradeNo, Type type, long price, long balance) {
+    public Turnover(String turboverNo, String outTradeNo, Type type, double price, double balance) {
         this.turboverNo = turboverNo;
         this.outTradeNo = outTradeNo;
         this.type = type;
@@ -70,19 +70,19 @@ public class Turnover extends BaseEntity{
         this.type = type;
     }
 
-    public long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public long getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(long balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 }

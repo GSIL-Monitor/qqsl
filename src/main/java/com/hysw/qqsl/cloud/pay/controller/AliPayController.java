@@ -119,7 +119,7 @@ public class AliPayController {
         requestParams.get("trade_status");
         String tradeNo = request.getParameter("out_trade_no");
         Trade trade = tradeService.findByOutTradeNo(tradeNo);
-        params.put("total_amount", String.valueOf(Double.valueOf(Double.valueOf(trade.getPrice()) / 100)));
+        params.put("total_amount", String.valueOf(trade.getPrice()));
         String tradeStatus = request.getParameter("trade_status");
         boolean signVerified = AlipaySignature.rsaCheckV1(params, CommonAttributes.ALIPAY_PUBLIC_KEY, CommonAttributes.CHARSET, CommonAttributes.SIGN_TYPE); //调用SDK验证签名
         if (signVerified) {
@@ -192,7 +192,7 @@ public class AliPayController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("out_trade_no",trade.getOutTradeNo());
         jsonObject.put("product_code","FAST_INSTANT_TRADE_PAY");
-        jsonObject.put("total_amount",trade.getPrice()/100.00);
+        jsonObject.put("total_amount",trade.getPrice());
         jsonObject.put("subject",type);
         alipayRequest.setBizContent(jsonObject.toString());//填充业务参数
         String form = "";

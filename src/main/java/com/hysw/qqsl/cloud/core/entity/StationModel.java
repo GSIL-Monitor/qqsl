@@ -8,7 +8,7 @@ public class StationModel implements Serializable {
     private CommonEnum.StationType type;
     private String name;
     private String description;
-    private long price;
+    private double price;
 
 
     public CommonEnum.StationType getType() {
@@ -35,11 +35,11 @@ public class StationModel implements Serializable {
         this.description = description;
     }
 
-    public long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 }

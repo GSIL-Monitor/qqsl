@@ -47,7 +47,7 @@ public class GoodsService implements Serializable{
             goodsModel.setName(element.attributeValue("name"));
             goodsModel.setType(CommonEnum.GoodsType.valueOf(element.attributeValue("type").toUpperCase()));
             goodsModel.setDescription(element.attributeValue("description"));
-            goodsModel.setPrice(Long.valueOf(element.attributeValue("price")));
+            goodsModel.setPrice(Double.valueOf(element.attributeValue("price")));
             goodsModels.add(goodsModel);
         }
         return goodsModels;

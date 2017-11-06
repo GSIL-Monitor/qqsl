@@ -122,7 +122,7 @@ public class WXPayController {
                             "  <return_code><![CDATA[SUCCESS]]></return_code>\n" +
                             "</xml>";
                 }
-                map.put("total_fee", String.valueOf(trade.getPrice()));
+                map.put("total_fee", String.valueOf(Math.round(trade.getPrice() * 100)));
                 if (WXPayUtil.isSignatureValid(WXPayUtil.mapToXml(map), wxPayConfig.getKey())) {
                     trade.setPayDate(new Date());
                     trade.setPayType(Trade.PayType.WX);

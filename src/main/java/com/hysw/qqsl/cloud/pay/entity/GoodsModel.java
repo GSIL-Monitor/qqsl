@@ -13,7 +13,7 @@ public class GoodsModel implements Serializable {
     /** 服务描述 */
     private String description;
     /** 价格 */
-    private long price;
+    private double price;
 
     public CommonEnum.GoodsType getType() {
         return type;
@@ -39,11 +39,11 @@ public class GoodsModel implements Serializable {
         this.description = description;
     }
 
-    public long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 }
