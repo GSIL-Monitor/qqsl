@@ -106,6 +106,31 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
     }
 
     /**
+     * 编辑过期时间
+     * @param object
+     * @return
+     */
+    public Message editDiffConnPoll(Map<String, Object> object) {
+        Object id = object.get("id");
+        Object timeout = object.get("timeout");
+        if (id == null || timeout==null) {
+            return new Message(Message.Type.FAIL);
+        }
+        DiffConnPoll diffConnPoll;
+        long l;
+        try {
+            l=Long.valueOf(timeout.toString());
+            diffConnPoll = find(Long.valueOf(id.toString()));
+        } catch (Exception e) {
+            return new Message(Message.Type.FAIL);
+        }
+        diffConnPoll.setTimeout(l);
+        diffConnPollService.save(diffConnPoll);
+        positionService.editTimeout(Long.valueOf(id.toString()),l);
+        return new Message(Message.Type.OK);
+    }
+
+    /**
      * 删除差分账户及缓存数据
      * @param id
      * @return
