@@ -507,7 +507,7 @@ public class StationService extends BaseService<Station, Long> {
         //视频地址:rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd
         if(cameraMap.get("cameraUrl")!=null&&StringUtils.hasText(cameraMap.get("cameraUrl").toString())){
             String cameraUrl = cameraMap.get("cameraUrl").toString();
-            if(!SettingUtils.rtmpRegex(cameraUrl)){
+            if(!SettingUtils.parameterRegex(cameraUrl)){
                 return new Message(Message.Type.FAIL);
             }
             sensor.setCameraUrl(cameraMap.get("cameraUrl").toString());
