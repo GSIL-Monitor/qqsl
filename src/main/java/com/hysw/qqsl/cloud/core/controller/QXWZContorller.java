@@ -91,6 +91,22 @@ public class QXWZContorller {
     }
 
     /**
+     * 增加千寻账户
+     * @param object
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"admin:simple"})
+    @RequestMapping(value = "/admin/edit",method = RequestMethod.POST)
+    public @ResponseBody Message edit(@RequestBody Map<String,Object> object){
+        Message message = Message.parameterCheck(object);
+        if(message.getType()== Message.Type.FAIL){
+            return message;
+        }
+        return diffConnPollService.editDiffConnPoll(object);
+    }
+
+    /**
      * 删除千寻账户
      * @param id
      * @return

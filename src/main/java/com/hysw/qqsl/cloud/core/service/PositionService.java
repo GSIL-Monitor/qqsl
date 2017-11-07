@@ -104,7 +104,7 @@ public class PositionService {
 //        }
         for (int i = 0; i < unuseds.size(); i++) {
 //            System.out.println("un:"+unuseds.get(i).getUserName()+":"+new Date(unuseds.get(i).getTimeout()));
-            if (unuseds.get(i).getTimeout() < (System.currentTimeMillis()+1 * 24 * 60 * 60 * 1000l)) {
+            if (unuseds.get(i).getTimeout() < (System.currentTimeMillis()+1 * 60 * 60 * 1000l)) {
 //                System.out.println("un:"+unuseds.get(i).getUserName()+":"+new Date(unuseds.get(i).getTimeout()));
                 timeout.add(unuseds.get(i));
                 unuseds.remove(i);
@@ -115,7 +115,7 @@ public class PositionService {
 //        }
         for (int i = 0; i < timeout.size(); i++) {
 //            System.out.println("to:"+timeout.get(i).getUserName()+":"+new Date(timeout.get(i).getTimeout()));
-            if (timeout.get(i).getTimeout()>(System.currentTimeMillis()+1 * 24 * 60 * 60 * 1000l)) {
+            if (timeout.get(i).getTimeout()>(System.currentTimeMillis()+1 * 60 * 60 * 1000l)) {
 //                System.out.println("to:"+timeout.get(i).getUserName()+":"+new Date(timeout.get(i).getTimeout()));
                 unuseds.add(timeout.get(i));
                 timeout.remove(i);
@@ -382,4 +382,29 @@ public class PositionService {
         return new Message(Message.Type.NO_ALLOW);
     }
 
+    /**
+     * 编辑过期时间
+     * @param id
+     * @param l
+     */
+    public void editTimeout(Long id,long l) {
+        for (Position position : timeout) {
+            if (position.getId().equals(id)) {
+                position.setTimeout(l);
+                return;
+            }
+        }
+        for (Position used : useds) {
+            if (used.getId().equals(id)) {
+                used.setTimeout(l);
+                return;
+            }
+        }
+        for (Position unused : unuseds) {
+            if (unused.getId().equals(id)) {
+                unused.setTimeout(l);
+                return;
+            }
+        }
+    }
 }
