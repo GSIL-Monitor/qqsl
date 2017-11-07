@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.*;
+import org.aspectj.util.LangUtil;
 import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @return
 	 * @throws IOException
 	 */
-	public Message readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type) throws IOException {
+	public Message readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		Workbook wb = SettingUtils.readExcel(is,s);
 		if(wb==null){
 			return new Message(Message.Type.FAIL);
@@ -81,7 +82,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("resource")
-	public Message readExcel(String central, Workbook wb, Project project, Coordinate.WGS84Type wgs84Type) {
+	public Message readExcel(String central, Workbook wb, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		String code = transFromService.checkCode84(central);
 		List<Graph> graphs = new ArrayList<Graph>();
 		List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
@@ -122,7 +123,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param project
 	 * @param wgs84Type
 	 */
-	private Message readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project, Coordinate.WGS84Type wgs84Type) {
+	private Message readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		Build build = null;
 		Build build2 = null;
 		JSONObject jsonObject1;
@@ -292,7 +293,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param numSheet
 	 * @param wgs84Type
 	 */
-	private void readLineOrAera(Sheet sheet, String code, List<Graph> graphs, Workbook wb, int numSheet, Coordinate.WGS84Type wgs84Type) {
+	private void readLineOrAera(Sheet sheet, String code, List<Graph> graphs, Workbook wb, int numSheet, Coordinate.WGS84Type wgs84Type) throws Exception {
 		CoordinateBase coordinateBase;
 		Graph graph;
 		List<CoordinateBase> list;
@@ -378,7 +379,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param code
 	 * @return
 	 */
-	private JSONObject coordinateXYZToBLH(String longitude, String latitude, String code,Coordinate.WGS84Type wgs84Type) {
+	private JSONObject coordinateXYZToBLH(String longitude, String latitude, String code,Coordinate.WGS84Type wgs84Type) throws Exception {
 		if (wgs84Type == null) {
 			return null;
 		}
@@ -508,7 +509,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param code
 	 * @return
 	 */
-	private JSONObject planeCoordinate(String longitude, String latitude, String code) {
+	private JSONObject planeCoordinate(String longitude, String latitude, String code) throws Exception {
 		double lon = 0.0f;
 		double lat = 0.0f;
 		if (longitude.length() == 0 || latitude.length() == 0
@@ -521,14 +522,14 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		if (str1.length() == 6) {
 			lon = Double.valueOf(str);
 		} else {
-			return null;
+			throw new Exception("");
 		}
 		str = latitude;
 		str1 = str.substring(0, str.indexOf("."));
 		if (str1.length() == 7) {
 			lat = Double.valueOf(str);
 		} else {
-			return null;
+			throw new Exception("");
 		}
 		ProjCoordinate pc = transFromService.XYZToBLH(code,
 				lon, lat);
@@ -682,7 +683,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		Message me;
 		try {
 			me = readExcels(is, central, s, project,wgs84Type);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.info("坐标文件或格式异常");
 			return new Message(Message.Type.FAIL);
 		}finally {
