@@ -565,11 +565,11 @@ public class TradeService extends BaseService<Trade, Long> {
         long expireDate = c1.getTimeInMillis();
 //        未使用天数
         long day=(expireDate-now)/1000/60/60/24;
-        long year=day/365;
-        long days=day%365;
-        double money = Double.valueOf(365 - days) / 365 * oldPackageModel.getPrice();
-        double money1 = Double.valueOf(365 - days) / 365 * newPackageModel.getPrice();
-        BigDecimal bg = new BigDecimal(newPackageModel.getPrice()*(year+1)-money1-(oldPackageModel.getPrice()*(year+1)-money));
+        double money = oldPackageModel.getPrice()/365;
+        double money1 = newPackageModel.getPrice()/365;
+        double m=money1-money;
+        double m1=m*day;
+        BigDecimal bg = new BigDecimal(m1);
         double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         return f1;
     }

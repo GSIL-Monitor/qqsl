@@ -130,10 +130,10 @@ public class TestWXPay {
      */
     public void doRefund() {
         HashMap<String, String> data = new HashMap<String, String>();
-        data.put("out_trade_no", "150233505951411277");
-        data.put("out_refund_no", "150233505951411277");
-        data.put("total_fee", total_fee);
-        data.put("refund_fee", total_fee);
+        data.put("out_trade_no", "151005132380854412");
+        data.put("out_refund_no", "151005132380854412");
+        data.put("total_fee", "399");
+        data.put("refund_fee", "399");
         data.put("refund_fee_type", "CNY");
         data.put("op_user_id", config.getMchID());
 
@@ -251,7 +251,7 @@ public class TestWXPay {
         TestWXPay dodo = new TestWXPay();
         // dodo.doGetSandboxSignKey();
 
-         dodo.doUnifiedOrder();
+//         dodo.doUnifiedOrder();
         // dodo.doOrderQuery();
         // dodo.doDownloadBill();
         // dodo.doShortUrl();
@@ -271,7 +271,7 @@ public class TestWXPay {
 //        dodo.doOrderQuery();
 //        dodo.doUnifiedOrder();
 //        dodo.doOrderClose();
-//        dodo.doRefund();
+        dodo.doRefund();
 //        dodo.test002();.
 //        dodo.doH5zhifu();
         System.out.println("<---------------"); // wx2016112510573077
