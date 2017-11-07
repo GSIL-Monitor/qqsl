@@ -262,10 +262,10 @@ public class SensorService extends BaseService<Sensor,Long>{
         if(cameraMap.get("factory")!=null&&StringUtils.hasText(cameraMap.get("factory").toString())){
             infoJson.put("factory",cameraMap.get("factory").toString());
         }
-        //rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd
+        //cameraUrl只能是由数字和字母组成,是视频拼接的唯一编码
         if(cameraMap.get("cameraUrl")!=null&&StringUtils.hasText(cameraMap.get("cameraUrl").toString())){
             String cameraUrl = cameraMap.get("cameraUrl").toString();
-            if(!SettingUtils.rtmpRegex(cameraUrl)){
+            if(!SettingUtils.parameterRegex(cameraUrl)){
                 return new Message(Message.Type.FAIL);
             }
             sensor.setCameraUrl(cameraUrl);
