@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,6 +53,7 @@ public class AliPayController {
     @Autowired
     private TurnoverService turnoverService;
     Log logger = LogFactory.getLog(this.getClass());
+    private DecimalFormat df=new DecimalFormat("#.00");
 
     //private static final String RETURN_URL = "http://4107ce0a.all123.net/qqsl.web/tpls/productModule/paySuccess.html";
     private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/aliPaySuccess.html";
@@ -123,7 +126,8 @@ public class AliPayController {
         requestParams.get("trade_status");
         String tradeNo = request.getParameter("out_trade_no");
         Trade trade = tradeService.findByOutTradeNo(tradeNo);
-        params.put("total_amount", String.valueOf(trade.getPrice()));
+        logger.info("订单价格:"+df.format(trade.getPrice())+" : "+String.valueOf(trade.getPrice()));
+        params.put("total_amount", df.format(trade.getPrice()));
         String tradeStatus = request.getParameter("trade_status");
         boolean signVerified = AlipaySignature.rsaCheckV1(params, CommonAttributes.ALIPAY_PUBLIC_KEY, CommonAttributes.CHARSET, CommonAttributes.SIGN_TYPE); //调用SDK验证签名
         if (signVerified) {
@@ -199,6 +203,7 @@ public class AliPayController {
         jsonObject.put("out_trade_no",trade.getOutTradeNo());
         jsonObject.put("product_code","FAST_INSTANT_TRADE_PAY");
         jsonObject.put("total_amount",trade.getPrice());
+        logger.info("支付订单价格:"+trade.getPrice()+" : "+String.valueOf(trade.getPrice()));
         jsonObject.put("subject",type);
         alipayRequest.setBizContent(jsonObject.toString());//填充业务参数
         String form = "";
