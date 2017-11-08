@@ -53,7 +53,7 @@ public class AliPayController {
     @Autowired
     private TurnoverService turnoverService;
     Log logger = LogFactory.getLog(this.getClass());
-    private DecimalFormat df=new DecimalFormat("#.00");
+    private DecimalFormat df=new DecimalFormat("######0.00");
 
     //private static final String RETURN_URL = "http://4107ce0a.all123.net/qqsl.web/tpls/productModule/paySuccess.html";
     private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/aliPaySuccess.html";

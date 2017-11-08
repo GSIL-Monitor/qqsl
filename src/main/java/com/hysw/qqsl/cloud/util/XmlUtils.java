@@ -9,6 +9,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -153,10 +154,15 @@ public class XmlUtils {
         List<String> strs2 = Arrays.asList(str2.split(","));
         System.out.println(strs2);*/
         java.text.DecimalFormat   df   =new   java.text.DecimalFormat("#.00");
+        DecimalFormat df1   = new DecimalFormat("######0.00");
         double d1 = 1.0;
         double d2 = 1;
         System.out.println(  df.format(1.00)+":"+df.format(d1)+":"+df.format(d2));
-        String result = df.format(2.10+3.9);
+
+        String result = df.format(0.01);
+        System.out.println( df1.format(222222222222222.01));
         System.out.println( result);
+        boolean boo = 0.01>1;
+        System.out.println(boo);
     }
 }
