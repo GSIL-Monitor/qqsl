@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -126,8 +127,11 @@ public class AliPayController {
         String tradeNo = request.getParameter("out_trade_no");
         Trade trade = tradeService.findByOutTradeNo(tradeNo);
         logger.info("支付宝价格:"+params.get("total_amount"));
-        logger.info("订单价格:"+trade.getPrice()+" : "+String.valueOf(trade.getPrice()));
-        params.put("total_amount", String.valueOf(trade.getPrice()));
+        BigDecimal bg = new BigDecimal(trade.getPrice());
+        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        logger.info("订单价格:"+f1+" : "+String.valueOf(trade.getPrice()));
+        params.put("total_amount", String.valueOf(f1));
+        logger.info("支付宝价格:"+params.get("total_amount"));
         String tradeStatus = request.getParameter("trade_status");
         boolean signVerified = AlipaySignature.rsaCheckV1(params, CommonAttributes.ALIPAY_PUBLIC_KEY, CommonAttributes.CHARSET, CommonAttributes.SIGN_TYPE); //调用SDK验证签名
         if (signVerified) {
