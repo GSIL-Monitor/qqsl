@@ -156,5 +156,7 @@ public class XmlUtils {
         double d1 = 1.0;
         double d2 = 1;
         System.out.println(  df.format(1.00)+":"+df.format(d1)+":"+df.format(d2));
+        String result = df.format(2.10+3.9);
+        System.out.println( result);
     }
 }
