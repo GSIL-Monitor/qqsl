@@ -54,7 +54,9 @@ public class AliPayController {
 
     //private static final String RETURN_URL = "http://4107ce0a.all123.net/qqsl.web/tpls/productModule/paySuccess.html";
     private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/aliPaySuccess.html";
+    //private static final String NOTIFY_URL = "http://112.124.104.190:8080/qqsl/aliPay/notify";
     private static final String NOTIFY_URL = "http://112.124.104.190:8080/qqsl/aliPay/notify";
+    //http://5007c0d2.nat123.cc/qqsl/wxPay/payNotice
 
 
 //    //手机网站支付
@@ -123,6 +125,8 @@ public class AliPayController {
         requestParams.get("trade_status");
         String tradeNo = request.getParameter("out_trade_no");
         Trade trade = tradeService.findByOutTradeNo(tradeNo);
+        logger.info("支付宝价格:"+params.get("total_amount"));
+        logger.info("订单价格:"+trade.getPrice()+" : "+String.valueOf(trade.getPrice()));
         params.put("total_amount", String.valueOf(trade.getPrice()));
         String tradeStatus = request.getParameter("trade_status");
         boolean signVerified = AlipaySignature.rsaCheckV1(params, CommonAttributes.ALIPAY_PUBLIC_KEY, CommonAttributes.CHARSET, CommonAttributes.SIGN_TYPE); //调用SDK验证签名
@@ -199,6 +203,7 @@ public class AliPayController {
         jsonObject.put("out_trade_no",trade.getOutTradeNo());
         jsonObject.put("product_code","FAST_INSTANT_TRADE_PAY");
         jsonObject.put("total_amount",trade.getPrice());
+        logger.info("支付订单价格:"+trade.getPrice()+" : "+String.valueOf(trade.getPrice()));
         jsonObject.put("subject",type);
         alipayRequest.setBizContent(jsonObject.toString());//填充业务参数
         String form = "";
