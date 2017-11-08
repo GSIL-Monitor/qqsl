@@ -283,6 +283,10 @@ public class CertifyCache {
         querys.put("cardno", certify.getIdentityId());
         querys.put("name", certify.getName());
         JSONObject jsonObject = httpRequestUtil.nameAndIdIsSame(host, path, querys);
+        if (jsonObject == null || jsonObject.size() == 0) {
+            certify.setIdentityAdvice("上传身份证模糊或无法识别");
+            return true;
+        }
         if (identity(jsonObject)) {
             certify.setIdentityAdvice("姓名与身份证号不匹配");
             return true;
@@ -351,6 +355,10 @@ public class CertifyCache {
         querys.put("company", certify.getCompanyName());
         querys.put("legal", certify.getLegal());
         JSONObject jsonObject = httpRequestUtil.nameAndIdIsSame(host, path, querys);
+        if (jsonObject == null || jsonObject.size() == 0) {
+            certify.setCompanyAdvice("上传营业执照模糊或无法识别");
+            return true;
+        }
         if (company(jsonObject)) {
             certify.setCompanyAdvice("社会信用代码、法人与公司名称不匹配");
             return true;

@@ -119,9 +119,8 @@ public class HttpRequestUtil {
         } catch (Exception e) {
             Note note = new Note("18661925010","图形识别监测");
             noteCache.add("18661925010",note);
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     /**
@@ -144,9 +143,8 @@ public class HttpRequestUtil {
         } catch (Exception e) {
             Note note = new Note("18661925010","认证监测");
             noteCache.add("18661925010",note);
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
 }
