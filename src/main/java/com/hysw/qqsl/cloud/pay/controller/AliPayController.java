@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -52,12 +53,11 @@ public class AliPayController {
     @Autowired
     private TurnoverService turnoverService;
     Log logger = LogFactory.getLog(this.getClass());
+    private DecimalFormat df=new DecimalFormat("#.00");
 
     //private static final String RETURN_URL = "http://4107ce0a.all123.net/qqsl.web/tpls/productModule/paySuccess.html";
     private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/aliPaySuccess.html";
-    //private static final String NOTIFY_URL = "http://112.124.104.190:8080/qqsl/aliPay/notify";
     private static final String NOTIFY_URL = "http://112.124.104.190:8080/qqsl/aliPay/notify";
-    //http://5007c0d2.nat123.cc/qqsl/wxPay/payNotice
 
 
 //    //手机网站支付
@@ -126,12 +126,8 @@ public class AliPayController {
         requestParams.get("trade_status");
         String tradeNo = request.getParameter("out_trade_no");
         Trade trade = tradeService.findByOutTradeNo(tradeNo);
-        logger.info("支付宝价格:"+params.get("total_amount"));
-        BigDecimal bg = new BigDecimal(trade.getPrice());
-        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        logger.info("订单价格:"+f1+" : "+String.valueOf(trade.getPrice()));
-        params.put("total_amount", String.valueOf(f1));
-        logger.info("支付宝价格:"+params.get("total_amount"));
+        logger.info("订单价格:"+df.format(trade.getPrice())+" : "+String.valueOf(trade.getPrice()));
+        params.put("total_amount", df.format(trade.getPrice()));
         String tradeStatus = request.getParameter("trade_status");
         boolean signVerified = AlipaySignature.rsaCheckV1(params, CommonAttributes.ALIPAY_PUBLIC_KEY, CommonAttributes.CHARSET, CommonAttributes.SIGN_TYPE); //调用SDK验证签名
         if (signVerified) {

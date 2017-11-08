@@ -143,7 +143,7 @@ public class XmlUtils {
        // xmlUtils.xmlEdit("buildsHydraulics.xml");
         // xmlUtils.xmlEdit("buildsMater.xml");
     //     xmlUtils.xmlEdit("buildsStructure.xml");
-        String str = "a,b,c";
+       /* String str = "a,b,c";
         List<String> strs = Arrays.asList(str.split(","));
         System.out.println(strs);
         String str1 = "a";
@@ -151,6 +151,10 @@ public class XmlUtils {
         System.out.println(strs1);
         String str2 = "";
         List<String> strs2 = Arrays.asList(str2.split(","));
-        System.out.println(strs2);
+        System.out.println(strs2);*/
+        java.text.DecimalFormat   df   =new   java.text.DecimalFormat("#.00");
+        double d1 = 1.0;
+        double d2 = 1;
+        System.out.println(  df.format(1.00)+":"+df.format(d1)+":"+df.format(d2));
     }
 }
