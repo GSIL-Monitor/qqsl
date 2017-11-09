@@ -127,7 +127,7 @@ public class TradeService extends BaseService<Trade, Long> {
         }
 //        未通过企业认证的用户不能购买套餐等级大于10的套餐
         if (packageModel.getLevel() > CommonAttributes.PROJECTLIMIT && !(user.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || user.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
-            return new Message(Message.Type.UNKNOWN);
+            return new Message(Message.Type.NO_CERTIFY);
         }
         Trade trade = new Trade();
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
