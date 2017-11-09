@@ -708,7 +708,9 @@ public class FieldService {
         JSONObject jsonObject = JSONObject.fromObject(str);
         JSONObject jsonObject11 = jsonObject;
         jsonObject11.put("id", coordinate.getId());
-//        jsonObject11.put("description", coordinate.getDescription());
+        if (!jsonObject11.containsKey("description")) {
+            jsonObject11.put("description", coordinate.getDescription());
+        }
         if (coordinate.getName() != null) {
             jsonObject11.put("name", coordinate.getName());
             jsonObject11.put("modifyDate", coordinate.getModifyDate());
