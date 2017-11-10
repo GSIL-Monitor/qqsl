@@ -455,6 +455,7 @@ public class TradeService extends BaseService<Trade, Long> {
             }
             jsonObject.put("createDate", trade.getCreateDate().getTime());
             jsonObject.put("status",trade.getStatus());
+            jsonObject.put("buyType", trade.getBuyType());
             jsonArray.add(jsonObject);
         }
         return jsonArray;
