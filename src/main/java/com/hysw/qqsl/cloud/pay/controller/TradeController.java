@@ -164,7 +164,7 @@ public class TradeController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/lists", method = RequestMethod.GET)
     public @ResponseBody Message getTradeList() {
         User user = authentService.getUserFromSubject();

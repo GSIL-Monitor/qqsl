@@ -225,6 +225,9 @@ public class FieldController {
         } else {
             return new Message(Message.Type.FAIL);
         }
+        if (wb == null) {
+            return new Message(Message.Type.EXIST);
+        }
         ByteArrayOutputStream bos = null;
         InputStream is = null;
         OutputStream output = null;

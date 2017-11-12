@@ -100,7 +100,7 @@ public class PackageService extends BaseService<Package,Long>{
             packageModel.setName(element.attributeValue("name"));
             packageModel.setType(CommonEnum.PackageType.valueOf(element.attributeValue("type").toUpperCase()));
             packageModel.setDescription(element.attributeValue("description"));
-            packageModel.setPrice(Long.valueOf(element.attributeValue("price")));
+            packageModel.setPrice(Double.valueOf(element.attributeValue("price")));
             packageModel.setLevel(Integer.valueOf(element.attributeValue("level")));
             List elements1 = element.elements();
             packageItems = new ArrayList<>();

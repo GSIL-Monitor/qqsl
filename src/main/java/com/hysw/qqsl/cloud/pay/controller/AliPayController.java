@@ -14,6 +14,8 @@ import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.pay.service.TurnoverService;
 import com.hysw.qqsl.cloud.pay.service.aliPay.AliPayService;
 import net.sf.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -25,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,10 +52,12 @@ public class AliPayController {
     private TradeService tradeService;
     @Autowired
     private TurnoverService turnoverService;
+    Log logger = LogFactory.getLog(this.getClass());
+    private DecimalFormat df=new DecimalFormat("######0.00");
 
     //private static final String RETURN_URL = "http://4107ce0a.all123.net/qqsl.web/tpls/productModule/paySuccess.html";
     private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/aliPaySuccess.html";
-    private static final String NOTIFY_URL = "http://5007c0d2.nat123.cc/qqsl/aliPay/notify";
+    private static final String NOTIFY_URL = "http://112.124.104.190:8080/qqsl/aliPay/notify";
 
 
 //    //手机网站支付
@@ -105,6 +111,7 @@ public class AliPayController {
     public
     @ResponseBody
     String notify(HttpServletRequest request) throws ServletException, IOException, AlipayApiException {
+        logger.info("支付成功,进入回调");
         Map<String, String> params = new HashMap<>();
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
@@ -119,16 +126,17 @@ public class AliPayController {
         requestParams.get("trade_status");
         String tradeNo = request.getParameter("out_trade_no");
         Trade trade = tradeService.findByOutTradeNo(tradeNo);
-        params.put("total_amount", String.valueOf(Double.valueOf(trade.getPrice() / 100)));
+        logger.info("订单价格:"+df.format(trade.getPrice())+" : "+String.valueOf(trade.getPrice()));
+        params.put("total_amount", df.format(trade.getPrice()));
         String tradeStatus = request.getParameter("trade_status");
         boolean signVerified = AlipaySignature.rsaCheckV1(params, CommonAttributes.ALIPAY_PUBLIC_KEY, CommonAttributes.CHARSET, CommonAttributes.SIGN_TYPE); //调用SDK验证签名
         if (signVerified) {
             if (tradeStatus.equals("TRADE_FINISHED") || tradeStatus.equals("TRADE_SUCCESS")) {
+                logger.info("回调参数验证成功");
                 //判断该笔订单是否在商户网站中已经做过处理
                 //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
                 //请务必判断请求时的total_fee、seller_id与通知时获取的total_fee、seller_id为一致的
                 //如果有做过处理，不执行商户的业务程序
-
                 //注意：
                 //如果签约的是可退款协议，退款日期超过可退款期限后（如三个月可退款），支付宝系统发送该交易状态通知
                 //如果没有签约可退款协议，那么付款完成后，支付宝系统发送该交易状态通知。
@@ -158,8 +166,10 @@ public class AliPayController {
 //            return "success";    //请不要修改或删除
             //////////////////////////////////////////////////////////////////////////////////////////
         } else {//验证失败
+            logger.info("回调参数验证失败");
             return "failure";
         }
+        logger.info("回调失败");
         return "failure";
     }
 
@@ -192,7 +202,8 @@ public class AliPayController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("out_trade_no",trade.getOutTradeNo());
         jsonObject.put("product_code","FAST_INSTANT_TRADE_PAY");
-        jsonObject.put("total_amount",trade.getPrice()/100.00);
+        jsonObject.put("total_amount",trade.getPrice());
+        logger.info("支付订单价格:"+trade.getPrice()+" : "+String.valueOf(trade.getPrice()));
         jsonObject.put("subject",type);
         alipayRequest.setBizContent(jsonObject.toString());//填充业务参数
         String form = "";

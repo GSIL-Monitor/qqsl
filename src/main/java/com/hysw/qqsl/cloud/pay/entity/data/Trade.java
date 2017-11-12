@@ -28,7 +28,7 @@ public class Trade extends BaseEntity{
     /** 订单状态 */
     private Status status;
     /** 订单价格(分) */
-    private long price;
+    private double price;
     /** 服务唯一编码 */
     private String instanceId;
     /** 三类商品type整合 */
@@ -157,11 +157,11 @@ public class Trade extends BaseEntity{
         this.status = status;
     }
 
-    public long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

@@ -228,6 +228,13 @@ public class RSACoderTest {
         rsaCoderTest.testAES111();
     }
 
+    @Test
+    public void test121312414(){
+        System.out.println(1d / 100);
+        System.out.println(Double.valueOf(1 / 100));
+        System.out.println(String.valueOf(Double.valueOf(Double.valueOf(1) / 100)));
+    }
+
 
 
 }

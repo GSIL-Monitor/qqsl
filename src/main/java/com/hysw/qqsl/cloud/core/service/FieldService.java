@@ -455,6 +455,9 @@ public class FieldService {
         putBuildOntheLine(jsonArray, list);
         Workbook wb = new HSSFWorkbook();
         String central = coordinateService.getCoordinateBasedatum(project);
+        if (central == null || central.equals("null") || central.equals("")) {
+            return null;
+        }
         String code = transFromService.checkCode84(central);
         writeCoordinateToExcel(jsonArray,wb,source,code,wgs84Type);
         writeBuildToExcel(map,wb,code,wgs84Type);
@@ -705,7 +708,9 @@ public class FieldService {
         JSONObject jsonObject = JSONObject.fromObject(str);
         JSONObject jsonObject11 = jsonObject;
         jsonObject11.put("id", coordinate.getId());
-//        jsonObject11.put("description", coordinate.getDescription());
+        if (!jsonObject11.containsKey("description")) {
+            jsonObject11.put("description", coordinate.getDescription());
+        }
         if (coordinate.getName() != null) {
             jsonObject11.put("name", coordinate.getName());
             jsonObject11.put("modifyDate", coordinate.getModifyDate());

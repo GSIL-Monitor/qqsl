@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service("tradeService")
@@ -126,7 +127,7 @@ public class TradeService extends BaseService<Trade, Long> {
         }
 //        未通过企业认证的用户不能购买套餐等级大于10的套餐
         if (packageModel.getLevel() > CommonAttributes.PROJECTLIMIT && !(user.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || user.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
-            return new Message(Message.Type.UNKNOWN);
+            return new Message(Message.Type.NO_CERTIFY);
         }
         Trade trade = new Trade();
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
@@ -454,6 +455,7 @@ public class TradeService extends BaseService<Trade, Long> {
             }
             jsonObject.put("createDate", trade.getCreateDate().getTime());
             jsonObject.put("status",trade.getStatus());
+            jsonObject.put("buyType", trade.getBuyType());
             jsonArray.add(jsonObject);
         }
         return jsonArray;
@@ -507,7 +509,7 @@ public class TradeService extends BaseService<Trade, Long> {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
-        long diff=diffPrice((Package) (map.get("aPackage")),(PackageModel)(map.get("newPackageModel")),(PackageModel)(map.get("oldPackageModel")));
+        double diff=diffPrice((Package) (map.get("aPackage")),(PackageModel)(map.get("newPackageModel")),(PackageModel)(map.get("oldPackageModel")));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("diff", diff);
         return new Message(Message.Type.OK, jsonObject);
@@ -556,15 +558,21 @@ public class TradeService extends BaseService<Trade, Long> {
      * @param oldPackageModel
      * @return
      */
-    private long diffPrice(Package aPackage, PackageModel newPackageModel, PackageModel oldPackageModel) {
+    private double diffPrice(Package aPackage, PackageModel newPackageModel, PackageModel oldPackageModel) {
         Calendar c = Calendar.getInstance();
         long now = c.getTimeInMillis();
         Calendar c1 = Calendar.getInstance();
         c1.setTime(aPackage.getExpireDate());
         long expireDate = c1.getTimeInMillis();
-//        已使用天数
-        long day= (int) (365-(expireDate-now)/1000/60/60/24);
-        return newPackageModel.getPrice() - day / 30 * oldPackageModel.getPrice();
+//        未使用天数
+        long day=(expireDate-now)/1000/60/60/24;
+        double money = oldPackageModel.getPrice()/365;
+        double money1 = newPackageModel.getPrice()/365;
+        double m=money1-money;
+        double m1=m*day;
+        BigDecimal bg = new BigDecimal(m1);
+        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return f1;
     }
 
     /**

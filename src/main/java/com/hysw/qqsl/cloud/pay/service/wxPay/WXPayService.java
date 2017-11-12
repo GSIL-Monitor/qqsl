@@ -31,7 +31,7 @@ public class WXPayService {
         data.put("out_trade_no", trade.getOutTradeNo());//商户支付的订单号由商户自定义生成，微信支付要求商户订单号保持唯一性（建议根据当前系统时间加随机序列来生成订单号）。重新发起一笔支付要使用原订单号，避免重复支付；已支付过或已调用关单、撤销（请见后文的API列表）的订单号不能重新发起支付
         data.put("device_info", "web");//自定义参数，可以为终端设备号(门店号或收银设备ID)，PC网页或公众号内支付可以传"WEB"
         data.put("fee_type", "CNY");//符合ISO 4217标准的三位字母代码，默认人民币：CNY
-        data.put("total_fee", String.valueOf(trade.getPrice()));//订单总金额，单位为分
+        data.put("total_fee", String.valueOf(Math.round(trade.getPrice() * 100)));//订单总金额，单位为分
         data.put("spbill_create_ip", "218.244.134.139");//APP和网页支付提交用户端ip，Native支付填调用微信支付API的机器IP
         data.put("notify_url", "http://5007c0d2.nat123.cc/qqsl/wxPay/payNotice");//异步接收微信支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。
         data.put("trade_type", "NATIVE");//JSAPI--公众号支付、NATIVE--原生扫码支付、APP--app支付，统一下单接口trade_type的传参可参考这里,MICROPAY--刷卡支付，刷卡支付有单独的支付接口，不调用统一下单接口
@@ -92,7 +92,7 @@ public class WXPayService {
                 jsonObject.put("tradeState",r.get("trade_state"));
                 return new Message(Message.Type.OK,jsonObject);
             }else{
-                jsonObject.put("tradeState",r.get("err_code_des"));
+                jsonObject.put("tradeState",r.get("err_code"));
                 System.out.println(jsonObject);
                 return new Message(Message.Type.OK,jsonObject);
             }
@@ -128,8 +128,8 @@ public class WXPayService {
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("out_trade_no", trade.getOutTradeNo());
         data.put("out_refund_no", trade.getOutTradeNo());
-        data.put("total_fee", String.valueOf(trade.getPrice()));
-        data.put("refund_fee", String.valueOf(trade.getPrice()));
+        data.put("total_fee", String.valueOf(Math.round(trade.getPrice() * 100)));
+        data.put("refund_fee", String.valueOf(Math.round(trade.getPrice() * 100)));
         data.put("refund_fee_type", "CNY");
 //        data.put("op_user_id", config.getMchID());
         Map<String, String> r = null;
