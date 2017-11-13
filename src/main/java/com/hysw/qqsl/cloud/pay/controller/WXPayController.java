@@ -61,6 +61,9 @@ public class WXPayController {
         if (trade == null) {
             return new Message(Message.Type.EXIST);
         }
+        if (System.currentTimeMillis()-trade.getExpireDate().getTime()>2*60*60*1000) {
+            return new Message(Message.Type.EXPIRED);
+        }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
             return new Message(Message.Type.UNKNOWN);

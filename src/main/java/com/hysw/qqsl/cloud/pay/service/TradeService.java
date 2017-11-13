@@ -144,6 +144,7 @@ public class TradeService extends BaseService<Trade, Long> {
         JSONObject remarkJson = new JSONObject();
         remarkJson.put("expireDate",new Date(c.getTimeInMillis()).getTime());
         trade.setRemark(remarkJson.toString());
+        setExpireDate(trade);
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
@@ -201,6 +202,7 @@ public class TradeService extends BaseService<Trade, Long> {
         JSONObject remarkJson = new JSONObject();
         remarkJson.put("expireDate",new Date(c.getTimeInMillis()).getTime());
         trade.setRemark(remarkJson.toString());
+        setExpireDate(trade);
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
@@ -261,6 +263,7 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setBaseType(Trade.BaseType.valueOf(goodsType.toString()));
         trade.setInstanceId(TradeUtil.buildInstanceId());
         trade.setRemark(remark.toString());
+        setExpireDate(trade);
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", trade.getId());
@@ -325,6 +328,8 @@ public class TradeService extends BaseService<Trade, Long> {
         JSONObject remarkJson = new JSONObject();
         Date expireDate = new Date(c.getTimeInMillis());
         remarkJson.put("expireDate",expireDate.getTime());
+        trade.setRemark(remarkJson.toString());
+        setExpireDate(trade);
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
@@ -372,6 +377,8 @@ public class TradeService extends BaseService<Trade, Long> {
         JSONObject remarkJson = new JSONObject();
         Date expireDate = new Date(c.getTimeInMillis());
         remarkJson.put("expireDate",expireDate.getTime());
+        trade.setRemark(remarkJson.toString());
+        setExpireDate(trade);
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
@@ -431,6 +438,7 @@ public class TradeService extends BaseService<Trade, Long> {
         }
         jsonObject2.put("expireDate",aPackage.getExpireDate().getTime());
         trade.setRemark(jsonObject2.toString());
+        setExpireDate(trade);
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", trade.getId());
@@ -646,5 +654,18 @@ public class TradeService extends BaseService<Trade, Long> {
             }
         }
         return type;
+    }
+
+    /**
+     * 设置订单支付过期时间
+     * @param trade
+     */
+    private void setExpireDate(Trade trade){
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.add(Calendar.HOUR,2);
+        JSONObject remarkJson = new JSONObject();
+        Date expireDate = new Date(c.getTimeInMillis());
+        trade.setExpireDate(expireDate);
     }
 }
