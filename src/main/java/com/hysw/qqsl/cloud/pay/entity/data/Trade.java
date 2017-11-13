@@ -27,7 +27,7 @@ public class Trade extends BaseEntity{
     private BuyType buyType;
     /** 订单状态 */
     private Status status;
-    /** 订单价格(分) */
+    /** 订单价格*/
     private double price;
     /** 服务唯一编码 */
     private String instanceId;

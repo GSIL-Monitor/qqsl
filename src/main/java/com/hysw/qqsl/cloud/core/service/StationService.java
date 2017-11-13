@@ -354,7 +354,7 @@ public class StationService extends BaseService<Station, Long> {
         }
         Calendar c = Calendar.getInstance();
         c.setTime(trade.getPayDate());
-        c.add(Calendar.YEAR, 1);
+        c.add(Calendar.MONTH, 1);
         station.setExpireDate(new Date(c.getTimeInMillis()));
         station.setInstanceId(trade.getInstanceId());
         station.setType(CommonEnum.StationType.valueOf(trade.getBaseType().toString()));

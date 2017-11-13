@@ -279,7 +279,7 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/email/getbackPassord", method = RequestMethod.POST)
+    @RequestMapping(value = "/email/getbackPassword", method = RequestMethod.POST)
     public
     @ResponseBody
     Message getbackPassordEmail(@RequestBody Map<String, Object> map, HttpSession session) {
