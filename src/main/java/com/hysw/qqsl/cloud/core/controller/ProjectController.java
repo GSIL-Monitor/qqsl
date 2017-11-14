@@ -817,8 +817,20 @@ public class ProjectController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowBim", method = RequestMethod.GET)
-    public @ResponseBody Message isAllowBim() {
+    public @ResponseBody Message isAllowBim(@RequestBody Map<String, Object> map) {
+        Message message = Message.parameterCheck(map);
+        if(message.getType()==Message.Type.FAIL){
+            return message;
+        }
         User user = authentService.getUserFromSubject();
+        if (user == null) {
+            Object projectId = map.get("projectId");
+            if (projectId == null) {
+                return new Message(Message.Type.FAIL);
+            }
+            Project project = projectService.find(Long.valueOf(projectId.toString()));
+            user = project.getUser();
+        }
         return projectService.isAllowBim(user);
     }
 

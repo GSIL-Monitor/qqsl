@@ -63,7 +63,7 @@ public class ElementGroupController {
         Map<String, Object> objectMap = (Map<String, Object>) object;
         // 取得单元id
         String alias = objectMap.get("alias").toString();
-        Long projectId = Long.valueOf(objectMap.get("id").toString());
+        Long projectId = Long.valueOf(objectMap.get("projectId").toString());
         Project project = projectService.find(projectId);
         // 取得单元
         Unit unit = unitService.findUnit(alias, false, project);

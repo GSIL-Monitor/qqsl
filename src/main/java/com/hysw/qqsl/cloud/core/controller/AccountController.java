@@ -8,6 +8,7 @@ import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.entity.data.UserMessage;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
@@ -111,6 +112,9 @@ public class AccountController {
         }
         if (map.get("loginType") != null && StringUtils.hasText(map.get("loginType").toString()) && map.get("loginType").equals("phone")) {
             return subjectLogin(account,"phone");
+        }
+        if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
+            return subjectLogin(account, "web");
         }
         if(map.get("cookie")==null||!StringUtils.hasText(map.get("cookie").toString())){
             return new Message(Message.Type.OTHER);
