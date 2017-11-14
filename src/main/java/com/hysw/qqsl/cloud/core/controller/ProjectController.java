@@ -715,6 +715,8 @@ public class ProjectController {
      * @return
      */
     @IsExpire
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/reportUploadFileInfo", method = RequestMethod.POST)
     public @ResponseBody Message uploadFileSize(@RequestBody Map<String, Object> map) {
         Message message = Message.parameterCheck(map);
@@ -730,6 +732,8 @@ public class ProjectController {
      * @param map
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/reportDownloadFileInfo", method = RequestMethod.POST)
     public @ResponseBody Message downloadFileSize(@RequestBody Map<String, Object> map) {
         Message message = Message.parameterCheck(map);
@@ -738,7 +742,12 @@ public class ProjectController {
         }
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            Object projectId = map.get("projectId");
+            if (projectId == null) {
+                return new Message(Message.Type.FAIL);
+            }
+            Project project = projectService.find(Long.valueOf(projectId.toString()));
+            user = project.getUser();
         }
         return projectService.downloadFileSize(map,user);
     }
@@ -748,6 +757,8 @@ public class ProjectController {
      * @param map
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/deleteFileSize", method = RequestMethod.POST)
     public @ResponseBody Message deleteFileSize(@RequestBody Map<String, Object> map) {
         Message message = Message.parameterCheck(map);
@@ -755,9 +766,6 @@ public class ProjectController {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
-        }
         return projectService.deleteFileSize(map,user);
     }
 
@@ -766,9 +774,23 @@ public class ProjectController {
      * @return
      */
     @IsExpire
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowUpload", method = RequestMethod.GET)
-    public @ResponseBody Message isAllowUpload() {
+    public @ResponseBody Message isAllowUpload(@RequestBody Map<String, Object> map) {
+        Message message = Message.parameterCheck(map);
+        if(message.getType()==Message.Type.FAIL){
+            return message;
+        }
         User user = authentService.getUserFromSubject();
+        if (user == null) {
+            Object projectId = map.get("projectId");
+            if (projectId == null) {
+                return new Message(Message.Type.FAIL);
+            }
+            Project project = projectService.find(Long.valueOf(projectId.toString()));
+            user = project.getUser();
+        }
         return projectService.isAllowUpload(user);
     }
 
@@ -776,16 +798,32 @@ public class ProjectController {
      * 是否允许下载
      * @return
      */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowDownload", method = RequestMethod.GET)
-    public @ResponseBody Message isAllowDownload() {
+    public @ResponseBody Message isAllowDownload(@RequestBody Map<String, Object> map) {
+        Message message = Message.parameterCheck(map);
+        if(message.getType()==Message.Type.FAIL){
+            return message;
+        }
         User user = authentService.getUserFromSubject();
+        if (user == null) {
+            Object projectId = map.get("projectId");
+            if (projectId == null) {
+                return new Message(Message.Type.FAIL);
+            }
+            Project project = projectService.find(Long.valueOf(projectId.toString()));
+            user = project.getUser();
+        }
         return projectService.isAllowDownload(user);
     }
     /**
-     * 是否允许下载
+     * 是否允许BIM
      * @return
      */
     @IsExpire
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowBim", method = RequestMethod.GET)
     public @ResponseBody Message isAllowBim() {
         User user = authentService.getUserFromSubject();

@@ -56,7 +56,7 @@ public class FieldController {
      * @param request
      * @return
      */
-    @IsExpire
+    @IsExpire(value = "request")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/coordinateFile", method = RequestMethod.POST)
