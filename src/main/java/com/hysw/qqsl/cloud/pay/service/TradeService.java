@@ -138,13 +138,10 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setBaseType(Trade.BaseType.valueOf(packageType.toString()));
         trade.setType(Trade.Type.PACKAGE);
         trade.setInstanceId(TradeUtil.buildInstanceId());
-        Calendar c = Calendar.getInstance();
-        c.setTime(trade.getCreateDate());
-        c.add(Calendar.YEAR, 1);
         JSONObject remarkJson = new JSONObject();
-        remarkJson.put("expireDate",new Date(c.getTimeInMillis()).getTime());
+        Date expireDate = getExpireDate(trade.getCreateDate(),"package");
+        remarkJson.put("expireDate",expireDate.getTime());
         trade.setRemark(remarkJson.toString());
-        setExpireDate(trade);
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
@@ -196,13 +193,10 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setInstanceId(TradeUtil.buildInstanceId());
         trade.setBaseType(Trade.BaseType.valueOf(stationType.toString()));
         trade.setType(Trade.Type.STATION);
-        Calendar c = Calendar.getInstance();
-        c.setTime(trade.getCreateDate());
-        c.add(Calendar.MONTH, 1);
         JSONObject remarkJson = new JSONObject();
-        remarkJson.put("expireDate",new Date(c.getTimeInMillis()).getTime());
+        Date expireDate = getExpireDate(trade.getCreateDate(),"station");
+        remarkJson.put("expireDate",expireDate.getTime());
         trade.setRemark(remarkJson.toString());
-        setExpireDate(trade);
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
@@ -263,7 +257,6 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setBaseType(Trade.BaseType.valueOf(goodsType.toString()));
         trade.setInstanceId(TradeUtil.buildInstanceId());
         trade.setRemark(remark.toString());
-        setExpireDate(trade);
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", trade.getId());
@@ -322,14 +315,10 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setUser(user);
         trade.setPrice(packageModel.getPrice());
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
-        Calendar c = Calendar.getInstance();
-        c.setTime(aPackage.getExpireDate());
-        c.add(Calendar.YEAR, 1);
+        Date expireDate = getExpireDate(trade.getCreateDate(),"package");
         JSONObject remarkJson = new JSONObject();
-        Date expireDate = new Date(c.getTimeInMillis());
         remarkJson.put("expireDate",expireDate.getTime());
         trade.setRemark(remarkJson.toString());
-        setExpireDate(trade);
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
@@ -371,14 +360,10 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setUser(user);
         trade.setPrice(stationModel.getPrice());
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
-        Calendar c = Calendar.getInstance();
-        c.setTime(station.getExpireDate());
-        c.add(Calendar.YEAR, 1);
+        Date expireDate = getExpireDate(trade.getCreateDate(),"station");
         JSONObject remarkJson = new JSONObject();
-        Date expireDate = new Date(c.getTimeInMillis());
         remarkJson.put("expireDate",expireDate.getTime());
         trade.setRemark(remarkJson.toString());
-        setExpireDate(trade);
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
@@ -438,7 +423,6 @@ public class TradeService extends BaseService<Trade, Long> {
         }
         jsonObject2.put("expireDate",aPackage.getExpireDate().getTime());
         trade.setRemark(jsonObject2.toString());
-        setExpireDate(trade);
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", trade.getId());
@@ -473,22 +457,7 @@ public class TradeService extends BaseService<Trade, Long> {
         JSONObject jsonObject;
         JSONArray jsonArray = new JSONArray();
         for (Trade trade : trades) {
-            jsonObject = new JSONObject();
-//            jsonObject.put("id", trade.getId());
-            jsonObject.put("price",trade.getPrice());
-            jsonObject.put("baseType",trade.getBaseType());
-            jsonObject.put("type",trade.getType());
-            jsonObject.put("instanceId",trade.getInstanceId());
-            jsonObject.put("outTradeNo",trade.getOutTradeNo());
-//            if (trade.getValidTime() != 0) {
-//                jsonObject.put("validTime",trade.getValidTime());
-//            }
-            if (trade.getGoodsNum() != 0) {
-                jsonObject.put("goodsNum",trade.getGoodsNum());
-            }
-            jsonObject.put("createDate", trade.getCreateDate().getTime());
-            jsonObject.put("status",trade.getStatus());
-            jsonObject.put("buyType", trade.getBuyType());
+            jsonObject = tradeToJson(trade);
             jsonArray.add(jsonObject);
         }
         return jsonArray;
@@ -527,6 +496,7 @@ public class TradeService extends BaseService<Trade, Long> {
         if (trade.getRemark() != null) {
             jsonObject.put("remark", trade.getRemark());
         }
+        jsonObject.put("createDate", trade.getCreateDate().getTime());
         return jsonObject;
     }
 
@@ -657,15 +627,36 @@ public class TradeService extends BaseService<Trade, Long> {
     }
 
     /**
-     * 设置订单支付过期时间
-     * @param trade
+     * 设置产品到期时间
+     * @param date
      */
-    private void setExpireDate(Trade trade){
+    private Date getExpireDate(Date date,String type){
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.add(Calendar.HOUR,2);
-        JSONObject remarkJson = new JSONObject();
+        if("station".equals(type)){
+            c.add(Calendar.MONTH,1);
+        }else{
+            c.add(Calendar.YEAR,1);
+        }
         Date expireDate = new Date(c.getTimeInMillis());
-        trade.setExpireDate(expireDate);
+        return expireDate;
+    }
+
+    /**
+     * 订单过期定时检测(订单应在两小时之内支付,超过两小时视为过期)
+     */
+    public void expireCheck() {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("status", Trade.Status.NOPAY));
+        List<Trade> trades = tradeDao.findList(0, null, filters);
+        Long now = System.currentTimeMillis();
+        Trade trade;
+        for(int i = 0;i<trades.size();i++){
+            trade = trades.get(i);
+            if(now-trade.getCreateDate().getTime()>2*60*60*100){
+                trade.setStatus(Trade.Status.EXPIRE);
+                save(trade);
+            }
+        }
     }
 }

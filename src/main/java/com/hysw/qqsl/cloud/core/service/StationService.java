@@ -352,10 +352,9 @@ public class StationService extends BaseService<Station, Long> {
         if (station == null) {
             station = new Station();
         }
-        Calendar c = Calendar.getInstance();
-        c.setTime(trade.getPayDate());
-        c.add(Calendar.MONTH, 1);
-        station.setExpireDate(new Date(c.getTimeInMillis()));
+        JSONObject remarkJson = JSONObject.fromObject(trade.getRemark());
+        Long times = remarkJson.getLong("expireDate");
+        station.setExpireDate(new Date(times));
         station.setInstanceId(trade.getInstanceId());
         station.setType(CommonEnum.StationType.valueOf(trade.getBaseType().toString()));
         station.setUser(trade.getUser());
@@ -595,10 +594,9 @@ public class StationService extends BaseService<Station, Long> {
      */
     public void renewStation(Trade trade) {
         Station station = findByInstanceId(trade.getInstanceId());
-        Calendar c = Calendar.getInstance();
-        c.setTime(station.getExpireDate());
-        c.add(Calendar.YEAR, 1);
-        station.setExpireDate(new Date(c.getTimeInMillis()));
+        JSONObject remarkJson = JSONObject.fromObject(trade.getRemark());
+        Long times = remarkJson.getLong("expireDate");
+        station.setExpireDate(new Date(times));
         save(station);
     }
 

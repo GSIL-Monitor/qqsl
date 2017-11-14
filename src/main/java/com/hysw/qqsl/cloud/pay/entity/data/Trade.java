@@ -100,6 +100,8 @@ public class Trade extends BaseEntity{
         REVERSE,
         /** 已退款 */
         REFUND,
+        /** 已失效*/
+        EXPIRE
     }
 
     public enum Type{

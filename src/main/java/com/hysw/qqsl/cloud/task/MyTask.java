@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.task;
 import com.hysw.qqsl.cloud.core.entity.Note;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
+import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.wechat.service.GetAccessTokenService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +46,8 @@ public class MyTask {
 //    private CertifyService certifyService;
     @Autowired
     private CertifyCache certifyCache;
+    @Autowired
+    private TradeService tradeService;
 
 //    @Autowired
 //    private CustomRealm customRealm;
@@ -129,4 +132,16 @@ public class MyTask {
         certifyCache.expire();
         logger.info("身份认证与企业认证是否过期监测");
     }
+
+
+    /**
+     * 订单过期定时检测(订单应在两小时之内支付,超过两小时视为过期)
+     */
+    @Scheduled(fixedDelay = 60000*30 )
+    public void tradeExpireCheck(){
+        tradeService.expireCheck();
+        logger.info("订单是否过期监测");
+    }
+
+
 }
