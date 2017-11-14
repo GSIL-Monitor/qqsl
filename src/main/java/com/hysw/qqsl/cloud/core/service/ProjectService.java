@@ -1143,6 +1143,9 @@ public class ProjectService extends BaseService<Project, Long> {
             return new Message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
+        if (user == null) {
+            user = project.getUser();
+        }
         Package aPackage = packageService.findByUser(user);
         if (project == null || aPackage == null) {
             return new Message(Message.Type.FAIL);

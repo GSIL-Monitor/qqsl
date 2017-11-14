@@ -2,11 +2,9 @@ package com.hysw.qqsl.cloud.annotation.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.annotation.util.IsExpire;
 import com.hysw.qqsl.cloud.core.controller.Message;
-import com.hysw.qqsl.cloud.core.entity.data.Certify;
-import com.hysw.qqsl.cloud.core.entity.data.Coordinate;
-import com.hysw.qqsl.cloud.core.entity.data.Project;
-import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.entity.element.Position;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.pay.entity.PackageItem;
@@ -21,7 +19,11 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.CodeSignature;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.hamcrest.core.Is;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +31,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -45,11 +49,11 @@ public class AspectService {
     @Autowired
     private PackageService packageService;
     @Autowired
-    private CertifyService certifyService;
+    private ProjectService projectService;
     @Autowired
     private TradeService tradeService;
     @Autowired
-    private ProjectService projectService;
+    private AccountService accountService;
     @Autowired
     private CoordinateService coordinateService;
     @Autowired
@@ -104,6 +108,36 @@ public class AspectService {
     @Around(value = "@annotation(com.hysw.qqsl.cloud.annotation.util.IsExpire)")
     public Message isExpire(ProceedingJoinPoint joinPoint){
         User user = authentService.getUserFromSubject();
+        if (user == null) {
+            Signature signature = joinPoint.getSignature();
+            MethodSignature methodSignature = (MethodSignature)signature;
+            Method targetMethod = methodSignature.getMethod();
+            Annotation[] declaredAnnotations = targetMethod.getDeclaredAnnotations();
+            String value = null;
+            for (Annotation declaredAnnotation : declaredAnnotations) {
+                if (declaredAnnotation instanceof IsExpire) {
+                    value = ((IsExpire) declaredAnnotation).value();
+                    break;
+                }
+            }
+            if (value.equals("request")) {
+                Object[] args = joinPoint.getArgs();
+                HttpServletRequest request= (HttpServletRequest) args[0];
+                String projectId = request.getParameter("projectId");
+                Project project = projectService.find(Long.valueOf(projectId));
+                user = project.getUser();
+            }
+            if (value.equals("object")) {
+                Map<String, Object> map = (Map<String, Object>) SettingUtils.objectCopy(Arrays.asList(joinPoint.getArgs()).get(0));
+                Object projectId = map.get("projectId") == null ? map.get("id") : map.get("projectId");
+                if (projectId == null) {
+                    return new Message(Message.Type.FAIL);
+                }
+                Project project = projectService.find(Long.valueOf(projectId.toString()));
+                user = project.getUser();
+            }
+
+        }
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
             return new Message(Message.Type.EXIST);
