@@ -190,7 +190,9 @@ public class PackageService extends BaseService<Package,Long>{
         Calendar c = Calendar.getInstance();
         c.setTime(trade.getPayDate());
         c.add(Calendar.YEAR, 1);
-        aPackage.setExpireDate(new Date(c.getTimeInMillis()));
+        JSONObject remarkJson = JSONObject.fromObject(trade.getRemark());
+        Long times = remarkJson.getLong("expireDate");
+        aPackage.setExpireDate(new Date(times));
         aPackage.setInstanceId(trade.getInstanceId());
         aPackage.setUser(trade.getUser());
         aPackage.setCurSpaceNum(0);
@@ -214,10 +216,9 @@ public class PackageService extends BaseService<Package,Long>{
      */
     public void renewPackage(Trade trade) {
         Package aPackage = findByInstanceId(trade.getInstanceId());
-        Calendar c = Calendar.getInstance();
-        c.setTime(aPackage.getExpireDate());
-        c.add(Calendar.YEAR, 1);
-        aPackage.setExpireDate(new Date(c.getTimeInMillis()));
+        JSONObject remarkJson = JSONObject.fromObject(trade.getRemark());
+        Long times = remarkJson.getLong("expireDate");
+        aPackage.setExpireDate(new Date(times));
         save(aPackage);
     }
 

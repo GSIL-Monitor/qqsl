@@ -191,7 +191,7 @@ public class AliPayController {
         alipayRequest.setReturnUrl(RETURN_URL);
         alipayRequest.setNotifyUrl(NOTIFY_URL);//在公共参数中设置回跳和通知地址
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
-        if (trade == null) {
+        if (trade == null||System.currentTimeMillis()-trade.getExpireDate().getTime()>2*60*60*1000) {
             return;
         }
         User user = authentService.getUserFromSubject();

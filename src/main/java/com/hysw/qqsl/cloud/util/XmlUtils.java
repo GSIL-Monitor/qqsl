@@ -153,16 +153,15 @@ public class XmlUtils {
         String str2 = "";
         List<String> strs2 = Arrays.asList(str2.split(","));
         System.out.println(strs2);*/
-        java.text.DecimalFormat   df   =new   java.text.DecimalFormat("#.00");
-        DecimalFormat df1   = new DecimalFormat("######0.00");
+        DecimalFormat df1 = new DecimalFormat("#.00");
+        DecimalFormat df2 = new DecimalFormat("######0.00");
         double d1 = 1.0;
-        double d2 = 1;
-        System.out.println(  df.format(1.00)+":"+df.format(d1)+":"+df.format(d2));
-
-        String result = df.format(0.01);
-        System.out.println( df1.format(222222222222222.01));
-        System.out.println( result);
-        boolean boo = 0.01>1;
-        System.out.println(boo);
+        double d2 = 5;
+        double d3 = 0.11;
+        double d4 = 1.11;
+        System.out.println("df1:"+df1.format(d1)+" pk "+df2.format(d1));
+        System.out.println("df1:"+df1.format(d2)+" pk "+df2.format(d2));
+        System.out.println("df1:"+df1.format(d3)+" pk "+df2.format(d3));
+        System.out.println("df1:"+df1.format(d4)+" pk "+df2.format(d4));
     }
 }

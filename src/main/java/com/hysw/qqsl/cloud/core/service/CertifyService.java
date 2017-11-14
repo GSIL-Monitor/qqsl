@@ -152,14 +152,14 @@ public class CertifyService extends BaseService<Certify, Long> {
 //            个人认证未通过不能进行企业认证
             return new Message(Message.Type.NO_ALLOW);
         }
-        if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS) {
+        if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS||findByCompanyLicence(companyLicence.toString())) {
 //            认证已通过，不可更改
             return new Message(Message.Type.EXIST);
         }
 //        企业许可证编号
-        if (findByCompanyLicence(companyLicence.toString())) {
+       /* if (findByCompanyLicence(companyLicence.toString())) {
             return new Message(Message.Type.OTHER);
-        }
+        }*/
         certify.setLegal(legal.toString());
         certify.setCompanyName(companyName.toString());
         certify.setCompanyAddress(companyAddress.toString());
