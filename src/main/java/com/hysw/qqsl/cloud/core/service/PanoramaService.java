@@ -131,17 +131,10 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("advice", panoramas.get(i).getAdvice());
             jsonObject.put("reviewDate", panoramas.get(i).getReviewDate());
             jsonObject.put("isShare", panoramas.get(i).getShare());
-            List<ObjectFile> objectFiles;
-            if (SettingUtils.getInstance().getSetting().getStatus().equals("run")) {
-                objectFiles= ossService
+            List<ObjectFile> objectFiles= ossService
                         .getSubdirectoryFiles("panorama" + "/" +panoramas.get(i).getId(),"qqslimage");
-            }else{
-                objectFiles= ossService
-                        .getSubdirectoryFiles("panorama_test" + "/" +panoramas.get(i).getId(),"qqslimage");
-            }
             jsonObject.put("pictures", objectFiles);
             jsonObject.put("user", userJson(panoramas.get(i).getUserId()));
-
             jsonArray.add(jsonObject);
         }
         return jsonArray;
