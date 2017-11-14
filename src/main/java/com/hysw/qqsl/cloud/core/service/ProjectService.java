@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
 import com.hysw.qqsl.cloud.core.entity.Setting;
@@ -788,9 +789,17 @@ public class ProjectService extends BaseService<Project, Long> {
         projectJson.put("views", project.getViews());
         projectJson.put("cooperate", project.getCooperate());
         projectJson.put("iconType", project.getIconType());
+        User user = project.getUser();
+        if(user.getPersonalStatus().equals(CommonEnum.CertifyStatus.PASS)){
+            if(user.getCompanyStatus().equals(CommonEnum.CertifyStatus.PASS)){
+                userJson.put("userName", user.getCompanyName());
+            }
+            userJson.put("userName", user.getUserName());
+        }else {
+            userJson.put("userName", user.getName());
+        }
         userJson.put("id", project.getUser().getId());
         userJson.put("name", project.getUser().getName());
-        userJson.put("userName", project.getUser().getUserName());
         projectJson.put("user", userJson);
     }
 
