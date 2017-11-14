@@ -129,7 +129,7 @@ public class AspectService {
             }
             if (value.equals("object")) {
                 Map<String, Object> map = (Map<String, Object>) SettingUtils.objectCopy(Arrays.asList(joinPoint.getArgs()).get(0));
-                Object projectId = map.get("projectId") == null ? map.get("id") : map.get("projectId");
+                Object projectId = map.get("projectId");
                 if (projectId == null) {
                     return new Message(Message.Type.FAIL);
                 }
