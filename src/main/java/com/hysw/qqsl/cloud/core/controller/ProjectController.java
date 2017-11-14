@@ -776,19 +776,15 @@ public class ProjectController {
     @IsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/isAllowUpload", method = RequestMethod.GET)
-    public @ResponseBody Message isAllowUpload(@RequestBody Map<String, Object> map) {
-        Message message = Message.parameterCheck(map);
+    @RequestMapping(value = "/isAllowUpload", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Message isAllowUpload(@RequestParam long projectId) {
+        Message message = Message.parametersCheck(projectId);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            Object projectId = map.get("projectId");
-            if (projectId == null) {
-                return new Message(Message.Type.FAIL);
-            }
-            Project project = projectService.find(Long.valueOf(projectId.toString()));
+            Project project = projectService.find(projectId);
             user = project.getUser();
         }
         return projectService.isAllowUpload(user);
@@ -800,19 +796,15 @@ public class ProjectController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/isAllowDownload", method = RequestMethod.GET)
-    public @ResponseBody Message isAllowDownload(@RequestBody Map<String, Object> map) {
-        Message message = Message.parameterCheck(map);
+    @RequestMapping(value = "/isAllowDownload", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Message isAllowDownload(@RequestParam long projectId) {
+        Message message = Message.parametersCheck(projectId);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            Object projectId = map.get("projectId");
-            if (projectId == null) {
-                return new Message(Message.Type.FAIL);
-            }
-            Project project = projectService.find(Long.valueOf(projectId.toString()));
+            Project project = projectService.find(projectId);
             user = project.getUser();
         }
         return projectService.isAllowDownload(user);
