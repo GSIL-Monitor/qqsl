@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" " http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
 <qqsl>
 	<!-- run:正式运行状态 dev:开发状态 -->
-	<setting name="status" value="dev" />
+	<setting name="status" value="run" />
 
 	<!-- 要素地址配置 -->
 	<setting name="agrProjectModel" value="agrProjectModel.xml" />
