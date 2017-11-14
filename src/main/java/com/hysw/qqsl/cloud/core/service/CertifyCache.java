@@ -395,7 +395,8 @@ public class CertifyCache {
         certify.setPersonalStatus(CommonEnum.CertifyStatus.PASS);
         certify.setIdentityAdvice(null);
         certifyService.save(certify);
-        setRolesPass(certify.getUser(),"user:identify");
+        //保存真实姓名和角色信息
+        setRolesAndName(certify.getUser(),"user:identify",certify.getName());
         //            发送短信，邮件通知
         emailService.personalCertifySuccess(certify);
         Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的实名认证已经通过认证，水利云将为您提供更多，更优质的服务。");
@@ -406,15 +407,21 @@ public class CertifyCache {
     /**
      * 认证通过,添加相应权限
      * @param user
-     * @param s
+     * @param role
+     * @param name
      */
-    private void setRolesPass(User user, String s) {
+    private void setRolesAndName(User user, String role,String name) {
         String roles = user.getRoles();
         if(roles == null||!StringUtils.hasText(roles.toString())){
             roles="user:simple";
         }
-        roles = roles + "," + s;
+        roles = roles + "," + role;
         user.setRoles(roles);
+        if("user:company".equals(role)){
+            user.setCompanyName(name);
+        }else {
+            user.setName(name);
+        }
         userService.save(user);
     }
 
@@ -447,7 +454,7 @@ public class CertifyCache {
         certify.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         certify.setCompanyAdvice(null);
         certifyService.save(certify);
-        setRolesPass(certify.getUser(),"user:company");
+        setRolesAndName(certify.getUser(),"user:company",certify.getCompanyName());
         //            发送短信，邮件通知
         emailService.companyCertifySuccess(certify);
         Note note = new Note(certify.getUser().getPhone(),"尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。");

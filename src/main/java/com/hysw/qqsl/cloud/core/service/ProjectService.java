@@ -773,7 +773,6 @@ public class ProjectService extends BaseService<Project, Long> {
      * @param projectJson
      */
     private void buildBaseInfo(Project project, JSONObject projectJson) {
-        JSONObject userJson = new JSONObject();
         projectJson.put("id", project.getId());
         projectJson.put("createDate", project.getCreateDate().getTime());
         projectJson.put("modifyDate", project.getModifyDate().getTime());
@@ -789,17 +788,7 @@ public class ProjectService extends BaseService<Project, Long> {
         projectJson.put("views", project.getViews());
         projectJson.put("cooperate", project.getCooperate());
         projectJson.put("iconType", project.getIconType());
-        User user = project.getUser();
-        if(user.getPersonalStatus().equals(CommonEnum.CertifyStatus.PASS)){
-            if(user.getCompanyStatus().equals(CommonEnum.CertifyStatus.PASS)){
-                userJson.put("userName", user.getCompanyName());
-            }
-            userJson.put("userName", user.getUserName());
-        }else {
-            userJson.put("userName", user.getName());
-        }
-        userJson.put("id", project.getUser().getId());
-        userJson.put("name", project.getUser().getName());
+        JSONObject userJson = userService.makeSimpleUserJson(project.getUser());
         projectJson.put("user", userJson);
     }
 

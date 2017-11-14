@@ -445,12 +445,14 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
 	 */
 	public JSONObject makeSimpleUserJson(User user){
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("id",user.getId());
-		jsonObject.put("name",user.getName());
-		jsonObject.put("userName",user.getUserName());
-		jsonObject.put("phone",user.getPhone());
-		return jsonObject;
+		JSONObject userJson = new JSONObject();
+		userJson.put("id",user.getId());
+		userJson.put("name",user.getName());
+		userJson.put("userName",user.getUserName());
+		userJson.put("phone",user.getPhone());
+		userJson.put("companyName", user.getCompanyName());
+		setNickName(user,userJson);
+		return userJson;
 	}
 
 	/**
@@ -463,6 +465,7 @@ public class UserService extends BaseService<User, Long> {
 		userJson.put("id",user.getId());
 		userJson.put("avatar",user.getAvatar());
 		userJson.put("email",user.getEmail());
+		setNickName(user,userJson);
 		if (user.getName() == null) {
 			userJson.put("name",user.getUserName());
 		}else{
@@ -476,7 +479,6 @@ public class UserService extends BaseService<User, Long> {
 		if (user.getCompanyName() != null) {
 			userJson.put("companyName", user.getCompanyName());
 		}
-//		userJson.put("type",user.getType());
 		List<UserMessage> userMessages = userMessageService.findByUserAndType(user);
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		JSONObject userMessageJson;
@@ -501,6 +503,21 @@ public class UserService extends BaseService<User, Long> {
         return userJson;
 	}
 
+	/**
+	 * 设置nickName，用于保存分享时的名称，如果是企业认证的是企业名，如果是实名认证的，是真实姓名，否则是昵称
+	 * @param user
+	 * @param userJson
+	 */
+	private void setNickName(User user,JSONObject userJson){
+		if(user.getPersonalStatus().equals(CommonEnum.CertifyStatus.PASS)){
+			if(user.getCompanyStatus().equals(CommonEnum.CertifyStatus.PASS)){
+				userJson.put("nickName", user.getCompanyName());
+			}
+			userJson.put("nickName", user.getName());
+		}else {
+			userJson.put("nickName", user.getUserName());
+		}
+	}
 
 	/**
 	 * 通过用户id获取所属子账号

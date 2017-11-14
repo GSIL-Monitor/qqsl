@@ -29,11 +29,12 @@ public class User extends BaseEntity {
 
 	private static final long serialVersionUID = 148187703824551916L;
 
+
     /** 真实姓名 */
     private String name;
     /** 公司名称 */
     private String companyName;
-	/** 登陆名 */
+	/** 登陆名(昵称) */
 	private String userName;
 	/** 密码 */
 	private String password;
@@ -97,7 +98,6 @@ public class User extends BaseEntity {
 		this.name = name;
 	}
 
-    @Transient
     public String getCompanyName() {
         return companyName;
     }
@@ -106,7 +106,7 @@ public class User extends BaseEntity {
         this.companyName = companyName;
     }
 
-    @NotEmpty
+	@NotEmpty
 	@Length(max=255)
 	@JsonIgnore
 	public String getPassword() {
