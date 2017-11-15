@@ -301,7 +301,7 @@ public class FieldController {
      * @param objectMap
      * @return
      */
-    @IsExpire
+    @IsExpire(value = "findById")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editBuild", method = RequestMethod.POST)
