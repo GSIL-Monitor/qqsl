@@ -773,7 +773,7 @@ public class ProjectController {
      * 是否允许上传
      * @return
      */
-    @IsExpire
+    @IsExpire(value = "property")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowUpload", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
