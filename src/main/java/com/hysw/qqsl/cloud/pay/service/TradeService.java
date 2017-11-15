@@ -145,14 +145,8 @@ public class TradeService extends BaseService<Trade, Long> {
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-//        jsonObject.put("validTime", trade.getValidTime());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -200,14 +194,8 @@ public class TradeService extends BaseService<Trade, Long> {
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-//        jsonObject.put("validTime", trade.getValidTime());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -259,14 +247,8 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setRemark(remark.toString());
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-        jsonObject.put("remark", trade.getRemark());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -322,15 +304,8 @@ public class TradeService extends BaseService<Trade, Long> {
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-//        jsonObject.put("validTime", trade.getValidTime());
-        jsonObject.put("expireDate", expireDate.getTime());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -425,15 +400,8 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setRemark(jsonObject2.toString());
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-        jsonObject.put("expireDate", aPackage.getExpireDate().getTime());
-        jsonObject.put("remark",trade.getRemark());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
