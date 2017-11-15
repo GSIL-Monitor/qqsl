@@ -115,6 +115,9 @@ public class OssController {
 			return message;
 		}
 		User user = authentService.getUserFromSubject();
+		if(user==null){
+			user = projectService.find(prpjectId).getUser();
+		}
 		Oss oss = new Oss(treePath,user.getId(),prpjectId);
 		ossService.save(oss);
 		return new Message(Message.Type.OK);
