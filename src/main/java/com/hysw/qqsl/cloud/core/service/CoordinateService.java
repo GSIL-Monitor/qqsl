@@ -182,8 +182,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
                 if (b.trim().equals("名称")) {
 					if (rowNum != 0) {
 						if (build1 != null && build1.getCenterCoor() != null) {
-							List<Attribe> list = fieldService.contrastEditAttribe(build1.getAttribeList(), attribes);
-							build1.setAttribeList(list);
+							build1.setAttribeList(attribes);
 //							if (build1.getAttribeList()!=null&&build1.getAttribeList().size()!=0) {
 							if (build1.getRemark() == null) {
 								for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
@@ -225,11 +224,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 //						}
 						build2 = fieldService.allEqual(builds, String.valueOf(jsonObject1.get("longitude")), String.valueOf(jsonObject1.get("latitude")),split[2]);
 						if (build2!= null) {
-							if (build2.getAttribeList() == null || build2.getAttribeList().size() == 0) {
-								build1.setId(build2.getId());
-							}else{
-								build1 = build2;
-							}
+							buildService.remove(build2);
 						}
 						jsonObject = new JSONObject();
 						jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
@@ -264,8 +259,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					}
 				}
 				if (rowNum == sheet.getLastRowNum() && build1 != null && build1.getCenterCoor() != null) {
-					List<Attribe> list = fieldService.contrastEditAttribe(build1.getAttribeList(), attribes);
-					build1.setAttribeList(list);
+					build1.setAttribeList(attribes);
 //					if (build1.getAttribeList()!=null&&build1.getAttribeList().size()!=0) {
 					if (build1.getRemark() == null) {
 						for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
