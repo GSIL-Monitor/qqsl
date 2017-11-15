@@ -420,21 +420,14 @@ public class FieldService {
         if (attribes.size() == 0) {
             return null;
         }
-        boolean flag;
         Attribe attribe1 = null;
         for (Attribe attribe : attribeList) {
-            flag=false;
             for (int i = 0; i < attribes.size(); i++) {
                 attribe1 = attribes.get(i);
                 if (attribe.getAlias().equals(attribe1.getAlias())&&attribe.getCode()==attribe1.getCode()) {
                     attribe.setValue(attribe1.getValue());
                     list.add(attribe);
-                    flag = true;
-                    break;
                 }
-            }
-            if (!flag) {
-                list.add(attribe1);
             }
         }
         return list;
