@@ -433,6 +433,7 @@ public class FieldService {
                     break;
                 }
             }
+
             if (!flag) {
                 list.add(attribe1);
             }
