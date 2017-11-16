@@ -37,7 +37,7 @@ public class PackageServiceTest extends BaseTest{
     @Test
     public void testActivatePackage(){
         Trade trade = new Trade();
-        trade.setBuyType(Trade.BuyType.FIRST);
+        trade.setBuyType(Trade.BuyType.BUY);
         trade.setType(Trade.Type.PACKAGE);
         trade.setBaseType(Trade.BaseType.TEST);
         trade.setPayDate(new Date());
@@ -52,7 +52,7 @@ public class PackageServiceTest extends BaseTest{
     @Test
     public void testRenewPackage(){
         Trade trade = new Trade();
-        trade.setBuyType(Trade.BuyType.FIRST);
+        trade.setBuyType(Trade.BuyType.BUY);
         trade.setType(Trade.Type.PACKAGE);
         trade.setBaseType(Trade.BaseType.TEST);
         trade.setPayDate(new Date());
