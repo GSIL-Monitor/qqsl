@@ -111,7 +111,7 @@ public class FieldService {
             if (attribes != null) {
                 build = isSameBuild(builds1, longitude.toString(), latitude.toString());
                 if (delete != null && Boolean.valueOf(delete.toString()) == true) {
-                    deleteBuildAndAttribes(build);
+                    buildService.remove(build);
                     continue;
                 }
                 if (build == null) {
@@ -195,18 +195,6 @@ public class FieldService {
         coordinateService.save(coordinate2);
         return new Message(Message.Type.OK);
     }
-
-    /**
-     * 删除建筑物以及其下所有属性
-     * @param build
-     */
-    private void deleteBuildAndAttribes(Build build) {
-        for (Attribe attribe : build.getAttribeList()) {
-            attribeService.remove(attribe);
-        }
-        buildService.remove(build);
-    }
-
 
     /**
      * @param builds
