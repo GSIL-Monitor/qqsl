@@ -335,22 +335,15 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setUser(user);
         trade.setPrice(stationModel.getPrice());
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
-        Date expireDate = getExpireDate(trade.getCreateDate(),"station");
+        Date expireDate = getExpireDate(trade.getCreateDate(),"renewStation");
         JSONObject remarkJson = new JSONObject();
         remarkJson.put("expireDate",expireDate.getTime());
         trade.setRemark(remarkJson.toString());
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-//        jsonObject.put("validTime", trade.getValidTime());
-        jsonObject.put("expireDate", expireDate.getTime());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
