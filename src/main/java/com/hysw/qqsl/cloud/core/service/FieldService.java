@@ -122,7 +122,6 @@ public class FieldService {
                     build.setSource(Build.Source.FIELD);
                     build.setRemark(remark.toString());
                 }else{
-                    Build build10 = new Build();
                     buildService.remove(build);
                     build.setAttribeList(null);
                     build.setId(null);

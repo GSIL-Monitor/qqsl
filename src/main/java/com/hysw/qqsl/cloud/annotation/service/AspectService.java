@@ -166,7 +166,6 @@ public class AspectService {
             try {
                 return (Message) joinPoint.proceed();
             } catch (Throwable e) {
-                e.fillInStackTrace();
                 return new Message(Message.Type.FAIL);
             }
         }
