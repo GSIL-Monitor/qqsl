@@ -1,21 +1,11 @@
 group "com.hysw"
 
-apply plugin: "java"
-apply plugin: "war" // war包生产插件
-apply plugin: "idea"
-apply plugin: "maven"
-apply plugin: "eclipse"
+apply plugin: "war"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 ext {
     springVersion="4.3.9.RELEASE"
-//    mockitoVersion="2.2.1"
-//    hamcrestVersion="1.3"
-//    jsonpathVersion="0.9.0"
-//    xstreamVersion="1.4.4"
-//    springBootVersion="0.5.0.BUILD-SNAPSHOT"
-//    projectBuildSourceEncoding="UTF-8"
 }
 
 repositories {
@@ -29,34 +19,11 @@ dependencies {
     def jsonpathVersion="0.9.0"
     def xstreamVersion="1.4.4"
 
-
-//    compile("org.springframework:spring-aop:$springVersion",
-//            "org.springframework:spring-orm:$springVersion",
-//            "org.springframework:spring-jdbc:$springVersion",
-//            "org.springframework:spring-instrument-tomcat:$springVersion",
-//            "org.springframework:spring-instrument:$springVersion",
-//            "org.springframework:spring-framework-bom:$springVersion",
-//            "org.springframework:spring-expression:$springVersion",
-//            "org.springframework:spring-core:$springVersion",
-//            "org.springframework:spring-context-support:$springVersion",
-//            "org.springframework:spring-context:$springVersion",
-//            "org.springframework:spring-beans:$springVersion",
-//            "org.springframework:spring-aspects:$springVersion",
-//            "org.springframework:spring-test:$springVersion",
-//            "org.springframework:spring-tx:$springVersion",
-//            "org.springframework:spring-web:$springVersion",
-//            "org.springframework:spring-webmvc:$springVersion",
-//            "org.springframework:spring-webmvc-portlet:$springVersion")
-//    providedCompile(
-//            "javax.servlet:javax.servlet-api:3.1.0",
-//            "javax.servlet.jsp:jsp-api:2.2.1-b03"
-//    )
     compile "javax.servlet:javax.servlet-api:3.1.0"
     compile "org.springframework:spring-web:$springVersion"
     compile "org.springframework:spring-webmvc:$springVersion"
     compile "org.springframework:spring-orm:$springVersion"
     compile "org.springframework:spring-context-support:$springVersion"
-
     compile "org.apache.velocity:velocity:1.7"
     compile "commons-codec:commons-codec:1.9"
     compile "commons-logging:commons-logging:1.2"
@@ -66,27 +33,24 @@ dependencies {
     compile "log4j:log4j:1.2.17"
     compile "commons-fileupload:commons-fileupload:1.3"
     compile "com.aliyun.oss:aliyun-sdk-oss:2.0.7"
-
-//    <!-- 阿里云STS -->
+    // 阿里云STS
     compile "com.aliyun:aliyun-java-sdk-sts:2.1.6"
     compile "com.aliyun:aliyun-java-sdk-core:2.1.7"
-//    <!-- 创蓝短信 -->
+    // 创蓝短信
     compile "commons-codec:commons-codec:1.10"
     compile "commons-httpclient:commons-httpclient:3.1"
     compile "commons-logging:commons-logging:1.2"
-//    <!-- shiro -->
+    // shiro
     compile "org.apache.shiro:shiro-core:1.2.3"
     compile "org.apache.shiro:shiro-web:1.2.3"
     compile "org.apache.shiro:shiro-spring:1.2.3"
     compile "org.apache.shiro:shiro-ehcache:1.2.3"
     compile "net.sf.ehcache:ehcache-core:2.5.0"
-
     compile "commons-cli:commons-cli:1.2"
     compile "org.slf4j:slf4j-api:1.7.21"
     compile "org.slf4j:slf4j-log4j12:1.7.21"
     compile "org.apache.commons:commons-lang3:3.4"
     compile "xerces:xercesImpl:2.11.0"
-//    compile "org.slf4j:slf4j-jdk14:1.5.6"
     compile "com.thoughtworks.xstream:xstream:$xstreamVersion"
     compile "jaxen:jaxen:1.1.1"
     compile "dom4j:dom4j:1.6.1"
@@ -97,42 +61,24 @@ dependencies {
     compile "mysql:mysql-connector-java:5.1.6"
     compile "com.thetransactioncompany:cors-filter:2.4"
     compile 'com.ibm.icu:icu4j:3.4.4'
-    compile fileTree(dir:'src/main/webapp/WEB-INF/lib',include:['*.jar'])
-//    compile 'xml-apis:xml-apis:1.4.01',force:true
     compile group:'xml-apis',name:'xml-apis',version:'1.4.01',force:true
-//    compile 'org.apache.poi:poi:3.13'
-//    compile 'org.osgeo:proj4j:0.1.0'
-//    <!-- 矩阵包-->
+    // 矩阵包
     compile "gov.nist.math:jama:1.0.3"
-//    <!-- 爬虫 -->
-//    <!--<dependency>
-//    <groupId>us.codecraft</groupId>
-//            <artifactId>webmagic-core</artifactId>
-//    <version>0.5.2</version>
-//        </dependency>
-//    <dependency>
-//    <groupId>us.codecraft</groupId>
-//            <artifactId>webmagic-extension</artifactId>
-//    <version>0.5.2</version>
-//        </dependency>-->
     compile "com.fasterxml.jackson.core:jackson-core:2.8.1"
     compile "com.fasterxml.jackson.core:jackson-databind:2.8.1"
     compile "com.fasterxml.jackson.core:jackson-annotations:2.8.1"
     compile "org.codehaus.groovy:groovy-all:2.4.7"
-//    <!-- test -->
-    testCompile "org.springframework:spring-test:$springVersion"
-    testCompile "junit:junit:4.12"
-    testCompile "org.mockito:mockito-core:$mockitoVersion"
-    testCompile "com.jayway.jsonpath:json-path:$jsonpathVersion"
     compile 'org.aspectj:aspectjrt:1.8.0'
     compile 'org.aspectj:aspectjweaver:1.8.0'
     compile "org.springframework:spring-aop:$springVersion"
     compile 'com.aliyun:aliyun-java-sdk-core:2.1.7'
-//    testCompile group: "junit", name: "junit", version: "4.12"
-//    testRuntime "org.springframework:spring-test:$springVersion"
-//    testRuntime "junit:junit:4.12"
-//    testRuntime "org.mockito:mockito-core:$mockitoVersion"
-//    testRuntime "com.jayway.jsonpath:json-path:$jsonpathVersion"
+    // 本地依赖
+    compile fileTree(dir:'src/main/webapp/WEB-INF/lib',include:['*.jar'])
+    // test
+    testCompile "org.springframework:spring-test:$springVersion"
+    testCompile "junit:junit:4.12"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "com.jayway.jsonpath:json-path:$jsonpathVersion"
 }
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 

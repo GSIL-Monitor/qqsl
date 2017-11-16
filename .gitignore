@@ -5,6 +5,7 @@ target/
 *.class
 classes/
 build/
+ui/
 .gradle/
 gradle/
 out/

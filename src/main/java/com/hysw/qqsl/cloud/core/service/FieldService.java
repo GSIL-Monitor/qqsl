@@ -111,7 +111,7 @@ public class FieldService {
             if (attribes != null) {
                 build = isSameBuild(builds1, longitude.toString(), latitude.toString());
                 if (delete != null && Boolean.valueOf(delete.toString()) == true) {
-                    deleteBuildAndAttribes(build);
+                    buildService.remove(build);
                     continue;
                 }
                 if (build == null) {
@@ -121,6 +121,10 @@ public class FieldService {
                     build.setType(CommonEnum.CommonType.valueOf(type.toString()));
                     build.setSource(Build.Source.FIELD);
                     build.setRemark(remark.toString());
+                }else{
+                    buildService.remove(build);
+                    build.setAttribeList(null);
+                    build.setId(null);
                 }
                 Object position = coordinate.get("position");
                 if (position != null) {
@@ -159,14 +163,14 @@ public class FieldService {
                     attribe.setBuild(build);
                     attribeList1.add(attribe);
                 }
-                List<Attribe> list;
-                if (!flag) {
-                    list = contrastEditAttribe(build.getAttribeList(), attribeList1);
-                }else{
-                    list = new ArrayList<>();
-                    list.addAll(attribeList1);
-                }
-                build.setAttribeList(list);
+//                List<Attribe> list;
+//                if (!flag) {
+//                    list = contrastEditAttribe(build.getAttribeList(), attribeList1);
+//                }else{
+//                    list = new ArrayList<>();
+//                    list.addAll(attribeList1);
+//                }
+                build.setAttribeList(attribeList1);
                 buildService.save(build);
             }
         }
@@ -191,18 +195,6 @@ public class FieldService {
         coordinateService.save(coordinate2);
         return new Message(Message.Type.OK);
     }
-
-    /**
-     * 删除建筑物以及其下所有属性
-     * @param build
-     */
-    private void deleteBuildAndAttribes(Build build) {
-        for (Attribe attribe : build.getAttribeList()) {
-            attribeService.remove(attribe);
-        }
-        buildService.remove(build);
-    }
-
 
     /**
      * @param builds
