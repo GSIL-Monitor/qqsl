@@ -41,7 +41,7 @@ public class TradeServiceTest extends BaseTest {
     @Test
     public void testActivateServePackage(){
         Trade trade = new Trade();
-        trade.setBuyType(Trade.BuyType.FIRST);
+        trade.setBuyType(Trade.BuyType.BUY);
         trade.setType(Trade.Type.PACKAGE);
         trade.setBaseType(Trade.BaseType.TEST);
         trade.setPayDate(new Date());
@@ -64,7 +64,7 @@ public class TradeServiceTest extends BaseTest {
         packageService.flush();
         Assert.assertTrue(packageService.findByInstanceId(trade.getInstanceId()) != null);
         Assert.assertTrue(packageService.findByInstanceId(trade.getInstanceId()).getType().toString().equalsIgnoreCase("test"));
-        trade.setBuyType(Trade.BuyType.UPDATE);
+        trade.setBuyType(Trade.BuyType.UPGRADE);
         trade.setType(Trade.Type.PACKAGE);
         trade.setBaseType(Trade.BaseType.SUN);
         trade.setPayDate(new Date());
@@ -84,7 +84,7 @@ public class TradeServiceTest extends BaseTest {
     @Test
     public void testActivateServeStation(){
         Trade trade = new Trade();
-        trade.setBuyType(Trade.BuyType.FIRST);
+        trade.setBuyType(Trade.BuyType.BUY);
         trade.setType(Trade.Type.STATION);
         trade.setBaseType(Trade.BaseType.HYDROLOGIC_STATION);
         trade.setPayDate(new Date());

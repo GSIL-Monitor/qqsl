@@ -394,6 +394,7 @@ public class UserService extends BaseService<User, Long> {
 			userJson.put("email", user.getEmail());
 			userJson.put("phone", user.getPhone());
 			userJson.put("roles",user.getRoles());
+			setNickName(user,userJson);
 			if(user.getLocked()==null||user.getLocked()==false){
 				userJson.put("isLocked", false);
 			}else{

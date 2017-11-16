@@ -121,6 +121,10 @@ public class FieldService {
                     build.setType(CommonEnum.CommonType.valueOf(type.toString()));
                     build.setSource(Build.Source.FIELD);
                     build.setRemark(remark.toString());
+                }else{
+                    buildService.remove(build);
+                    build.setAttribeList(null);
+                    build.setId(null);
                 }
                 Object position = coordinate.get("position");
                 if (position != null) {
@@ -159,14 +163,14 @@ public class FieldService {
                     attribe.setBuild(build);
                     attribeList1.add(attribe);
                 }
-                List<Attribe> list;
-                if (!flag) {
-                    list = contrastEditAttribe(build.getAttribeList(), attribeList1);
-                }else{
-                    list = new ArrayList<>();
-                    list.addAll(attribeList1);
-                }
-                build.setAttribeList(list);
+//                List<Attribe> list;
+//                if (!flag) {
+//                    list = contrastEditAttribe(build.getAttribeList(), attribeList1);
+//                }else{
+//                    list = new ArrayList<>();
+//                    list.addAll(attribeList1);
+//                }
+                build.setAttribeList(attribeList1);
                 buildService.save(build);
             }
         }
@@ -433,6 +437,7 @@ public class FieldService {
                     break;
                 }
             }
+
             if (!flag) {
                 list.add(attribe1);
             }

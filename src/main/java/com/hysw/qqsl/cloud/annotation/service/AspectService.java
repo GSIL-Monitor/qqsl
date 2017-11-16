@@ -58,6 +58,8 @@ public class AspectService {
     private CoordinateService coordinateService;
     @Autowired
     private PositionService positionService;
+    @Autowired
+    private BuildService buildService;
 
     private final static Log log = LogFactory.getLog(AspectService.class);
 
@@ -136,7 +138,14 @@ public class AspectService {
                 Project project = projectService.find(Long.valueOf(projectId.toString()));
                 user = project.getUser();
             }
-
+            if (value.equals("property")) {
+                Object projectId = (joinPoint.getArgs())[0];
+                if (projectId == null) {
+                    return new Message(Message.Type.FAIL);
+                }
+                Project project = projectService.find(Long.valueOf(projectId.toString()));
+                user = project.getUser();
+            }
         }
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {

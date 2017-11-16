@@ -43,8 +43,7 @@ public class Trade extends BaseEntity{
     private int goodsNum;
     /** 退款日期 */
     private Date refundDate;
-    /**  过期时间 */
-    private Date expireDate;
+
 
     // 删除状态
     private boolean deleteStatus;
@@ -82,11 +81,11 @@ public class Trade extends BaseEntity{
 
     public enum BuyType{
         /** 首次购买 */
-        FIRST,
+        BUY,
         /** 续费 */
         RENEW,
         /** 升级 */
-        UPDATE
+        UPGRADE
     }
 
     public enum Status{
@@ -244,13 +243,5 @@ public class Trade extends BaseEntity{
 
     public void setDeleteStatus(boolean deleteStatus) {
         this.deleteStatus = deleteStatus;
-    }
-
-    public Date getExpireDate() {
-        return expireDate;
-    }
-
-    public void setExpireDate(Date expireDate) {
-        this.expireDate = expireDate;
     }
 }

@@ -184,19 +184,19 @@ public class AliPayController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
     @RequestMapping(value = "/pcPay/{out_trade_no}", method = RequestMethod.GET)
-    public void doPost(@PathVariable("out_trade_no") String out_trade_no,
+    public @ResponseBody Message doPost(@PathVariable("out_trade_no") String out_trade_no,
                        HttpServletResponse httpResponse) throws ServletException, IOException {
         AlipayClient alipayClient = aliPayService.getAlipayClient();
         AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();//创建API对应的request
         alipayRequest.setReturnUrl(RETURN_URL);
         alipayRequest.setNotifyUrl(NOTIFY_URL);//在公共参数中设置回跳和通知地址
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
-        if (trade == null||System.currentTimeMillis()-trade.getExpireDate().getTime()>2*60*60*1000) {
-            return;
+        if (System.currentTimeMillis()-trade.getCreateDate().getTime()>2*60*60*1000) {
+                return new Message(Message.Type.EXPIRED);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return;
+            return new Message(Message.Type.FAIL);
         }
         String type = tradeService.convertType(trade);
         JSONObject jsonObject = new JSONObject();
@@ -216,6 +216,7 @@ public class AliPayController {
         httpResponse.getWriter().write(form);//直接将完整的表单html输出到页面
         httpResponse.getWriter().flush();
         httpResponse.getWriter().close();
+        return new Message(Message.Type.OK);
     }
 
 //    /**

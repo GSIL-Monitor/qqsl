@@ -65,7 +65,7 @@ public class TradeService extends BaseService<Trade, Long> {
      */
     public void activateServe(Trade trade) {
 //        首次购买业务处理
-        if (trade.getBuyType() == Trade.BuyType.FIRST) {
+        if (trade.getBuyType() == Trade.BuyType.BUY) {
             if (trade.getType() == Trade.Type.PACKAGE) {
                 packageService.activatePackage(trade);
             } else if (trade.getType() == Trade.Type.STATION) {
@@ -78,7 +78,7 @@ public class TradeService extends BaseService<Trade, Long> {
             } else if (trade.getType() == Trade.Type.STATION) {
                 stationService.renewStation(trade);
             }
-        } else if (trade.getBuyType() == Trade.BuyType.UPDATE) {
+        } else if (trade.getBuyType() == Trade.BuyType.UPGRADE) {
             if (trade.getType() == Trade.Type.PACKAGE) {
                 packageService.updatePackage(trade);
             }
@@ -134,7 +134,7 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setPrice(packageModel.getPrice());
         trade.setUser(user);
         trade.setStatus(Trade.Status.NOPAY);
-        trade.setBuyType(Trade.BuyType.FIRST);
+        trade.setBuyType(Trade.BuyType.BUY);
         trade.setBaseType(Trade.BaseType.valueOf(packageType.toString()));
         trade.setType(Trade.Type.PACKAGE);
         trade.setInstanceId(TradeUtil.buildInstanceId());
@@ -145,14 +145,8 @@ public class TradeService extends BaseService<Trade, Long> {
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-//        jsonObject.put("validTime", trade.getValidTime());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -189,7 +183,7 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setPrice(stationModel.getPrice());
         trade.setUser(user);
         trade.setStatus(Trade.Status.NOPAY);
-        trade.setBuyType(Trade.BuyType.FIRST);
+        trade.setBuyType(Trade.BuyType.BUY);
         trade.setInstanceId(TradeUtil.buildInstanceId());
         trade.setBaseType(Trade.BaseType.valueOf(stationType.toString()));
         trade.setType(Trade.Type.STATION);
@@ -200,14 +194,8 @@ public class TradeService extends BaseService<Trade, Long> {
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-//        jsonObject.put("validTime", trade.getValidTime());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -253,20 +241,14 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setPrice(goodsModel.getPrice()*trade.getGoodsNum());
         trade.setUser(user);
         trade.setStatus(Trade.Status.NOPAY);
-        trade.setBuyType(Trade.BuyType.FIRST);
+        trade.setBuyType(Trade.BuyType.BUY);
         trade.setBaseType(Trade.BaseType.valueOf(goodsType.toString()));
         trade.setInstanceId(TradeUtil.buildInstanceId());
         trade.setRemark(remark.toString());
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-        jsonObject.put("remark", trade.getRemark());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -322,15 +304,8 @@ public class TradeService extends BaseService<Trade, Long> {
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-//        jsonObject.put("validTime", trade.getValidTime());
-        jsonObject.put("expireDate", expireDate.getTime());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -360,22 +335,15 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setUser(user);
         trade.setPrice(stationModel.getPrice());
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
-        Date expireDate = getExpireDate(trade.getCreateDate(),"station");
+        Date expireDate = getExpireDate(trade.getCreateDate(),"renewStation");
         JSONObject remarkJson = new JSONObject();
         remarkJson.put("expireDate",expireDate.getTime());
         trade.setRemark(remarkJson.toString());
 //        trade.setValidTime(1);
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-//        jsonObject.put("validTime", trade.getValidTime());
-        jsonObject.put("expireDate", expireDate.getTime());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -403,12 +371,12 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setBaseType(Trade.BaseType.valueOf(packageType.toString()));
         trade.setType(Trade.Type.PACKAGE);
         trade.setInstanceId(aPackage.getInstanceId());
-        trade.setBuyType(Trade.BuyType.UPDATE);
+        trade.setBuyType(Trade.BuyType.UPGRADE);
         trade.setUser(user);
         trade.setPrice(diffPrice(aPackage,newPackageModel,oldPackageModel));
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
         JSONObject jsonObject2 = new JSONObject();
-        jsonObject2.put("type", Trade.BuyType.UPDATE);
+        jsonObject2.put("type", Trade.BuyType.UPGRADE);
         for (int i = 0; i < CommonAttributes.TRADEBASETYPEE.length; i++) {
             if (CommonAttributes.TRADEBASETYPEE[i].equals(oldPackageModel.getType().toString())) {
                 jsonObject2.put("oldType", CommonAttributes.TRADEBASETYPEC[i]);
@@ -425,15 +393,8 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setRemark(jsonObject2.toString());
         save(trade);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", trade.getId());
-        jsonObject.put("outTradeNo", trade.getOutTradeNo());
-        jsonObject.put("instanceId", trade.getInstanceId());
-        jsonObject.put("type", trade.getType());
-        jsonObject.put("expireDate", aPackage.getExpireDate().getTime());
-        jsonObject.put("remark",trade.getRemark());
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("trade", jsonObject);
-        return new Message(Message.Type.OK,jsonObject1);
+        jsonObject.put("trade", tradeToJson(trade));
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**

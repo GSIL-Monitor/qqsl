@@ -28,7 +28,7 @@ public class WXPayServiceTest extends BaseTest{
     @Test
     public void testUnifiedOrderPay(){
         Trade trade = new Trade();
-        trade.setBuyType(Trade.BuyType.FIRST);
+        trade.setBuyType(Trade.BuyType.BUY);
 //        trade.setContent("...");
 //        trade.setName("测试支付");
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
