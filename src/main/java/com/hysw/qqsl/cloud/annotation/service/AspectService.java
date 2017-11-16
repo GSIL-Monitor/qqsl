@@ -146,17 +146,6 @@ public class AspectService {
                 Project project = projectService.find(Long.valueOf(projectId.toString()));
                 user = project.getUser();
             }
-            if (value.equals("findById")) {
-                Map<String, Object> map = (Map<String, Object>) SettingUtils.objectCopy(Arrays.asList(joinPoint.getArgs()).get(0));
-                Object buildId = map.get("id");
-                if (buildId == null) {
-                    return new Message(Message.Type.FAIL);
-                }
-                Build build = buildService.find(Long.valueOf(buildId.toString()));
-                Project project = projectService.find(build.getProject().getId());
-                user = project.getUser();
-            }
-
         }
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
