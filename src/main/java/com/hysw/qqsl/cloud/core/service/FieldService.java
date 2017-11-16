@@ -1184,6 +1184,11 @@ public class FieldService {
             if (build.getPositionCoor() != null) {
                 jsonObject.put("positionCoor", build.getPositionCoor());
             }
+            if(build.getAttribeList().size()>0){
+                jsonObject.put("simpleFlag",true);
+            }else {
+                jsonObject.put("simpleFlag",false);
+            }
             jsonObject.put("type", build.getType());
             jsonObject.put("remark", build.getRemark());
             jsonArray1.add(jsonObject);
