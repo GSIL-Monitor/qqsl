@@ -1177,9 +1177,9 @@ public class FieldService {
                 jsonObject.put("positionCoor", build.getPositionCoor());
             }
             if(build.getAttribeList().size()>0){
-                jsonObject.put("simpleFlag",true);
-            }else {
                 jsonObject.put("simpleFlag",false);
+            }else {
+                jsonObject.put("simpleFlag",true);
             }
             jsonObject.put("type", build.getType());
             jsonObject.put("remark", build.getRemark());

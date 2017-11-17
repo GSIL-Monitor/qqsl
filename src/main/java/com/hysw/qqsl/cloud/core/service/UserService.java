@@ -187,14 +187,13 @@ public class UserService extends BaseService<User, Long> {
 				it.remove();
 				continue;
 			}
-			if (!(certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING||certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || certify.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
+			if (!(user1.getPersonalStatus() == CommonEnum.CertifyStatus.PASS ||
+					user1.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING||
+					user1.getCompanyStatus() == CommonEnum.CertifyStatus.PASS ||
+					user1.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
 				it.remove();
 				continue;
 			}
-			user1.setName(certify.getName());
-			user1.setCompanyName(certify.getCompanyName());
-			user1.setPersonalStatus(certify.getPersonalStatus());
-			user1.setCompanyStatus(certify.getCompanyStatus());
 		}
 		return users;
 	}
