@@ -317,6 +317,8 @@ public class CertifyService extends BaseService<Certify, Long> {
             jsonObject.put("phone", certify.getUser().getPhone());
             jsonObject.put("personalStatus", certify.getPersonalStatus());
             jsonObject.put("companyStatus", certify.getCompanyStatus());
+            jsonObject.put("createDate", certify.getCreateDate());
+            jsonObject.put("modifyDate", certify.getModifyDate());
             jsonArray.add(jsonObject);
         }
         return new Message(Message.Type.OK, jsonArray);
