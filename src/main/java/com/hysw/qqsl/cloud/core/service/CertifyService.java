@@ -120,10 +120,10 @@ public class CertifyService extends BaseService<Certify, Long> {
      * @return
      */
     public Certify findByUser(User user) {
-        List<Certify> certifies = (List<Certify>) SettingUtils.objectCopy(findAll());
+        List<Certify> certifies = findAll();
         for (Certify certify : certifies) {
             if (certify.getUser().getId().equals(user.getId())) {
-                return certify;
+                return (Certify) SettingUtils.objectCopy(certify);
             }
         }
         return null;
@@ -231,11 +231,11 @@ public class CertifyService extends BaseService<Certify, Long> {
      * @return
      */
     public List<Certify> findByPersonalStatus() {
-        List<Certify> certifies = (List<Certify>) SettingUtils.objectCopy(findAll());
+        List<Certify> certifies = findAll();
         List<Certify> certifies1 = new ArrayList<>();
         for (Certify certify : certifies) {
             if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.AUTHEN) {
-                certifies1.add(certify);
+                certifies1.add((Certify) SettingUtils.objectCopy(certify));
             }
         }
         return certifies1;
@@ -246,11 +246,11 @@ public class CertifyService extends BaseService<Certify, Long> {
      * @return
      */
     public List<Certify> findByCompanyStatus() {
-        List<Certify> certifies = (List<Certify>) SettingUtils.objectCopy(findAll());
+        List<Certify> certifies = findAll();
         List<Certify> certifies1 = new ArrayList<>();
         for (Certify certify : certifies) {
             if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS && certify.getCompanyStatus() == CommonEnum.CertifyStatus.AUTHEN) {
-                certifies1.add(certify);
+                certifies1.add((Certify) SettingUtils.objectCopy(certify));
             }
         }
         return certifies1;

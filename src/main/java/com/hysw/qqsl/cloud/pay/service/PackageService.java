@@ -201,10 +201,10 @@ public class PackageService extends BaseService<Package,Long>{
     }
 
     public Package findByInstanceId(String instanceId) {
-        List<Package> packages = (List<Package>) SettingUtils.objectCopy(findAll());
+        List<Package> packages = findAll();
         for (Package aPackage : packages) {
             if (aPackage.getInstanceId().equals(instanceId)) {
-                return aPackage;
+                return (Package) SettingUtils.objectCopy(aPackage);
             }
         }
         return null;
@@ -286,10 +286,10 @@ public class PackageService extends BaseService<Package,Long>{
      * @return
      */
     public Package findByUser(User user){
-        List<Package> packages = (List<Package>) SettingUtils.objectCopy(findAll());
+        List<Package> packages = findAll();
         for (Package aPackage : packages) {
             if (aPackage.getUser().getId().equals(user.getId())) {
-                return aPackage;
+                return (Package) SettingUtils.objectCopy(aPackage);
             }
         }
         return null;

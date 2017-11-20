@@ -1057,7 +1057,7 @@ public class ProjectService extends BaseService<Project, Long> {
      */
     public List<JSONObject> getProjectJsons() {
         List<JSONObject> projectJsons = new ArrayList<>();
-        List<Project> projects = (List<Project>) SettingUtils.objectCopy(findAll());
+        List<Project> projects = findAll();
         Project project;
         JSONObject projectJson;
         for (int i = 0; i < projects.size(); i++) {

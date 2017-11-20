@@ -161,7 +161,7 @@ public class LogService extends BaseService<Log, Long> {
 		if(logs.size()==0){
 			return logJsons;
 		}
-		List<User> users = (List<User>) SettingUtils.objectCopy(userService.findAll());
+		List<User> users = userService.findAll();
 		List<Account> accounts = accountService.findAll();
 		List<JSONObject> userJsons = userService.makeUserJsons(users);
 		List<JSONObject> accountJsons = accountService.makeAccountJsons(accounts);

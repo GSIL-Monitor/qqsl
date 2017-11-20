@@ -39,7 +39,7 @@ public class ShareService {
     public List<Share> getShares(User user) {
         List<Share> shares = new ArrayList<>();
         Share share;
-        List<Project> projects = (List<Project>) SettingUtils.objectCopy(projectService.findAll());
+        List<Project> projects = projectService.findAll();
         for (int i = 0; i < projects.size(); i++) {
             share = makeShare(projects.get(i));
             if (projects.get(i).getUser().getId().equals(user.getId()) || isShare(projects.get(i), user)) {

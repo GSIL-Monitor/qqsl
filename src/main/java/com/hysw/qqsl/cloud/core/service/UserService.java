@@ -99,11 +99,11 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
 	 */
 	public User findByUserName(String userName) {
-		List<User> users = (List<User>) SettingUtils.objectCopy(findAll());
+		List<User> users = findAll();
 		for (User user : users) {
 			if (user.getUserName().equals(userName)) {
-                return user;
-			}
+                return (User) SettingUtils.objectCopy(user);
+            }
 		}
 		return null;
 	}

@@ -171,7 +171,7 @@ public class AdminController {
     public
     @ResponseBody
     Message getUsers() {
-        List<User> users = (List<User>) SettingUtils.objectCopy(userService.findAll());
+        List<User> users = userService.findAll();
         List<JSONObject> userJsons = userService.makeUserJsons(users);
         return new Message(Message.Type.OK, userJsons);
     }
