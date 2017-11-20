@@ -153,9 +153,6 @@ public class ShareService {
         if (StringUtils.hasText(project.getShares())) {
             jsonArray = JSONArray.fromObject(project.getShares());
         } else {
-            jsonArray = new JSONArray();
-        }
-        if (jsonArray.isEmpty()) {
             return share;
         }
         for (int i = 0; i < jsonArray.size(); i++) {

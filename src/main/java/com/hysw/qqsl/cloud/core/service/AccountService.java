@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -330,13 +331,17 @@ public class AccountService extends BaseService<Account,Long> {
     public JSONObject getAuthenticate(Account account) {
         JSONObject subjectJson = new JSONObject();
         JSONObject infoJson = new JSONObject();
-        JSONObject authcJson = new JSONObject();
         JSONObject principalJson = new JSONObject();
         List<String> roles = new ArrayList<>();
         principalJson.put("name", account.getPhone());
         principalJson.put("login",account.getPhone());
         principalJson.put("email",StringUtils.hasText(account.getEmail()) ? account.getEmail():"test@qqsl.com");
-        roles.add("account");
+        if (account.getRoles().indexOf(",") == -1) {
+            roles.add(account.getRoles());
+        } else {
+            roles.addAll(Arrays.asList(account.getRoles().split(",")));
+        }
+        JSONObject authcJson = new JSONObject();
         authcJson.put("principal", principalJson);
         authcJson.put("credentials", principalJson);
         JSONObject authzJson = new JSONObject();
