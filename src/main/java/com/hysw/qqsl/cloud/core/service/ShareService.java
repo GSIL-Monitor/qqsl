@@ -82,7 +82,7 @@ public class ShareService {
     public Message shares(List<Integer> projectIds, List<Integer> userIds, User own) {
         long projectId;
         Project project;
-        User user;
+        User user = null;
         //判断项目归属
         if(!isOwn(projectIds,own)){
             return new Message(Message.Type.FAIL);
@@ -91,7 +91,13 @@ public class ShareService {
             projectId = Long.valueOf(projectIds.get(i));
             project = projectService.find(projectId);
             for(int k = 0;k<userIds.size();k++){
-                user = userService.find(Long.valueOf(userIds.get(k)));
+                List<User> all = userService.findAll();
+                for (User user1 : all) {
+                    if (userIds.get(k).toString().equals(user1.getId().toString())) {
+                        user = (User) SettingUtils.objectCopy(user1);
+                        break;
+                    }
+                }
                 if(user==null||user.getId().equals(own.getId())){
                     continue;
                 }
