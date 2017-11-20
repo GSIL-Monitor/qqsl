@@ -122,26 +122,26 @@ public class UserService extends BaseService<User, Long> {
         user.setPackages(packages);
     }
 
-	/**
-	 * 构建认证
-	 * @param user
-	 * @return
-	 */
-	private User buildCertify(User user){
-		Certify certify = certifyService.findByUser(user);
-		if (certify == null) {
-			return user;
-		}
-		user.setPersonalStatus(certify.getPersonalStatus());
-		if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING) {
-			user.setName(certify.getName());
-		}
-		user.setCompanyStatus(certify.getCompanyStatus());
-		if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || certify.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING) {
-			user.setCompanyName(certify.getCompanyName());
-		}
-		return user;
-	}
+//	/**
+//	 * 构建认证
+//	 * @param user
+//	 * @return
+//	 */
+//	private User buildCertify(User user){
+//		Certify certify = certifyService.findByUser(user);
+//		if (certify == null) {
+//			return user;
+//		}
+//		user.setPersonalStatus(certify.getPersonalStatus());
+//		if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+//			user.setName(certify.getName());
+//		}
+//		user.setCompanyStatus(certify.getCompanyStatus());
+//		if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || certify.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+//			user.setCompanyName(certify.getCompanyName());
+//		}
+//		return user;
+//	}
 
     /**
 	 * 用户注册业务封装
@@ -174,7 +174,7 @@ public class UserService extends BaseService<User, Long> {
 	public List<User> findUsersNeOwn(User user) {
 		List<User> users = (List<User>) SettingUtils.objectCopy(findAll());
 		Iterator<User> it = users.iterator();
-		Certify certify;
+//		Certify certify;
 		User user1;
 		while (it.hasNext()) {
 			user1 = it.next();
@@ -182,32 +182,32 @@ public class UserService extends BaseService<User, Long> {
 				it.remove();
 				continue;
 			}
-			certify = certifyService.findByUser(user1);
-			if (certify == null) {
-				it.remove();
-				continue;
-			}
-			if (!(certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING||certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || certify.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
-				it.remove();
-				continue;
-			}
-			user1.setName(certify.getName());
-			user1.setCompanyName(certify.getCompanyName());
-			user1.setPersonalStatus(certify.getPersonalStatus());
-			user1.setCompanyStatus(certify.getCompanyStatus());
-		}
-		return users;
-	}
-//			if (!(user1.getPersonalStatus() == CommonEnum.CertifyStatus.PASS ||
-//					user1.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING||
-//					user1.getCompanyStatus() == CommonEnum.CertifyStatus.PASS ||
-//					user1.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
+//			certify = certifyService.findByUser(user1);
+//			if (certify == null) {
 //				it.remove();
 //				continue;
 //			}
+//			if (!(certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING||certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || certify.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
+//				it.remove();
+//				continue;
+//			}
+//			user1.setName(certify.getName());
+//            user1.setCompanyName(certify.getCompanyName());
+//            user1.setPersonalStatus(certify.getPersonalStatus());
+//            user1.setCompanyStatus(certify.getCompanyStatus());
 //		}
 //		return users;
 //	}
+			if (!(user1.getPersonalStatus() == CommonEnum.CertifyStatus.PASS ||
+					user1.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING||
+					user1.getCompanyStatus() == CommonEnum.CertifyStatus.PASS ||
+					user1.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
+				it.remove();
+				continue;
+			}
+		}
+		return users;
+	}
 
 	/**
 	 * 获取用户
@@ -238,7 +238,8 @@ public class UserService extends BaseService<User, Long> {
 		for (User user : users) {
 			if (user.getPhone().equals(phone)) {
 				buildPackage(user);
-				return buildCertify(user);
+				return user;
+//				return buildCertify(user);
 			}
 		}
 		return null;
@@ -631,9 +632,19 @@ public class UserService extends BaseService<User, Long> {
 	 */
 	public void userCache() {
 		List<User> users = userDao.findList(0, null, null);
-		for (User user : users) {
+        Certify certify;
+        for (User user : users) {
 			user.getAccounts().size();
-		}
+            certify = certifyService.findByUser(user);
+            user.setPersonalStatus(certify.getPersonalStatus());
+            user.setCompanyStatus(certify.getCompanyStatus());
+            if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+                user.setName(certify.getName());
+            }
+            if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || certify.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+                user.setCompanyName(certify.getCompanyName());
+            }
+        }
 		Cache cache = cacheManager.getCache("userAllCache");
 		net.sf.ehcache.Element element = new net.sf.ehcache.Element("user", users);
 		cache.put(element);
@@ -652,7 +663,8 @@ public class UserService extends BaseService<User, Long> {
 		for (User user : list) {
 			if (user.getEmail() != null && user.getEmail().equals(email)) {
 				buildPackage(user);
-				return buildCertify(user);
+				return user;
+//				return buildCertify(user);
 			}
 		}
 		return null;

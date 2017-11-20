@@ -15,6 +15,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
+import org.junit.After;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,8 @@ public class CertifyService extends BaseService<Certify, Long> {
     private CacheManager cacheManager;
     @Autowired
     private OssService ossService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public void setBaseDao(CertifyDao certifyDao) {
@@ -76,6 +79,8 @@ public class CertifyService extends BaseService<Certify, Long> {
         certify.setIdentityAdvice(null);
         certify.setPersonalStatus(CommonEnum.CertifyStatus.AUTHEN);
         save(certify);
+        user.setPersonalStatus(CommonEnum.CertifyStatus.AUTHEN);
+        userService.save(user);
         return new Message(Message.Type.OK);
     }
 
@@ -168,6 +173,8 @@ public class CertifyService extends BaseService<Certify, Long> {
         certify.setCompanyAdvice(null);
         certify.setCompanyStatus(CommonEnum.CertifyStatus.AUTHEN);
         save(certify);
+        user.setCompanyStatus(CommonEnum.CertifyStatus.AUTHEN);
+        userService.save(user);
         return new Message(Message.Type.OK);
     }
 

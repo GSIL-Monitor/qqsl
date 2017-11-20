@@ -98,6 +98,7 @@ public class User extends BaseEntity {
 		this.name = name;
 	}
 
+	@Transient
     public String getCompanyName() {
         return companyName;
     }

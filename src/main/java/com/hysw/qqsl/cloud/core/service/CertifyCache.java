@@ -374,6 +374,8 @@ public class CertifyCache {
     private void passPersonalCertification(Certify certify){
         if (idAndIdentityImageIsSame(certify)) {
             certify.setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
+            certify.getUser().setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
+            userService.save(certify.getUser());
             certifyService.save(certify);
 //            发送短信，邮件通知,站内信
             emailService.personalCertifyFail(certify);
@@ -384,6 +386,8 @@ public class CertifyCache {
         }
         if (nameAndIdIsSame(certify)) {
             certify.setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
+            certify.getUser().setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
+            userService.save(certify.getUser());
             certifyService.save(certify);
             //            发送短信，邮件通知
             emailService.personalCertifyFail(certify);
@@ -419,8 +423,10 @@ public class CertifyCache {
         user.setRoles(roles);
         if("user:company".equals(role)){
             user.setCompanyName(name);
+            user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         }else {
             user.setName(name);
+            user.setPersonalStatus(CommonEnum.CertifyStatus.PASS);
         }
         userService.save(user);
     }
@@ -433,6 +439,8 @@ public class CertifyCache {
     private void passCompanyCertification(Certify certify){
         if (idAndCompanyImageIsSame(certify)) {
             certify.setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
+            certify.getUser().setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
+            userService.save(certify.getUser());
             certifyService.save(certify);
             //            发送短信，邮件通知
             emailService.companyCertifyFail(certify);
@@ -443,6 +451,8 @@ public class CertifyCache {
         }
         if (companyNameAndIdIsSame(certify)) {
             certify.setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
+            certify.getUser().setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
+            userService.save(certify.getUser());
             certifyService.save(certify);
             //            发送短信，邮件通知
             emailService.companyCertifyFail(certify);
@@ -544,6 +554,7 @@ public class CertifyCache {
 
             } else if (certify.getValidTill().getTime() - System.currentTimeMillis() <= 90 * 24 * 3600 * 1000l && certify.getValidTill().getTime() - System.currentTimeMillis() > 0) {
                 certify.setPersonalStatus(CommonEnum.CertifyStatus.EXPIRING);
+                certify.getUser().setPersonalStatus(CommonEnum.CertifyStatus.EXPIRING);
                 String message = "尊敬的水利云用户您好，您的实名认证即将过期，为了方便您继续使用水利云功能，请您重新进行认证。";
                 emailService.emailNotice(certify.getUser().getEmail(),"水利云实名认证即将过期",message);
                 Note note = new Note(certify.getUser().getPhone(),message);
@@ -551,6 +562,7 @@ public class CertifyCache {
                 userMessageService.emailNotice(certify.getUser(),message);
             } else if (certify.getValidTill().getTime() - System.currentTimeMillis() <= 0) {
                 certify.setPersonalStatus(CommonEnum.CertifyStatus.EXPIRED);
+                certify.getUser().setPersonalStatus(CommonEnum.CertifyStatus.EXPIRED);
                 rolesExpired(certify.getUser(),"user:identify");
                 String message = "尊敬的水利云用户您好，您的实名认证已过期，为了方便您继续使用水利云功能，请您重新进行认证。";
                 emailService.emailNotice(certify.getUser().getEmail(),"水利云实名认证已过期",message);
@@ -565,6 +577,7 @@ public class CertifyCache {
 
             } else if (certify.getValidPeriod().getTime() - System.currentTimeMillis() <= 90 * 24 * 3600 * 1000l && certify.getValidPeriod().getTime() - System.currentTimeMillis() > 0) {
                 certify.setCompanyStatus(CommonEnum.CertifyStatus.EXPIRING);
+                certify.getUser().setCompanyStatus(CommonEnum.CertifyStatus.EXPIRING);
                 String message = "尊敬的水利云用户您好，您的企业认证即将过期，为了方便您继续使用水利云功能，请您重新进行认证。";
                 emailService.emailNotice(certify.getUser().getEmail(),"水利云企业认证即将过期",message);
                 Note note = new Note(certify.getUser().getPhone(),message);
@@ -572,6 +585,7 @@ public class CertifyCache {
                 userMessageService.emailNotice(certify.getUser(),message);
             } else if (certify.getValidPeriod().getTime() - System.currentTimeMillis() <= 0) {
                 certify.setCompanyStatus(CommonEnum.CertifyStatus.EXPIRED);
+                certify.getUser().setCompanyStatus(CommonEnum.CertifyStatus.EXPIRED);
                 rolesExpired(certify.getUser(),"user:company");
                 String message = "尊敬的水利云用户您好，您的企业认证已过期，为了方便您继续使用水利云功能，请您重新进行认证。";
                 emailService.emailNotice(certify.getUser().getEmail(),"水利云企业认证已过期",message);
@@ -580,6 +594,7 @@ public class CertifyCache {
                 userMessageService.emailNotice(certify.getUser(),message);
             }
             certifyService.save(certify);
+            userService.save(certify.getUser());
         }
         refresh();
     }
