@@ -47,27 +47,37 @@ public class CertifyCache {
      * 根据身份证图片组合body信息组
      * @param certify
      */
-    private String getIdentityBodys(Certify certify) {
+    private String getIdentityFaceBodys(Certify certify) {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = new JSONObject();
         String identity1;
-        String identity2;
         try{
             identity1 = certifyService.getAliImage(certify.getUser().getId(), "identity1.jpg");
         }catch (Exception e){
             identity1 = "";
         }
+        if (identity1.equals("")) {
+            return "";
+        }
+        JSONObject face = getBody(identity1,"FACE");
+        jsonArray.add(face);
+        jsonObject.put("inputs", jsonArray);
+        return jsonObject.toString().replace("FACE", "{\\\"side\\\":\\\"face\\\"}").replace("BACK","{\\\"side\\\":\\\"back\\\"}");
+    }
+
+    private String getIdentityBackBodys(Certify certify) {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        String identity2;
         try{
             identity2 = certifyService.getAliImage(certify.getUser().getId(), "identity2.jpg");
         }catch (Exception e){
             identity2 = "";
         }
-        if (identity1.equals("") || identity2.equals("")) {
+        if (identity2.equals("")) {
             return "";
         }
-        JSONObject face = getBody(identity1,"FACE");
         JSONObject back = getBody(identity2,"BACK");
-        jsonArray.add(face);
         jsonArray.add(back);
         jsonObject.put("inputs", jsonArray);
         return jsonObject.toString().replace("FACE", "{\\\"side\\\":\\\"face\\\"}").replace("BACK","{\\\"side\\\":\\\"back\\\"}");
@@ -107,7 +117,10 @@ public class CertifyCache {
     protected JSONObject getIdentity(Certify certify){
         String host = "https://dm-51.data.aliyun.com";
         String path = "/rest/160601/ocr/ocr_idcard.json";
-        return changeNeedElementOfIdentityImage(httpRequestUtil.getIdMessage(host, path, getIdentityBodys(certify)));
+        JSONObject jsonObject = new JSONObject();
+        changeNeedElementOfIdentityImage(httpRequestUtil.getIdMessage(host, path, getIdentityFaceBodys(certify)),jsonObject);
+        changeNeedElementOfIdentityImage(httpRequestUtil.getIdMessage(host, path, getIdentityBackBodys(certify)),jsonObject);
+        return jsonObject;
     }
 
     /**
@@ -160,12 +173,11 @@ public class CertifyCache {
      * @param jsonObject
      * @return
      */
-    private JSONObject changeNeedElementOfIdentityImage(JSONObject jsonObject){
-        if (jsonObject == null) {
+    private JSONObject changeNeedElementOfIdentityImage(JSONObject result,JSONObject jsonObject){
+        if (result == null) {
             return null;
         }
-        JSONObject jsonObject1 = new JSONObject();
-        JSONArray jsonArray= (JSONArray) jsonObject.get("outputs");
+        JSONArray jsonArray= (JSONArray) result.get("outputs");
         for (Object o : jsonArray) {
             JSONObject outputs = (JSONObject) o;
             JSONObject outputValue= (JSONObject) outputs.get("outputValue");
@@ -174,16 +186,16 @@ public class CertifyCache {
                 return null;
             }
             if (dataValue.get("name")!=null) {
-                jsonObject1.put("name", dataValue.get("name"));
+                jsonObject.put("name", dataValue.get("name"));
             }
             if (dataValue.get("num") != null) {
-                jsonObject1.put("num", dataValue.get("num"));
+                jsonObject.put("num", dataValue.get("num"));
             }
             if (dataValue.get("end_date") != null) {
-                jsonObject1.put("endDate", dataValue.get("end_date"));
+                jsonObject.put("endDate", dataValue.get("end_date"));
             }
         }
-        return jsonObject1;
+        return jsonObject;
     }
 
     /**
@@ -256,7 +268,7 @@ public class CertifyCache {
      */
     boolean idAndIdentityImageIsSame(Certify certify){
         JSONObject jsonObject = getIdentity(certify);
-        if (jsonObject == null||jsonObject.size()==0) {
+        if (jsonObject == null||jsonObject.size()==0||jsonObject.isEmpty()) {
             certify.setIdentityAdvice("上传身份证模糊或无法识别");
             return true;
         }
@@ -371,7 +383,7 @@ public class CertifyCache {
      * @param certify
      * @return
      */
-    private void passPersonalCertification(Certify certify){
+    protected void passPersonalCertification(Certify certify){
         if (idAndIdentityImageIsSame(certify)) {
             certify.setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
             certify.getUser().setPersonalStatus(CommonEnum.CertifyStatus.NOTPASS);
@@ -436,7 +448,7 @@ public class CertifyCache {
      * @param certify
      * @return
      */
-    private void passCompanyCertification(Certify certify){
+    protected void passCompanyCertification(Certify certify){
         if (idAndCompanyImageIsSame(certify)) {
             certify.setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
             certify.getUser().setCompanyStatus(CommonEnum.CertifyStatus.NOTPASS);
@@ -479,7 +491,7 @@ public class CertifyCache {
      */
     private boolean idAndCompanyImageIsSame(Certify certify){
         JSONObject jsonObject = getCompany(certify);
-        if (jsonObject == null || jsonObject.size() == 0) {
+        if (jsonObject == null || jsonObject.size() == 0||jsonObject.isEmpty()) {
             certify.setCompanyAdvice("上传营业执照模糊或无法识别");
             return true;
         }

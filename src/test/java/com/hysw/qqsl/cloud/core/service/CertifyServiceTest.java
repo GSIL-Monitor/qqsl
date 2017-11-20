@@ -1,18 +1,22 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.aliyun.oss.common.utils.HttpUtil;
 import com.aliyun.oss.model.OSSObject;
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.util.HttpRequestUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.binary.Base64;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -22,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,7 +44,8 @@ public class CertifyServiceTest extends BaseTest{
     private UserService userService;
     @Autowired
     private OssService ossService;
-
+    @Autowired
+    private HttpRequestUtil httpRequestUtil;
     @Test
     public void testGetImage(){
         Certify certify = new Certify();
@@ -142,5 +148,12 @@ public class CertifyServiceTest extends BaseTest{
         certifyService.save(certify);
         certifyCache.certification();
         Assert.assertTrue(certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS && certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS);
+    }
+
+    @Test
+    public void testCertify(){
+        Certify certify = certifyService.find(27l);
+        certifyCache.passPersonalCertification(certify);;
+        System.out.println();
     }
 }
