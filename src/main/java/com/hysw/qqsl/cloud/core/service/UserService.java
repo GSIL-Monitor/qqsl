@@ -512,6 +512,7 @@ public class UserService extends BaseService<User, Long> {
 		if(user.getPersonalStatus().equals(CommonEnum.CertifyStatus.PASS)){
 			if(user.getCompanyStatus().equals(CommonEnum.CertifyStatus.PASS)){
 				userJson.put("nickName", user.getCompanyName());
+				return;
 			}
 			userJson.put("nickName", user.getName());
 		}else {
