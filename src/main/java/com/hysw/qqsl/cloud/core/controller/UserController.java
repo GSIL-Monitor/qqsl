@@ -251,7 +251,7 @@ public class UserController {
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.INVALID);
+            return new Message(Message.Type.OTHER);
         }
         User user = userService.findByPhone(verification.getPhone());
         if (user == null) {
@@ -289,7 +289,7 @@ public class UserController {
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.INVALID);
+            return new Message(Message.Type.OTHER);
         }
         User user = userService.findByEmail(verification.getEmail());
         if (user == null) {
@@ -355,7 +355,7 @@ public class UserController {
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.INVALID);
+            return new Message(Message.Type.OTHER);
         }
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return new Message(Message.Type.FAIL);
@@ -386,7 +386,7 @@ public class UserController {
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.INVALID);
+            return new Message(Message.Type.OTHER);
         }
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return new Message(Message.Type.FAIL);
@@ -659,7 +659,7 @@ public class UserController {
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.INVALID);
+            return new Message(Message.Type.OTHER);
         }
         String code = verification.getEmail()==null?verification.getPhone():verification.getEmail();
         User user = userService.findByPhoneOrEmial(code);

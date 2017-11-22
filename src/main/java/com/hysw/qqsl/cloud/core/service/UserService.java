@@ -299,7 +299,7 @@ public class UserService extends BaseService<User, Long> {
 		}
 		boolean result = noteService.checkCode(code, verification);
 		if (result) {
-			return new Message(Message.Type.INVALID);
+			return new Message(Message.Type.FAIL);
 		}
 		return new Message(Message.Type.OK);
 	}
