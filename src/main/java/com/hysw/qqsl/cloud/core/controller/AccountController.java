@@ -217,7 +217,7 @@ public class AccountController {
         Verification verification = (Verification) session
                 .getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.INVALID);
+            return new Message(Message.Type.OTHER);
         }
         String name,password,code;
         name = map.get("name").toString();

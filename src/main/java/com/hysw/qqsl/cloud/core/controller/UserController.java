@@ -230,7 +230,7 @@ public class UserController {
         Verification verification = (Verification) session
                 .getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.INVALID);
+            return new Message(Message.Type.OTHER);
         }
         return userService.registerService(map, verification);
     }
