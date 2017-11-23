@@ -165,12 +165,12 @@ public class AccountService extends BaseService<Account,Long> {
      * @return
      */
     public Message updatePassword(String password,Long id) {
-        Account account = accountDao.find(id);
+        Account account = find(id);
         if(password.length()!=32){
             return new Message(Message.Type.OTHER);
         }
         account.setPassword(password);
-        accountDao.save(account);
+        save(account);
         authentService.updateSession(account);
         return new Message(Message.Type.OK,makeAccountJson(account));
     }
@@ -215,7 +215,40 @@ public class AccountService extends BaseService<Account,Long> {
         }else{
             return null;
         }
+    }
 
+    /**
+     * 根据email查询子账号
+     * @param email
+     * @return
+     */
+    public Account findByEmail(String email) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("email",email));
+        List<Account> accounts = accountDao.findList(0,null,filters);
+        if(accounts.size()==1){
+            accounts.get(0).getUsers();
+            return accounts.get(0);
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * 根据用户名或手机号码查找用户
+     * @param argument
+     * @return
+     */
+    public Account findByPhoneOrEmial(String argument){
+        Account account;
+        if(SettingUtils.phoneRegex(argument)){
+            account = findByPhone(argument);
+        }else if(SettingUtils.emailRegex(argument)){
+            account = findByEmail(argument);
+        }else {
+            account = null;
+        }
+        return account;
     }
 
     /**

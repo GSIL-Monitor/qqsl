@@ -48,13 +48,159 @@ public class AccountController {
     private AuthentService authentService;
     @Autowired
     private AccountMessageService accountMessageService;
+    @Autowired
+    private EmailService emailService;
 
     Log logger = LogFactory.getLog(this.getClass());
 
+    /**
+     * 发送验证码
+     *
+     * @param phone
+     * @param session
+     * @return
+     */
+    private Message sendVerify(String phone, HttpSession session,boolean flag){
+        Message message = Message.parametersCheck(phone);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        if(!SettingUtils.phoneRegex(phone)){
+            return new Message(Message.Type.FAIL);
+        }
+        Account account = accountService.findByPhone(phone);
+        if (flag) {
+            if (account == null) {
+                return new Message(Message.Type.EXIST);
+            }
+        }else{
+            if (account != null) {
+                return new Message(Message.Type.EXIST);
+            }
+        }
+        return noteService.isSend(phone, session);
+    }
+
+    /**
+     * 注册时发送手机验证码
+     * @param phone
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/phone/getRegistVerify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getRegistVerify(@RequestParam String phone,
+                            HttpSession session) {
+        return sendVerify(phone,session,false);
+    }
+
+    /**
+     * 修改密保手机发送验证码
+     * @param phone
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/phone/getUpdateVerify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getUpdateVerify(@RequestParam String phone,
+                            HttpSession session) {
+        return sendVerify(phone,session,false);
+    }
+
+    /**
+     * 手机找回密码时发送验证码：
+     * 参数：phone:手机号
+     * 返回：OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
+     */
+    @RequestMapping(value = "/phone/getGetbackVerify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getGetbackVerify(@RequestParam String phone,
+                             HttpSession session) {
+        return sendVerify(phone, session,true);
+    }
+
+    /**
+     * web端登录发送验证码:
+     *
+     */
+    @RequestMapping(value = "/login/getLoginVerify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getLoginVerify(@RequestParam String code,
+                           HttpSession session) {
+        Message message = Message.parametersCheck(code);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
+            return new Message(Message.Type.FAIL);
+        }
+        Account account = accountService.findByPhoneOrEmial(code);
+        if (account == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        if(SettingUtils.phoneRegex(code)){
+            message = noteService.isSend(account.getPhone(), session);
+        }else if(SettingUtils.emailRegex(code)){
+            return emailService.getVerifyCodeLogin(code,session);
+        }
+        return message;
+    }
+
+    /**
+     * email绑定时发送验证码
+     * @return
+     * OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
+     */
+    @RequestMapping(value = "/email/getBindVerify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getBindVerify(@RequestParam String email, HttpSession session) {
+        Message message = Message.parametersCheck(email);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        if(!SettingUtils.emailRegex(email)){
+            return new Message(Message.Type.FAIL);
+        }
+        Account account = accountService.findByEmail(email);
+        if (account != null) {
+            // 该邮箱已被注册
+            return new Message(Message.Type.EXIST);
+        }
+        emailService.getVerifyCodeBinding(email,session);
+        return new Message(Message.Type.OK);
+    }
+
+    /**
+     * email找回密码时发送验证码
+     * @param email
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/email/getGetbackVerify", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getGetbackVerifyEmial(@RequestParam String email, HttpSession session) {
+        Message message = Message.parametersCheck(email);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        if(!SettingUtils.emailRegex(email)){
+            return new Message(Message.Type.FAIL);
+        }
+        Account account = accountService.findByEmail(email);
+        if (account == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        return emailService.getVerifyCoderesetPassword(email,session);
+    }
 
     /**
      * 子账号注册
-     *
      * @param objectMap
      * @return
      */
@@ -70,53 +216,259 @@ public class AccountController {
         Map<String, Object> map = (Map<String, Object>) message.getData();
         Verification verification = (Verification) session
                 .getAttribute("verification");
-        String name,phone,password,code;
+        if (verification == null) {
+            return new Message(Message.Type.INVALID);
+        }
+        String name,password,code;
         name = map.get("name").toString();
         password = map.get("password").toString();
-        phone = map.get("phone").toString();
-        code = map.get("code").toString();
+        code = map.get("verification").toString();
         message = userService.checkCode(code,verification);
         if (message.getType()!=Message.Type.OK) {
             return message;
         }
         try {
-            message = accountService.register(name,phone,password);
+            message = accountService.register(name,verification.getPhone(),password);
         } catch (QQSLException e) {
             e.printStackTrace();
             return message;
         }
         return message;
     }
+
     /**
-     * 子账号登录
+     * 手机找回密码:忘记密码时找回密码
+     *
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/phone/getbackPassword", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Message getbackPassord(@RequestBody Map<String, Object> map, HttpSession session) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        Verification verification = (Verification) session.getAttribute("verification");
+        if (verification == null) {
+            return new Message(Message.Type.OTHER);
+        }
+        Account account = accountService.findByPhone(verification.getPhone());
+        if (account == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        message = userService.checkCode(map.get("verification").toString(), verification);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        String password = map.get("password").toString();
+        account.setPassword(password);
+        accountService.save(account);
+        return message;
+    }
+
+    /**
+     * 邮箱找回密码:忘记密码时找回密码
+     *
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/email/getbackPassword", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Message getbackPassordEmail(@RequestBody Map<String, Object> map, HttpSession session) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        Verification verification = (Verification) session.getAttribute("verification");
+        if (verification == null) {
+            return new Message(Message.Type.OTHER);
+        }
+        Account account = accountService.findByEmail(verification.getEmail());
+        if (account == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        message = userService.checkCode(map.get("verification").toString(), verification);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        String password = map.get("password").toString();
+        account.setPassword(password);
+        accountService.save(account);
+        return message;
+    }
+
+    /**
+     * 修改密码:在基本资料的修改密码处点击保存时调用
      * @param map
      * @return
      */
-    @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public @ResponseBody Message login(@RequestBody Map<String,Object> map){
-        if (SecurityUtils.getSubject().getSession() != null) {
-            SecurityUtils.getSubject().logout();
-        }
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    public @ResponseBody Message updatePassword(@RequestBody Map<String,Object> map){
         Message message = Message.parameterCheck(map);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
-        String accountPhone = map.get("phone").toString();
-        String password = map.get("password").toString();
-        Account account = accountService.findByPhone(accountPhone);
-        if(account==null){
-            return new Message(Message.Type.EXIST);
-        }
-        if(!account.getPassword().equals(password)){
+        Account account = authentService.getAccountFromSubject();
+        if (map.get("oldPassword") == null || !StringUtils.hasText(map.get("oldPassword").toString())) {
             return new Message(Message.Type.FAIL);
         }
-        if (map.get("loginType") != null && StringUtils.hasText(map.get("loginType").toString()) && map.get("loginType").equals("phone")) {
-            return subjectLogin(account,"phone");
+        String oldPassword = map.get("oldPassword").toString();
+        if(!account.getPassword().equals(oldPassword)){
+            return new Message(Message.Type.UNKNOWN);
+        }
+        if (map.get("newPassword") == null || !StringUtils.hasText(map.get("newPassword").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        String newPassword = map.get("newPassword").toString();
+        message = accountService.updatePassword(newPassword,account.getId());
+        return message;
+    }
+
+    /**
+     * 修改手机号码:在基本资料的修改手机号码处点击保存时调用
+     *
+     * @param map
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/changePhone ", method = RequestMethod.POST)
+    public @ResponseBody
+    Message changePhone(@RequestBody Map<String, Object> map, HttpSession session) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType().equals(Message.Type.FAIL)) {
+            return message;
+        }
+        Verification verification = (Verification) session.getAttribute("verification");
+        if (verification == null) {
+            return new Message(Message.Type.OTHER);
+        }
+        if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        message = userService.checkCode(map.get("verification").toString(), verification);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Account account = authentService.getAccountFromSubject();
+        account.setPhone(verification.getPhone());
+        authentService.updateSession(account);
+        accountService.save(account);
+        return new Message(Message.Type.OK, accountService.makeAccountJson(account));
+    }
+
+    /**
+     * 绑定邮箱\修改绑定邮箱：在基本资料里的绑定邮箱处点击保存时调用
+     * @param map
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
+    public @ResponseBody Message updateEmail(@RequestBody Map<String,Object> map,HttpSession session){
+        Message message = Message.parameterCheck(map);
+        if(message.getType().equals(Message.Type.FAIL)){
+            return message;
+        }
+        Verification verification = (Verification) session.getAttribute("verification");
+        if (verification == null) {
+            return new Message(Message.Type.OTHER);
+        }
+        if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        message = userService.checkCode(map.get("verification").toString(), verification);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Account account = authentService.getAccountFromSubject();
+        account.setEmail(verification.getEmail());
+        authentService.updateSession(account);
+        accountService.save(account);
+        return new Message(Message.Type.OK, accountService.makeAccountJson(account));
+    }
+
+
+    /**
+     * 获取子账户信息：在基本资料的基本信息处显示
+     *
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/getAccount", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message getAccount() {
+        Account account = authentService.getAccountFromSubject();
+        JSONObject json = accountService.makeAccountJson(account);
+        return new Message(Message.Type.OK, json);
+    }
+
+    /**
+     * web端登录
+     *
+     * @param objectMap
+     * @throws
+     */
+    @RequestMapping(value = "/web/login", method = RequestMethod.POST, produces = "application/json")
+    public
+    @ResponseBody
+    Message login(
+            @RequestBody Map<String, Object> objectMap) {
+        if (SecurityUtils.getSubject().getSession() != null) {
+            SecurityUtils.getSubject().logout();
+        }
+        Message message = Message.parameterCheck(objectMap);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        Map<String, Object> map = (Map<String, Object>) message.getData();
+        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        String code = map.get("code").toString();
+        if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
+            return new Message(Message.Type.FAIL);
+        }
+        Account account = accountService.findByPhoneOrEmial(code);
+        if (account == null) {
+            return new Message(Message.Type.EXIST) ;
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        if (!account.getPassword().equals(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
         }
         if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
             return subjectLogin(account, "web");
         }
         if(map.get("cookie")==null||!StringUtils.hasText(map.get("cookie").toString())){
+            return new Message(Message.Type.OTHER);
+        }
+        //登录间隔时间过长需重新登录
+        if(account.getLoginDate()==null){
+            account.setLoginDate(new Date());
+        }
+        if(System.currentTimeMillis() - account.getLoginDate().getTime()>15*24*60*60*1000l){
             return new Message(Message.Type.OTHER);
         }
         String cookie = map.get("cookie").toString();
@@ -126,6 +478,112 @@ public class AccountController {
             return subjectLogin(account, "web");
         }
     }
+
+    /**
+     * 移动端登录
+     *
+     * @param objectMap
+     * @throws
+     */
+    @RequestMapping(value = "/phone/login", method = RequestMethod.POST, produces = "application/json")
+    public
+    @ResponseBody
+    Message phoneLogin(
+            @RequestBody Map<String, Object> objectMap) {
+        if (SecurityUtils.getSubject().getSession() != null) {
+            SecurityUtils.getSubject().logout();
+        }
+        Message message = Message.parameterCheck(objectMap);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        Map<String, Object> map = (Map<String, Object>) message.getData();
+        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        String code = map.get("code").toString();
+        if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
+            return new Message(Message.Type.FAIL);
+        }
+        Account account = accountService.findByPhoneOrEmial(code);
+        if (account == null) {
+            return new Message(Message.Type.EXIST) ;
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        if (!account.getPassword().equals(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+       /* if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
+            return subjectLogin(user, "web",null);
+        }*/
+        return subjectLogin(account, "phone");
+    }
+
+    /**
+     * web端验证码登录
+     *
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/web/loginByVerify", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Message loginByVerify(
+            @RequestBody Map<String, String> map, HttpSession session) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        Verification verification = (Verification) session.getAttribute("verification");
+        if (verification == null) {
+            return new Message(Message.Type.OTHER);
+        }
+        String code = verification.getEmail()==null?verification.getPhone():verification.getEmail();
+        Account account = accountService.findByPhoneOrEmial(code);
+        if (account == null) {
+            return new Message(Message.Type.EXIST);
+        }
+        String verifyCode = map.get("verification").toString();
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        if (!account.getPassword().equals(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        message = userService.checkCode(verifyCode,verification);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        return subjectLogin(account,"web");
+    }
+
+    /**
+     * 判断输入的用户密码是否正确
+     *
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/checkPassword", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Message checkPassword(
+            @RequestBody Map<String, String> map) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return new Message(Message.Type.FAIL);
+        }
+        Account account = authentService.getAccountFromSubject();
+        if (account.getPassword().equals(map.get("password"))) {
+            return new Message(Message.Type.OK);
+        }
+        return new Message(Message.Type.FAIL);
+    }
+
 
     private Message subjectLogin( Account account, String loginType) {
         ShiroToken token = new ShiroToken();
@@ -153,239 +611,7 @@ public class AccountController {
         JSONObject accountJson = accountService.makeAccountJson(account);
         return new Message(Message.Type.OK, accountJson);
     }
-
-
-    /**
-     * 子账号登陆时发现ip有变化发送验证码
-     *　忘记密码时获取验证码
-     *
-     * @param phone
-     * @param session
-     * @return
-     */
-    @RequestMapping(value = "/getVerifyCode", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    Message getVerifyCode(@RequestParam String phone,
-                     HttpSession session) {
-        Message message = Message.parametersCheck(phone);
-        if (message.getType() == Message.Type.FAIL) {
-            return message;
-        }
-        Account account = accountService.findByPhoneOrUserName(phone);
-        if (account == null) {
-            return new Message(Message.Type.EXIST);
-        }
-        if (account.getPhone() == null) {
-            // 未绑定手机号码
-            return new Message(Message.Type.UNKNOWN);
-        }
-        return noteService.isSend(account.getPhone(), session);
-    }
-
-    /**
-     * ip有变化验证码验证
-     *　　
-     * @param session
-     * @return
-     */
-    @RequestMapping(value = "/loginByVerifyCode", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    Message loginByVerifyCode(
-            @RequestBody Map<String, String> objectMap, HttpSession session) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
-            return message;
-        }
-        Map<String, Object> map = (Map<String, Object>) message.getData();
-        String verifyIpCode = map.get("verifyIpCode").toString();
-        Account account = accountService.findByPhone(map.get("phone").toString());
-        if (account == null) {
-            return new Message(Message.Type.EXIST);
-        }
-        //判断是否被禁用
-        if(account.getLocked()!=null&&account.getLocked()==true){
-            return new Message(Message.Type.UNKNOWN);
-        }
-        Verification verification = (Verification) session
-                .getAttribute("verification");
-        message = userService.checkCode(verifyIpCode, verification);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        return subjectLogin(account,"web");
-    }
-
-    /**
-     * 重置密码需要手机验证
-     *
-     * @return
-     */
-    @RequestMapping(value = "/getRegVerifyCode", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    Message getRegVerifyCode(@RequestParam String phone, HttpSession session) {
-        Message message = Message.parametersCheck(phone);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        if (phone.length() != 11) {
-            return new Message(Message.Type.FAIL);
-        }
-        Account account = accountService.findByPhone(phone);
-        if (account != null) {
-            // 该手机号已被注册
-            return new Message(Message.Type.EXIST);
-        }
-        return noteService.isSend(phone, session);
-    }
-
-    /**
-     * 重置密码
-     * @param map
-     * @param session
-     * @return
-     */
-    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    Message changePassword(@RequestBody Map<String, Object> map,HttpSession session) {
-        Message message = Message.parameterCheck(map);
-        if (message.getType() == Message.Type.FAIL) {
-            return message;
-        }
-        map = (Map<String, Object>) message.getData();
-        String code = map.get("code").toString();
-        Account account = accountService.findByPhone(map.get("phone").toString());
-        if (account == null) {
-            return new Message(Message.Type.EXIST);
-        }
-        String password = map.get("password").toString();
-        Verification verification = (Verification) session
-                .getAttribute("verification");
-        message = userService.checkCode(code, verification);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        account.setPassword(password);
-        accountService.save(account);
-        return new Message(Message.Type.OK);
-    }
-
-    /**
-     * 获取当前子账号
-     *
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"account:simple"})
-    @RequestMapping(value = "/getAccount", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    Message getAccount() {
-        Account account = authentService.getAccountFromSubject();
-        account = accountService.find(account.getId());
-        JSONObject jsonObject = accountService.makeAccountJson(account);
-       return new Message(Message.Type.OK,jsonObject);
-
-    }
-
-    /**
-     * 完善或更新子账号信息
-     * @param map
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"account:simple"})
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public @ResponseBody Message update(@RequestBody Map<String,Object> map){
-        Message message = Message.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
-            return message;
-        }
-        Account account = authentService.getAccountFromSubject();
-        message = accountService.update(map,account.getId());
-        return message;
-    }
-
-    /**
-     * 修改密码
-     * @param map
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"account:simple"})
-    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
-    public @ResponseBody Message updatePassword(@RequestBody Map<String,Object> map){
-        Message message = Message.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
-            return message;
-        }
-        Account account = authentService.getAccountFromSubject();
-        String oldPassword = map.get("oldPassword").toString();
-        if(!account.getPassword().equals(oldPassword)){
-            return new Message(Message.Type.UNKNOWN);
-        }
-        String newPassword = map.get("newPassword").toString();
-        message = accountService.updatePassword(newPassword,account.getId());
-        return message;
-    }
-
-    /**
-     * 修改用户名和邮箱
-     * @param map
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"account:simple"})
-    @RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
-    public @ResponseBody Message updateInfo(@RequestBody Map<String,Object> map){
-        Message message = Message.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
-            return message;
-        }
-        Account account = authentService.getAccountFromSubject();
-        String name,email;
-        if(map.get("email")!=null&&StringUtils.hasText( map.get("email").toString())){
-            email = map.get("email").toString();
-        }else {
-            email = account.getEmail();
-        }
-        if(map.get("name")!=null&&StringUtils.hasText( map.get("name").toString())){
-            name = map.get("name").toString();
-        }else {
-            name = account.getName();
-        }
-        message = accountService.updateInfo(name,email,account.getId());
-        return message;
-    }
-    /**
-     * 更改手机号
-     * @param map
-     * @param session
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"account:simple"})
-    @RequestMapping(value = "/changePhone", method = RequestMethod.POST)
-    public @ResponseBody Message changePhone(@RequestBody Map<String,Object> map,HttpSession session){
-        Message message = Message.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
-            return message;
-        }
-        Account account = authentService.getAccountFromSubject();
-        Verification verification = (Verification) session.getAttribute("verification");
-        String code = map.get("code").toString();
-        String phone = map.get("phone").toString();
-        message = userService.checkCode(code,verification);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        message = accountService.changePhone(phone,account.getId());
-        return message;
-    }
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * 子账号解绑企业
@@ -423,25 +649,4 @@ public class AccountController {
         return new Message(Message.Type.OK);
     }
 
-    /**
-     * 上传子账号头像
-     * @param avatar
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/avatar", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    Message uploadAvatar(
-            @RequestBody Map<String, String> avatar) {
-        Message message = Message.parameterCheck(avatar);
-        if (message.getType() == Message.Type.FAIL) {
-            return message;
-        }
-        Account account = authentService.getAccountFromSubject();
-        account.setAvatar(avatar.get("avatar"));
-        accountService.save(account);
-        return new Message(Message.Type.OK);
-    }
 }
