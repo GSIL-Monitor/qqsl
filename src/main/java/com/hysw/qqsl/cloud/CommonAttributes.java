@@ -228,5 +228,8 @@ public final class CommonAttributes {
     public static String MYEMAILACCOUNT = "leinuo@qingqingshuili.cn";
     //    企业邮箱密码
     public static String MYEMAILPASSWORD = "Ljb608403";
+
+    public static final String PROJECTURL = "user.html#/project-edit/";
+    public static final String SENSORURL = "user.html#/station";
 }
 

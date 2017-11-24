@@ -571,7 +571,7 @@ public class CertifyCache {
                 emailService.emailNotice(certify.getUser().getEmail(),"水利云实名认证即将过期",message);
                 Note note = new Note(certify.getUser().getPhone(),message);
                 noteCache.add(certify.getUser().getPhone(),note);
-                userMessageService.emailNotice(certify.getUser(),message);
+//                userMessageService.emailNotice(certify.getUser(),message);
             } else if (certify.getValidTill().getTime() - System.currentTimeMillis() <= 0) {
                 certify.setPersonalStatus(CommonEnum.CertifyStatus.EXPIRED);
                 certify.getUser().setPersonalStatus(CommonEnum.CertifyStatus.EXPIRED);
@@ -580,7 +580,7 @@ public class CertifyCache {
                 emailService.emailNotice(certify.getUser().getEmail(),"水利云实名认证已过期",message);
                 Note note = new Note(certify.getUser().getPhone(),message);
                 noteCache.add(certify.getUser().getPhone(),note);
-                userMessageService.emailNotice(certify.getUser(),message);
+//                userMessageService.emailNotice(certify.getUser(),message);
             }
             if (certify.getValidPeriod() == null) {
                 continue;
@@ -594,7 +594,7 @@ public class CertifyCache {
                 emailService.emailNotice(certify.getUser().getEmail(),"水利云企业认证即将过期",message);
                 Note note = new Note(certify.getUser().getPhone(),message);
                 noteCache.add(certify.getUser().getPhone(),note);
-                userMessageService.emailNotice(certify.getUser(),message);
+//                userMessageService.emailNotice(certify.getUser(),message);
             } else if (certify.getValidPeriod().getTime() - System.currentTimeMillis() <= 0) {
                 certify.setCompanyStatus(CommonEnum.CertifyStatus.EXPIRED);
                 certify.getUser().setCompanyStatus(CommonEnum.CertifyStatus.EXPIRED);
@@ -603,7 +603,7 @@ public class CertifyCache {
                 emailService.emailNotice(certify.getUser().getEmail(),"水利云企业认证已过期",message);
                 Note note = new Note(certify.getUser().getPhone(),message);
                 noteCache.add(certify.getUser().getPhone(),note);
-                userMessageService.emailNotice(certify.getUser(),message);
+//                userMessageService.emailNotice(certify.getUser(),message);
             }
             certifyService.save(certify);
             userService.save(certify.getUser());
