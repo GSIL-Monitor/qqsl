@@ -7,9 +7,11 @@ import com.alipay.api.request.*;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Note;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
+import com.hysw.qqsl.cloud.pay.service.CommonService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.pay.service.TurnoverService;
 import com.hysw.qqsl.cloud.pay.service.aliPay.AliPayService;
@@ -52,6 +54,8 @@ public class AliPayController {
     private TradeService tradeService;
     @Autowired
     private TurnoverService turnoverService;
+    @Autowired
+    private CommonService commonService;
     Log logger = LogFactory.getLog(this.getClass());
     private DecimalFormat df=new DecimalFormat("######0.00");
 
@@ -149,6 +153,7 @@ public class AliPayController {
                     public void run() {
                         turnoverService.writeTurnover(trade);
                         tradeService.activateServe(trade);
+                        commonService.sendMessage(trade);
                     }
                 }.start();
                 return "success";

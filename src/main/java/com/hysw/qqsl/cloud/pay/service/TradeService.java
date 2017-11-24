@@ -588,6 +588,22 @@ public class TradeService extends BaseService<Trade, Long> {
     }
 
     /**
+     * buyType转汉字
+     * @param trade
+     * @return
+     */
+    public String convertBuyType(Trade trade){
+        String type="";
+        for (int i = 0; i < CommonAttributes.TRADEBUYTYPEE.length; i++) {
+            if (CommonAttributes.TRADEBUYTYPEE[i].equals(trade.getType().toString())) {
+                type = CommonAttributes.TRADEBUYTYPEC[i];
+                break;
+            }
+        }
+        return type;
+    }
+
+    /**
      * 设置产品到期时间
      * @param date
      */

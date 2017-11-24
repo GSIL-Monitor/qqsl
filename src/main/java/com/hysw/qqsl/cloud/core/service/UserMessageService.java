@@ -61,7 +61,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setStatus(UserMessage.Status.UNREAD);
 		userMessage.setContent(content);
 		userMessage.setType(UserMessage.Type.INVITE__ACCOUNT);
-		userMessageDao.save(userMessage);
+		save(userMessage);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setContent(content);
 		userMessage.setStatus(UserMessage.Status.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_PROJECT);
-		userMessageDao.save(userMessage);
+		save(userMessage);
     }
 
 	/**
@@ -104,7 +104,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setContent(content);
 		userMessage.setStatus(UserMessage.Status.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_STATION);
-		userMessageDao.save(userMessage);
+		save(userMessage);
     }
 
 	/**
@@ -117,6 +117,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setContent("尊敬的水利云用户您好，您的实名认证由于==>"+certify.getIdentityAdvice()+"<==原因，导致认证失败，请重新进行认证。");
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
+		save(userMessage);
 	}
 
 	public void companyCertifyFail(Certify certify) {
@@ -125,6 +126,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setContent("尊敬的水利云用户您好，您的企业认证由于==>"+certify.getCompanyAdvice()+"<==原因，导致认证失败，请重新进行认证。");
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
+		save(userMessage);
 	}
 
 	public void personalCertifySuccess(Certify certify) {
@@ -133,6 +135,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setContent("尊敬的水利云用户您好，您的实名认证已经通过认证，水利云将为您提供更多，更优质的服务。");
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
+		save(userMessage);
 	}
 
 	public void companyCertifySuccess(Certify certify) {
@@ -141,6 +144,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setContent("尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。");
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
+		save(userMessage);
 	}
 
 	public void emailNotice(User user,String message) {
@@ -149,5 +153,15 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setContent(message);
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(user);
+		save(userMessage);
+	}
+
+	public void buyPackage(User user,String message){
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setContent(message);
+		userMessage.setType(UserMessage.Type.BUY_PACKAGE);
+		userMessage.setUser(user);
+		save(userMessage);
 	}
 }

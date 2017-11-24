@@ -1,10 +1,15 @@
 package com.hysw.qqsl.cloud.pay.controller;
 
+import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Note;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
+import com.hysw.qqsl.cloud.core.service.EmailService;
 import com.hysw.qqsl.cloud.core.service.NoteCache;
+import com.hysw.qqsl.cloud.core.service.UserMessageService;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
+import com.hysw.qqsl.cloud.pay.service.CommonService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.pay.service.TurnoverService;
 import com.hysw.qqsl.cloud.pay.service.wxPay.WXPayConfigImpl;
@@ -41,7 +46,7 @@ public class WXPayController {
     @Autowired
     private TurnoverService turnoverService;
     @Autowired
-    private NoteCache noteCache;
+    private CommonService commonService;
 
     /**
      * 扫码支付下单
@@ -136,11 +141,7 @@ public class WXPayController {
                         public void run(){
                             turnoverService.writeTurnover(trade);
                             tradeService.activateServe(trade);
-//                            //                    短信通知
-//                            Note note = new Note(trade.getUser().getPhone(), CommonAttributes.BUY.replace("TYPE",tradeService.convertType(trade)).replace("BASE",tradeService.convertBaseType(trade)));
-//                            noteCache.add(trade.getUser().getPhone(),note);
-//                            //                    邮件通知
-//
+                            commonService.sendMessage(trade);
                         }
                     }.start();
                     return "<xml>\n" +
