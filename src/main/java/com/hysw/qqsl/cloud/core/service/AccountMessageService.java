@@ -3,16 +3,15 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.AccountMessageDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
-import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
-import com.hysw.qqsl.cloud.core.entity.data.Project;
-import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.entity.project.CooperateVisit;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,9 +56,18 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
      * @return
      */
     public List<AccountMessage> getMessage(Account account) {
-        List<Filter> filters = new ArrayList<Filter>();
-        filters.add(Filter.eq("account", account.getId()));
-        List<AccountMessage> accountMessages = accountMessageDao.findList(0, null, filters);
+        Date newDate=new Date();
+        Calendar calendar = Calendar.getInstance();  //得到日历
+        calendar.setTime(newDate);//把当前时间赋给日历
+        calendar.add(Calendar.DAY_OF_MONTH, -30);  //设置为前一天
+        Date dBefore = calendar.getTime();   //得到前一天的时间
+        List<Filter> filters1 = new ArrayList<Filter>();
+        List<Filter> filters2 = new ArrayList<Filter>();
+        filters1.add(Filter.eq("account", account.getId()));
+        filters2.add(Filter.eq("account", account.getId()));
+        filters1.add(Filter.in("status", UserMessage.Status.UNREAD));
+        filters2.add(Filter.between("createDate", dBefore, newDate));
+        List<AccountMessage> accountMessages= accountMessageDao.findList(0, null, filters1,filters2);
         return accountMessages;
     }
 
