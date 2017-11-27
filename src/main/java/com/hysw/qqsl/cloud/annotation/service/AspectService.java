@@ -53,8 +53,6 @@ public class AspectService {
     private ProjectService projectService;
     @Autowired
     private TradeService tradeService;
-    @Autowired
-    private ProjectLogService projectLogService;
 
     private final static Log log = LogFactory.getLog(AspectService.class);
 
@@ -175,12 +173,6 @@ public class AspectService {
         return new Message(Message.Type.EXIST);
     }
 
-    @After("@annotation(com.hysw.qqsl.cloud.annotation.util.QqslLog)")
-    public void after(JoinPoint joinPoint){
-        if(log.isInfoEnabled()){
-            log.info("after " + joinPoint);
-        }
-    }
 
     //配置后置返回通知,使用在方法aspect()上注册的切入点
 //    @AfterReturning("aspect()")
