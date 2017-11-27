@@ -46,7 +46,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         }
         accountMessage.setContent(content);
         accountMessage.setStatus(AccountMessage.Status.UNREAD);
-        accountMessage.setUserId(user.getId());
+        accountMessage.setType(AccountMessage.Type.INVITE__ACCOUNT);
         accountMessageDao.save(accountMessage);
     }
 
@@ -71,18 +71,17 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     public void viewMessage(Project project, Account account,boolean isView) {
         AccountMessage accountMessage = new AccountMessage();
         String content;
+        //progectShowUrl用于替换项目展示页的url;
         if(isView) {
-            content = "尊敬的用户，您好！"+project.getUser().getName()+"企业已将《"+project.getName()+"》项目的查看权限分配给您，您已获得查看权限。";
+            content = "尊敬的用户，您好！"+project.getUser().getName()+"企业已将<a href=progectShowUrl"+project.getId()+"《"+project.getName()+"》/>项目的查看权限分配给您，您已获得查看权限。";
         }else{
             content = "尊敬的用户，您好！"+project.getUser().getName()+"企业已将《"+project.getName()+"》项目的查看权限收回。";
         }
-
         accountMessage.setAccount(account);
-        accountMessage.setUserId(project.getUser().getId());
         accountMessage.setStatus(AccountMessage.Status.UNREAD);
         accountMessage.setContent(content);
         accountMessage.setAccount(account);
-        accountMessage.setProjectId(project.getId());
+        accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
     }
 
@@ -96,17 +95,19 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         AccountMessage accountMessage = new AccountMessage();
         String content;
         if(isCooperate){
-            content="尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将《"+project.getName()+"》项目的"+covert(type)+"权限分配给您，您已获得编辑权限，请注意添加内容。";
+           // content="尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将<a href=\"progectShowUrl/\""+project.getId()+"《"+project.getName()+"》/a>项目的"+covert(type)+"权限分配给您，您已获得编辑权限，请注意添加内容。";
+            content="尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将<a href=\"www.baidu.com\">《"+project.getName()+"》</a>项目的"+covert(type)+"权限分配给您，您已获得编辑权限，请注意添加内容。";
         }else{
             content="尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将《"+project.getName()+"》项目的"+covert(type)+"权限收回，已不能编辑该项目。";
         }
         accountMessage.setAccount(account);
-        accountMessage.setUserId(project.getUser().getId());
         accountMessage.setStatus(AccountMessage.Status.UNREAD);
         accountMessage.setContent(content);
         accountMessage.setAccount(account);
-        accountMessage.setProjectId(project.getId());
+        accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
+
+
     }
 
     /**

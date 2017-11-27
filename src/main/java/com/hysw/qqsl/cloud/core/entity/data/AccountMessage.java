@@ -24,14 +24,20 @@ public class AccountMessage extends BaseEntity{
     private String content;
     /** 消息状态 */
     private Status status;
-    /** 企业id */
-    private long userId;
-    /** 项目id */
-    private long projectId;
+    /** 类型 */
+    private Type type;
 
     public enum Status {
         UNREAD,
         READED
+    }
+
+    /**
+     * 类型
+     */
+    public enum Type {
+        INVITE__ACCOUNT,
+        COOPERATE_PROJECT
     }
 
     @ManyToOne(fetch=FetchType.EAGER)
@@ -61,7 +67,14 @@ public class AccountMessage extends BaseEntity{
         this.status = status;
     }
 
-    public long getUserId() {
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+/* public long getUserId() {
         return userId;
     }
 
@@ -75,5 +88,5 @@ public class AccountMessage extends BaseEntity{
 
     public void setProjectId(long projectId) {
         this.projectId = projectId;
-    }
+    }*/
 }
