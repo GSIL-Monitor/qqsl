@@ -14,29 +14,39 @@ public class UserMessage extends BaseEntity {
 
 	/** 用户 */
 	private User user;
-	/** 项目id */
-	private String projectId;
 	/** 内容 */
 	private String content;
 	/** 状态 */
 	private Status status;
-	/** 权限标记*/
-	private Sign sign;
-	/** 子账号id */
-	private Long accountId;
-	/** 仪表id */
-	private String sensorId;
-	public enum Sign{
-		/** 失去权限*/
-		MISS,
-		/** 有权限*/
-		GIVEN
+	/** 类型 */
+	private Type type;
+
+	/**
+	 * 类型
+	 */
+	public enum Type {
+		// 购买套餐，包含购买，续费，升级
+		BUY_PACKAGE,
+		// 购买测站，包含购买，续费
+		BUY_STATION,
+		// 分享项目
+		SHARE_PROJECT,
+		// 分享测站
+		SHARE_STATION,
+		// 子账号解绑企业
+		INVITE__ACCOUNT,
+		// 认证
+		CERTIFY
 	}
-	
+
+	/**
+	 * 状态
+	 */
 	public enum Status {
 		UNREAD,
 		READED
 	}
+
 
 	@ManyToOne(fetch=FetchType.EAGER)
 	public User getUser() {
@@ -65,45 +75,11 @@ public class UserMessage extends BaseEntity {
 		this.status = status;
 	}
 
-	public String getProjectId() {
-		return projectId;
+	public Type getType() {
+		return type;
 	}
 
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
+	public void setType(Type type) {
+		this.type = type;
 	}
-
-	/*public VisitType getVisitType() {
-		return visitType;
-	}
-
-	public void setVisitType(VisitType visitType) {
-		this.visitType = visitType;
-	}*/
-
-	public Long getAccountId() {
-		return accountId;
-	}
-
-	public void setAccountId(Long accountId) {
-		this.accountId = accountId;
-	}
-
-	public String getSensorId() {
-		return sensorId;
-	}
-
-	public void setSensorId(String sensorId) {
-		this.sensorId = sensorId;
-	}
-
-	@Transient
-	public Sign getSign() {
-		return sign;
-	}
-
-	public void setSign(Sign sign) {
-		this.sign = sign;
-	}
-		
 }

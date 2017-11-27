@@ -299,7 +299,7 @@ public class UserService extends BaseService<User, Long> {
 		}
 		boolean result = noteService.checkCode(code, verification);
 		if (result) {
-			return new Message(Message.Type.UNKNOWN);
+			return new Message(Message.Type.NO_ALLOW);
 		}
 		return new Message(Message.Type.OK);
 	}
@@ -552,9 +552,6 @@ public class UserService extends BaseService<User, Long> {
 		JSONObject userMessageJson = new JSONObject();
 		userMessageJson.put("id",userMessage.getId());
 		userMessageJson.put("content",userMessage.getContent());
-		userMessageJson.put("projectId",userMessage.getProjectId());
-		//userMessageJson.put("sensorId",userMessage.getSensorId());
-		userMessageJson.put("sign",userMessage.getSign());
 		userMessageJson.put("status",userMessage.getStatus());
 		//userMessageJson.put("visitType",userMessage.getVisitType());
 		userMessageJson.put("createDate",userMessage.getCreateDate().getTime());

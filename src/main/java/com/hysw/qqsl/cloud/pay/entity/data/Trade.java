@@ -80,7 +80,7 @@ public class Trade extends BaseEntity{
     }
 
     public enum BuyType{
-        /** 首次购买 */
+        /** 购买 */
         BUY,
         /** 续费 */
         RENEW,
