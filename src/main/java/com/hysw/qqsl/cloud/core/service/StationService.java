@@ -7,6 +7,7 @@ import com.hysw.qqsl.cloud.core.entity.*;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.UserMessage;
 import com.hysw.qqsl.cloud.core.entity.station.Camera;
 import com.hysw.qqsl.cloud.core.entity.station.Share;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -55,6 +56,8 @@ public class StationService extends BaseService<Station, Long> {
     private MonitorService monitorService;
     @Autowired
     private AuthentService authentService;
+    @Autowired
+    private UserMessageService userMessageService;
 
     @Autowired
     public void setBaseDao(StationDao stationDao) {
@@ -752,6 +755,7 @@ public class StationService extends BaseService<Station, Long> {
                     continue;
                 }
                 share.register(user);
+                userMessageService.stationShareMessage(station,user,true);
             }
             saveShare(share);
         }
@@ -764,7 +768,7 @@ public class StationService extends BaseService<Station, Long> {
      * @param userIds
      * @param own
      */
-    public void unShare(Station station, List<String> userIds, User own) {
+    public void unShare(Station station, List<String> userIds) {
         Long userId;
         User user;
         boolean flag;
@@ -776,8 +780,9 @@ public class StationService extends BaseService<Station, Long> {
                 continue;
             }
             flag = share.unRegister(user);
+            userMessageService.stationShareMessage(station,user,false);
             if (flag) {
-                saveShare(share, user, own);
+                saveShare(share);
             }
         }
     }
@@ -830,14 +835,6 @@ public class StationService extends BaseService<Station, Long> {
         return false;
     }
 
-    private void saveShare(Share share, User user, User own) {
-        Station station = share.getStation();
-        JSONArray shareJsons = share.toJson();
-        station.setShares(shareJsons.isEmpty() ? null : shareJsons.toString());
-        stationDao.save(station);
-        //记录仪表分享消息
-        // userMessageService.sensorShareMessage(sensor,user,own,true);
-    }
 
     private void saveShare(Share share) {
         Station station = share.getStation();

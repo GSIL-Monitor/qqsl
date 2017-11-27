@@ -27,6 +27,12 @@ public class CommonService {
 //                            //                    邮件通知
         emailService.emailNotice(trade.getUser().getEmail(), tradeService.convertType(trade)+tradeService.convertBuyType(trade), message);
 //                                                  站内通知
-        userMessageService.buyPackage(trade.getUser(),message);
+        if (trade.getType() == Trade.Type.PACKAGE) {
+            userMessageService.buyPackage(trade.getUser(),message);
+        } else if (trade.getType() == Trade.Type.STATION) {
+            userMessageService.buyStation(trade.getUser(),message);
+        }else{
+
+        }
     }
 }

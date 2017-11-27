@@ -1,9 +1,11 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.UserMessageDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.*;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 
 	@Autowired
 	private UserMessageDao userMessageDao;
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	public void setBaseDao(UserMessageDao userMessageDao) {
@@ -43,9 +47,6 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		filters1.add(Filter.in("status", UserMessage.Status.UNREAD));
 		filters2.add(Filter.between("createDate", dBefore, newDate));
 		List<UserMessage> userMessages= userMessageDao.findList(0, null, filters1,filters2);
-		for (int i = 0; i < userMessages.size(); i++) {
-			userMessages.get(i).setContent(userMessages.get(i).getContent().replaceAll("PROJECTURL", CommonAttributes.PROJECTURL).replaceAll("SENSORURL", CommonAttributes.SENSORURL));
-		}
 		return userMessages;
 	}
 
@@ -56,10 +57,14 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 	 */
 	public void unbindMessage(Account account, User user) {
 		UserMessage userMessage = new UserMessage();
-		String content = "尊敬的用户，您好！手机号为: "+account.getPhone()+" 的子账号已与企业解绑。";
+		JSONObject content = new JSONObject();
+		content.put("phone", account.getPhone());
+		content.put("name", account.getName());
+		content.put("isBind", false);
+//		String content = "尊敬的用户，您好！手机号为: "+account.getPhone()+" 的子账号已与企业解绑。";
 		userMessage.setUser(user);
 		userMessage.setStatus(UserMessage.Status.UNREAD);
-		userMessage.setContent(content);
+		userMessage.setContent(content.toString());
 		userMessage.setType(UserMessage.Type.INVITE__ACCOUNT);
 		save(userMessage);
 	}
@@ -72,14 +77,22 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
     public void shareMessage(Project project, User user,boolean flag) {
 		UserMessage userMessage = new UserMessage();
 		userMessage.setUser(user);
-		String content;
+		JSONObject content = new JSONObject();
 		//分享权限
 		if(flag){
-			content = "尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将《<a href=\"PROJECTURL"+project.getId()+"\">"+project.getName()+"</a>》项目的查看权限分配给贵公司，已获得该项目查看权限。";
+			content.put("nickname", userService.nickname(project.getUser()));
+			content.put("projectId", project.getId());
+			content.put("projectName", project.getName());
+			content.put("isShare", true);
+//			content = "尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将《<a href=\"PROJECTURL"+project.getId()+"\">"+project.getName()+"</a>》项目的查看权限分配给贵公司，已获得该项目查看权限。";
 		}else{
-			content="尊敬的用户，您好！"+project.getUser().getUserName()+"已将《"+project.getName()+"》项目的查看权限收回，您已失去查看权限。";
+			content.put("nickname", userService.nickname(project.getUser()));
+//			content.put("projectId", project.getId());
+			content.put("projectName", project.getName());
+			content.put("isShare", false);
+//			content="尊敬的用户，您好！"+project.getUser().getUserName()+"已将《"+project.getName()+"》项目的查看权限收回，您已失去查看权限。";
 		}
-		userMessage.setContent(content);
+		userMessage.setContent(content.toString());
 		userMessage.setStatus(UserMessage.Status.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_PROJECT);
 		save(userMessage);
@@ -87,21 +100,29 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 
 	/**
 	 * 记录仪表分享和取消分享的消息
-	 * @param sensor
+	 * @param station
 	 * @param user
 	 * @param flag
 	 */
-    public void sensorShareMessage(Sensor sensor, User user, User own, boolean flag) {
+    public void stationShareMessage(Station station, User user, boolean flag) {
 		UserMessage userMessage = new UserMessage();
 		userMessage.setUser(user);
-		String content;
+		JSONObject content = new JSONObject();
 		//分享权限
 		if(flag){
-			content = "尊敬的用户，您好！"+own.getUserName()+"企业已将编号为<a href=\"SENSORURL\">"+sensor.getCode()+"</a>仪表的查看权限分配给贵公司，已获得该仪表查看权限。";
+			content.put("nickname", userService.nickname(station.getUser()));
+			content.put("stationId", station.getId());
+			content.put("stationName", station.getName());
+			content.put("isShare", true);
+//			content = "尊敬的用户，您好！"+own.getUserName()+"企业已将编号为<a href=\"SENSORURL\">"+sensor.getCode()+"</a>仪表的查看权限分配给贵公司，已获得该仪表查看权限。";
 		}else{
-			content="尊敬的用户，您好！"+own.getUserName()+"已将编号为"+sensor.getCode()+"仪表的查看权限收回，您已失去查看权限。";
+			content.put("nickname", userService.nickname(station.getUser()));
+//			content.put("stationId", station.getId());
+			content.put("stationName", station.getName());
+			content.put("isShare", false);
+//			content="尊敬的用户，您好！"+own.getUserName()+"已将编号为"+sensor.getCode()+"仪表的查看权限收回，您已失去查看权限。";
 		}
-		userMessage.setContent(content);
+		userMessage.setContent(content.toString());
 		userMessage.setStatus(UserMessage.Status.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_STATION);
 		save(userMessage);
@@ -161,6 +182,15 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setStatus(UserMessage.Status.UNREAD);
 		userMessage.setContent(message);
 		userMessage.setType(UserMessage.Type.BUY_PACKAGE);
+		userMessage.setUser(user);
+		save(userMessage);
+	}
+
+	public void buyStation(User user,String message){
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setContent(message);
+		userMessage.setType(UserMessage.Type.BUY_STATION);
 		userMessage.setUser(user);
 		save(userMessage);
 	}

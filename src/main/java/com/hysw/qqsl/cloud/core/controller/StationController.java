@@ -395,7 +395,7 @@ public class StationController {
             return new Message(Message.Type.UNKNOWN);
         }
         List<String> userIds = Arrays.asList(userIdsStr.split(","));
-        stationService.unShare(station,userIds,own);
+        stationService.unShare(station,userIds);
         return new Message(Message.Type.OK);
     }
 

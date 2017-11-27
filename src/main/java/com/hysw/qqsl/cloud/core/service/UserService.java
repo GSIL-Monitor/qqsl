@@ -58,6 +58,17 @@ public class UserService extends BaseService<User, Long> {
 		super.setBaseDao(userDao);
 	}
 
+	@Override
+	public User find(Long id) {
+		List<User> all = findAll();
+		for (User user : all) {
+			if (user.getId().equals(id)) {
+				return user;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * 为前台构建授权信息（用户，管理员）
 	 */
@@ -529,6 +540,17 @@ public class UserService extends BaseService<User, Long> {
 			userJson.put("nickName", user.getName());
 		}else {
 			userJson.put("nickName", user.getUserName());
+		}
+	}
+
+	public String nickname(User user) {
+		if(user.getPersonalStatus().equals(CommonEnum.CertifyStatus.PASS)){
+			if(user.getCompanyStatus().equals(CommonEnum.CertifyStatus.PASS)){
+				return user.getCompanyName();
+			}
+			return user.getName();
+		}else {
+			return user.getUserName();
 		}
 	}
 
