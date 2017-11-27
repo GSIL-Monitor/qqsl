@@ -1,7 +1,14 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
-import com.hysw.qqsl.cloud.core.entity.project.CooperateVisit;
+import javax.persistence.*;
 
+import com.hysw.qqsl.cloud.core.entity.project.CooperateVisit;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@Entity
+@Table(name = "projectLog")
+@SequenceGenerator(name = "sequenceGenerator", sequenceName = "project_sequence")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class ProjectLog extends BaseEntity {
     /** 内容 */
     private String content;
