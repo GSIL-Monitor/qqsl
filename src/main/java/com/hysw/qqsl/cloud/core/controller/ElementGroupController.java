@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.annotation.util.QqslLog;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.element.Unit;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDataGroup;
@@ -52,6 +53,7 @@ public class ElementGroupController {
      * 保存单元下的复合单元列表
      */
     @IsExpire
+//    @QqslLog
     @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
