@@ -8,6 +8,7 @@ import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.entity.project.CooperateVisit;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,8 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     @Autowired
     private AccountMessageDao accountMessageDao;
     @Autowired
+    private UserService userService;
+    @Autowired
     private CooperateService cooperateService;
     @Autowired
     public void setBaseDao(AccountMessageDao accountMessageDao){
@@ -38,13 +41,11 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     public void bindMsessage(User user, Account account,boolean isBind) {
         AccountMessage accountMessage = new AccountMessage();
         accountMessage.setAccount(account);
-        String content;
-        if(isBind){
-            content = "尊敬的用户，您好！您已经被邀请成为"+user.getName()+"企业的子账号。";
-        }else{
-            content = "尊敬的用户，您好！手机号为: "+account.getPhone()+" 的子账号已与企业解绑。";
-        }
-        accountMessage.setContent(content);
+        JSONObject contentJson = new JSONObject();
+        contentJson.put("nickName",userService.nickname(user.getId()));
+        String bindCode = isBind?"0":"1";
+        contentJson.put("bindCode",bindCode);
+        accountMessage.setContent(contentJson.toString());
         accountMessage.setStatus(AccountMessage.Status.UNREAD);
         accountMessage.setType(AccountMessage.Type.INVITE__ACCOUNT);
         accountMessageDao.save(accountMessage);
@@ -70,16 +71,15 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
      */
     public void viewMessage(Project project, Account account,boolean isView) {
         AccountMessage accountMessage = new AccountMessage();
-        String content;
-        //progectShowUrl用于替换项目展示页的url;
-        if(isView) {
-            content = "尊敬的用户，您好！"+project.getUser().getName()+"企业已将<a href=progectShowUrl"+project.getId()+"《"+project.getName()+"》/>项目的查看权限分配给您，您已获得查看权限。";
-        }else{
-            content = "尊敬的用户，您好！"+project.getUser().getName()+"企业已将《"+project.getName()+"》项目的查看权限收回。";
-        }
+        String cooperateCode = isView?"0":"1";
+        JSONObject contentJson = new JSONObject();
+        contentJson.put("cooperateCode",cooperateCode);
+        contentJson.put("nickName",contentJson.put("nickName",userService.nickname(project.getUser().getId())));
+        contentJson.put("projectName",project.getName());
+        contentJson.put("projectId",project.getId());
         accountMessage.setAccount(account);
         accountMessage.setStatus(AccountMessage.Status.UNREAD);
-        accountMessage.setContent(content);
+        accountMessage.setContent(contentJson.toString());
         accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
@@ -93,16 +93,16 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
      */
     public void cooperate(CooperateVisit.Type type, Project project, Account account,boolean isCooperate) {
         AccountMessage accountMessage = new AccountMessage();
-        String content;
-        if(isCooperate){
-           // content="尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将<a href=\"progectShowUrl/\""+project.getId()+"《"+project.getName()+"》/a>项目的"+covert(type)+"权限分配给您，您已获得编辑权限，请注意添加内容。";
-            content="尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将<a href=\"www.baidu.com\">《"+project.getName()+"》</a>项目的"+covert(type)+"权限分配给您，您已获得编辑权限，请注意添加内容。";
-        }else{
-            content="尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将《"+project.getName()+"》项目的"+covert(type)+"权限收回，已不能编辑该项目。";
-        }
+        String cooperateCode = isCooperate?"2":"3";
+        JSONObject contentJson = new JSONObject();
+        contentJson.put("cooperateCode",cooperateCode);
+        contentJson.put("nickName",userService.nickname(project.getUser().getId()));
+        contentJson.put("projectName",project.getName());
+        contentJson.put("projectId",project.getId());
+        contentJson.put("cooperateInfo",covert(type));
         accountMessage.setAccount(account);
         accountMessage.setStatus(AccountMessage.Status.UNREAD);
-        accountMessage.setContent(content);
+        accountMessage.setContent(contentJson.toString());
         accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
