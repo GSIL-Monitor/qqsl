@@ -54,6 +54,8 @@ public class UserService extends BaseService<User, Long> {
 	@Autowired
 	private CertifyService certifyService;
 	@Autowired
+	private UserService userService;
+	@Autowired
 	public void setBaseDao(UserDao userDao) {
 		super.setBaseDao(userDao);
 	}
@@ -543,13 +545,14 @@ public class UserService extends BaseService<User, Long> {
 		}
 	}
 
-	public String nickname(User user) {
-		if(user.getPersonalStatus().equals(CommonEnum.CertifyStatus.PASS)){
-			if(user.getCompanyStatus().equals(CommonEnum.CertifyStatus.PASS)){
+	public String nickname(Long userId) {
+		User user = userService.find(userId);
+		if (user.getPersonalStatus().equals(CommonEnum.CertifyStatus.PASS)) {
+			if (user.getCompanyStatus().equals(CommonEnum.CertifyStatus.PASS)) {
 				return user.getCompanyName();
 			}
 			return user.getName();
-		}else {
+		} else {
 			return user.getUserName();
 		}
 	}
