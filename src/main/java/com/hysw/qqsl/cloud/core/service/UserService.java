@@ -65,7 +65,7 @@ public class UserService extends BaseService<User, Long> {
 		List<User> all = findAll();
 		for (User user : all) {
 			if (user.getId().equals(id)) {
-				return user;
+				return (User) SettingUtils.objectCopy(user);
 			}
 		}
 		return null;
