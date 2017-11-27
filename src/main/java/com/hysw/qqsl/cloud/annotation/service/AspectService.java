@@ -18,6 +18,7 @@ import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
@@ -53,13 +54,7 @@ public class AspectService {
     @Autowired
     private TradeService tradeService;
     @Autowired
-    private AccountService accountService;
-    @Autowired
-    private CoordinateService coordinateService;
-    @Autowired
-    private PositionService positionService;
-    @Autowired
-    private BuildService buildService;
+    private ProjectLogService projectLogService;
 
     private final static Log log = LogFactory.getLog(AspectService.class);
 
@@ -180,6 +175,12 @@ public class AspectService {
         return new Message(Message.Type.EXIST);
     }
 
+    @After("@annotation(com.hysw.qqsl.cloud.annotation.util.QqslLog)")
+    public void after(JoinPoint joinPoint){
+        if(log.isInfoEnabled()){
+            log.info("after " + joinPoint);
+        }
+    }
 
     //配置后置返回通知,使用在方法aspect()上注册的切入点
 //    @AfterReturning("aspect()")
@@ -197,5 +198,7 @@ public class AspectService {
 //            log.info("afterThrow " + joinPoint + "\t" + ex.getMessage());
 //        }
 //    }
+
+
 
 }

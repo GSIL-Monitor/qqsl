@@ -360,5 +360,13 @@ public class CommonEnum {
         AIRSURVEY
     }
 
+    /**
+     * 站内信状态
+     */
+    public enum MessageStatus {
+        UNREAD,
+        READED
+    }
+
 }
 

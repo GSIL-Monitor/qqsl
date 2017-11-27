@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
@@ -641,8 +642,8 @@ public class AccountController {
         List<AccountMessage> messages = accountMessageService.getMessage(account);
         for (int i = 0; i < messages.size(); i++) {
             if (messages.get(i).getStatus()
-                    .equals(UserMessage.Status.UNREAD)) {
-                messages.get(i).setStatus(AccountMessage.Status.READED);
+                    .equals(CommonEnum.MessageStatus.UNREAD)) {
+                messages.get(i).setStatus(CommonEnum.MessageStatus.READED);
                 accountMessageService.save(messages.get(i));
             }
         }

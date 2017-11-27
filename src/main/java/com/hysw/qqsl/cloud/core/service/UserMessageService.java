@@ -44,7 +44,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		List<Filter> filters2 = new ArrayList<Filter>();
 		filters1.add(Filter.eq("user", user.getId()));
 		filters2.add(Filter.eq("user", user.getId()));
-		filters1.add(Filter.in("status", UserMessage.Status.UNREAD));
+		filters1.add(Filter.in("status", CommonEnum.MessageStatus.UNREAD));
 		filters2.add(Filter.between("createDate", dBefore, newDate));
 		List<UserMessage> userMessages= userMessageDao.findList(0, null, filters1,filters2);
 		return userMessages;
@@ -63,7 +63,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		content.put("isBind", false);
 //		String content = "尊敬的用户，您好！手机号为: "+account.getPhone()+" 的子账号已与企业解绑。";
 		userMessage.setUser(user);
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent(content.toString());
 		userMessage.setType(UserMessage.Type.INVITE__ACCOUNT);
 		save(userMessage);
@@ -93,7 +93,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 //			content="尊敬的用户，您好！"+project.getUser().getUserName()+"已将《"+project.getName()+"》项目的查看权限收回，您已失去查看权限。";
 		}
 		userMessage.setContent(content.toString());
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_PROJECT);
 		save(userMessage);
     }
@@ -123,7 +123,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 //			content="尊敬的用户，您好！"+own.getUserName()+"已将编号为"+sensor.getCode()+"仪表的查看权限收回，您已失去查看权限。";
 		}
 		userMessage.setContent(content.toString());
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_STATION);
 		save(userMessage);
     }
@@ -134,7 +134,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 	 */
 	public void personalCertifyFail(Certify certify) {
 		UserMessage userMessage = new UserMessage();
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent("尊敬的水利云用户您好，您的实名认证由于==>"+certify.getIdentityAdvice()+"<==原因，导致认证失败，请重新进行认证。");
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
@@ -143,7 +143,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 
 	public void companyCertifyFail(Certify certify) {
 		UserMessage userMessage = new UserMessage();
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent("尊敬的水利云用户您好，您的企业认证由于==>"+certify.getCompanyAdvice()+"<==原因，导致认证失败，请重新进行认证。");
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
@@ -152,7 +152,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 
 	public void personalCertifySuccess(Certify certify) {
 		UserMessage userMessage = new UserMessage();
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent("尊敬的水利云用户您好，您的实名认证已经通过认证，水利云将为您提供更多，更优质的服务。");
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
@@ -161,7 +161,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 
 	public void companyCertifySuccess(Certify certify) {
 		UserMessage userMessage = new UserMessage();
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent("尊敬的水利云用户您好，您的企业认证已经通过认证，水利云将为您提供更多企业级功能，更优质的企业级服务。");
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
@@ -170,7 +170,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 
 	public void emailNotice(User user,String message) {
 		UserMessage userMessage = new UserMessage();
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent(message);
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(user);
@@ -179,7 +179,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 
 	public void buyPackage(User user,String message){
 		UserMessage userMessage = new UserMessage();
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent(message);
 		userMessage.setType(UserMessage.Type.BUY_PACKAGE);
 		userMessage.setUser(user);
@@ -188,7 +188,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 
 	public void buyStation(User user,String message){
 		UserMessage userMessage = new UserMessage();
-		userMessage.setStatus(UserMessage.Status.UNREAD);
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent(message);
 		userMessage.setType(UserMessage.Type.BUY_STATION);
 		userMessage.setUser(user);

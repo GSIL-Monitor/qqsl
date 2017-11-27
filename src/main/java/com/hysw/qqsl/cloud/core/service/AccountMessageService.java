@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.AccountMessageDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.*;
@@ -45,7 +46,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         String bindCode = isBind?"0":"1";
         contentJson.put("bindCode",bindCode);
         accountMessage.setContent(contentJson.toString());
-        accountMessage.setStatus(AccountMessage.Status.UNREAD);
+        accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
         accountMessage.setType(AccountMessage.Type.INVITE__ACCOUNT);
         accountMessageDao.save(accountMessage);
     }
@@ -65,7 +66,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         List<Filter> filters2 = new ArrayList<Filter>();
         filters1.add(Filter.eq("account", account.getId()));
         filters2.add(Filter.eq("account", account.getId()));
-        filters1.add(Filter.in("status", UserMessage.Status.UNREAD));
+        filters1.add(Filter.in("status", CommonEnum.MessageStatus.UNREAD));
         filters2.add(Filter.between("createDate", dBefore, newDate));
         List<AccountMessage> accountMessages= accountMessageDao.findList(0, null, filters1,filters2);
         return accountMessages;
@@ -86,7 +87,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         contentJson.put("projectName",project.getName());
         contentJson.put("projectId",project.getId());
         accountMessage.setAccount(account);
-        accountMessage.setStatus(AccountMessage.Status.UNREAD);
+        accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
         accountMessage.setContent(contentJson.toString());
         accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
@@ -109,7 +110,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         contentJson.put("projectId",project.getId());
         contentJson.put("cooperateInfo",covert(type));
         accountMessage.setAccount(account);
-        accountMessage.setStatus(AccountMessage.Status.UNREAD);
+        accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
         accountMessage.setContent(contentJson.toString());
         accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);

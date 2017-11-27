@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
@@ -1202,8 +1203,8 @@ public class UserController {
         List<UserMessage> messages = userMessageService.findByUser(user);
         for (int i = 0; i < messages.size(); i++) {
             if (messages.get(i).getStatus().toString()
-                    .equals(UserMessage.Status.UNREAD.toString())) {
-                messages.get(i).setStatus(UserMessage.Status.READED);
+                    .equals(CommonEnum.MessageStatus.UNREAD.toString())) {
+                messages.get(i).setStatus(CommonEnum.MessageStatus.READED);
                 userMessageService.save(messages.get(i));
             }
         }

@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
+import com.hysw.qqsl.cloud.CommonEnum;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -23,14 +24,9 @@ public class AccountMessage extends BaseEntity{
     /** 内容 */
     private String content;
     /** 消息状态 */
-    private Status status;
+    private CommonEnum.MessageStatus status;
     /** 类型 */
     private Type type;
-
-    public enum Status {
-        UNREAD,
-        READED
-    }
 
     /**
      * 类型
@@ -59,11 +55,11 @@ public class AccountMessage extends BaseEntity{
         this.content = content;
     }
 
-    public Status getStatus() {
+    public CommonEnum.MessageStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(CommonEnum.MessageStatus status) {
         this.status = status;
     }
 
