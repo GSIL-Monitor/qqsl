@@ -581,6 +581,7 @@ public class UserService extends BaseService<User, Long> {
 		//userMessageJson.put("visitType",userMessage.getVisitType());
 		userMessageJson.put("createDate",userMessage.getCreateDate().getTime());
 		userMessageJson.put("modifyDate",userMessage.getModifyDate().getTime());
+		userMessageJson.put("type", userMessage.getType());
 		return userMessageJson;
 	}
 
