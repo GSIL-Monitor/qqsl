@@ -83,7 +83,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         String cooperateCode = isView?"0":"1";
         JSONObject contentJson = new JSONObject();
         contentJson.put("cooperateCode",cooperateCode);
-        contentJson.put("nickName",contentJson.put("nickName",userService.nickname(project.getUser().getId())));
+        contentJson.put("nickName",userService.nickname(project.getUser().getId()));
         contentJson.put("projectName",project.getName());
         contentJson.put("projectId",project.getId());
         accountMessage.setAccount(account);
