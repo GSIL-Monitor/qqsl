@@ -350,9 +350,9 @@ public class AccountController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/changePhone ", method = RequestMethod.POST)
+    @RequestMapping(value = "/updatePhone ", method = RequestMethod.POST)
     public @ResponseBody
-    Message changePhone(@RequestBody Map<String, Object> map, HttpSession session) {
+    Message updatePhone(@RequestBody Map<String, Object> map, HttpSession session) {
         Message message = Message.parameterCheck(map);
         if (message.getType().equals(Message.Type.FAIL)) {
             return message;
