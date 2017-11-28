@@ -24,6 +24,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -756,38 +757,6 @@ public class UserController {
     }
 
 
-//    /**
-//     * 忘记密码时修改密码
-//     *
-//     * @param object
-//     * @param session
-//     * @return
-//     */
-//    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-//    public
-//    @ResponseBody
-//    Message changePassword(@RequestBody Object object, HttpSession session) {
-//        Message message = Message.parameterCheck(object);
-//        Map<String, Object> map = (Map<String, Object>) message.getData();
-//        if (message.getType() == Message.Type.FAIL) {
-//            return message;
-//        }
-//        User user = userService.findByPhone(map.get("phone").toString());
-//        if (user == null) {
-//            return new Message(Message.Type.EXIST);
-//        }
-//        Verification verification = (Verification) session
-//                .getAttribute("verification");
-//        message = userService.checkCode(map.get("code").toString(), verification);
-//        if (message.getType() != Message.Type.OK) {
-//            return message;
-//        }
-//        String password = map.get("password").toString();
-//        user.setPassword(password);
-//        userService.save(user);
-//        return message;
-//    }
-
     /**
      * 登陆
      *
@@ -832,312 +801,6 @@ public class UserController {
         userService.save(user);
         return new Message(Message.Type.OK, userJson);
     }
-
-
-//    /**
-//     * 登陆时发现ip有变化或忘记密码时发送验证码
-//     *
-//     * @param phone
-//     * @param session
-//     * @return
-//     */
-//    @RequestMapping(value = "/getVerifyCode", method = RequestMethod.GET)
-//    public
-//    @ResponseBody
-//    Message getVerifyCode(@RequestParam String phone,
-//                     HttpSession session) {
-//        Message message = Message.parametersCheck(phone);
-//        if (message.getType() == Message.Type.FAIL) {
-//            return message;
-//        }
-//        User user = userService.findByPhone(phone);
-//        if (user == null) {
-//            return new Message(Message.Type.EXIST);
-//        }
-//        if (user.getPhone() == null) {
-//            // 未绑定手机号码
-//            return new Message(Message.Type.UNKNOWN);
-//        }
-//        return noteService.isSend(user.getPhone(), session);
-//    }
-
-//    /**
-//     * ip有变化验证码验证
-//     *
-//     * @param session
-//     * @return
-//     */
-//    @RequestMapping(value = "/loginByVerifyCode", method = RequestMethod.POST)
-//    public
-//    @ResponseBody
-//    Message loginByVerifyCode(
-//            @RequestBody Map<String, String> objectMap, HttpSession session) {
-//        Message message = Message.parameterCheck(objectMap);
-//        if (message.getType() == Message.Type.FAIL) {
-//            return message;
-//        }
-//        Map<String, Object> map = (Map<String, Object>) message.getData();
-//        String verifyIpCode = map.get("verifyIpCode").toString();
-//        User user = userService.findByPhone(map.get("phone").toString());
-//        if (user == null) {
-//            return new Message(Message.Type.EXIST);
-//        }
-//        //判断是否被禁用
-//        if(user.getLocked()!=null&&user.getLocked()==true){
-//            return new Message(Message.Type.UNKNOWN);
-//        }
-//        Verification verification = (Verification) session
-//                .getAttribute("verification");
-//        message = userService.checkCode(verifyIpCode,verification);
-//        if (message.getType() != Message.Type.OK) {
-//            return message;
-//        }
-//        return subjectLogin(user,"web",null);
-//    }
-
-//    /**
-//     * 检查该用户名是否被注册
-//     *
-//     * @param userName
-//     * @return
-//     */
-//    @RequestMapping(value = "/checkUserName/{userName}", method = RequestMethod.GET)
-//    public
-//    @ResponseBody
-//    Message checkUserName(
-//            @PathVariable("userName") String userName) {
-//        Message message = Message.parametersCheck(userName);
-//        if (message.getType() != Message.Type.OK) {
-//            return message;
-//        }
-//        User user = userService.findByUserName(userName);
-//        if (user == null) {
-//            return new Message(Message.Type.OK);
-//        }
-//        return new Message(Message.Type.EXIST);
-//    }
-
-//    /**
-//     * 更改手机号码或注册时，需要手机验证
-//     *
-//     * @return
-//     */
-//    @RequestMapping(value = "/getRegVerifyCode", method = RequestMethod.GET)
-//    public
-//    @ResponseBody
-//    Message getRegVerifyCode(@RequestParam String phone, HttpSession session) {
-//        Message message = Message.parametersCheck(phone);
-//        if (message.getType() != Message.Type.OK) {
-//            return message;
-//        }
-//        if (phone.length() != 11) {
-//            return new Message(Message.Type.FAIL);
-//        }
-//        User user = userService.findByPhone(phone);
-//        if (user != null) {
-//            // 该手机号已被注册
-//            return new Message(Message.Type.EXIST);
-//        }
-//        //user.setPhone(phone);
-//        return noteService.isSend(phone, session);
-//    }
-
-//    /**
-//     * 用户注册
-//     *
-//     * @param objectMap
-//     * @return
-//     */
-//    @RequestMapping(value = "/register", method = RequestMethod.POST)
-//    public
-//    @ResponseBody
-//    Message register(@RequestBody Map<String, String> objectMap,
-//                     HttpSession session) {
-//        Message message = Message.parameterCheck(objectMap);
-//        if (message.getType() == Message.Type.FAIL) {
-//            return message;
-//        }
-//        Map<String, Object> map = (Map<String, Object>) message.getData();
-//        Verification verification = (Verification) session
-//                .getAttribute("verification");
-//        message = userService.registerService(map, verification);
-//        return message;
-//    }
-
-//    /**
-//     * 修改用户信息
-//     *
-//     * @param object
-//     * @return
-//     */
-//    @SuppressWarnings("unchecked")
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/update", method = RequestMethod.POST)
-//    public
-//    @ResponseBody
-//    Message update(@RequestBody Object object) {
-//        Message message = Message.parameterCheck(object);
-//        if (message.getType() == Message.Type.FAIL) {
-//            return message;
-//        }
-//        User user = authentService.getUserFromSubject();
-//        Map<String, Object> map = (Map<String, Object>) message.getData();
-//        if (!Long.valueOf(map.get("id").toString()).equals(user.getId())) {
-//            return new Message(Message.Type.FAIL);
-//        }
-//        try {
-//            message = userService.update(map.get("userName").toString(), map.get("name").toString(),
-//                    map.get("email").toString(), map.get("password").toString());
-//        } catch (QQSLException e) {
-//            logger.info(e.getMessage());
-//            return new Message(Message.Type.FAIL);
-//        }
-//        return message;
-//
-//    }
-
-//    /**
-//     * 修改密码
-//     * @param map
-//     * @return
-//     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
-//    public @ResponseBody Message updatePassword(@RequestBody Map<String,Object> map){
-//        Message message = Message.parameterCheck(map);
-//        if(message.getType().equals(Message.Type.FAIL)){
-//            return message;
-//        }
-//        User user = authentService.getUserFromSubject();
-//        String oldPassword = map.get("oldPassword").toString();
-//        if(!user.getPassword().equals(oldPassword)){
-//            return new Message(Message.Type.UNKNOWN);
-//        }
-//        String newPassword = map.get("newPassword").toString();
-//        message = userService.updatePassword(newPassword,user.getId());
-//        return message;
-//    }
-
-//    /**
-//     * 修改用户名和邮箱
-//     * @param map
-//     * @return
-//     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
-//    public @ResponseBody Message updateInfo(@RequestBody Map<String,Object> map){
-//        Message message = Message.parameterCheck(map);
-//        if(message.getType().equals(Message.Type.FAIL)){
-//            return message;
-//        }
-//        User user = authentService.getUserFromSubject();
-//        String email,name;
-//        if(map.get("email")!=null&&StringUtils.hasText( map.get("email").toString())){
-//            email = map.get("email").toString();
-//        }else {
-//            email = user.getEmail();
-//        }
-//        if(map.get("name")!=null&&StringUtils.hasText( map.get("name").toString())){
-//            name = map.get("name").toString();
-//        }else {
-//            name = user.getName();
-//        }
-//        message = userService.updateInfo(name,email,user.getId());
-//        return message;
-//    }
-
-//    /**
-//     * 上传用户头像
-//     *
-//     * @return
-//     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/avatar", method = RequestMethod.POST)
-//    public
-//    @ResponseBody
-//    Message uploadAvatar(
-//            @RequestBody Map<String, String> avatar) {
-//        Message message = Message.parameterCheck(avatar);
-//        if (message.getType() == Message.Type.FAIL) {
-//            return message;
-//        }
-//        Map<String, Object> map = (Map<String, Object>) message.getData();
-//        User user = authentService.getUserFromSubject();
-//        user.setAvatar(map.get("avatar").toString());
-//        userService.save(user);
-//        return new Message(Message.Type.OK);
-//    }
-
-//    /**
-//     * 获取用户
-//     *
-//     * @return
-//     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/getUser", method = RequestMethod.GET)
-//    //@RequiresPermissions(value = { "webUser:user:query","clientUser:user:query","mobileUser:user:query" }, logical = Logical.OR)
-//    public
-//    @ResponseBody
-//    Message getUser() {
-//        User user = authentService.getUserFromSubject();
-//        JSONObject json = userService.makeUserJson(user);
-//            return new Message(Message.Type.OK, json);
-//    }
-
-//    /**
-//     * 获取所有用户
-//     *
-//     * @return
-//     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/getUsers", method = RequestMethod.GET)
-//    public
-//    @ResponseBody
-//    Message getUsers() {
-//        User user = authentService.getUserFromSubject();
-//        List<JSONObject> userJsons;
-//        List<User> users = userService.findUsers(user);
-//        userJsons = userService.makeUserJsons(users);
-//        return new Message(Message.Type.OK, userJsons);
-//    }
-
-//    /**
-//     * 修改手机号码验证短信
-//     *
-//     * @param map
-//     * @param session
-//     * @return
-//     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/changePhone", method = RequestMethod.POST)
-//    public
-//    @ResponseBody
-//    Message checkPhoneCode(@RequestBody Map<String,Object> map, HttpSession session) {
-//        Message message = Message.parameterCheck(map);
-//        if (message.getType() != Message.Type.OK) {
-//            return message;
-//        }
-//        User user = authentService.getUserFromSubject();
-//        Verification verification = (Verification) session
-//                .getAttribute("verification");
-//        String code = map.get("code").toString();
-//        String newPhone = map.get("phone").toString();
-//        message = userService.checkCode(code, verification);
-//        if (message.getType() != Message.Type.OK) {
-//            return message;
-//        }
-//        user.setPhone(newPhone);
-//        userService.save(user);
-//        authentService.updateSession(user);
-//        return message;
-//    }
 
     /**
      * 发布文章
@@ -1289,11 +952,17 @@ public class UserController {
         }
         return userService.unbindAccount(account);
     }
-//    使用user缓存，加载用户时，将已认证用户真实姓名从认证表写入用户
-//    ?企业认证限制
 
-
-
-
+    /**
+     * 用户获取当前套餐详情时,查看套餐剩余空间,每天文件上传下载的空间变化情况,以及下载流量的使用情况
+     * 注:上传和下载流量最大是空间大小的10倍。
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/storageCountLog", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Message getStorageCountLog() {
+        return new Message(Message.Type.OK);
+    }
 }
 
