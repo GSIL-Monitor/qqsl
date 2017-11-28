@@ -350,7 +350,7 @@ public class AccountController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/updatePhone ", method = RequestMethod.POST)
+    @RequestMapping(value = "/updatePhone", method = RequestMethod.POST)
     public @ResponseBody
     Message updatePhone(@RequestBody Map<String, Object> map, HttpSession session) {
         Message message = Message.parameterCheck(map);
