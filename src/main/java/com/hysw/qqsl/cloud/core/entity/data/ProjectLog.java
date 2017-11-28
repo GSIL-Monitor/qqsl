@@ -32,7 +32,9 @@ public class ProjectLog extends BaseEntity {
         // 项目文件上传
         FILE_UPLOAD,
         // 项目文件下载
-        FILE_DOWNLOAD
+        FILE_DOWNLOAD,
+        // 项目文件删除
+        FILE_DELETE
     }
 
     public String getContent() {

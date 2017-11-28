@@ -245,7 +245,7 @@ public class ElementService {
 		Project project = projectService.find(unit.getProject().getId());
 		int info;
 		Element element;
-		String description, elementAlias, value;
+		String description, elementAlias, value = null;
 		Object objectValue, infoOrder, introduceDescription;
 		List<Object> elements= (List<Object>) elementGroup.get("elements");
 		List<String> aliases = new ArrayList<>();
@@ -299,13 +299,13 @@ public class ElementService {
 				elementDB.setProject(project);
 			}
 			aliases.add(elementAlias);
-			addLogTimeToProject(project,elementAlias,"element");
+//			addLogTimeToProject(project,elementAlias,"element");
 			// 保存要素数据和项目简介
 			elementDataGroupService.doSaveElementDataGroup(elementDB, elementDataGroups);
 			elementDBService.save(elementDB);
 		}
 		if(aliases.size()!=0){
-			projectLogService.saveLog(project,object,aliases,null,null);
+			projectLogService.saveLog(project,object,aliases,value,null);
 		}
 		//保存项目进度
 		doSaveProjectSchedule(unit.getAlias(),unit.getName(),project);
@@ -313,82 +313,82 @@ public class ElementService {
 		projectService.save(project);
 	}
 
-	public void addLogTimeToProject(Project project,String elementAlias,String stage) {
-		JSONObject object = JSONObject.fromObject(project.getLogStr());
-		JSONObject jsonObject = new JSONObject();
-		Object inviteElement = null;
-		Object inviteFile = null;
-		Object preparationElement = null;
-		Object preparationFile = null;
-		Object buildingElement = null;
-		Object buildingFile = null;
-		Object maintenanceElement = null;
-		Object maintenanceFile = null;
-		if(object.size()!=0){
-			inviteElement = object.get("inviteElement");
-			inviteFile =  object.get("inviteFile");
-			preparationElement =  object.get("preparationElement");
-			preparationFile =  object.get("preparationFile");
-			buildingElement =  object.get("buildingElement");
-			buildingFile = object.get("buildingFile");
-			maintenanceElement = object.get("maintenanceElement");
-			maintenanceFile =  object.get("maintenanceFile");
-		}
-		if(stage.equals("element")){
-			if(elementAlias.substring(0,1).equals("1")){
-				inviteElement=System.currentTimeMillis();
-			}
-			if(elementAlias.substring(0,1).equals("2")){
-				preparationElement=System.currentTimeMillis();
-			}
-			if(elementAlias.substring(0,1).equals("3")){
-				buildingElement=System.currentTimeMillis();
-			}
-			if(elementAlias.substring(0,1).equals("4")){
-				maintenanceElement=System.currentTimeMillis();
-			}
-		}else{
-			if(elementAlias.substring(0,1).equals("1")){
-				inviteFile=System.currentTimeMillis();
-			}
-			if(elementAlias.substring(0,1).equals("2")){
-				preparationFile=System.currentTimeMillis();
-			}
-			if(elementAlias.substring(0,1).equals("3")){
-				buildingFile=System.currentTimeMillis();
-			}
-			if(elementAlias.substring(0,1).equals("4")){
-				maintenanceFile=System.currentTimeMillis();
-			}
-		}
-		if(inviteElement!=null){
-			jsonObject.put("inviteElement",inviteElement);
-		}
-		if(inviteFile!=null){
-			jsonObject.put("inviteFile",inviteFile);
-		}
-		if(preparationElement!=null){
-			jsonObject.put("preparationElement",preparationElement);
-		}
-		if(preparationFile!=null){
-			jsonObject.put("preparationFile",preparationFile);
-		}
-		if(buildingElement!=null){
-			jsonObject.put("buildingElement",buildingElement );
-		}
-		if(buildingFile!=null){
-			jsonObject.put("buildingFile", buildingFile);
-		}
-		if(maintenanceElement!=null){
-			jsonObject.put("maintenanceElement",maintenanceElement );
-		}
-		if(maintenanceFile!=null){
-			jsonObject.put("maintenanceFile",maintenanceFile );
-		}
-		if(jsonObject!=null&&!jsonObject.isEmpty()){
-			project.setLogStr(jsonObject.toString());
-		}
-	}
+//	public void addLogTimeToProject(Project project,String elementAlias,String stage) {
+//		JSONObject object = JSONObject.fromObject(project.getLogStr());
+//		JSONObject jsonObject = new JSONObject();
+//		Object inviteElement = null;
+//		Object inviteFile = null;
+//		Object preparationElement = null;
+//		Object preparationFile = null;
+//		Object buildingElement = null;
+//		Object buildingFile = null;
+//		Object maintenanceElement = null;
+//		Object maintenanceFile = null;
+//		if(object.size()!=0){
+//			inviteElement = object.get("inviteElement");
+//			inviteFile =  object.get("inviteFile");
+//			preparationElement =  object.get("preparationElement");
+//			preparationFile =  object.get("preparationFile");
+//			buildingElement =  object.get("buildingElement");
+//			buildingFile = object.get("buildingFile");
+//			maintenanceElement = object.get("maintenanceElement");
+//			maintenanceFile =  object.get("maintenanceFile");
+//		}
+//		if(stage.equals("element")){
+//			if(elementAlias.substring(0,1).equals("1")){
+//				inviteElement=System.currentTimeMillis();
+//			}
+//			if(elementAlias.substring(0,1).equals("2")){
+//				preparationElement=System.currentTimeMillis();
+//			}
+//			if(elementAlias.substring(0,1).equals("3")){
+//				buildingElement=System.currentTimeMillis();
+//			}
+//			if(elementAlias.substring(0,1).equals("4")){
+//				maintenanceElement=System.currentTimeMillis();
+//			}
+//		}else{
+//			if(elementAlias.substring(0,1).equals("1")){
+//				inviteFile=System.currentTimeMillis();
+//			}
+//			if(elementAlias.substring(0,1).equals("2")){
+//				preparationFile=System.currentTimeMillis();
+//			}
+//			if(elementAlias.substring(0,1).equals("3")){
+//				buildingFile=System.currentTimeMillis();
+//			}
+//			if(elementAlias.substring(0,1).equals("4")){
+//				maintenanceFile=System.currentTimeMillis();
+//			}
+//		}
+//		if(inviteElement!=null){
+//			jsonObject.put("inviteElement",inviteElement);
+//		}
+//		if(inviteFile!=null){
+//			jsonObject.put("inviteFile",inviteFile);
+//		}
+//		if(preparationElement!=null){
+//			jsonObject.put("preparationElement",preparationElement);
+//		}
+//		if(preparationFile!=null){
+//			jsonObject.put("preparationFile",preparationFile);
+//		}
+//		if(buildingElement!=null){
+//			jsonObject.put("buildingElement",buildingElement );
+//		}
+//		if(buildingFile!=null){
+//			jsonObject.put("buildingFile", buildingFile);
+//		}
+//		if(maintenanceElement!=null){
+//			jsonObject.put("maintenanceElement",maintenanceElement );
+//		}
+//		if(maintenanceFile!=null){
+//			jsonObject.put("maintenanceFile",maintenanceFile );
+//		}
+//		if(jsonObject!=null&&!jsonObject.isEmpty()){
+//			project.setLogStr(jsonObject.toString());
+//		}
+//	}
 
 	/**
 	 * 判断用户权限

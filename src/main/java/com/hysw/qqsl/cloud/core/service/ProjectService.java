@@ -15,6 +15,7 @@ import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.entity.element.*;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.project.Cooperate;
+import com.hysw.qqsl.cloud.core.entity.project.CooperateVisit;
 import com.hysw.qqsl.cloud.core.entity.project.Share;
 import com.hysw.qqsl.cloud.core.entity.project.Stage;
 import com.hysw.qqsl.cloud.pay.entity.PackageItem;
@@ -782,14 +783,92 @@ public class ProjectService extends BaseService<Project, Long> {
         projectJson.put("treePath", project.getTreePath());
         projectJson.put("buildArea", project.getBuildArea());
         projectJson.put("planning", project.getPlanning());
-        projectJson.put("logStr", project.getLogStr());
+//        projectJson.put("logStr", project.getLogStr());
         projectJson.put("infoStr", project.getInfoStr());
         projectJson.put("shares", project.getShares());
         projectJson.put("views", project.getViews());
-        projectJson.put("cooperate", project.getCooperate());
+        setCooperate(project,projectJson);
         projectJson.put("iconType", project.getIconType());
         JSONObject userJson = userService.makeSimpleUserJson(project.getUser());
         projectJson.put("user", userJson);
+    }
+
+    /**
+     * 构建协同编辑状态
+     * @param project
+     * @param projectJson
+     */
+    private void setCooperate(Project project, JSONObject projectJson) {
+        if (project.getCooperate() != null) {
+            JSONObject jsonObject = JSONObject.fromObject(project.getCooperate());
+            JSONObject jsonObject1;
+            if (jsonObject.get("invite") != null) {
+                jsonObject1 = (JSONObject) jsonObject.get("invite");
+                if (jsonObject1 != null) {
+                    if (jsonObject1.get("element") != null) {
+                        addEditStatus(jsonObject1,"element", CooperateVisit.Type.VISIT_INVITE_ELEMENT,project.getId());
+                    }
+                    if (jsonObject1.get("file") != null) {
+                        addEditStatus(jsonObject1,"file", CooperateVisit.Type.VISIT_INVITE_FILE,project.getId());
+                    }
+                }
+            }
+            if (jsonObject.get("preparation") != null) {
+                jsonObject1 = (JSONObject) jsonObject.get("preparation");
+                if (jsonObject1 != null) {
+                    if (jsonObject1.get("element") != null) {
+                        addEditStatus(jsonObject1,"element", CooperateVisit.Type.VISIT_PREPARATION_ELEMENT,project.getId());
+                    }
+                    if (jsonObject1.get("file") != null) {
+                        addEditStatus(jsonObject1,"file", CooperateVisit.Type.VISIT_PREPARATION_FILE,project.getId());
+                    }
+                }
+            }
+            if (jsonObject.get("building") != null) {
+                jsonObject1 = JSONObject.fromObject(jsonObject.get("building"));
+                if (jsonObject1 != null) {
+                    if (jsonObject1.get("element") != null) {
+                        addEditStatus(jsonObject1,"element", CooperateVisit.Type.VISIT_BUILDING_ELEMENT,project.getId());
+                    }
+                    if (jsonObject1.get("file") != null) {
+                        addEditStatus(jsonObject1,"file", CooperateVisit.Type.VISIT_BUILDING_FILE,project.getId());
+                    }
+                }
+            }
+            if (jsonObject.get("maintenance") != null) {
+                jsonObject1 = JSONObject.fromObject(jsonObject.get("maintenance"));
+                if (jsonObject1 != null) {
+                    if (jsonObject1.get("element") != null) {
+                        addEditStatus(jsonObject1,"element", CooperateVisit.Type.VISIT_MAINTENANCE_ELEMENT,project.getId());
+                    }
+                    if (jsonObject1.get("file") != null) {
+                        addEditStatus(jsonObject1,"file", CooperateVisit.Type.VISIT_MAINTENANCE_FILE,project.getId());
+                    }
+                }
+            }
+            projectJson.put("cooperate", jsonObject);
+        }
+    }
+
+    /**
+     * 增加协同状态
+     * @param jsonObject1
+     * @param sign
+     * @param type
+     * @param id
+     */
+    private void addEditStatus(JSONObject jsonObject1, String sign, CooperateVisit.Type type, Long id) {
+        long l = Long.valueOf(((JSONObject)jsonObject1.get(sign)).get("createTime").toString());
+        ProjectLog projectLog = projectLogService.findByCooperateType(type, id);
+        if (projectLog == null) {
+            ((JSONObject)(jsonObject1.get(sign))).put("editStatus", false);
+        }else{
+            if (projectLog.getCreateDate().getTime() > l) {
+                ((JSONObject)(jsonObject1.get(sign))).put("editStatus", true);
+            }else{
+                ((JSONObject)(jsonObject1.get(sign))).put("editStatus", false);
+            }
+        }
     }
 
     /**
@@ -1145,8 +1224,10 @@ public class ProjectService extends BaseService<Project, Long> {
      */
     public Message deleteFileSize(Map<String, Object> map, User user) {
         Object projectId = map.get("projectId");
+        Object alias = map.get("alias");
         Object fileSize = map.get("fileSize");
-        if (projectId == null || fileSize == null) {
+        Object fileName = map.get("fileName");
+        if (projectId == null || fileSize == null || alias == null || fileName == null) {
             return new Message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
@@ -1165,6 +1246,9 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         save(project);
         packageService.save(aPackage);
+        List<String> aliases = new ArrayList<>();
+        aliases.add(alias.toString());
+        projectLogService.saveLog(project,user,aliases,fileName.toString(),ProjectLog.Type.FILE_DELETE);
         return new Message(Message.Type.OK);
     }
 
