@@ -1145,8 +1145,10 @@ public class ProjectService extends BaseService<Project, Long> {
      */
     public Message deleteFileSize(Map<String, Object> map, User user) {
         Object projectId = map.get("projectId");
+        Object alias = map.get("alias");
         Object fileSize = map.get("fileSize");
-        if (projectId == null || fileSize == null) {
+        Object fileName = map.get("fileName");
+        if (projectId == null || fileSize == null || alias == null || fileName == null) {
             return new Message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
@@ -1165,6 +1167,9 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         save(project);
         packageService.save(aPackage);
+        List<String> aliases = new ArrayList<>();
+        aliases.add(alias.toString());
+        projectLogService.saveLog(project,user,aliases,fileName.toString(),ProjectLog.Type.FILE_DELETE);
         return new Message(Message.Type.OK);
     }
 

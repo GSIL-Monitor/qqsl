@@ -245,7 +245,7 @@ public class ElementService {
 		Project project = projectService.find(unit.getProject().getId());
 		int info;
 		Element element;
-		String description, elementAlias, value;
+		String description, elementAlias, value = null;
 		Object objectValue, infoOrder, introduceDescription;
 		List<Object> elements= (List<Object>) elementGroup.get("elements");
 		List<String> aliases = new ArrayList<>();
@@ -305,7 +305,7 @@ public class ElementService {
 			elementDBService.save(elementDB);
 		}
 		if(aliases.size()!=0){
-			projectLogService.saveLog(project,object,aliases,null,null);
+			projectLogService.saveLog(project,object,aliases,value,null);
 		}
 		//保存项目进度
 		doSaveProjectSchedule(unit.getAlias(),unit.getName(),project);
