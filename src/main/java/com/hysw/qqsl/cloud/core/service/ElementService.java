@@ -1,10 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.core.controller.Message;
-import com.hysw.qqsl.cloud.core.entity.data.ElementDB;
-import com.hysw.qqsl.cloud.core.entity.data.ElementDataGroup;
-import com.hysw.qqsl.cloud.core.entity.data.Project;
-import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.element.ElementGroup;
 import com.hysw.qqsl.cloud.core.entity.element.Info;
@@ -33,7 +30,7 @@ public class ElementService {
 	@Autowired
 	private InfoService infoService;
 	@Autowired
-	private LogService logService;
+	private ProjectLogService projectLogService;
 	private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/**
@@ -308,7 +305,7 @@ public class ElementService {
 			elementDBService.save(elementDB);
 		}
 		if(aliases.size()!=0){
-			logService.saveLog(project,object,aliases,null,null);
+			projectLogService.saveLog(project,object,aliases,null,null);
 		}
 		//保存项目进度
 		doSaveProjectSchedule(unit.getAlias(),unit.getName(),project);
@@ -425,31 +422,38 @@ public class ElementService {
 		return true;
 	}*/
 
-	/**
-	 * 保存文件编辑日志
-	 * @param simpleUser
-	 * @param map
-     * @return
-     */
-	public Message saveFileLog(User simpleUser, Map<String,Object> map){
-		Project project = projectService.find(Long.valueOf(map.get("id").toString()));
-		List<String> aliases = new ArrayList<>();
-		aliases.add(map.get("alias").toString());
-		boolean flag = logService.saveLog(project,simpleUser,aliases,map.get("fileNames").toString(),map.get("type").toString());
-		if (!flag) {
-			return new Message(Message.Type.FAIL);
-		}
-		List<ElementDB> elementDBs = elementDBService.findByProject(project.getId(), map.get("alias").toString());
-		ElementDB elementDB;
-		if(elementDBs.size()==0){
-			elementDB = new ElementDB();
-			elementDB.setAlias(map.get("alias").toString());
-			elementDB.setProject(project);
-		}else{
-			elementDB = elementDBs.get(0);
-		}
-		elementDBService.save(elementDB);
-		addLogTimeToProject(project,map.get("alias").toString(),"file");
-		return new Message(Message.Type.OK);
-	}
+//	/**
+//	 * 保存文件编辑日志
+//	 * @param simpleUser
+//	 * @param map
+//     * @return
+//     */
+//	public Message saveFileLog(User simpleUser, Map<String,Object> map){
+//		Project project = projectService.find(Long.valueOf(map.get("id").toString()));
+//		List<String> aliases = new ArrayList<>();
+//		Object logType = map.get("type");
+//		if (logType == null || map.get("alias") == null) {
+//			return new Message(Message.Type.FAIL);
+//		}
+//		aliases.add(map.get("alias").toString());
+//		ProjectLog.Type type = null;
+//		if (logType.toString().equals("upload")) {
+//			type=ProjectLog.Type.FILE_UPLOAD;
+//		} else if (logType.toString().equals("download")) {
+//			type = ProjectLog.Type.FILE_DOWNLOAD;
+//		}
+//		projectLogService.saveLog(project,simpleUser,aliases,map.get("fileNames").toString(),type);
+//		List<ElementDB> elementDBs = elementDBService.findByProject(project.getId(), map.get("alias").toString());
+//		ElementDB elementDB;
+//		if(elementDBs.size()==0){
+//			elementDB = new ElementDB();
+//			elementDB.setAlias(map.get("alias").toString());
+//			elementDB.setProject(project);
+//		}else{
+//			elementDB = elementDBs.get(0);
+//		}
+//		elementDBService.save(elementDB);
+//		addLogTimeToProject(project,map.get("alias").toString(),"file");
+//		return new Message(Message.Type.OK);
+//	}
 }

@@ -4,8 +4,10 @@ import java.util.*;
 
 import com.hysw.qqsl.cloud.annotation.util.*;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
+import com.hysw.qqsl.cloud.core.entity.data.ProjectLog;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.shiro.authz.annotation.Logical;
@@ -59,6 +61,8 @@ public class ProjectController {
     private CooperateService cooperateService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private ProjectLogService projectLogService;
 
     /**
      * 取得用户对应的项目列表
@@ -430,27 +434,27 @@ public class ProjectController {
     }
 
 
-    /**
-     * 保存文件日志
-     * @param
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/fileLog", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    Message fileLog(@RequestBody  Object object) {
-        Message message = Message.parameterCheck(object);
-        if(message.getType()==Message.Type.FAIL){
-            return message;
-        }
-        Map<String,Object> map = (Map<String,Object>)message.getData();
-        User user = authentService.getUserFromSubject();
-        User simpleUser = userService.getSimpleUser(user);
-        message = elementService.saveFileLog(simpleUser,map);
-        return message;
-    }
+//    /**
+//     * 保存文件日志
+//     * @param
+//     * @return
+//     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/fileLog", method = RequestMethod.POST)
+//    public
+//    @ResponseBody
+//    Message fileLog(@RequestBody  Object object) {
+//        Message message = Message.parameterCheck(object);
+//        if(message.getType()==Message.Type.FAIL){
+//            return message;
+//        }
+//        Map<String,Object> map = (Map<String,Object>)message.getData();
+//        User user = authentService.getUserFromSubject();
+//        User simpleUser = userService.getSimpleUser(user);
+//        message = elementService.saveFileLog(simpleUser,map);
+//        return message;
+//    }
     /**
      * 根据请求的项目返回相应类型的外业测量要素
      * @return
@@ -849,6 +853,20 @@ public class ProjectController {
         }
         User user = authentService.getUserFromSubject();
         return projectService.iconTypeUpdate(user,map);
+    }
+
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/elementLog/{projectId}", method = RequestMethod.GET)
+    public @ResponseBody Message elementLog(@PathVariable Long projectId) {
+        List<ProjectLog> projectLogs;
+        try {
+            projectLogs = projectLogService.findByProjectId(projectId);
+        } catch (Exception e) {
+            return new Message(Message.Type.FAIL);
+        }
+        JSONArray jsonArray=projectLogService.projectLogsToJson(projectLogs);
+        return new Message(Message.Type.OK, jsonArray);
     }
 
 //    ?创建子账户限制条件(是否允许创建)

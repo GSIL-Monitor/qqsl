@@ -167,6 +167,22 @@ public abstract class BaseDao<T extends BaseEntity, Id extends Serializable> {
 		return query.getResultList();
 	}
 
+	/**
+	 * 根据表中某个属性按照倒序查询第一条数据
+	 *
+	 * @param hql
+	 *            筛选
+	 * @return 实体对象集合
+	 */
+	public List<T> hqlFindList(String hql,int count) {
+//		String hql="from project_log where project_id="
+		Query query = entityManager.createQuery(hql)
+				.setFlushMode(FlushModeType.COMMIT);
+		query.setFirstResult(0);
+		query.setMaxResults(count);
+		return query.getResultList();
+	}
+
 
 	/**
 	 * 加入条件
@@ -233,7 +249,7 @@ public abstract class BaseDao<T extends BaseEntity, Id extends Serializable> {
 		restrictions1 = filterToRestriction(restrictions1,filters1,criteriaBuilder,root);
 		if(filters2!=null && !filters2.isEmpty()){
 			restrictions2 = filterToRestriction(restrictions2,filters2,criteriaBuilder,root);
-			restrictions = criteriaBuilder.or(restrictions1, restrictions2);		
+			restrictions = criteriaBuilder.or(restrictions1, restrictions2);
 		}else{
 			restrictions =restrictions1;
 		}
