@@ -62,6 +62,15 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
         return projectLogs;
     }
 
+    public ProjectLog findByCooperateType(CooperateVisit.Type type,Long projectId){
+        String hql="from ProjectLog where cooperate_type="+type.ordinal()+" and project_id="+projectId+" order by id desc";
+        List<ProjectLog> projectLogs = projectLogDao.hqlFindList(hql, 1);
+        if (projectLogs.size() == 0) {
+            return null;
+        }
+        return projectLogs.get(0);
+    }
+
     /**
      * projectLogs to   json
      * @param projectLogs
