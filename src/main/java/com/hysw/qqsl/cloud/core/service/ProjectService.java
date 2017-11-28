@@ -81,8 +81,6 @@ public class ProjectService extends BaseService<Project, Long> {
     @Autowired
     private ShareService shareService;
     @Autowired
-    private LogService logService;
-    @Autowired
     private AccountService accountService;
     @Autowired
     private PositionService positionService;
@@ -96,6 +94,8 @@ public class ProjectService extends BaseService<Project, Long> {
     private TradeService tradeService;
     @Autowired
     private CertifyService certifyService;
+    @Autowired
+    private ProjectLogService projectLogService;
 
     @Autowired
     public void setBaseDao(ProjectDao projectDao) {
@@ -1011,29 +1011,29 @@ public class ProjectService extends BaseService<Project, Long> {
 
     public void projectCache() {
         List<Project> projects = projectDao.findList(0, null, null);
-        Setting setting = SettingUtils.getInstance().getSetting();
-        String status = setting.getStatus();
-        if (status.equals("run")==true || status.equals("dev")==true) {
-            for (int i = 0; i < projects.size(); i++) {
-                buildLog(projects.get(i));
-            }
-        }
+//        Setting setting = SettingUtils.getInstance().getSetting();
+//        String status = setting.getStatus();
+//        if (status.equals("run")==true || status.equals("dev")==true) {
+//            for (int i = 0; i < projects.size(); i++) {
+//                buildLog(projects.get(i));
+//            }
+//        }
         Cache cache = cacheManager.getCache("projectAllCache");
         net.sf.ehcache.Element element = new net.sf.ehcache.Element("project", projects);
         cache.put(element);
     }
 
-    /**
-     * 构建共享权限
-     *
-     * @param project
-     */
-    private void buildLog(Project project) {
-        List<JSONObject> logs = logService.getLogJsonsByProject(project.getId());
-        if (logs != null && !logs.isEmpty()) {
-            project.setLogStr(logs.toString());
-        }
-    }
+//    /**
+//     * 构建共享权限
+//     *
+//     * @param project
+//     */
+//    private void buildLog(Project project) {
+//        List<JSONObject> logs = logService.getLogJsonsByProject(project.getId());
+//        if (logs != null && !logs.isEmpty()) {
+//            project.setLogStr(logs.toString());
+//        }
+//    }
 
     @Override
     public List<Project> findAll() {
@@ -1079,7 +1079,8 @@ public class ProjectService extends BaseService<Project, Long> {
         Object projectId = map.get("projectId");
         Object fileSize = map.get("fileSize");
         Object fileNames = map.get("fileNames");//用于记录日志
-        if (projectId == null || fileSize == null || fileNames == null) {
+        Object alias = map.get("alias");
+        if (projectId == null || fileSize == null || fileNames == null || alias == null) {
             return new Message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
@@ -1096,6 +1097,9 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         save(project);
         packageService.save(aPackage);
+        List<String> aliases = new ArrayList<>();
+        aliases.add(alias.toString());
+        projectLogService.saveLog(project,user,aliases,fileNames.toString(),ProjectLog.Type.FILE_UPLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
         return new Message(Message.Type.OK, jsonObject);
@@ -1108,9 +1112,11 @@ public class ProjectService extends BaseService<Project, Long> {
      * @return
      */
     public Message downloadFileSize(Map<String, Object> map, User user) {
+        Object projectId = map.get("projectId");
         Object fileSize = map.get("fileSize");
         Object fileName = map.get("fileName");//用于记录日志
-        if (fileSize == null || fileName == null) {
+        Object alias = map.get("alias");
+        if (projectId == null || fileSize == null || fileName == null || alias == null) {
             return new Message(Message.Type.FAIL);
         }
         Package aPackage = packageService.findByUser(user);
@@ -1123,6 +1129,9 @@ public class ProjectService extends BaseService<Project, Long> {
             return new Message(Message.Type.FAIL);
         }
         packageService.save(aPackage);
+        List<String> aliases = new ArrayList<>();
+        aliases.add(alias.toString());
+        projectLogService.saveLog(find(Long.valueOf(projectId.toString())),user,aliases,fileName.toString(),ProjectLog.Type.FILE_UPLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
         return new Message(Message.Type.OK, jsonObject);

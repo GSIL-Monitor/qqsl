@@ -44,8 +44,6 @@ public class AdminController {
     @Autowired
     private ProjectService projectService;
     @Autowired
-    private LogService logService;
-    @Autowired
     private AuthentService authentService;
 
     /**
@@ -296,16 +294,16 @@ public class AdminController {
         return new Message(Message.Type.OK,projectJsons);
     }
 
-    /**
-     *获取当前项目的相关日志
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"admin:simple"})
-    @RequestMapping(value = "/getLogsByProject", method = RequestMethod.GET)
-    public @ResponseBody Message getLogsByProject(@RequestParam long id){
-        List<JSONObject> logJsons = logService.getLogJsonsByProject(id);
-        return new Message(Message.Type.OK,logJsons);
-    }
+//    /**
+//     *获取当前项目的相关日志
+//     * @return
+//     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"admin:simple"})
+//    @RequestMapping(value = "/getLogsByProject", method = RequestMethod.GET)
+//    public @ResponseBody Message getLogsByProject(@RequestParam long id){
+//        List<JSONObject> logJsons = logService.getLogJsonsByProject(id);
+//        return new Message(Message.Type.OK,logJsons);
+//    }
 
 }
