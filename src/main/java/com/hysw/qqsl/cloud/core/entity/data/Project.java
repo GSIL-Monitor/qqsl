@@ -72,7 +72,6 @@ public class Project extends BaseEntity {
      * 坐标对象,当长度为1表示线或面坐标，不唯一表示点坐标
      */
     private List<Coordinate> coordinates = new ArrayList<Coordinate>();
-    private String logStr;
     /**
      * 占用空间
      */
@@ -246,15 +245,6 @@ public class Project extends BaseEntity {
 
     public void setCoordinates(List<Coordinate> coordinates) {
         this.coordinates = coordinates;
-    }
-
-    @Transient
-    public String getLogStr() {
-        return logStr;
-    }
-
-    public void setLogStr(String logStr) {
-        this.logStr = logStr;
     }
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy = "project")
