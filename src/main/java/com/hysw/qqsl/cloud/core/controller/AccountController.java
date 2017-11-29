@@ -350,9 +350,9 @@ public class AccountController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/changePhone ", method = RequestMethod.POST)
+    @RequestMapping(value = "/updatePhone", method = RequestMethod.POST)
     public @ResponseBody
-    Message changePhone(@RequestBody Map<String, Object> map, HttpSession session) {
+    Message updatePhone(@RequestBody Map<String, Object> map, HttpSession session) {
         Message message = Message.parameterCheck(map);
         if (message.getType().equals(Message.Type.FAIL)) {
             return message;
@@ -634,20 +634,80 @@ public class AccountController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/updateAccountMessage", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateAccountMessage/{ids}", method = RequestMethod.POST)
     public
     @ResponseBody
-    Message updateUserMessage() {
+    Message updateAccountMessage(@PathVariable("ids") String ids) {
+        Message message = Message.parametersCheck(ids);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
         Account account = authentService.getAccountFromSubject();
-        List<AccountMessage> messages = accountMessageService.getMessage(account);
-        for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).getStatus()
-                    .equals(CommonEnum.MessageStatus.UNREAD)) {
-                messages.get(i).setStatus(CommonEnum.MessageStatus.READED);
-                accountMessageService.save(messages.get(i));
+        List<AccountMessage> accountMessages = accountMessageService.findByUser(account);
+        String[] split = ids.split(",");
+        for (String id : split) {
+            for (int i = 0; i < accountMessages.size(); i++) {
+                if (accountMessages.get(i).getId().toString().equals(id)) {
+                    accountMessages.get(i).setStatus(CommonEnum.MessageStatus.READED);
+                    accountMessageService.save(accountMessages.get(i));
+                    break;
+                }
             }
         }
         return new Message(Message.Type.OK);
+    }
+
+    /**
+     * 删除accountMessage
+     * @param ids
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteUserMessage/{ids}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    Message deleteUserMessage(@PathVariable("ids") String ids) {
+        Message message = Message.parametersCheck(ids);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        AccountMessage accountMessage;
+        String[] split = ids.split(",");
+        for (String id : split) {
+            try {
+                accountMessage = accountMessageService.find(Long.valueOf(id));
+            } catch (Exception e) {
+                return new Message(Message.Type.EXIST);
+            }
+            accountMessageService.remove(accountMessage);
+        }
+        return new Message(Message.Type.OK);
+
+    }
+
+    /**
+     * 修改name
+     * @param map
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"})
+    @RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
+    public @ResponseBody Message updateInfo(@RequestBody Map<String,Object> map){
+        Message message = Message.parameterCheck(map);
+        if(message.getType().equals(Message.Type.FAIL)){
+            return message;
+        }
+        Account account = authentService.getAccountFromSubject();
+        String name;
+        if(map.get("name")!=null&&StringUtils.hasText( map.get("name").toString())){
+            name = map.get("name").toString();
+        }else {
+            name = account.getName();
+        }
+        message = accountService.updateInfo(name,account.getId());
+        return message;
     }
 
 }

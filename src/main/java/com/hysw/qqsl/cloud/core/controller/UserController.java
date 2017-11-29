@@ -860,20 +860,56 @@ public class UserController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/updateUserMessage", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateUserMessage/{ids}", method = RequestMethod.POST)
     public
     @ResponseBody
-    Message updateUserMessage() {
+    Message updateUserMessage(@PathVariable("ids") String ids) {
+        Message message = Message.parametersCheck(ids);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
         User user = authentService.getUserFromSubject();
-        List<UserMessage> messages = userMessageService.findByUser(user);
-        for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).getStatus().toString()
-                    .equals(CommonEnum.MessageStatus.UNREAD.toString())) {
-                messages.get(i).setStatus(CommonEnum.MessageStatus.READED);
-                userMessageService.save(messages.get(i));
+        List<UserMessage> userMessages = userMessageService.findByUser(user);
+        String[] split = ids.split(",");
+        for (String id : split) {
+            for (int i = 0; i < userMessages.size(); i++) {
+                if (userMessages.get(i).getId().toString().equals(id)) {
+                    userMessages.get(i).setStatus(CommonEnum.MessageStatus.READED);
+                    userMessageService.save(userMessages.get(i));
+                    break;
+                }
             }
         }
         return new Message(Message.Type.OK);
+    }
+
+    /**
+     * 删除userMessage
+     * @param ids
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteUserMessage/{ids}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    Message deleteUserMessage(@PathVariable("ids") String ids) {
+        Message message = Message.parametersCheck(ids);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        UserMessage userMessage;
+        String[] split = ids.split(",");
+        for (String id : split) {
+            try {
+                userMessage = userMessageService.find(Long.valueOf(id));
+            } catch (Exception e) {
+                return new Message(Message.Type.EXIST);
+            }
+            userMessageService.remove(userMessage);
+        }
+        return new Message(Message.Type.OK);
+
     }
 
     /**

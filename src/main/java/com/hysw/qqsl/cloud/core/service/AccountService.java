@@ -147,14 +147,10 @@ public class AccountService extends BaseService<Account,Long> {
      * @param id
      * @return
      */
-    public Message updateInfo(String name,String email, Long id) {
+    public Message updateInfo(String name, Long id) {
         Account account = accountDao.find(id);
-        if(!SettingUtils.emailRegex(email)){
-            return new Message(Message.Type.OTHER);
-        }
         account.setName(name);
-        account.setEmail(email);
-        accountDao.save(account);
+        save(account);
         authentService.updateSession(account);
         return new Message(Message.Type.OK,makeAccountJson(account));
     }
