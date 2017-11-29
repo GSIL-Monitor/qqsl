@@ -132,4 +132,11 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         }
         return null;
     }
+
+    public List<AccountMessage> findByUser(Account account) {
+        List<Filter> filters = new ArrayList<Filter>();
+        filters.add(Filter.eq("user", account.getId()));
+        List<AccountMessage> accountMessages = accountMessageDao.findList(0, null, filters);
+        return accountMessages;
+    }
 }

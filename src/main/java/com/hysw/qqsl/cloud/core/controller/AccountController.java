@@ -637,17 +637,49 @@ public class AccountController {
     @RequestMapping(value = "/updateAccountMessage", method = RequestMethod.POST)
     public
     @ResponseBody
-    Message updateUserMessage() {
+    Message updateAccountMessage(@RequestBody Map<Object, Object> map) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
         Account account = authentService.getAccountFromSubject();
-        List<AccountMessage> messages = accountMessageService.getMessage(account);
-        for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).getStatus()
-                    .equals(CommonEnum.MessageStatus.UNREAD)) {
-                messages.get(i).setStatus(CommonEnum.MessageStatus.READED);
-                accountMessageService.save(messages.get(i));
+        List<AccountMessage> accountMessages = accountMessageService.findByUser(account);
+        Object ids = map.get("ids");
+        if (ids == null) {
+            return new Message(Message.Type.FAIL);
+        }
+        List<Integer> list = (List<Integer>) ids;
+        for (Integer id : list) {
+            for (int i = 0; i < accountMessages.size(); i++) {
+                if (accountMessages.get(i).getId().toString().equals(id.toString())) {
+                    accountMessages.get(i).setStatus(CommonEnum.MessageStatus.READED);
+                    accountMessageService.save(accountMessages.get(i));
+                    break;
+                }
             }
         }
         return new Message(Message.Type.OK);
+    }
+
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteUserMessage/{id}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    Message deleteUserMessage(@PathVariable("id") Long id) {
+        Message message = Message.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        AccountMessage accountMessage;
+        try {
+            accountMessage = accountMessageService.find(id);
+        } catch (Exception e) {
+            return new Message(Message.Type.EXIST);
+        }
+        accountMessageService.remove(accountMessage);
+        return new Message(Message.Type.OK);
+
     }
 
     /**

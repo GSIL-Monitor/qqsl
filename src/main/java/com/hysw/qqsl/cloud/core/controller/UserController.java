@@ -861,17 +861,54 @@ public class UserController {
     @RequestMapping(value = "/updateUserMessage", method = RequestMethod.POST)
     public
     @ResponseBody
-    Message updateUserMessage() {
+    Message updateUserMessage(@RequestBody Map<Object, Object> map) {
+        Message message = Message.parameterCheck(map);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
         User user = authentService.getUserFromSubject();
-        List<UserMessage> messages = userMessageService.findByUser(user);
-        for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).getStatus().toString()
-                    .equals(CommonEnum.MessageStatus.UNREAD.toString())) {
-                messages.get(i).setStatus(CommonEnum.MessageStatus.READED);
-                userMessageService.save(messages.get(i));
+        List<UserMessage> userMessages = userMessageService.findByUser(user);
+        Object ids = map.get("ids");
+        if (ids == null) {
+            return new Message(Message.Type.FAIL);
+        }
+        List<Integer> list = (List<Integer>) ids;
+        for (Integer id : list) {
+            for (int i = 0; i < userMessages.size(); i++) {
+                if (userMessages.get(i).getId().toString().equals(id.toString())) {
+                    userMessages.get(i).setStatus(CommonEnum.MessageStatus.READED);
+                    userMessageService.save(userMessages.get(i));
+                    break;
+                }
             }
         }
         return new Message(Message.Type.OK);
+    }
+
+    /**
+     * 删除userMessage
+     * @param id
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteUserMessage/{id}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    Message deleteUserMessage(@PathVariable("id") Long id) {
+        Message message = Message.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        UserMessage userMessage;
+        try {
+            userMessage = userMessageService.find(id);
+        } catch (Exception e) {
+            return new Message(Message.Type.EXIST);
+        }
+        userMessageService.remove(userMessage);
+        return new Message(Message.Type.OK);
+
     }
 
     /**
