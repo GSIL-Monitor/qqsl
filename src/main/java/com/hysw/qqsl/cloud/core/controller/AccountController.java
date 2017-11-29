@@ -661,6 +661,11 @@ public class AccountController {
         return new Message(Message.Type.OK);
     }
 
+    /**
+     * 删除accountMessage
+     * @param id
+     * @return
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/deleteUserMessage/{id}", method = RequestMethod.DELETE)
