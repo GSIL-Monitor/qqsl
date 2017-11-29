@@ -887,26 +887,29 @@ public class UserController {
 
     /**
      * 删除userMessage
-     * @param id
+     * @param ids
      * @return
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteUserMessage/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteUserMessage/{ids}", method = RequestMethod.DELETE)
     public
     @ResponseBody
-    Message deleteUserMessage(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
+    Message deleteUserMessage(@PathVariable("ids") String ids) {
+        Message message = Message.parametersCheck(ids);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         UserMessage userMessage;
-        try {
-            userMessage = userMessageService.find(id);
-        } catch (Exception e) {
-            return new Message(Message.Type.EXIST);
+        String[] split = ids.split(",");
+        for (String id : split) {
+            try {
+                userMessage = userMessageService.find(Long.valueOf(id));
+            } catch (Exception e) {
+                return new Message(Message.Type.EXIST);
+            }
+            userMessageService.remove(userMessage);
         }
-        userMessageService.remove(userMessage);
         return new Message(Message.Type.OK);
 
     }

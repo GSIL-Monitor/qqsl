@@ -663,26 +663,29 @@ public class AccountController {
 
     /**
      * 删除accountMessage
-     * @param id
+     * @param ids
      * @return
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteUserMessage/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteUserMessage/{ids}", method = RequestMethod.DELETE)
     public
     @ResponseBody
-    Message deleteUserMessage(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
+    Message deleteUserMessage(@PathVariable("ids") String ids) {
+        Message message = Message.parametersCheck(ids);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         AccountMessage accountMessage;
-        try {
-            accountMessage = accountMessageService.find(id);
-        } catch (Exception e) {
-            return new Message(Message.Type.EXIST);
+        String[] split = ids.split(",");
+        for (String id : split) {
+            try {
+                accountMessage = accountMessageService.find(Long.valueOf(id));
+            } catch (Exception e) {
+                return new Message(Message.Type.EXIST);
+            }
+            accountMessageService.remove(accountMessage);
         }
-        accountMessageService.remove(accountMessage);
         return new Message(Message.Type.OK);
 
     }
