@@ -12,6 +12,7 @@ import com.hysw.qqsl.cloud.wechat.entity.data.WeChat;
 import com.hysw.qqsl.cloud.wechat.service.GetAccessTokenService;
 import com.hysw.qqsl.cloud.wechat.service.GetUserBaseMessage;
 import com.hysw.qqsl.cloud.wechat.service.WeChatService;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
@@ -60,7 +61,8 @@ public class UserController {
     private GetUserBaseMessage getUserBaseMessage;
     @Autowired
     private EmailService emailService;
-
+    @Autowired
+    private StorageLogService storageLogService;
 
     /**
      * 注册时发送手机验证码
@@ -962,7 +964,9 @@ public class UserController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/storageCountLog", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message getStorageCountLog() {
-        return new Message(Message.Type.OK);
+        User user = authentService.getUserFromSubject();
+        JSONArray jsonArray = storageLogService.getStorageCountLog(user);
+        return new Message(Message.Type.OK,jsonArray);
     }
 }
 

@@ -97,6 +97,8 @@ public class ProjectService extends BaseService<Project, Long> {
     private CertifyService certifyService;
     @Autowired
     private ProjectLogService projectLogService;
+    @Autowired
+    private StorageLogService storageLogService;
 
     @Autowired
     public void setBaseDao(ProjectDao projectDao) {
@@ -1176,6 +1178,7 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         save(project);
         packageService.save(aPackage);
+        storageLogService.saveStorageLog(aPackage,"upload",fileSize);
         List<String> aliases = new ArrayList<>();
         aliases.add(alias.toString());
         projectLogService.saveLog(project,user,aliases,fileNames.toString(),ProjectLog.Type.FILE_UPLOAD);
@@ -1208,6 +1211,7 @@ public class ProjectService extends BaseService<Project, Long> {
             return new Message(Message.Type.FAIL);
         }
         packageService.save(aPackage);
+        storageLogService.saveStorageLog(aPackage,"download",fileSize);
         List<String> aliases = new ArrayList<>();
         aliases.add(alias.toString());
         projectLogService.saveLog(find(Long.valueOf(projectId.toString())),user,aliases,fileName.toString(),ProjectLog.Type.FILE_UPLOAD);
@@ -1215,6 +1219,8 @@ public class ProjectService extends BaseService<Project, Long> {
         jsonObject.put("fileSize", fileSize);
         return new Message(Message.Type.OK, jsonObject);
     }
+
+
 
     /**
      * 删除文件大小计入项目和套餐中
@@ -1246,6 +1252,7 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         save(project);
         packageService.save(aPackage);
+        storageLogService.saveStorageLog(aPackage,"delete",fileSize);
         List<String> aliases = new ArrayList<>();
         aliases.add(alias.toString());
         projectLogService.saveLog(project,user,aliases,fileName.toString(),ProjectLog.Type.FILE_DELETE);
