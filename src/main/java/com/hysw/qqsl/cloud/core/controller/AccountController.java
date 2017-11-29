@@ -650,4 +650,28 @@ public class AccountController {
         return new Message(Message.Type.OK);
     }
 
+    /**
+     * 修改name
+     * @param map
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"})
+    @RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
+    public @ResponseBody Message updateInfo(@RequestBody Map<String,Object> map){
+        Message message = Message.parameterCheck(map);
+        if(message.getType().equals(Message.Type.FAIL)){
+            return message;
+        }
+        Account account = authentService.getAccountFromSubject();
+        String name;
+        if(map.get("name")!=null&&StringUtils.hasText( map.get("name").toString())){
+            name = map.get("name").toString();
+        }else {
+            name = account.getName();
+        }
+        message = accountService.updateInfo(name,account.getId());
+        return message;
+    }
+
 }
