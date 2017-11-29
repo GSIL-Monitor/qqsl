@@ -858,24 +858,20 @@ public class UserController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/updateUserMessage", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateUserMessage/{ids}", method = RequestMethod.POST)
     public
     @ResponseBody
-    Message updateUserMessage(@RequestBody Map<Object, Object> map) {
-        Message message = Message.parameterCheck(map);
-        if (message.getType() == Message.Type.FAIL) {
+    Message updateUserMessage(@PathVariable("ids") String ids) {
+        Message message = Message.parametersCheck(ids);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
         List<UserMessage> userMessages = userMessageService.findByUser(user);
-        Object ids = map.get("ids");
-        if (ids == null) {
-            return new Message(Message.Type.FAIL);
-        }
-        List<Integer> list = (List<Integer>) ids;
-        for (Integer id : list) {
+        String[] split = ids.split(",");
+        for (String id : split) {
             for (int i = 0; i < userMessages.size(); i++) {
-                if (userMessages.get(i).getId().toString().equals(id.toString())) {
+                if (userMessages.get(i).getId().toString().equals(id)) {
                     userMessages.get(i).setStatus(CommonEnum.MessageStatus.READED);
                     userMessageService.save(userMessages.get(i));
                     break;

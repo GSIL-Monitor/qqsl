@@ -634,24 +634,20 @@ public class AccountController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/updateAccountMessage", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateAccountMessage/{ids}", method = RequestMethod.POST)
     public
     @ResponseBody
-    Message updateAccountMessage(@RequestBody Map<Object, Object> map) {
-        Message message = Message.parameterCheck(map);
-        if (message.getType() == Message.Type.FAIL) {
+    Message updateAccountMessage(@PathVariable("ids") String ids) {
+        Message message = Message.parametersCheck(ids);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Account account = authentService.getAccountFromSubject();
         List<AccountMessage> accountMessages = accountMessageService.findByUser(account);
-        Object ids = map.get("ids");
-        if (ids == null) {
-            return new Message(Message.Type.FAIL);
-        }
-        List<Integer> list = (List<Integer>) ids;
-        for (Integer id : list) {
+        String[] split = ids.split(",");
+        for (String id : split) {
             for (int i = 0; i < accountMessages.size(); i++) {
-                if (accountMessages.get(i).getId().toString().equals(id.toString())) {
+                if (accountMessages.get(i).getId().toString().equals(id)) {
                     accountMessages.get(i).setStatus(CommonEnum.MessageStatus.READED);
                     accountMessageService.save(accountMessages.get(i));
                     break;
