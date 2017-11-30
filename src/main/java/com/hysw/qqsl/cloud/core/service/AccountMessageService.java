@@ -42,7 +42,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         AccountMessage accountMessage = new AccountMessage();
         accountMessage.setAccount(account);
         JSONObject contentJson = new JSONObject();
-        contentJson.put("nickName",userService.nickname(user.getId()));
+        contentJson.put("nickName",userService.nickName(user.getId()));
         String bindCode = isBind?"0":"1";
         contentJson.put("bindCode",bindCode);
         accountMessage.setContent(contentJson.toString());
@@ -83,7 +83,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         String cooperateCode = isView?"0":"1";
         JSONObject contentJson = new JSONObject();
         contentJson.put("cooperateCode",cooperateCode);
-        contentJson.put("nickName",userService.nickname(project.getUser().getId()));
+        contentJson.put("nickName",userService.nickName(project.getUser().getId()));
         contentJson.put("projectName",project.getName());
         contentJson.put("projectId",project.getId());
         accountMessage.setAccount(account);
@@ -105,7 +105,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         String cooperateCode = isCooperate?"2":"3";
         JSONObject contentJson = new JSONObject();
         contentJson.put("cooperateCode",cooperateCode);
-        contentJson.put("nickName",userService.nickname(project.getUser().getId()));
+        contentJson.put("nickName",userService.nickName(project.getUser().getId()));
         contentJson.put("projectName",project.getName());
         contentJson.put("projectId",project.getId());
         contentJson.put("cooperateInfo",covert(type));

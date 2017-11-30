@@ -80,13 +80,13 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		JSONObject content = new JSONObject();
 		//分享权限
 		if(flag){
-			content.put("nickname", userService.nickname(project.getUser().getId()));
+			content.put("nickName", userService.nickName(project.getUser().getId()));
 			content.put("projectId", project.getId());
 			content.put("projectName", project.getName());
 			content.put("isShare", true);
 //			content = "尊敬的用户，您好！"+project.getUser().getUserName()+"企业已将《<a href=\"PROJECTURL"+project.getId()+"\">"+project.getName()+"</a>》项目的查看权限分配给贵公司，已获得该项目查看权限。";
 		}else{
-			content.put("nickname", userService.nickname(project.getUser().getId()));
+			content.put("nickName", userService.nickName(project.getUser().getId()));
 //			content.put("projectId", project.getId());
 			content.put("projectName", project.getName());
 			content.put("isShare", false);
@@ -110,13 +110,13 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		JSONObject content = new JSONObject();
 		//分享权限
 		if(flag){
-			content.put("nickname", userService.nickname(station.getUser().getId()));
+			content.put("nickName", userService.nickName(station.getUser().getId()));
 			content.put("stationId", station.getId());
 			content.put("stationName", station.getName());
 			content.put("isShare", true);
 //			content = "尊敬的用户，您好！"+own.getUserName()+"企业已将编号为<a href=\"SENSORURL\">"+sensor.getCode()+"</a>仪表的查看权限分配给贵公司，已获得该仪表查看权限。";
 		}else{
-			content.put("nickname", userService.nickname(station.getUser().getId()));
+			content.put("nickName", userService.nickName(station.getUser().getId()));
 //			content.put("stationId", station.getId());
 			content.put("stationName", station.getName());
 			content.put("isShare", false);

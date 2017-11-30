@@ -545,7 +545,7 @@ public class UserService extends BaseService<User, Long> {
 		}
 	}
 
-	public String nickname(Long userId) {
+	public String nickName(Long userId) {
 		User user = userService.find(userId);
 		if (user.getPersonalStatus().equals(CommonEnum.CertifyStatus.PASS)) {
 			if (user.getCompanyStatus().equals(CommonEnum.CertifyStatus.PASS)) {

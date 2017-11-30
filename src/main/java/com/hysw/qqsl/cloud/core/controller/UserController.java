@@ -791,7 +791,7 @@ public class UserController {
                 WeChat weChat = new WeChat();
                 weChat.setUserId(user.getId());
                 weChat.setOpenId(openId.toString());
-                weChat.setNickName(getUserBaseMessage.getNickname(openId.toString()));
+                weChat.setNickName(getUserBaseMessage.getNickName(openId.toString()));
                 weChatService.save(weChat);
             }
         }
