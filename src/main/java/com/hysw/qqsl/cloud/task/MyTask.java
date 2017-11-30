@@ -48,6 +48,8 @@ public class MyTask {
     private CertifyCache certifyCache;
     @Autowired
     private TradeService tradeService;
+    @Autowired
+    private StorageLogService storageLogService;
 
 //    @Autowired
 //    private CustomRealm customRealm;
@@ -143,5 +145,13 @@ public class MyTask {
         logger.info("订单是否过期监测");
     }
 
+    /**
+     * 定时每两个小时构建一次日志
+     */
+    @Scheduled(fixedDelay = 60000*60*2 )
+    public void storageCountLogTask(){
+        storageLogService.buildStorageCountLogByHour();
+        logger.info("存储日志刷新");
+    }
 
 }
