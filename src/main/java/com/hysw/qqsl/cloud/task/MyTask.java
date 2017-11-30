@@ -150,7 +150,7 @@ public class MyTask {
      */
     @Scheduled(fixedDelay = 60000*60*2 )
     public void storageCountLogTask(){
-        storageLogService.buildStorageCountLog();
+        storageLogService.buildStorageCountLogByHour();
         logger.info("存储日志刷新");
     }
 
