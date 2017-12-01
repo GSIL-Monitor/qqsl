@@ -62,6 +62,12 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
         return projectLogs;
     }
 
+    /**
+     * 根据项目阶段和项目id查询日志
+     * @param type 项目阶段
+     * @param projectId 项目id
+     * @return
+     */
     public ProjectLog findByCooperateType(CooperateVisit.Type type,Long projectId){
         String hql="from ProjectLog where cooperate_type="+type.ordinal()+" and project_id="+projectId+" order by id desc";
         List<ProjectLog> projectLogs = projectLogDao.hqlFindList(hql, 1);
