@@ -32,12 +32,12 @@ public class GetUserBaseMessage {
      * @param openid 普通用户的标识，对当前公众号唯一
      * @return
      */
-    public String getNickname(String openid){
+    public String getNickName(String openid){
         JSONObject jsonObject = getUserBaseMessage(openid);
-        Object nickname = jsonObject.get("nickname");
-        if (nickname == null) {
+        Object nickName = jsonObject.get("nickName");
+        if (nickName == null) {
             return null;
         }
-        return nickname.toString();
+        return nickName.toString();
     }
 }

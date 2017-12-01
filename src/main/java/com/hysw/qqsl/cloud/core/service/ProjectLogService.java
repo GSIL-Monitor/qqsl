@@ -62,6 +62,12 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
         return projectLogs;
     }
 
+    /**
+     * 根据项目阶段和项目id查询日志
+     * @param type 项目阶段
+     * @param projectId 项目id
+     * @return
+     */
     public ProjectLog findByCooperateType(CooperateVisit.Type type,Long projectId){
         String hql="from ProjectLog where cooperate_type="+type.ordinal()+" and project_id="+projectId+" order by id desc";
         List<ProjectLog> projectLogs = projectLogDao.hqlFindList(hql, 1);
@@ -81,7 +87,7 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
         JSONObject jsonObject;
         for (ProjectLog projectLog : projectLogs) {
             jsonObject = new JSONObject();
-            jsonObject.put("id", projectLog.getId());
+//            jsonObject.put("id", projectLog.getId());
             if (projectLog.getAccountId() != 0) {
                 Account account = accountService.find(projectLog.getAccountId());
                 jsonObject.put("accountName", account.getName());
@@ -89,7 +95,8 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
                 jsonObject.put("accountName", "用户");
             }
             jsonObject.put("content", projectLog.getContent());
-            jsonObject.put("cooperateType", projectLog.getCooperateType());
+//            jsonObject.put("cooperateType", projectLog.getCooperateType());
+            jsonObject.put("createDate", projectLog.getCreateDate().getTime());
             jsonObject.put("type", projectLog.getType());
             jsonArray.add(jsonObject);
         }
@@ -126,6 +133,10 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
         String content = alias.startsWith("1") ? "招投标" : alias.startsWith("2") ? "项目前期" : alias.startsWith("3") ? "建设期" : "运营维护期";
         for (int i = 0; i < units.size(); i++) {
             for (int i1 = 0; i1 < units.get(i).getElementGroups().size(); i1++) {
+                if (units.get(i).getElementGroups().get(i1).getAlias().equals(alias)) {
+                    content = content + "--" + units.get(i).getName() + "--" + units.get(i).getElementGroups().get(i1).getName();
+                    break;
+                }
                 for (Element element : units.get(i).getElementGroups().get(i1).getElements()) {
                     if (element.getAlias().equals(alias)) {
                         content = content + "--" + units.get(i).getName() + "--" + units.get(i).getElementGroups().get(i1).getName() + "--" + element.getName();
@@ -134,7 +145,7 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
                 }
             }
         }
-        content = content + "--" + object;
+        content = content + "：" + object;
         return content;
     }
 }
