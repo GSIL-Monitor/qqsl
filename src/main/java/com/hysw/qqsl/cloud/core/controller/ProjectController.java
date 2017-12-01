@@ -855,6 +855,11 @@ public class ProjectController {
         return projectService.iconTypeUpdate(user,map);
     }
 
+    /**
+     * 日志
+     * @param projectId
+     * @return
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/elementLog/{projectId}", method = RequestMethod.GET)
