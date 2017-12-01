@@ -36,7 +36,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 
 	public List<UserMessage> findByUserAndType(User user) {
 		Date newDate=new Date(); 
-		Calendar calendar = Calendar.getInstance();  //得到日历
+		Calendar calendar =  Calendar.getInstance();  //得到日历
 		calendar.setTime(newDate);//把当前时间赋给日历
 		calendar.add(Calendar.DAY_OF_MONTH, -30);  //设置为前一天
 		Date dBefore = calendar.getTime();   //得到前一天的时间
