@@ -81,7 +81,7 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
         JSONObject jsonObject;
         for (ProjectLog projectLog : projectLogs) {
             jsonObject = new JSONObject();
-            jsonObject.put("id", projectLog.getId());
+//            jsonObject.put("id", projectLog.getId());
             if (projectLog.getAccountId() != 0) {
                 Account account = accountService.find(projectLog.getAccountId());
                 jsonObject.put("accountName", account.getName());
@@ -89,7 +89,8 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
                 jsonObject.put("accountName", "用户");
             }
             jsonObject.put("content", projectLog.getContent());
-            jsonObject.put("cooperateType", projectLog.getCooperateType());
+//            jsonObject.put("cooperateType", projectLog.getCooperateType());
+            jsonObject.put("createDate", projectLog.getCreateDate().getTime());
             jsonObject.put("type", projectLog.getType());
             jsonArray.add(jsonObject);
         }
