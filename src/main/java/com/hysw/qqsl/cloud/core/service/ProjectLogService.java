@@ -127,6 +127,10 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
         String content = alias.startsWith("1") ? "招投标" : alias.startsWith("2") ? "项目前期" : alias.startsWith("3") ? "建设期" : "运营维护期";
         for (int i = 0; i < units.size(); i++) {
             for (int i1 = 0; i1 < units.get(i).getElementGroups().size(); i1++) {
+                if (units.get(i).getElementGroups().get(i1).getAlias().equals(alias)) {
+                    content = content + "--" + units.get(i).getName() + "--" + units.get(i).getElementGroups().get(i1).getName();
+                    break;
+                }
                 for (Element element : units.get(i).getElementGroups().get(i1).getElements()) {
                     if (element.getAlias().equals(alias)) {
                         content = content + "--" + units.get(i).getName() + "--" + units.get(i).getElementGroups().get(i1).getName() + "--" + element.getName();
@@ -135,7 +139,7 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
                 }
             }
         }
-        content = content + "--" + object;
+        content = content + "：" + object;
         return content;
     }
 }
