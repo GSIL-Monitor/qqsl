@@ -23,6 +23,8 @@ import java.util.*;
 public class StorageLogService extends BaseService<StorageLog, Long> {
     @Autowired
     private StorageLogDao storageLogDao;
+    @Autowired
+    private UserService userService;
     /**
      * 获取到的用户列表
      */
@@ -31,6 +33,10 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
      * 一个月内所有用户的存储日志
      */
     private Map<Long,List<StorageLog>> storageLogMap= new HashMap<>();
+    /**
+     * 两个小时内所有用户的存储日志
+     */
+    private Map<Long,List<StorageLog>> storageLogMapTwoHour= new HashMap<>();
     /**
      * 一个月内所有用户的存储日志缓存
      */
@@ -80,11 +86,11 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
      * @return
      */
     public JSONArray getStorageCountLog(User user){
+        JSONArray storageCountLogJsons = new JSONArray();
         List<StorageCountLog> storageCountLogs = storageCountLogMap.get(user.getId());
         if(storageCountLogs==null){
-            return null;
+            return storageCountLogJsons;
         }
-        JSONArray storageCountLogJsons = new JSONArray();
         JSONObject jsonObject;
         StorageCountLog storageCountLog;
         for(int i = 0;i < storageCountLogs.size();i++){
@@ -96,19 +102,101 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
     }
 
     /**
-     * 定时每两个小时构建一次日志
-     * @return
+     *构建每个用户对应的日志,type为构建类型,按小时和按月
+     * @param type
      */
-    public void buildStorageCountLogByHour(){
-        List<StorageLog> storageLogs = findByTwoHour();
+    private void buildStorageLogs(String type){
+        List<StorageLog> storageLogs = "hour".equals(type)? findByTwoHour():findByMonth();
+        userIds.clear();
+        List<User> users = userService.findAll();
+        for(int i = 0;i<users.size();i++){
+            userIds.add(users.get(i).getId());
+        }
+        List<StorageLog> storageLogList;
         StorageLog storageLog;
-        for (int i = 0;i < storageLogs.size();i++){
-           storageLog = storageLogs.get(i);
-           if (userIds.contains(storageLog.getUserId())){
+        for(int j = 0;j < userIds.size();j++){
+            storageLogList = new ArrayList<>();
+            for (int i = 0;i < storageLogs.size();i++) {
+                storageLog = storageLogs.get(i);
+                if (userIds.get(j).equals(storageLog.getUserId())) {
+                    storageLogList.add(storageLog);
+                }
+            }
+            if("hour".equals(type)){
+                storageLogMapTwoHour.put(userIds.get(j),storageLogList);
+            }else {
+                storageLogMap.put(userIds.get(j),storageLogList);
+            }
+        }
+    }
 
-           }else {
-               userIds.add(storageLog.getUserId());
-           }
+    /**
+     * 定时每两个小时构建一次日志
+     *
+     */
+    public void updateStorageCountLogByTwoHour(){
+        List<StorageCountLog> storageCountLogs;
+        buildStorageLogs("hour");
+        List<StorageLog> storageLogList;
+        for (int i = 0;i<userIds.size();i++){
+            storageCountLogs = storageCountLogMap.get(userIds.get(i));
+            if(storageCountLogs==null){
+                storageCountLogs = new ArrayList<>();
+                storageCountLogMap.put(userIds.get(i),storageCountLogs);
+            }
+            deleteExpireStorageCountLogs(storageCountLogs);
+            storageLogList = storageLogMapTwoHour.get(userIds.get(i));
+            addNewStorageCountLog(storageCountLogs,storageLogList,userIds.get(i));
+            storageCountLogMap.put(userIds.get(i),storageCountLogs);
+        }
+    }
+
+    /**
+     * 添加新日志
+     * @param storageCountLogs
+     * @param storageLogList
+     */
+    private void addNewStorageCountLog(List<StorageCountLog> storageCountLogs, List<StorageLog> storageLogList,long userId) {
+        StorageCountLog storageCountLog = new StorageCountLog();
+        long curSpaceNum = 0, uploadCount = 0, downloadCount = 0,curTrafficNum = 0;
+        if(storageLogList != null&&!storageLogList.isEmpty()){
+            StorageLog storageLog;
+            for(int i = 0;i<storageLogList.size();i++){
+                storageLog = storageLogList.get(i);
+                curSpaceNum = curSpaceNum + storageLog.getCurSpaceNum();
+                uploadCount = uploadCount + storageLog.getUploadSize();
+                downloadCount = downloadCount + storageLog.getDownloadSize();
+                curTrafficNum = curTrafficNum + storageLog.getCurTrafficNum();
+            }
+        }
+        storageCountLog.setCurSpaceNum(curSpaceNum);
+        storageCountLog.setCurTrafficNum(curTrafficNum);
+        storageCountLog.setUserId(userId);
+        storageCountLog.setUploadCount(uploadCount);
+        storageCountLog.setDownloadCount(downloadCount);
+        storageCountLog.setCreateDate(new Date());
+        storageCountLogs.add(storageCountLog);
+    }
+
+
+    /**
+     * 删除过期日志
+     * @param storageCountLogs
+     */
+    private void deleteExpireStorageCountLogs(List<StorageCountLog> storageCountLogs) {
+        if(storageCountLogs.isEmpty()){
+            return;
+        }
+        long now = System.currentTimeMillis();
+        long delTimes = now-(MONTH_TIMES+TWO_HOUR_TIMES);
+        StorageCountLog storageCountLog;
+        int size = storageCountLogs.size();
+        for(int i = 0;i<size;i++ ){
+            storageCountLog = storageCountLogs.get(i);
+            if(storageCountLog.getCreateDate().getTime()<delTimes){
+                storageCountLogs.remove(i);
+                i--;
+            }
         }
     }
 
@@ -117,25 +205,8 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
      * @return
      */
     public void buildStorageLog(){
-        List<StorageLog> storageLogs = findByMonth();
-        StorageLog storageLog;
-        for (int i = 0;i < storageLogs.size();i++){
-            storageLog = storageLogs.get(i);
-          if(!userIds.contains(storageLog.getUserId())){
-              userIds.add(storageLog.getUserId());
-          }
-        }
-        List<StorageLog> storageLogs1;
-        for(int j = 0;j < userIds.size();j++){
-            storageLogs1 = new ArrayList<>();
-            for (int i = 0;i < storageLogs.size();i++) {
-                storageLog = storageLogs.get(i);
-                if (userIds.get(j).equals(storageLog.getUserId())) {
-                    storageLogs1.add(storageLog);
-                }
-            }
-            storageLogMap.put(userIds.get(j),storageLogs1);
-        }
+        buildStorageLogs("month");
+        buildStorageCountLogs();
     }
 
     /**
@@ -168,7 +239,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             if(cut>now){
                 return storageCountLogs;
             }
-            storageCountLog = getStorageCountLogByTwoHour(cut,storageLogs);
+            storageCountLog = getStorageCountLogByTwoHour(cut,storageLogs,userId);
             storageCountLogs.add(storageCountLog);
         }
         return storageCountLogs;
@@ -179,7 +250,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
      * @param cut
      * @param storageLogs
      */
-    private StorageCountLog getStorageCountLogByTwoHour(long cut,List<StorageLog> storageLogs){
+    private StorageCountLog getStorageCountLogByTwoHour(long cut,List<StorageLog> storageLogs,long userId){
         StorageCountLog storageCountLog = new StorageCountLog();
         StorageLog storageLog;
         /** 完成后的空间数 */
@@ -197,7 +268,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
         }
         storageCountLog.setCurSpaceNum(curSpaceNum);
         storageCountLog.setCurTrafficNum(curTrafficNum);
-        storageCountLog.setUserId(storageLogs.get(0).getUserId());
+        storageCountLog.setUserId(userId);
         storageCountLog.setUploadCount(uploadCount);
         storageCountLog.setDownloadCount(downloadCount);
         storageCountLog.setCreateDate(new Date(cut));
@@ -226,11 +297,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
      * @return
      */
     private List<StorageLog> findByMonth() {
-        List<Filter> filters = new ArrayList<>();
-        Long times = System.currentTimeMillis();
-        filters.add(Filter.between("createDate", new Date(times-30*24*60*60*1000L), new Date(times)));
-        List<StorageLog> storageLogs = storageLogDao.findList(0,null,filters);
-        return storageLogs;
+        return findByTime(MONTH_TIMES);
     }
 
     /**
@@ -238,9 +305,13 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
      * @return
      */
     private List<StorageLog> findByTwoHour() {
+        return findByTime(TWO_HOUR_TIMES);
+    }
+
+    private List<StorageLog> findByTime(Long time){
         List<Filter> filters = new ArrayList<>();
         Long times = System.currentTimeMillis();
-        filters.add(Filter.between("createDate", new Date(times-TWO_HOUR_TIMES), new Date(times)));
+        filters.add(Filter.between("createDate", new Date(times-time), new Date(times)));
         List<StorageLog> storageLogs = storageLogDao.findList(0,null,filters);
         return storageLogs;
     }

@@ -55,6 +55,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private CertifyService certifyService;
 	@Autowired
 	private EmailManager emailManager;
+	@Autowired
+	private StorageLogService storageLogService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -119,6 +121,9 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			logger.info("套餐模板加载");
 			stationService.putStationModelInCache();
 			logger.info("测站模板加载");
+			//存储日志缓存加载
+			storageLogService.buildStorageLog();
+			logger.info("存储日志缓存加载完成");
 		}
 	}
 
