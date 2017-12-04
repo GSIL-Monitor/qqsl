@@ -294,7 +294,7 @@ public class ProjectController {
                     @RequestParam String alias) {
         Message message = Message.parametersCheck(id,alias);
         if(message.getType()== Message.Type.FAIL){
-            return message;
+            return message ;
         }
         User user = authentService.getUserFromSubject();
         Account account= authentService.getAccountFromSubject();
