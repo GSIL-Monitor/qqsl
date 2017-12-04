@@ -85,16 +85,24 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
      * @param user
      * @return
      */
-    public JSONArray getStorageCountLog(User user){
+    public JSONArray getStorageCountLog(User user,long begin,long end){
         JSONArray storageCountLogJsons = new JSONArray();
         List<StorageCountLog> storageCountLogs = storageCountLogMap.get(user.getId());
-        if(storageCountLogs==null){
+        List<StorageCountLog> storageCountLogList = new ArrayList<>();
+        StorageCountLog storageCountLog;
+        for(int i=0;i<storageCountLogs.size();i++){
+            storageCountLog = storageCountLogs.get(i);
+            if(storageCountLog.getCreateDate().getTime()>=begin
+                    && storageCountLog.getCreateDate().getTime()<=end){
+                storageCountLogList.add(storageCountLog);
+            }
+        }
+        if(storageCountLogList.isEmpty()){
             return storageCountLogJsons;
         }
         JSONObject jsonObject;
-        StorageCountLog storageCountLog;
-        for(int i = 0;i < storageCountLogs.size();i++){
-            storageCountLog = storageCountLogs.get(i);
+        for(int i = 0;i < storageCountLogList.size();i++){
+            storageCountLog = storageCountLogList.get(i);
             jsonObject = makeStorageCountLogJson(storageCountLog);
             storageCountLogJsons.add(jsonObject);
         }
@@ -143,6 +151,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             if(storageCountLogs==null){
                 storageCountLogs = new ArrayList<>();
                 storageCountLogMap.put(userIds.get(i),storageCountLogs);
+                continue;
             }
             deleteExpireStorageCountLogs(storageCountLogs);
             storageLogList = storageLogMapTwoHour.get(userIds.get(i));
@@ -163,11 +172,14 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             StorageLog storageLog;
             for(int i = 0;i<storageLogList.size();i++){
                 storageLog = storageLogList.get(i);
-                curSpaceNum = curSpaceNum + storageLog.getCurSpaceNum();
+                curSpaceNum = storageLog.getCurSpaceNum();
                 uploadCount = uploadCount + storageLog.getUploadSize();
                 downloadCount = downloadCount + storageLog.getDownloadSize();
-                curTrafficNum = curTrafficNum + storageLog.getCurTrafficNum();
+                curTrafficNum =  storageLog.getCurTrafficNum();
             }
+        }else {
+            curSpaceNum = storageCountLogs.get(storageCountLogs.size()-1).getCurSpaceNum();
+            curTrafficNum = storageCountLogs.get(storageCountLogs.size()-1).getCurTrafficNum();
         }
         storageCountLog.setCurSpaceNum(curSpaceNum);
         storageCountLog.setCurTrafficNum(curTrafficNum);
@@ -260,10 +272,10 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             storageLog = storageLogs.get(i);
             createDateTime = storageLog.getCreateDate().getTime();
             if(cut-TWO_HOUR_TIMES<=createDateTime&&createDateTime<cut){
-                curSpaceNum = curSpaceNum + storageLog.getCurSpaceNum();
+                curSpaceNum = storageLog.getCurSpaceNum();
                 uploadCount = uploadCount + storageLog.getUploadSize();
                 downloadCount = downloadCount + storageLog.getDownloadSize();
-                curTrafficNum = curTrafficNum + storageLog.getCurTrafficNum();
+                curTrafficNum =  storageLog.getCurTrafficNum();
             }
         }
         storageCountLog.setCurSpaceNum(curSpaceNum);

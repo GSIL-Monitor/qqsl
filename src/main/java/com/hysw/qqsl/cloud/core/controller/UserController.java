@@ -999,9 +999,13 @@ public class UserController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/storageCountLog", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Message getStorageCountLog() {
+    public @ResponseBody Message getStorageCountLog(@RequestParam("begin") long begin, @RequestParam("end") long end) {
         User user = authentService.getUserFromSubject();
-        JSONArray jsonArray = storageLogService.getStorageCountLog(user);
+        Message message = Message.parametersCheck(begin,end);
+        if(message.getType().equals(Message.Type.FAIL)){
+            return message;
+        }
+        JSONArray jsonArray = storageLogService.getStorageCountLog(user,begin,end);
         return new Message(Message.Type.OK,jsonArray);
     }
 }
