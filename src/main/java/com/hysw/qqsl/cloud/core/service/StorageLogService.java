@@ -85,16 +85,24 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
      * @param user
      * @return
      */
-    public JSONArray getStorageCountLog(User user){
+    public JSONArray getStorageCountLog(User user,long begin,long end){
         JSONArray storageCountLogJsons = new JSONArray();
         List<StorageCountLog> storageCountLogs = storageCountLogMap.get(user.getId());
-        if(storageCountLogs==null){
+        List<StorageCountLog> storageCountLogList = new ArrayList<>();
+        StorageCountLog storageCountLog;
+        for(int i=0;i<storageCountLogs.size();i++){
+            storageCountLog = storageCountLogs.get(i);
+            if(storageCountLog.getCreateDate().getTime()>=begin
+                    && storageCountLog.getCreateDate().getTime()<=end){
+                storageCountLogList.add(storageCountLog);
+            }
+        }
+        if(storageCountLogList.isEmpty()){
             return storageCountLogJsons;
         }
         JSONObject jsonObject;
-        StorageCountLog storageCountLog;
-        for(int i = 0;i < storageCountLogs.size();i++){
-            storageCountLog = storageCountLogs.get(i);
+        for(int i = 0;i < storageCountLogList.size();i++){
+            storageCountLog = storageCountLogList.get(i);
             jsonObject = makeStorageCountLogJson(storageCountLog);
             storageCountLogJsons.add(jsonObject);
         }
