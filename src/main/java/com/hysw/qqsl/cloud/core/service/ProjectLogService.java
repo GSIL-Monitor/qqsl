@@ -74,12 +74,22 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
      * @return
      */
     public ProjectLog findByCooperateType(CooperateVisit.Type type,Long projectId){
-        String hql="from ProjectLog where cooperate_type="+type.ordinal()+" and project_id="+projectId+" order by id desc";
-        List<ProjectLog> projectLogs = projectLogDao.hqlFindList(hql, 1);
-        if (projectLogs.size() == 0) {
-            return null;
+        Cache cache = cacheManager.getCache("projectLogPartCache");
+        net.sf.ehcache.Element element = cache.get("projectLog");
+        List<ProjectLog> projectLogs = (List<ProjectLog>) element.getValue();
+        ProjectLog projectLog = null;
+        for (ProjectLog log : projectLogs) {
+            if (log.getCooperateType() == type && log.getProjectId() == projectId) {
+                if (projectLog == null) {
+                    projectLog = log;
+                }else{
+                    if (log.getId() > projectLog.getId()) {
+                        projectLog = log;
+                    }
+                }
+            }
         }
-        return projectLogs.get(0);
+        return projectLog;
     }
 
     /**

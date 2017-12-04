@@ -395,7 +395,7 @@ public class ProjectController {
         if (project == null) {
             return new Message(Message.Type.EXIST);
         }
-        JSONObject projectJson = projectService.makeProjectJson(project);
+        JSONObject projectJson = projectService.makeProjectJson(project,false);
         return new Message(Message.Type.OK, projectJson);
     }
 
