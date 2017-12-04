@@ -50,6 +50,8 @@ public class MyTask {
     private TradeService tradeService;
     @Autowired
     private StorageLogService storageLogService;
+    @Autowired
+    private ProjectLogService projectLogService;
 
 //    @Autowired
 //    private CustomRealm customRealm;
@@ -154,4 +156,12 @@ public class MyTask {
         logger.info("存储日志刷新");
     }
 
+    /**
+     * 删除缓存中超过一周时间的日志
+     */
+    @Scheduled(cron =  "0 0 0 * * *")
+    public void deleteNotNearlyWeekLog(){
+        projectLogService.deleteNotNearlyWeekLog();
+        logger.info("删除缓存中超过一周时间的日志");
+    }
 }

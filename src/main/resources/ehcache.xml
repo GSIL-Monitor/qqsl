@@ -39,6 +39,8 @@
 	<cache name="userAllCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
 	<cache name="certifyAllCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+	<!--部分日志缓存===>一周内-->
+	<cache name="projectLogPartCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
 
 	<!--name:缓存名称。-->

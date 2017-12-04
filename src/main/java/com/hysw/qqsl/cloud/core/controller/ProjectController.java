@@ -856,17 +856,74 @@ public class ProjectController {
     }
 
     /**
-     * 日志
+     * 日志-->最近一周内
      * @param projectId
      * @return
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/elementLog/{projectId}", method = RequestMethod.GET)
-    public @ResponseBody Message elementLog(@PathVariable Long projectId) {
+    @RequestMapping(value = "/elementLog/week/{projectId}", method = RequestMethod.GET)
+    public @ResponseBody Message elementLogWeek(@PathVariable Long projectId) {
         List<ProjectLog> projectLogs;
         try {
-            projectLogs = projectLogService.findByProjectId(projectId);
+            projectLogs = projectLogService.findByProjectIdAndWeek(projectId);
+        } catch (Exception e) {
+            return new Message(Message.Type.FAIL);
+        }
+        JSONArray jsonArray=projectLogService.projectLogsToJson(projectLogs);
+        return new Message(Message.Type.OK, jsonArray);
+    }
+
+    /**
+     * 日志-->最近一月内
+     * @param projectId
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/elementLog/month/{projectId}", method = RequestMethod.GET)
+    public @ResponseBody Message elementLogMonth(@PathVariable Long projectId) {
+        List<ProjectLog> projectLogs;
+        try {
+            projectLogs = projectLogService.findByProjectIdAndMonth(projectId);
+        } catch (Exception e) {
+            return new Message(Message.Type.FAIL);
+        }
+        JSONArray jsonArray=projectLogService.projectLogsToJson(projectLogs);
+        return new Message(Message.Type.OK, jsonArray);
+    }
+
+    /**
+     * 日志-->最近三月内
+     * @param projectId
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/elementLog/threeMonth/{projectId}", method = RequestMethod.GET)
+    public @ResponseBody Message elementLogThreeMonth(@PathVariable Long projectId) {
+        List<ProjectLog> projectLogs;
+        try {
+            projectLogs = projectLogService.findByProjectIdAndThreeMonth(projectId);
+        } catch (Exception e) {
+            return new Message(Message.Type.FAIL);
+        }
+        JSONArray jsonArray=projectLogService.projectLogsToJson(projectLogs);
+        return new Message(Message.Type.OK, jsonArray);
+    }
+
+    /**
+     * 日志-->最近一年内
+     * @param projectId
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/elementLog/year/{projectId}", method = RequestMethod.GET)
+    public @ResponseBody Message elementLogYear(@PathVariable Long projectId) {
+        List<ProjectLog> projectLogs;
+        try {
+            projectLogs = projectLogService.findByProjectIdAndYear(projectId);
         } catch (Exception e) {
             return new Message(Message.Type.FAIL);
         }

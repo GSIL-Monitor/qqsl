@@ -57,6 +57,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private EmailManager emailManager;
 	@Autowired
 	private StorageLogService storageLogService;
+	@Autowired
+	private ProjectLogService projectLogService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -124,6 +126,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			//存储日志缓存加载
 			storageLogService.buildStorageLog();
 			logger.info("存储日志缓存加载完成");
+			projectLogService.addNearlyWeekLog();
+			logger.info("加载近一周日志缓存");
 		}
 	}
 

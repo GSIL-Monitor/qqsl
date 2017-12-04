@@ -1,19 +1,22 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.core.dao.ProjectLogDao;
+import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.ProjectLog;
-import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.element.Unit;
 import com.hysw.qqsl.cloud.core.entity.project.CooperateVisit;
+import com.hysw.qqsl.cloud.util.SettingUtils;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service("projectLogService")
 public class ProjectLogService extends BaseService<ProjectLog, Long> {
@@ -23,6 +26,8 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
     private UnitService unitService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private CacheManager cacheManager;
     @Autowired
     public void setBaseDao(ProjectLogDao projectLogDao) {
         super.setBaseDao(projectLogDao);
@@ -147,5 +152,106 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
         }
         content = content + "：" + object;
         return content;
+    }
+
+    /**
+     * 添加近一周日志缓存
+     */
+    public void addNearlyWeekLog(){
+        Cache cache = cacheManager.getCache("projectLogPartCache");
+        net.sf.ehcache.Element element=new net.sf.ehcache.Element("projectLog",findByNearlyWeekDate());
+        cache.put(element);
+    }
+
+    /**
+     * 查询近一周日志
+     * @return
+     */
+    private List<ProjectLog> findByNearlyWeekDate() {
+        List<Filter> filters = new LinkedList<>();
+        Date newDate=new Date();
+        Calendar calendar = Calendar.getInstance();  //得到日历
+        calendar.setTime(newDate);//把当前时间赋给日历
+        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        filters.add(Filter.between("createDate", calendar.getTime(), newDate));
+        return projectLogDao.findList(0, null, filters);
+    }
+
+    /**
+     * 删除缓存中超过一周时间的日志
+     */
+    public void deleteNotNearlyWeekLog() {
+        Cache cache = cacheManager.getCache("projectLogPartCache");
+        net.sf.ehcache.Element element = cache.get("projectLog");
+        List<ProjectLog> projectLogs = (List<ProjectLog>) element.getValue();
+        Iterator<ProjectLog> iterator = projectLogs.iterator();
+        Date newDate=new Date();
+        Calendar calendar = Calendar.getInstance();  //得到日历
+        calendar.setTime(newDate);//把当前时间赋给日历
+        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        ProjectLog projectLog;
+        while (iterator.hasNext()) {
+            projectLog = iterator.next();
+            if (projectLog.getCreateDate().getTime() > calendar.getTimeInMillis()) {
+                continue;
+            }
+            iterator.remove();
+        }
+        net.sf.ehcache.Element element1 = new net.sf.ehcache.Element("projectLog", projectLogs);
+        cache.put(element1);
+    }
+
+    /**
+     * 从缓存中获取周内日志
+     * @param projectId
+     * @return
+     */
+    public List<ProjectLog> findByProjectIdAndWeek(Long projectId) {
+        Cache cache = cacheManager.getCache("projectLogPartCache");
+        net.sf.ehcache.Element element = cache.get("projectLog");
+        List<ProjectLog> projectLogs = (List<ProjectLog>) SettingUtils.objectCopy(element.getValue());
+        Iterator<ProjectLog> it = projectLogs.iterator();
+        ProjectLog projectLog;
+        while (it.hasNext()) {
+            projectLog = it.next();
+            if (projectLog.getProjectId() == projectId) {
+                continue;
+            }
+            it.remove();
+        }
+        return projectLogs;
+    }
+
+    public List<ProjectLog> findByProjectIdAndMonth(Long projectId) {
+        List<Filter> filters = new LinkedList<>();
+        Date newDate=new Date();
+        Calendar calendar = Calendar.getInstance();  //得到日历
+        calendar.setTime(newDate);//把当前时间赋给日历
+        calendar.add(Calendar.MONTH, -1);
+        filters.add(Filter.eq("projectId", projectId));
+        filters.add(Filter.between("createDate", calendar.getTime(), newDate));
+        return projectLogDao.findList(0, null, filters);
+    }
+
+    public List<ProjectLog> findByProjectIdAndThreeMonth(Long projectId) {
+        List<Filter> filters = new LinkedList<>();
+        Date newDate=new Date();
+        Calendar calendar = Calendar.getInstance();  //得到日历
+        calendar.setTime(newDate);//把当前时间赋给日历
+        calendar.add(Calendar.MONTH, -3);
+        filters.add(Filter.eq("projectId", projectId));
+        filters.add(Filter.between("createDate", calendar.getTime(), newDate));
+        return projectLogDao.findList(0, null, filters);
+    }
+
+    public List<ProjectLog> findByProjectIdAndYear(Long projectId) {
+        List<Filter> filters = new LinkedList<>();
+        Date newDate=new Date();
+        Calendar calendar = Calendar.getInstance();  //得到日历
+        calendar.setTime(newDate);//把当前时间赋给日历
+        calendar.add(Calendar.YEAR, -1);
+        filters.add(Filter.eq("projectId", projectId));
+        filters.add(Filter.between("createDate", calendar.getTime(), newDate));
+        return projectLogDao.findList(0, null, filters);
     }
 }
