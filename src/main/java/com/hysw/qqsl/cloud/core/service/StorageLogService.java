@@ -163,11 +163,14 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             StorageLog storageLog;
             for(int i = 0;i<storageLogList.size();i++){
                 storageLog = storageLogList.get(i);
-                curSpaceNum = curSpaceNum + storageLog.getCurSpaceNum();
+                curSpaceNum = storageLog.getCurSpaceNum();
                 uploadCount = uploadCount + storageLog.getUploadSize();
                 downloadCount = downloadCount + storageLog.getDownloadSize();
-                curTrafficNum = curTrafficNum + storageLog.getCurTrafficNum();
+                curTrafficNum =  storageLog.getCurTrafficNum();
             }
+        }else {
+            curSpaceNum = storageCountLogs.get(storageCountLogs.size()-1).getCurSpaceNum();
+            curTrafficNum = storageCountLogs.get(storageCountLogs.size()-1).getCurTrafficNum();
         }
         storageCountLog.setCurSpaceNum(curSpaceNum);
         storageCountLog.setCurTrafficNum(curTrafficNum);
@@ -260,10 +263,10 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             storageLog = storageLogs.get(i);
             createDateTime = storageLog.getCreateDate().getTime();
             if(cut-TWO_HOUR_TIMES<=createDateTime&&createDateTime<cut){
-                curSpaceNum = curSpaceNum + storageLog.getCurSpaceNum();
+                curSpaceNum = storageLog.getCurSpaceNum();
                 uploadCount = uploadCount + storageLog.getUploadSize();
                 downloadCount = downloadCount + storageLog.getDownloadSize();
-                curTrafficNum = curTrafficNum + storageLog.getCurTrafficNum();
+                curTrafficNum =  storageLog.getCurTrafficNum();
             }
         }
         storageCountLog.setCurSpaceNum(curSpaceNum);
