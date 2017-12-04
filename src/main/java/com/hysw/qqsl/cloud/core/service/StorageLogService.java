@@ -151,6 +151,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             if(storageCountLogs==null){
                 storageCountLogs = new ArrayList<>();
                 storageCountLogMap.put(userIds.get(i),storageCountLogs);
+                continue;
             }
             deleteExpireStorageCountLogs(storageCountLogs);
             storageLogList = storageLogMapTwoHour.get(userIds.get(i));
