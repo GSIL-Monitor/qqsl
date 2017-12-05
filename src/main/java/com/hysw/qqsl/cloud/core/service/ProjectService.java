@@ -22,6 +22,7 @@ import com.hysw.qqsl.cloud.pay.entity.PackageItem;
 import com.hysw.qqsl.cloud.pay.entity.PackageModel;
 import com.hysw.qqsl.cloud.pay.entity.ServeItem;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
+import com.hysw.qqsl.cloud.pay.service.GoodsService;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.util.ObjectJsonConvertUtils;
@@ -99,6 +100,10 @@ public class ProjectService extends BaseService<Project, Long> {
     private ProjectLogService projectLogService;
     @Autowired
     private StorageLogService storageLogService;
+    @Autowired
+    private GoodsService goodsService;
+    @Autowired
+    private StationService stationService;
 
     @Autowired
     public void setBaseDao(ProjectDao projectDao) {
@@ -137,6 +142,8 @@ public class ProjectService extends BaseService<Project, Long> {
         cache12.removeAll();
         Cache cache13 = cacheManager.getCache("certifyAllCache");
         cache13.removeAll();
+        Cache cache14 = cacheManager.getCache("projectLogPartCache");
+        cache14.removeAll();
         elementGroupService.getDriElementGroups();
         elementGroupService.getConElementGroups();
         elementGroupService.getFloElementGroups();
@@ -182,6 +189,8 @@ public class ProjectService extends BaseService<Project, Long> {
         monitorService.format();
         sensorService.addCodeToCache();
         logger.info("未绑定仪表加入缓存");
+        projectLogService.addNearlyWeekLog();
+        logger.info("加载近一周日志缓存");
         logger.info("缓存刷新完成");
         return new Message(Message.Type.OK);
     }
