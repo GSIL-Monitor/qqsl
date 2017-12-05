@@ -92,8 +92,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
         StorageCountLog storageCountLog;
         for(int i=0;i<storageCountLogs.size();i++){
             storageCountLog = storageCountLogs.get(i);
-            if(storageCountLog.getCreateDate().getTime()>=begin
-                    && storageCountLog.getCreateDate().getTime()<=end){
+            if((storageCountLog.getCreateDate().getTime()>=begin)&&(storageCountLog.getCreateDate().getTime()<=end)){
                 storageCountLogList.add(storageCountLog);
             }
         }
@@ -245,9 +244,10 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
         long month = System.currentTimeMillis()-MONTH_TIMES;
         long cut;
         List<StorageCountLog> storageCountLogs = new ArrayList<>();
+        long curSpaceNum = 0,curTrafficNum = 0;
         StorageCountLog storageCountLog;
         for(int i = 0;i < 360;i++){
-            cut = month+TWO_HOUR_TIMES;
+            cut = month+(TWO_HOUR_TIMES * i);
             if(cut>now){
                 return storageCountLogs;
             }
@@ -271,11 +271,20 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
         for(int i = 0;i < storageLogs.size();i++){
             storageLog = storageLogs.get(i);
             createDateTime = storageLog.getCreateDate().getTime();
-            if(cut-TWO_HOUR_TIMES<=createDateTime&&createDateTime<cut){
+            if((cut-TWO_HOUR_TIMES)<=createDateTime&&createDateTime<cut){
                 curSpaceNum = storageLog.getCurSpaceNum();
                 uploadCount = uploadCount + storageLog.getUploadSize();
                 downloadCount = downloadCount + storageLog.getDownloadSize();
                 curTrafficNum =  storageLog.getCurTrafficNum();
+            }
+        }
+        //上传流量与下载流量应一直保持用户最后套餐的状态
+        if(!storageLogs.isEmpty()){
+            if(storageCountLog.getCurSpaceNum()==0){
+                curSpaceNum = storageLogs.get(storageLogs.size()-1).getCurSpaceNum();
+            }
+            if(storageCountLog.getCurTrafficNum()==0){
+                curTrafficNum = storageLogs.get(storageLogs.size()-1).getCurTrafficNum();
             }
         }
         storageCountLog.setCurSpaceNum(curSpaceNum);

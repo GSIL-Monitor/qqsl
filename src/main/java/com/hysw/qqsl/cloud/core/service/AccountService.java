@@ -236,13 +236,11 @@ public class AccountService extends BaseService<Account,Long> {
      * @return
      */
     public Account findByPhoneOrEmial(String argument){
-        Account account;
+        Account account = null;
         if(SettingUtils.phoneRegex(argument)){
             account = findByPhone(argument);
         }else if(SettingUtils.emailRegex(argument)){
             account = findByEmail(argument);
-        }else {
-            account = null;
         }
         return account;
     }
