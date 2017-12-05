@@ -8,7 +8,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.service.*;
 
 
-import com.hysw.qqsl.cloud.annotation.util.IsExpire;
+import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
 import net.sf.json.JSONArray;
 
 import net.sf.json.JSONObject;
@@ -56,7 +56,7 @@ public class FieldController {
      * @param request
      * @return
      */
-    @IsExpire(value = "request")
+    @PackageIsExpire(value = "request")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/coordinateFile", method = RequestMethod.POST)
@@ -114,7 +114,7 @@ public class FieldController {
      * @param objectMap
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/saveField", method = RequestMethod.POST)
@@ -284,7 +284,7 @@ public class FieldController {
      * @param objectMap
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/createBuild", method = RequestMethod.POST)
@@ -301,7 +301,7 @@ public class FieldController {
      * @param objectMap
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editBuild", method = RequestMethod.POST)
@@ -405,7 +405,7 @@ public class FieldController {
      * @param objectMap
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/createShape", method = RequestMethod.POST)

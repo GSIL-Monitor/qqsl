@@ -2,7 +2,7 @@ package com.hysw.qqsl.cloud.annotation.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.annotation.util.IsExpire;
+import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.entity.element.Position;
@@ -53,6 +53,8 @@ public class AspectService {
     private ProjectService projectService;
     @Autowired
     private TradeService tradeService;
+    @Autowired
+    private StationService stationService;
 
     private final static Log log = LogFactory.getLog(AspectService.class);
 
@@ -100,8 +102,33 @@ public class AspectService {
      * @return
      */
     //配置环绕通知,使用在方法aspect()上注册的切入点
-    @Around(value = "@annotation(com.hysw.qqsl.cloud.annotation.util.IsExpire)")
-    public Message isExpire(ProceedingJoinPoint joinPoint){
+    @Around(value = "@annotation(com.hysw.qqsl.cloud.annotation.util.StationIsExpire)")
+    public Message stationIsExpire(ProceedingJoinPoint joinPoint){
+        User user = authentService.getUserFromSubject();
+        Map<String, Object> map = (Map<String, Object>) SettingUtils.objectCopy(Arrays.asList(joinPoint.getArgs()).get(0));
+        Object id = map.get("id");
+        Station station = stationService.find(Long.valueOf(id.toString()));
+        if (station==null||station.getUser().getId().equals(user.getId())) {
+            return new Message(Message.Type.EXIST);
+        }
+        if (station.getExpireDate().getTime() > System.currentTimeMillis()) {
+            try {
+                return (Message) joinPoint.proceed();
+            } catch (Throwable e) {
+                return new Message(Message.Type.FAIL);
+            }
+        }
+        return new Message(Message.Type.EXPIRED);
+    }
+
+    /**
+     * 套餐未过期
+     * @param joinPoint
+     * @return
+     */
+    //配置环绕通知,使用在方法aspect()上注册的切入点
+    @Around(value = "@annotation(com.hysw.qqsl.cloud.annotation.util.PackageIsExpire)")
+    public Message packageIsExpire(ProceedingJoinPoint joinPoint){
         User user = authentService.getUserFromSubject();
         if (user == null) {
             Signature signature = joinPoint.getSignature();
@@ -110,8 +137,8 @@ public class AspectService {
             Annotation[] declaredAnnotations = targetMethod.getDeclaredAnnotations();
             String value = null;
             for (Annotation declaredAnnotation : declaredAnnotations) {
-                if (declaredAnnotation instanceof IsExpire) {
-                    value = ((IsExpire) declaredAnnotation).value();
+                if (declaredAnnotation instanceof PackageIsExpire) {
+                    value = ((PackageIsExpire) declaredAnnotation).value();
                     break;
                 }
             }

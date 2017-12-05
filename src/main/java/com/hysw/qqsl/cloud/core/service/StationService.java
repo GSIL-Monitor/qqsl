@@ -249,7 +249,7 @@ public class StationService extends BaseService<Station, Long> {
      * @param user
      * @return
      */
-    private List<Station> findByUser(User user) {
+    public List<Station> findByUser(User user) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("user", user.getId()));
         List<Station> stations = stationDao.findList(0, null, filters);
