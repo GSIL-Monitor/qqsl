@@ -68,12 +68,12 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
         switch (type){
             case "upload":
                 storageLog.setUploadSize(Long.valueOf(fileSize.toString()));
-                return;
+                break;
             case "download":
                 storageLog.setDownloadSize(Long.valueOf(fileSize.toString()));
-                return;
+                break;
             case "delete":
-                return;
+                break;
         }
         storageLog.setCurTrafficNum(aPackage.getCurTrafficNum());
         storageLog.setCurSpaceNum(aPackage.getCurSpaceNum());
