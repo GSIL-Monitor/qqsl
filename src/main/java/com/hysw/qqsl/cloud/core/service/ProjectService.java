@@ -216,7 +216,7 @@ public class ProjectService extends BaseService<Project, Long> {
         JSONArray projectJsons = new JSONArray();
         JSONObject jsonObject;
         for (int j = 0; j < shares1.size(); j++) {
-            jsonObject = makeProjectJsons(shares1.get(j).getProject());
+            jsonObject = makeProjectJsons(shares1.get(j).getProject(),true);
             projectJsons.add(jsonObject);
         }
         Message message = new Message(Message.Type.OK, projectJsons, start + "," + String.valueOf(shares.size()));
@@ -255,7 +255,7 @@ public class ProjectService extends BaseService<Project, Long> {
         JSONArray projectJsons = new JSONArray();
         JSONObject jsonObject;
         for (int j = 0; j < cooperates1.size(); j++) {
-            jsonObject = makeProjectJsons(cooperates1.get(j).getProject());
+            jsonObject = makeProjectJsons(cooperates1.get(j).getProject(),false);
             projectJsons.add(jsonObject);
         }
         Message message = new Message(Message.Type.OK, projectJsons, start + "," + String.valueOf(cooperates.size()));
@@ -273,7 +273,7 @@ public class ProjectService extends BaseService<Project, Long> {
         JSONObject introduceJson = introduceService.buildIntroduceJson(project);
         // 构建启动项目短信内容
         JSONObject noteJson = noteService.makeProjectStartNote(project);
-        JSONObject projectJson = makeProjectJson(project);
+        JSONObject projectJson =makeProjectJson(project, false);
         projectJson.put("introduce", introduceJson);
         projectJson.put("note", noteJson);
         // 构建对应阶段的权限
@@ -342,7 +342,7 @@ public class ProjectService extends BaseService<Project, Long> {
         super.save(project);
         userService.save(project.getUser());
         Share share = shareService.makeShare(project);
-        JSONObject projectJson = makeProjectJsons(share.getProject());
+        JSONObject projectJson = makeProjectJsons(share.getProject(),false);
         return new Message(Message.Type.OK, projectJson);
     }
 
@@ -711,9 +711,9 @@ public class ProjectService extends BaseService<Project, Long> {
      * @param project
      * @return
      */
-    public JSONObject makeProjectJsons(Project project) {
+    public JSONObject makeProjectJsons(Project project,boolean flag) {
         JSONObject projectJson = new JSONObject();
-        buildBaseInfo(project, projectJson);
+        buildBaseInfo(project, projectJson,flag);
         JSONObject centerJson = getProjectCenter(project);
         projectJson.put("coordinateBase", centerJson);
         return projectJson;
@@ -725,10 +725,10 @@ public class ProjectService extends BaseService<Project, Long> {
      * @param project
      * @return
      */
-    public JSONObject makeProjectJson(Project project) {
+    public JSONObject makeProjectJson(Project project,boolean flag) {
         JSONObject introduceJson, centerJson;
         JSONObject projectJson = new JSONObject();
-        buildBaseInfo(project, projectJson);
+        buildBaseInfo(project, projectJson, flag);
         // 中心点坐标
         centerJson = getProjectCenter(project);
         if (!centerJson.isEmpty()) {
@@ -775,7 +775,7 @@ public class ProjectService extends BaseService<Project, Long> {
      * @param project
      * @param projectJson
      */
-    private void buildBaseInfo(Project project, JSONObject projectJson) {
+    private void buildBaseInfo(Project project, JSONObject projectJson,boolean flag) {
         projectJson.put("id", project.getId());
         projectJson.put("createDate", project.getCreateDate().getTime());
         projectJson.put("modifyDate", project.getModifyDate().getTime());
@@ -789,7 +789,7 @@ public class ProjectService extends BaseService<Project, Long> {
         projectJson.put("infoStr", project.getInfoStr());
         projectJson.put("shares", project.getShares());
         projectJson.put("views", project.getViews());
-        setCooperate(project,projectJson);
+        setCooperate(project,projectJson,flag);
         projectJson.put("iconType", project.getIconType());
         JSONObject userJson = userService.makeSimpleUserJson(project.getUser());
         projectJson.put("user", userJson);
@@ -797,10 +797,15 @@ public class ProjectService extends BaseService<Project, Long> {
 
     /**
      * 构建协同编辑状态
+     *
      * @param project
      * @param projectJson
+     * @param flag
      */
-    private void setCooperate(Project project, JSONObject projectJson) {
+    private void setCooperate(Project project, JSONObject projectJson, boolean flag) {
+        if (!flag) {
+            return;
+        }
         if (project.getCooperate() != null) {
             JSONObject jsonObject = JSONObject.fromObject(project.getCooperate());
             JSONObject jsonObject1;
@@ -808,10 +813,10 @@ public class ProjectService extends BaseService<Project, Long> {
                 jsonObject1 = (JSONObject) jsonObject.get("invite");
                 if (jsonObject1 != null) {
                     if (jsonObject1.get("element") != null) {
-                        addEditStatus(jsonObject1,"element", CooperateVisit.Type.VISIT_INVITE_ELEMENT,project.getId());
+                        addEditStatus(jsonObject1, "element", CooperateVisit.Type.VISIT_INVITE_ELEMENT, project.getId());
                     }
                     if (jsonObject1.get("file") != null) {
-                        addEditStatus(jsonObject1,"file", CooperateVisit.Type.VISIT_INVITE_FILE,project.getId());
+                        addEditStatus(jsonObject1, "file", CooperateVisit.Type.VISIT_INVITE_FILE, project.getId());
                     }
                 }
             }
@@ -819,10 +824,10 @@ public class ProjectService extends BaseService<Project, Long> {
                 jsonObject1 = (JSONObject) jsonObject.get("preparation");
                 if (jsonObject1 != null) {
                     if (jsonObject1.get("element") != null) {
-                        addEditStatus(jsonObject1,"element", CooperateVisit.Type.VISIT_PREPARATION_ELEMENT,project.getId());
+                        addEditStatus(jsonObject1, "element", CooperateVisit.Type.VISIT_PREPARATION_ELEMENT, project.getId());
                     }
                     if (jsonObject1.get("file") != null) {
-                        addEditStatus(jsonObject1,"file", CooperateVisit.Type.VISIT_PREPARATION_FILE,project.getId());
+                        addEditStatus(jsonObject1, "file", CooperateVisit.Type.VISIT_PREPARATION_FILE, project.getId());
                     }
                 }
             }
@@ -830,10 +835,10 @@ public class ProjectService extends BaseService<Project, Long> {
                 jsonObject1 = JSONObject.fromObject(jsonObject.get("building"));
                 if (jsonObject1 != null) {
                     if (jsonObject1.get("element") != null) {
-                        addEditStatus(jsonObject1,"element", CooperateVisit.Type.VISIT_BUILDING_ELEMENT,project.getId());
+                        addEditStatus(jsonObject1, "element", CooperateVisit.Type.VISIT_BUILDING_ELEMENT, project.getId());
                     }
                     if (jsonObject1.get("file") != null) {
-                        addEditStatus(jsonObject1,"file", CooperateVisit.Type.VISIT_BUILDING_FILE,project.getId());
+                        addEditStatus(jsonObject1, "file", CooperateVisit.Type.VISIT_BUILDING_FILE, project.getId());
                     }
                 }
             }
@@ -841,10 +846,10 @@ public class ProjectService extends BaseService<Project, Long> {
                 jsonObject1 = JSONObject.fromObject(jsonObject.get("maintenance"));
                 if (jsonObject1 != null) {
                     if (jsonObject1.get("element") != null) {
-                        addEditStatus(jsonObject1,"element", CooperateVisit.Type.VISIT_MAINTENANCE_ELEMENT,project.getId());
+                        addEditStatus(jsonObject1, "element", CooperateVisit.Type.VISIT_MAINTENANCE_ELEMENT, project.getId());
                     }
                     if (jsonObject1.get("file") != null) {
-                        addEditStatus(jsonObject1,"file", CooperateVisit.Type.VISIT_MAINTENANCE_FILE,project.getId());
+                        addEditStatus(jsonObject1, "file", CooperateVisit.Type.VISIT_MAINTENANCE_FILE, project.getId());
                     }
                 }
             }
@@ -1144,7 +1149,7 @@ public class ProjectService extends BaseService<Project, Long> {
         for (int i = 0; i < projects.size(); i++) {
             projectJson = new JSONObject();
             project = projects.get(i);
-            buildBaseInfo(project, projectJson);
+            buildBaseInfo(project, projectJson,true);
             projectJsons.add(projectJson);
         }
         return projectJsons;

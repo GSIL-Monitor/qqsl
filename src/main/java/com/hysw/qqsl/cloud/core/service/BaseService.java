@@ -47,7 +47,7 @@ public abstract class BaseService<T extends BaseEntity, Id extends Serializable>
 			Element element = new Element(entity.getId(), entity);
 			cache.put(element);
 		}
-		Cache cache1 = cacheManager.getCache(name + "AllCache");
+		Cache cache1 = cacheManager.getCache(name + "AllCache")!=null?cacheManager.getCache(name + "AllCache"):cacheManager.getCache(name + "PartCache");
 		if (cache1 != null) {
 			Object key = cache1.getKeys().get(0);
 			Element element = cache1.get(key);
@@ -76,7 +76,7 @@ public abstract class BaseService<T extends BaseEntity, Id extends Serializable>
 		if (cache != null) {
 			cache.remove(entity.getId());
 		}
-		Cache cache1 = cacheManager.getCache(name + "AllCache");
+		Cache cache1 = cacheManager.getCache(name + "AllCache")!=null?cacheManager.getCache(name + "AllCache"):cacheManager.getCache(name + "PartCache");
 		if (cache1 != null) {
 			Object key = cache1.getKeys().get(0);
 			Element element = cache1.get(key);

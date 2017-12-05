@@ -299,7 +299,7 @@ public class ProjectServiceTest extends BaseTest {
 		//构建简介，基本信息，中心点坐标，坐标数据，要素组数据
 		User user = userService.findByUserName("qqsl");
 		Project project = projectService.findByCode("projectJsonTest1",user.getId()).get(0);
-		JSONObject projectJson = projectService.makeProjectJson(project);
+		JSONObject projectJson = projectService.makeProjectJson(project,true);
         assertNotNull(projectJson);
 	}
 
