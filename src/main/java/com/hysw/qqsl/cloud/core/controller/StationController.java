@@ -63,7 +63,7 @@ public class StationController {
      * @param request
      * @return
      */
-    @StationIsExpire
+    @StationIsExpire("request")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/uploadModel" ,method = RequestMethod.POST)
@@ -157,7 +157,7 @@ public class StationController {
      * @param map
      * @return
      */
-    @StationIsExpire
+    @StationIsExpire("station")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/edit",method = RequestMethod.POST)
@@ -282,7 +282,7 @@ public class StationController {
      * @param map
      * @return
      */
-    @StationIsExpire
+    @StationIsExpire("sensor")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editSensor",method = RequestMethod.POST)
@@ -316,7 +316,7 @@ public class StationController {
      * @param map
      * @return
      */
-    @StationIsExpire
+    @StationIsExpire("camera")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editCamera",method = RequestMethod.POST)

@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.annotation.service;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
+import com.hysw.qqsl.cloud.annotation.util.StationIsExpire;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.entity.element.Position;
@@ -106,9 +107,36 @@ public class AspectService {
     public Message stationIsExpire(ProceedingJoinPoint joinPoint){
         User user = authentService.getUserFromSubject();
         Map<String, Object> map = (Map<String, Object>) SettingUtils.objectCopy(Arrays.asList(joinPoint.getArgs()).get(0));
-        Object id = map.get("id");
+        Signature signature = joinPoint.getSignature();
+        MethodSignature methodSignature = (MethodSignature)signature;
+        Method targetMethod = methodSignature.getMethod();
+        Annotation[] declaredAnnotations = targetMethod.getDeclaredAnnotations();
+        String value = null;
+        for (Annotation declaredAnnotation : declaredAnnotations) {
+            if (declaredAnnotation instanceof StationIsExpire) {
+                value = ((StationIsExpire) declaredAnnotation).value();
+                break;
+            }
+        }
+        Object id = null;
+        if (value.equals("station")) {
+            Map<Object, Object> station = (Map<Object, Object>) map.get("station");
+            id = station.get("id");
+        } else if (value.equals("request")) {
+            Object[] args = joinPoint.getArgs();
+            HttpServletRequest request= (HttpServletRequest) args[0];
+            id = request.getParameter("id");
+        }else if (value.equals("sensor")) {
+            Map<Object, Object> sensor = (Map<Object, Object>) map.get("sensor");
+            id = sensor.get("station");
+        }else if(value.equals("camera")){
+            Map<Object, Object> camera = (Map<Object, Object>) map.get("camera");
+            id = camera.get("station");
+        }else if(value.equals("object")){
+            id = map.get("id");
+        }
         Station station = stationService.find(Long.valueOf(id.toString()));
-        if (station==null||station.getUser().getId().equals(user.getId())) {
+        if (station==null||!station.getUser().getId().equals(user.getId())) {
             return new Message(Message.Type.EXIST);
         }
         if (station.getExpireDate().getTime() > System.currentTimeMillis()) {
