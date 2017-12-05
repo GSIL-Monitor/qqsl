@@ -162,10 +162,10 @@ public class ProjectService extends BaseService<Project, Long> {
         objectJsonConvertUtils.getFloJsonTree();
         objectJsonConvertUtils.getWatJsonTree();
         objectJsonConvertUtils.getHydJsonTree();
-        userService.userCache();
-        logger.info("加载用户缓存");
         certifyService.certifyCache();
         logger.info("加载认证缓存");
+        userService.userCache();
+        logger.info("加载用户缓存");
         packageService.packageCache();
         logger.info("加载套餐缓存");
         //将所有项目写入缓存
