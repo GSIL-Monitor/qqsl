@@ -1008,5 +1008,18 @@ public class UserController {
         JSONArray jsonArray = storageLogService.getStorageCountLog(user,begin,end);
         return new Message(Message.Type.OK,jsonArray);
     }
+
+    /**
+     * 用于存储日志查看(后期删除)
+     * @return
+     */
+    @RequestMapping(value = "/storageCountLogs", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Message getStorageCountLogs() {
+        User user = new User();
+        user.setId(1L);
+        storageLogService.buildStorageLog();
+        JSONArray jsonArray = storageLogService.getStorageCountLog(user,System.currentTimeMillis()-8*60*60*1000L,System.currentTimeMillis());
+        return new Message(Message.Type.OK,jsonArray);
+    }
 }
 

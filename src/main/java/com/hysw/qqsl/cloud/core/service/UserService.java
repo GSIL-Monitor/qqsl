@@ -365,25 +365,6 @@ public class UserService extends BaseService<User, Long> {
 	}
 
 	/**
-	 * 修改用户名和邮箱
-	 * @param name
-	 * @param email
-	 * @param id
-	 * @return
-	 */
-	public Message updateInfo(String name, String email, Long id) {
-		User user = find(id);
-		if(!SettingUtils.emailRegex(email)){
-			return new Message(Message.Type.OTHER);
-		}
-		user.setName(name);
-		user.setEmail(email);
-		save(user);
-		authentService.updateSession(user);
-		return new Message(Message.Type.OK,makeUserJson(user));
-	}
-
-	/**
 	 * 根据用户名或手机号码查找用户
 	 * @param argument
 	 * @return
