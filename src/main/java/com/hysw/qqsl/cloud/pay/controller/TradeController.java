@@ -96,7 +96,7 @@ public class TradeController {
      * @param objectMap
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
@@ -121,6 +121,7 @@ public class TradeController {
      * @param objectMap
      * @return
      */
+    @StationIsExpire
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
@@ -144,7 +145,7 @@ public class TradeController {
      * @param objectMap
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)

@@ -7,7 +7,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
 
-import com.hysw.qqsl.cloud.annotation.util.IsExpire;
+import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
@@ -51,7 +51,7 @@ public class ElementGroupController {
     /**
      * 保存单元下的复合单元列表
      */
-    @IsExpire
+    @PackageIsExpire
     @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -102,7 +102,7 @@ public class ElementGroupController {
      * @param object
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)

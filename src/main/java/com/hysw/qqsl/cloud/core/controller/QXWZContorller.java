@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.core.controller;
 
-import com.hysw.qqsl.cloud.annotation.util.IsExpire;
 import com.hysw.qqsl.cloud.core.service.ApplicationTokenService;
 import com.hysw.qqsl.cloud.core.service.DiffConnPollService;
 import com.hysw.qqsl.cloud.core.service.PositionService;

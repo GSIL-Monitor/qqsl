@@ -96,7 +96,7 @@ public class ProjectController {
      * @param objectMap
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/new", method = RequestMethod.POST)
@@ -177,7 +177,7 @@ public class ProjectController {
      *
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -404,7 +404,7 @@ public class ProjectController {
      *
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
@@ -500,7 +500,7 @@ public class ProjectController {
      * @param map
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/share", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
@@ -588,8 +588,7 @@ public class ProjectController {
      * @param map
      * @return
      */
-    @IsExpire
-
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/cooperateMul", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
@@ -623,7 +622,7 @@ public class ProjectController {
      * @param map
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/cooperateSim", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
@@ -718,7 +717,7 @@ public class ProjectController {
      * @param map
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/reportUploadFileInfo", method = RequestMethod.POST)
@@ -777,7 +776,7 @@ public class ProjectController {
      * 是否允许上传
      * @return
      */
-    @IsExpire(value = "property")
+    @PackageIsExpire(value = "property")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowUpload", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
@@ -817,7 +816,7 @@ public class ProjectController {
      * 是否允许BIM
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowBim", method = RequestMethod.GET)

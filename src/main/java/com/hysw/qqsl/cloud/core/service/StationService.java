@@ -249,7 +249,7 @@ public class StationService extends BaseService<Station, Long> {
      * @param user
      * @return
      */
-    private List<Station> findByUser(User user) {
+    public List<Station> findByUser(User user) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("user", user.getId()));
         List<Station> stations = stationDao.findList(0, null, filters);
@@ -464,14 +464,14 @@ public class StationService extends BaseService<Station, Long> {
         }
         String code = map.get("code").toString();
         String ciphertext = map.get("ciphertext").toString();
-        Sensor sensor = sensorService.findByCode(code);
-        if (sensor != null) {
-            return new Message(Message.Type.EXIST);
-        }
         //return new Message(Message.Type.OK);
         //加密并验证密码是否一致
         boolean verify = monitorService.verify(code,ciphertext);
         if (verify) {
+            Sensor sensor = sensorService.findByCode(code);
+            if (sensor != null) {
+                return new Message(Message.Type.EXIST);
+            }
              //注册成功
             return verify(map, station);
         } else {
@@ -766,7 +766,6 @@ public class StationService extends BaseService<Station, Long> {
      *
      * @param station
      * @param userIds
-     * @param own
      */
     public void unShare(Station station, List<String> userIds) {
         Long userId;

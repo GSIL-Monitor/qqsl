@@ -289,7 +289,8 @@ public class AccountService extends BaseService<Account,Long> {
             messageJson.put("content",accountMessages.get(i).getContent());
             messageJson.put("status",accountMessages.get(i).getStatus());
             messageJson.put("createDate",accountMessages.get(i).getCreateDate().getTime());
-            messageJson.put("modifyDate",accountMessages.get(i).getModifyDate().getTime());
+            messageJson.put("modifyDate", accountMessages.get(i).getModifyDate().getTime());
+            messageJson.put("type", accountMessages.get(i).getType());
             messageJsons.add(messageJson);
         }
         jsonObject.put("accountMessages",messageJsons);

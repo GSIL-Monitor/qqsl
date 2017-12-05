@@ -5,7 +5,7 @@ import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
-import com.hysw.qqsl.cloud.annotation.util.IsExpire;
+import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
 import com.hysw.qqsl.cloud.core.service.EmailService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import com.hysw.qqsl.cloud.wechat.entity.data.WeChat;
@@ -934,7 +934,7 @@ public class UserController {
      * 企业账号邀请子账号
      * @return
      */
-    @IsExpire
+    @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/account/invite",method = RequestMethod.POST)

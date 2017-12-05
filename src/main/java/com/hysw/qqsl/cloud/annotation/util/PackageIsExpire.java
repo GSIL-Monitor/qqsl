@@ -7,6 +7,6 @@ import java.lang.annotation.*;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IsExpire {
+public @interface PackageIsExpire {
     String value() default "object";
 }
