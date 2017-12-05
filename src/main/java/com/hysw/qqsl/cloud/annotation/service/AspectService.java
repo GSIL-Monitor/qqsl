@@ -118,6 +118,9 @@ public class AspectService {
                 break;
             }
         }
+        if (value == null) {
+            return new Message(Message.Type.FAIL);
+        }
         Object id = null;
         Station station = null;
         if (value.equals("station")) {
@@ -137,6 +140,9 @@ public class AspectService {
             id = map.get("id");
         } else if (value.equals("instanceId")) {
             station = stationService.findByInstanceId(map.get("instanceId").toString());
+        }
+        if (id == null) {
+            return new Message(Message.Type.EXIST);
         }
         if (station == null) {
             station = stationService.find(Long.valueOf(id.toString()));
@@ -174,6 +180,9 @@ public class AspectService {
                     value = ((PackageIsExpire) declaredAnnotation).value();
                     break;
                 }
+            }
+            if (value == null) {
+                return new Message(Message.Type.FAIL);
             }
             if (value.equals("request")) {
                 Object[] args = joinPoint.getArgs();
