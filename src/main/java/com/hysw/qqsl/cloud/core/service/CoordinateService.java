@@ -10,6 +10,7 @@ import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
 import com.hysw.qqsl.cloud.core.entity.build.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -929,6 +930,10 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		if (line == null || projectId == null || description == null) {
 			return new Message(Message.Type.FAIL);
 		}
+		Message message=checkCoordinateFormat(line);
+		if (message.getType() == Message.Type.OTHER) {
+			return message;
+		}
 		Coordinate coordinate = new Coordinate();
 		JSONObject jsonObject = JSONObject.fromObject(line);
 		Project project = projectService.find(Long.valueOf(projectId.toString()));
@@ -949,5 +954,22 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		filters.add(Filter.between("createDate", dBefore,newDate));
 		List<Coordinate> list = coordinateDao.findList(0, null, filters);
 		return list;
+	}
+
+	/**
+	 * 检查坐标格式
+	 * @param line
+	 */
+	public Message checkCoordinateFormat(Object line) {
+		Map<Object, Object> map = (Map<Object, Object>) line;
+		JSONArray coordinate = JSONArray.fromObject(map.get("coordinate"));
+		JSONObject jsonObject;
+		for (Object o : coordinate) {
+			jsonObject = JSONObject.fromObject(o);
+			if (jsonObject.size() != 3) {
+				return new Message(Message.Type.OTHER);
+			}
+		}
+		return new Message(Message.Type.OK);
 	}
 }

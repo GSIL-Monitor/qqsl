@@ -119,9 +119,10 @@ public class AspectService {
             }
         }
         Object id = null;
+        Station station = null;
         if (value.equals("station")) {
-            Map<Object, Object> station = (Map<Object, Object>) map.get("station");
-            id = station.get("id");
+            Map<Object, Object> station1 = (Map<Object, Object>) map.get("station");
+            id = station1.get("id");
         } else if (value.equals("request")) {
             Object[] args = joinPoint.getArgs();
             HttpServletRequest request= (HttpServletRequest) args[0];
@@ -134,8 +135,12 @@ public class AspectService {
             id = camera.get("station");
         }else if(value.equals("object")){
             id = map.get("id");
+        } else if (value.equals("instanceId")) {
+            station = stationService.findByInstanceId(map.get("instanceId").toString());
         }
-        Station station = stationService.find(Long.valueOf(id.toString()));
+        if (station == null) {
+            station = stationService.find(Long.valueOf(id.toString()));
+        }
         if (station==null||!station.getUser().getId().equals(user.getId())) {
             return new Message(Message.Type.EXIST);
         }
