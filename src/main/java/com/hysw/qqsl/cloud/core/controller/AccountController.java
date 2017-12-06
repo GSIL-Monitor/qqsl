@@ -631,7 +631,7 @@ public class AccountController {
             return message;
         }
         Account account = authentService.getAccountFromSubject();
-        List<AccountMessage> accountMessages = accountMessageService.findByUser(account);
+        List<AccountMessage> accountMessages = accountMessageService.findByAccount(account);
         String[] split = ids.split(",");
         for (String id : split) {
             for (int i = 0; i < accountMessages.size(); i++) {
@@ -671,7 +671,6 @@ public class AccountController {
             accountMessageService.remove(accountMessage);
         }
         return new Message(Message.Type.OK);
-
     }
 
     /**

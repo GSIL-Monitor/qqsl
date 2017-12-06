@@ -105,7 +105,7 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
 //            jsonObject.put("id", projectLog.getId());
             if (projectLog.getAccountId() != 0) {
                 Account account = accountService.find(projectLog.getAccountId());
-                jsonObject.put("accountName", account.getName());
+                jsonObject.put("accountName", account.getName()+"("+account.getPhone()+")");
             }else{
                 jsonObject.put("accountName", "用户");
             }
