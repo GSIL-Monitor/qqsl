@@ -544,7 +544,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
 	 */
 	public List<Account> getAccountsByUserId(Long id) {
-		User user = find(id);
+		User user = userDao.find(id);
 		List<Account> accounts = user.getAccounts();
 		return  accounts;
 	}
