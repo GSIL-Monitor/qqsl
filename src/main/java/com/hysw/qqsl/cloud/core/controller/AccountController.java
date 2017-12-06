@@ -252,14 +252,7 @@ public class AccountController {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
-        if (verification == null) {
-            return new Message(Message.Type.OTHER);
-        }
-        Account account = accountService.findByPhone(verification.getPhone());
-        if (account == null) {
-            return new Message(Message.Type.EXIST);
-        }
-        if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
+        if (verification == null || map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return new Message(Message.Type.FAIL);
         }
         message = userService.checkCode(map.get("verification").toString(), verification);
@@ -269,6 +262,7 @@ public class AccountController {
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
         }
+        Account account = accountService.findByPhone(verification.getPhone());
         String password = map.get("password").toString();
         account.setPassword(password);
         accountService.save(account);
@@ -290,14 +284,7 @@ public class AccountController {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
-        if (verification == null) {
-            return new Message(Message.Type.OTHER);
-        }
-        Account account = accountService.findByEmail(verification.getEmail());
-        if (account == null) {
-            return new Message(Message.Type.EXIST);
-        }
-        if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
+        if (verification == null||map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return new Message(Message.Type.FAIL);
         }
         message = userService.checkCode(map.get("verification").toString(), verification);
@@ -307,6 +294,7 @@ public class AccountController {
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
         }
+        Account account = accountService.findByEmail(verification.getEmail());
         String password = map.get("password").toString();
         account.setPassword(password);
         accountService.save(account);
