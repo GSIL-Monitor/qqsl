@@ -121,7 +121,7 @@ public class TradeController {
      * @param objectMap
      * @return
      */
-    @StationIsExpire
+    @StationIsExpire("instanceId")
     @IsHaveTradeNoPay
     @RequiresAuthentication
     @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)

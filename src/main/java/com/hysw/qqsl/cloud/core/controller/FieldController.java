@@ -354,6 +354,10 @@ public class FieldController {
         if (line == null && description == null) {
             return new Message(Message.Type.FAIL);
         }
+        message=coordinateService.checkCoordinateFormat(line);
+        if (message.getType() == Message.Type.OTHER) {
+            return message;
+        }
         JSONObject jsonObject = JSONObject.fromObject(line);
         Object id = jsonObject.get("id");
         if (id == null) {
