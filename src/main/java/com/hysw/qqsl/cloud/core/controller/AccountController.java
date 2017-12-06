@@ -671,7 +671,6 @@ public class AccountController {
             accountMessageService.remove(accountMessage);
         }
         return new Message(Message.Type.OK);
-
     }
 
     /**
