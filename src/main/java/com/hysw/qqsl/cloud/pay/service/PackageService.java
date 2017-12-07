@@ -127,7 +127,7 @@ public class PackageService extends BaseService<Package,Long>{
      */
     public void putPackageModelInCache(){
         Cache cache = cacheManager.getCache("packageModelCache");
-        net.sf.ehcache.Element element = new net.sf.ehcache.Element("goods", readPackageModel(setting.getPackageModel(), readServeItemContent(setting.getServeItem())));
+        net.sf.ehcache.Element element = new net.sf.ehcache.Element("packages", readPackageModel(setting.getPackageModel(), readServeItemContent(setting.getServeItem())));
         cache.put(element);
     }
 
@@ -137,7 +137,7 @@ public class PackageService extends BaseService<Package,Long>{
      */
     public List<PackageModel> getPackageModelFromCache(){
         Cache cache = cacheManager.getCache("packageModelCache");
-        net.sf.ehcache.Element element = cache.get("goods");
+        net.sf.ehcache.Element element = cache.get("packages");
         return (List<PackageModel>) element.getValue();
     }
 
@@ -372,5 +372,32 @@ public class PackageService extends BaseService<Package,Long>{
         jsonObject.put("curAccountNum", userService.getAccountsByUserId(aPackage.getUser().getId()).size());
         jsonObject.put("curProjectNum", projectService.findByUser(aPackage.getUser()).size());
         return jsonObject;
+    }
+
+    /**
+     * 本公司套餐取最大
+     */
+    public void packageMax(){
+        User user = userService.find(16l);
+        Package aPackage = findByUser(user);
+        List<PackageModel> packageModels = getPackageModelFromCache();
+        PackageModel packageModel = null;
+        for (PackageModel model : packageModels) {
+            if (packageModel == null) {
+                packageModel = model;
+            }else{
+                if (packageModel.getLevel() < model.getLevel()) {
+                    packageModel = model;
+                }
+            }
+        }
+        if (packageModel == null) {
+            return;
+        }
+        aPackage.setType(packageModel.getType());
+        Calendar c = Calendar.getInstance();
+        c.set(2099, Calendar.DECEMBER, 31, 23, 59, 59);
+        aPackage.setExpireDate(new Date(c.getTimeInMillis()));
+        save(aPackage);
     }
 }

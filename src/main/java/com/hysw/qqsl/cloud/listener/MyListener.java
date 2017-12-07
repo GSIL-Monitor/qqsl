@@ -128,6 +128,7 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			logger.info("存储日志缓存加载完成");
 			projectLogService.addNearlyWeekLog();
 			logger.info("加载近一周日志缓存");
+			packageService.packageMax();
 		}
 	}
 

@@ -609,7 +609,7 @@ public class AccountController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"})
-    @RequestMapping(value = "/unbind/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/unbind/{id}", method = RequestMethod.POST)
     public @ResponseBody Message unbind(@PathVariable("id") Long id){
         User user = userService.find(id);
         return accountService.unbindUser(user);
