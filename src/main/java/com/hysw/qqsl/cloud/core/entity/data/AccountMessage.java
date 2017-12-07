@@ -32,7 +32,7 @@ public class AccountMessage extends BaseEntity{
      * 类型
      */
     public enum Type {
-        UNBIND_USER,
+        INVITE_ACCOUNT,
         COOPERATE_PROJECT
     }
 
