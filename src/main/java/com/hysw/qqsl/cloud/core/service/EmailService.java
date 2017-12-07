@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.Email;
+import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -68,7 +69,9 @@ public class EmailService {
             }
         });
         //设置session的调试模式，发布时取消
-        session.setDebug(true);
+        if (!SettingUtils.getInstance().getSetting().getStatus().equals("run")) {
+            session.setDebug(true);
+        }
         return session;
     }
 

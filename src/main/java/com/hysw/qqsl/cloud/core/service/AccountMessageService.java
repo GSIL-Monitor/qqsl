@@ -47,7 +47,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         contentJson.put("bindCode",bindCode);
         accountMessage.setContent(contentJson.toString());
         accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
-        accountMessage.setType(AccountMessage.Type.INVITE__ACCOUNT);
+        accountMessage.setType(AccountMessage.Type.UNBIND_USER);
         accountMessageDao.save(accountMessage);
     }
 
