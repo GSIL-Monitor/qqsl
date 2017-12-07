@@ -65,7 +65,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setUser(user);
 		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent(content.toString());
-		userMessage.setType(UserMessage.Type.INVITE__ACCOUNT);
+		userMessage.setType(UserMessage.Type.INVITE_ACCOUNT);
 		save(userMessage);
 	}
 

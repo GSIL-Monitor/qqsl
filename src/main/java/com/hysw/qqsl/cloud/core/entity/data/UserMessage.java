@@ -35,7 +35,7 @@ public class UserMessage extends BaseEntity {
 		// 分享测站
 		SHARE_STATION,
 		// 子账号解绑企业
-		INVITE__ACCOUNT,
+		INVITE_ACCOUNT,
 		// 认证
 		CERTIFY
 	}
