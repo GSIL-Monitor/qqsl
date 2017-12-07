@@ -244,10 +244,9 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
         long month = System.currentTimeMillis()-MONTH_TIMES;
         long cut;
         List<StorageCountLog> storageCountLogs = new ArrayList<>();
-        long curSpaceNum = 0,curTrafficNum = 0;
         StorageCountLog storageCountLog;
         for(int i = 0;i < 360;i++){
-            cut = month+(TWO_HOUR_TIMES * i);
+            cut = month+(TWO_HOUR_TIMES * (i+1));
             if(cut>now){
                 return storageCountLogs;
             }

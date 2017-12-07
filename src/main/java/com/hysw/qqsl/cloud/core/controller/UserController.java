@@ -1013,10 +1013,10 @@ public class UserController {
      * 用于存储日志查看(后期删除)
      * @return
      */
-    @RequestMapping(value = "/storageCountLogs", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Message getStorageCountLogs() {
+    @RequestMapping(value = "/storageCountLogs/{id}", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Message getStorageCountLogs(@PathVariable("id") long id) {
         User user = new User();
-        user.setId(1L);
+        user.setId(id);
         storageLogService.buildStorageLog();
         JSONArray jsonArray = storageLogService.getStorageCountLog(user,System.currentTimeMillis()-8*60*60*1000L,System.currentTimeMillis());
         return new Message(Message.Type.OK,jsonArray);
