@@ -1018,7 +1018,7 @@ public class UserController {
         User user = new User();
         user.setId(id);
         storageLogService.buildStorageLog();
-        JSONArray jsonArray = storageLogService.getStorageCountLog(user,System.currentTimeMillis()-8*60*60*1000L,System.currentTimeMillis());
+        JSONArray jsonArray = storageLogService.getStorageCountLog(user,System.currentTimeMillis()-300*60*60*1000L,System.currentTimeMillis());
         return new Message(Message.Type.OK,jsonArray);
     }
 }
