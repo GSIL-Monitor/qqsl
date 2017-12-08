@@ -615,6 +615,15 @@ public class AccountController {
         return accountService.unbindUser(user);
     }
 
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"})
+    @RequestMapping(value = "/getInviteCompany", method = RequestMethod.GET)
+    public @ResponseBody Message userList(){
+        Account account = authentService.getAccountFromSubject();
+        List<User> users = accountService.getUsersByAccountId(account.getId());
+        return new Message(Message.Type.OK, userService.makeUserJsons(users));
+    }
+
     /**
      * 更新accountMessage
      *
