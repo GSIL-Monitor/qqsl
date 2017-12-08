@@ -270,7 +270,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
      */
     private StorageCountLog getStorageCountLogByTwoHour(long cut, List<StorageLog> storageLogs, long userId) {
         StorageCountLog storageCountLog = new StorageCountLog();
-        StorageLog storageLog = null;
+        StorageLog storageLog;
         /** 完成后的空间数 */
         long curSpaceNum = 0, uploadCount = 0, downloadCount = 0, curTrafficNum = 0;
         long createDateTime;
@@ -285,6 +285,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             }
         }
         //上传流量与下载流量应一直保持用户最后套餐的状态,找出当前时间节点最后的StorageLog状态
+        storageLog = null;
         for (int i = 0; i < storageLogs.size(); i++) {
             createDateTime = storageLogs.get(i).getCreateDate().getTime();
             if (createDateTime < cut) {
