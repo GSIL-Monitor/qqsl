@@ -615,6 +615,10 @@ public class AccountController {
         return accountService.unbindUser(user);
     }
 
+    /**
+     * 子账户对应user列表
+     * @return
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"})
     @RequestMapping(value = "/getInviteCompany", method = RequestMethod.GET)
