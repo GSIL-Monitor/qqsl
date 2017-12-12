@@ -1,10 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
@@ -1192,10 +1189,10 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         save(project);
         packageService.save(aPackage);
-        storageLogService.saveStorageLog(aPackage,"upload",fileSize);
-        List<String> aliases = new ArrayList<>();
-        aliases.add(alias.toString());
-        projectLogService.saveLog(project,user,aliases,fileNames.toString(),ProjectLog.Type.FILE_UPLOAD);
+        storageLogService.saveStorageLog(aPackage, "upload", fileSize);
+        Map<String, String> aliases = new LinkedHashMap<>();
+        aliases.put(alias.toString(),fileNames.toString());
+        projectLogService.saveLog(project,user,aliases,ProjectLog.Type.FILE_UPLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
         return new Message(Message.Type.OK, jsonObject);
@@ -1226,9 +1223,9 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         packageService.save(aPackage);
         storageLogService.saveStorageLog(aPackage,"download",fileSize);
-        List<String> aliases = new ArrayList<>();
-        aliases.add(alias.toString());
-        projectLogService.saveLog(find(Long.valueOf(projectId.toString())),user,aliases,fileName.toString(),ProjectLog.Type.FILE_UPLOAD);
+        Map<String, String> aliases = new LinkedHashMap<>();
+        aliases.put(alias.toString(),fileName.toString());
+        projectLogService.saveLog(find(Long.valueOf(projectId.toString())),user,aliases,ProjectLog.Type.FILE_UPLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
         return new Message(Message.Type.OK, jsonObject);
@@ -1267,9 +1264,9 @@ public class ProjectService extends BaseService<Project, Long> {
         save(project);
         packageService.save(aPackage);
         storageLogService.saveStorageLog(aPackage,"delete",fileSize);
-        List<String> aliases = new ArrayList<>();
-        aliases.add(alias.toString());
-        projectLogService.saveLog(project,user,aliases,fileName.toString(),ProjectLog.Type.FILE_DELETE);
+        Map<String, String> aliases = new LinkedHashMap<>();
+        aliases.put(alias.toString(),fileName.toString());
+        projectLogService.saveLog(project,user,aliases,ProjectLog.Type.FILE_DELETE);
         return new Message(Message.Type.OK);
     }
 

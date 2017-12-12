@@ -37,19 +37,19 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
      * 保存项目编辑日志
      * @return
      */
-    public void saveLog(Project project, Object object, List<String> aliases, String object1, ProjectLog.Type type) {
+    public void saveLog(Project project, Object object, Map<String,String> map, ProjectLog.Type type) {
         ProjectLog projectLog = new ProjectLog();
-        for (String alias : aliases) {
-            projectLog.setContent(covert(project.getType(),alias,object1));
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            projectLog.setContent(covert(project.getType(),entry.getKey(),entry.getValue()));
             projectLog.setProjectId(project.getId());
             if (object instanceof Account) {
                 projectLog.setAccountId(((Account) object).getId());
             }
             if (type == null) {
-                projectLog.setCooperateType(alias.startsWith("1")? CooperateVisit.Type.VISIT_INVITE_ELEMENT:alias.startsWith("2")?CooperateVisit.Type.VISIT_PREPARATION_ELEMENT:alias.startsWith("3")?CooperateVisit.Type.VISIT_BUILDING_ELEMENT:CooperateVisit.Type.VISIT_MAINTENANCE_ELEMENT);
+                projectLog.setCooperateType(entry.getKey().startsWith("1")? CooperateVisit.Type.VISIT_INVITE_ELEMENT:entry.getKey().startsWith("2")?CooperateVisit.Type.VISIT_PREPARATION_ELEMENT:entry.getKey().startsWith("3")?CooperateVisit.Type.VISIT_BUILDING_ELEMENT:CooperateVisit.Type.VISIT_MAINTENANCE_ELEMENT);
                 projectLog.setType(ProjectLog.Type.ELEMENT);
             } else if (type != null) {
-                projectLog.setCooperateType(alias.startsWith("1")? CooperateVisit.Type.VISIT_INVITE_FILE:alias.startsWith("2")?CooperateVisit.Type.VISIT_PREPARATION_FILE:alias.startsWith("3")?CooperateVisit.Type.VISIT_BUILDING_FILE:CooperateVisit.Type.VISIT_MAINTENANCE_FILE);
+                projectLog.setCooperateType(entry.getKey().startsWith("1")? CooperateVisit.Type.VISIT_INVITE_FILE:entry.getKey().startsWith("2")?CooperateVisit.Type.VISIT_PREPARATION_FILE:entry.getKey().startsWith("3")?CooperateVisit.Type.VISIT_BUILDING_FILE:CooperateVisit.Type.VISIT_MAINTENANCE_FILE);
                 projectLog.setType(type);
             }
             save(projectLog);
@@ -146,6 +146,7 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
             units = unitService.getWatUnits();
         }
         String content = alias.startsWith("1") ? "招投标" : alias.startsWith("2") ? "项目前期" : alias.startsWith("3") ? "建设期" : "运营维护期";
+        String parentName;
         for (int i = 0; i < units.size(); i++) {
             for (int i1 = 0; i1 < units.get(i).getElementGroups().size(); i1++) {
                 if (units.get(i).getElementGroups().get(i1).getAlias().equals(alias)) {
@@ -154,12 +155,14 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
                 }
                 for (Element element : units.get(i).getElementGroups().get(i1).getElements()) {
                     if (element.getAlias().equals(alias)) {
-                        content = content + "--" + units.get(i).getName() + "--" + units.get(i).getElementGroups().get(i1).getName() + "--" + element.getName();
+                        parentName=units.get(i).getUnitParent()!=null?units.get(i).getUnitParent().getName():"======";
+                        content = content + "--"+parentName+"--" + units.get(i).getName() + "--" + units.get(i).getElementGroups().get(i1).getName() + "--" + element.getName();
                         break;
                     }
                 }
             }
         }
+        content = content.replace("--======--", "--");
         content = content + "：" + object;
         return content;
     }
