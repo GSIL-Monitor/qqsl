@@ -248,7 +248,7 @@ public class ElementService {
 		String description, elementAlias, value = null;
 		Object objectValue, infoOrder, introduceDescription;
 		List<Object> elements= (List<Object>) elementGroup.get("elements");
-		List<String> aliases = new ArrayList<>();
+		Map<String, String> aliases = new LinkedHashMap<>();
 		for (int k = 0; k < elements.size(); k++) {
 			objectValue = ((Map<String, Object>) elements.get(k)).get("value");
 			if (objectValue != null && objectValue.equals(",")) {
@@ -298,14 +298,14 @@ public class ElementService {
 				elementDB.setAlias(elementAlias);
 				elementDB.setProject(project);
 			}
-			aliases.add(elementAlias);
+			aliases.put(elementAlias,value);
 //			addLogTimeToProject(project,elementAlias,"element");
 			// 保存要素数据和项目简介
 			elementDataGroupService.doSaveElementDataGroup(elementDB, elementDataGroups);
 			elementDBService.save(elementDB);
 		}
 		if(aliases.size()!=0){
-			projectLogService.saveLog(project,object,aliases,value,null);
+			projectLogService.saveLog(project,object,aliases,null);
 		}
 		//保存项目进度
 		doSaveProjectSchedule(unit.getAlias(),unit.getName(),project);
