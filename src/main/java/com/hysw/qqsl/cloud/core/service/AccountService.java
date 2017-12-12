@@ -72,7 +72,7 @@ public class AccountService extends BaseService<Account,Long> {
         if(user.getCompanyName()!=null){
             userName = user.getCompanyName();
         }
-        String noteMessage = account==null? "恭喜你已经被邀请成为"+userName+"企业的子账号，初始密码为"+inviteCode+"。请打开www.qingqingshuili.com网页登录并完善个人信息。": "恭喜你已经被邀请成为"+user.getCompanyName()+"企业的子账号。";
+        String noteMessage = account==null? "恭喜你已经被邀请成为"+userName+"企业的子账号，初始密码为"+inviteCode+"。请打开www.qingqingshuili.com网页登录并完善个人信息。": "恭喜你已经被邀请成为"+userName+"企业的子账号。";
         Note note = new Note(phone,noteMessage);
         List<User> users;
         if(account == null){
