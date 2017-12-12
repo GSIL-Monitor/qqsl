@@ -27,7 +27,7 @@ import java.util.List;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(SpringJUnit4ClassRunner.class)
-//@TestExecutionListeners(value = {TestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(value = {TestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ContextConfiguration(locations = {"classpath*:/applicationContext-test.xml", "classpath*:/applicationContext-cache-test.xml"})
 @Transactional(transactionManager = "transactionManager")
 @Rollback(value = false)
@@ -91,7 +91,7 @@ public class UpdateTest {
      */
     @Test
     public void testChangeUserRoles(){
-        List<User> all = userService.findAll();
+        List<User> all = (List<User>) SettingUtils.objectCopy(userService.findAll());
         String roles="user:simple";
         Certify certify;
         for (User user : all) {

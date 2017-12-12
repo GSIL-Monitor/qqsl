@@ -640,6 +640,9 @@ public class UserService extends BaseService<User, Long> {
         for (User user : users) {
 			user.getAccounts().size();
             certify = certifyService.findByUser(user);
+			if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
+				continue;
+			}
             user.setPersonalStatus(certify.getPersonalStatus());
             user.setCompanyStatus(certify.getCompanyStatus());
             if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING) {

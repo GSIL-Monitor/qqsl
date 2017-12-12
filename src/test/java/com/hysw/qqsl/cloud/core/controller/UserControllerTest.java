@@ -46,7 +46,7 @@ public class UserControllerTest extends BaseControllerTest{
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.getStatus();
         String  requestJson = net.minidev.json.JSONObject.toJSONString(loginMap);
-        MvcResult result = HttpUtils.httpPost(mockMvc,requestJson,"/user/login");
+        MvcResult result = HttpUtils.httpPost(mockMvc,requestJson,"/user/web/login");
         String res = result.getResponse().getContentAsString();
         JSONObject resultJson= JSONObject.fromObject(res);
         assertTrue("OTHER".equals(resultJson.getString("type")));

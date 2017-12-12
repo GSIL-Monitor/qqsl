@@ -5,6 +5,7 @@ import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.pay.service.GoodsService;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.util.ObjectJsonConvertUtils;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +129,9 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			logger.info("存储日志缓存加载完成");
 			projectLogService.addNearlyWeekLog();
 			logger.info("加载近一周日志缓存");
-			packageService.packageMax();
+			if (!SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
+				packageService.packageMax();
+			}
 		}
 	}
 
