@@ -56,6 +56,7 @@ public class UpdateTest {
     @Autowired
     private CertifyService certifyService;
 
+//    删除accountMessage,userMessage,log表
 
     /**
      * 为所有已注册用户增加测试版套餐
