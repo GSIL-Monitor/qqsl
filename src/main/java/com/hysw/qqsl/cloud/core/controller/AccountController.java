@@ -304,7 +304,7 @@ public class AccountController {
     /**
      * 修改密码:在基本资料的修改密码处点击保存时调用
      * @param map
-     * @return
+     * @return ziahgn
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
