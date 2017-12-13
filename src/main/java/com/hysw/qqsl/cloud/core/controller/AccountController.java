@@ -665,10 +665,10 @@ public class AccountController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteUserMessage/{ids}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteAccountMessage/{ids}", method = RequestMethod.DELETE)
     public
     @ResponseBody
-    Message deleteUserMessage(@PathVariable("ids") String ids) {
+    Message deleteAccountMessage(@PathVariable("ids") String ids) {
         Message message = Message.parametersCheck(ids);
         if (message.getType() != Message.Type.OK) {
             return message;
