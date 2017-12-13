@@ -57,7 +57,7 @@ public class AccountController {
     /**
      * 发送验证码
      *
-     * @param phone
+     * @param  phone
      * @param session
      * @return
      */
