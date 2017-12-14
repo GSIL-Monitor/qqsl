@@ -101,6 +101,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setType(UserMessage.Type.SHARE_PROJECT);
 		save(userMessage);
 		pollingService.changeMessageStatus(user,true);
+		pollingService.changeShareStatus(user,true);
     }
 
 	/**
@@ -132,6 +133,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setType(UserMessage.Type.SHARE_STATION);
 		save(userMessage);
 		pollingService.changeMessageStatus(user,true);
+		pollingService.changeStationStatus(user,true);
     }
 
 	/**

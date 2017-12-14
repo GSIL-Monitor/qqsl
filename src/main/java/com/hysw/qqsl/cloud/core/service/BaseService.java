@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.List;
 
 
@@ -41,6 +42,7 @@ public abstract class BaseService<T extends BaseEntity, Id extends Serializable>
 	@Transactional
 	public void save(T entity) {
 		baseDao.save(entity);
+		entity.setModifyDate(new Date());
 		String name = getClassName(entity.getClass().getName());
 		Cache cache = cacheManager.getCache(name + "Cache");
 		if (cache != null) {

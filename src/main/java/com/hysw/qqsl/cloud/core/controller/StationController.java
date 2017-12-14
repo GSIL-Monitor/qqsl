@@ -46,6 +46,8 @@ public class StationController {
     private SensorService sensorService;
     @Autowired
     private ApplicationTokenService applicationTokenService;
+    @Autowired
+    private PollingService pollingService;
     /**
      * 获取token
      * @return
@@ -149,6 +151,7 @@ public class StationController {
     public @ResponseBody Message getStations(){
         User user = authentService.getUserFromSubject();
         List<JSONObject> jsonObjectList = stationService.getStations(user);
+        pollingService.changeStationStatus(user, false);
         return new Message(Message.Type.OK,jsonObjectList);
     }
 

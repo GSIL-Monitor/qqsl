@@ -63,6 +63,8 @@ public class ProjectController {
     private AccountService accountService;
     @Autowired
     private ProjectLogService projectLogService;
+    @Autowired
+    private PollingService pollingService;
 
     /**
      * 取得用户对应的项目列表
@@ -78,12 +80,14 @@ public class ProjectController {
         if(user !=null){
             user = userService.getSimpleUser(user);
             message = projectService.getProjects(start,user);
+            pollingService.changeShareStatus(user,false);
             return message;
         }
         Account account = authentService.getAccountFromSubject();
         if(account!=null){
             account = accountService.getSimpleAccount(account);
             message = projectService.getAccountProjects(start,account);
+            pollingService.changeCooperateStatus(account, false);
             return message;
         }
         return new Message(Message.Type.UNKNOWN);

@@ -97,6 +97,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
         pollingService.changeMessageStatus(account,true);
+        pollingService.changeShareStatus(account,true);
     }
 
     /**
@@ -121,6 +122,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
         pollingService.changeMessageStatus(account,true);
+        pollingService.changeCooperateStatus(account,true);
     }
 
     /**

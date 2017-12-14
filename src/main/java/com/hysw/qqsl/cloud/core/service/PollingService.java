@@ -89,4 +89,55 @@ public class PollingService {
         }
     }
 
+    /**
+     * 改变账户测站轮询状态
+     * @param object
+     * @param flag
+     */
+    public void changeStationStatus(Object object,boolean flag) {
+        if (object instanceof Account) {
+            Polling polling = accountPolling.get(((Account)object).getId());
+            polling.setStationStatus(flag);
+            accountPolling.put(((Account)object).getId(), polling);
+        }else{
+            Polling polling = userPolling.get(((User)object).getId());
+            polling.setStationStatus(flag);
+            userPolling.put(((User)object).getId(), polling);
+        }
+    }
+
+    /**
+     * 改变账户分享轮询状态
+     * @param object
+     * @param flag
+     */
+    public void changeShareStatus(Object object,boolean flag) {
+        if (object instanceof Account) {
+            Polling polling = accountPolling.get(((Account)object).getId());
+            polling.setShareStatus(flag);
+            accountPolling.put(((Account)object).getId(), polling);
+        }else{
+            Polling polling = userPolling.get(((User)object).getId());
+            polling.setShareStatus(flag);
+            userPolling.put(((User)object).getId(), polling);
+        }
+    }
+
+    /**
+     * 改变账户协同轮询状态
+     * @param object
+     * @param flag
+     */
+    public void changeCooperateStatus(Object object,boolean flag) {
+        if (object instanceof Account) {
+            Polling polling = accountPolling.get(((Account)object).getId());
+            polling.setCooperateStatus(flag);
+            accountPolling.put(((Account)object).getId(), polling);
+        }else{
+            Polling polling = userPolling.get(((User)object).getId());
+            polling.setCooperateStatus(flag);
+            userPolling.put(((User)object).getId(), polling);
+        }
+    }
+
 }
