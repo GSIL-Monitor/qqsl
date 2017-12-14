@@ -3,6 +3,7 @@
 <qqsl>
 	<!-- run:正式运行状态 dev:开发状态 -->
 	<setting name="status" value="dev" />
+	<setting name="waterIP" value="121.40.82.11" />
 
 	<!-- 要素地址配置 -->
 	<setting name="agrProjectModel" value="agrProjectModel.xml" />
@@ -17,10 +18,9 @@
 	<setting name="hydElementGroupModel" value="hydElementGroup.xml" />
 	<setting name="driElementGroupModel" value="driElementGroup.xml" />
 	<setting name="floElementGroupModel" value="floElementGroup.xml" />
-	<setting name="info" value="info.xml" />goo
+	<setting name="info" value="info.xml" />
 	<setting name="elementDataModel" value="elementDataModel.xml" />
 	<setting name="elementDataSimpleModel" value="elementDataSimpleModel.xml" />
-	<setting name="waterIP" value="www.qingqingshuili.cn" />
 	<!-- 建筑物 -->
 	<setting name="buildsModel" value="buildsModel.xml"/>
 	<setting name="buildsMater" value="buildsMater.xml"/>
