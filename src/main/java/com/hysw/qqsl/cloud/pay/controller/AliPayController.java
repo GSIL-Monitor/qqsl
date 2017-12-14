@@ -272,7 +272,7 @@ public class AliPayController {
      * @throws AlipayApiException
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/refund/{out_trade_no}", method = RequestMethod.GET)
     public
     @ResponseBody

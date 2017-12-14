@@ -82,7 +82,7 @@ public class WXPayController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:identify","user:company"}, logical = Logical.OR)
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/refund/{outTradeNo}", method = RequestMethod.GET)
     public @ResponseBody Message refund(@PathVariable("outTradeNo") String outTradeNo) {
         if (outTradeNo == null) {
