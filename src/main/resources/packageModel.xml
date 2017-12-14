@@ -10,14 +10,14 @@
     <!--</package>-->
     <package name="体验版" type="test" description="提供体验功能" price="0" level="0">
         <!-- 10G?? -->
-        <packageItem type="space" limitNum="10000000"/>
+        <packageItem type="space" limitNum="10000000000"/>
         <packageItem type="project" limitNum="10" />
         <packageItem type="account" limitNum="5"/>
         <packageItem type="pano" limitNum="10"/>
     </package>
     <package name="青春版" type="youth" description="提供个人及小团队功能" price="1" level="1">
         <!-- 200G -->
-        <packageItem type="space" limitNum="200000000"/>
+        <packageItem type="space" limitNum="200000000000"/>
         <packageItem type="project" limitNum="200" />
         <packageItem type="account" limitNum="20"/>
         <!-- 全景数量 -->
@@ -25,7 +25,7 @@
     </package>
     <package name="朝阳版" type="sun" description="中小型设计单位使用，提供厘米级测量，BIM协同" price="2" level="11">
         <!-- 500G -->
-        <packageItem type="space" limitNum="500000000"/>
+        <packageItem type="space" limitNum="500000000000"/>
         <packageItem type="project" limitNum="500" />
         <packageItem type="account" limitNum="50"/>
         <!-- 全景数量 -->
@@ -37,7 +37,7 @@
     </package>
     <package name="旭日版" type="sunrise" description="大中型设计单位使用，提供厘米级测量，BIM协同" price="3" level="12">
         <!-- 1024G -->
-        <packageItem type="space" limitNum="1024000000"/>
+        <packageItem type="space" limitNum="1024000000000"/>
         <packageItem type="project" limitNum="1000" />
         <packageItem type="account" limitNum="100"/>
         <!-- 全景数量 -->
