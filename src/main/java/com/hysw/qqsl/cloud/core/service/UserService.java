@@ -71,6 +71,10 @@ public class UserService extends BaseService<User, Long> {
 		return null;
 	}
 
+	public User findByDao(Long id){
+		return userDao.find(id);
+	}
+
 	/**
 	 * 为前台构建授权信息（用户，管理员）
 	 */
