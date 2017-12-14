@@ -187,9 +187,6 @@ public class PackageService extends BaseService<Package,Long>{
             aPackage = new Package();
         }
         aPackage.setType(CommonEnum.PackageType.valueOf(trade.getBaseType().toString()));
-        Calendar c = Calendar.getInstance();
-        c.setTime(trade.getPayDate());
-        c.add(Calendar.YEAR, 1);
         JSONObject remarkJson = JSONObject.fromObject(trade.getRemark());
         Long times = remarkJson.getLong("expireDate");
         aPackage.setExpireDate(new Date(times));

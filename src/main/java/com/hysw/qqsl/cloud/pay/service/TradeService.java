@@ -333,7 +333,7 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setInstanceId(station.getInstanceId());
         trade.setBuyType(Trade.BuyType.RENEW);
         trade.setUser(user);
-        trade.setPrice(stationModel.getPrice());
+        trade.setPrice(stationModel.getServicePrice());
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
         Date expireDate = getExpireDate(trade.getCreateDate(),"renewStation");
         JSONObject remarkJson = new JSONObject();
@@ -595,7 +595,7 @@ public class TradeService extends BaseService<Trade, Long> {
     public String convertBuyType(Trade trade){
         String type="";
         for (int i = 0; i < CommonAttributes.TRADEBUYTYPEE.length; i++) {
-            if (CommonAttributes.TRADEBUYTYPEE[i].equals(trade.getType().toString())) {
+            if (CommonAttributes.TRADEBUYTYPEE[i].equals(trade.getBuyType().toString())) {
                 type = CommonAttributes.TRADEBUYTYPEC[i];
                 break;
             }

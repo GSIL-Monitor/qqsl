@@ -141,9 +141,6 @@ public class AspectService {
         } else if (value.equals("instanceId")) {
             station = stationService.findByInstanceId(map.get("instanceId").toString());
         }
-        if (id == null) {
-            return new Message(Message.Type.EXIST);
-        }
         if (station == null) {
             station = stationService.find(Long.valueOf(id.toString()));
         }

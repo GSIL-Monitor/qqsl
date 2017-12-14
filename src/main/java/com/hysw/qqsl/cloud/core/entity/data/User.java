@@ -54,8 +54,6 @@ public class User extends BaseEntity {
 	private String loginIp;
 	/** 连续登录失败次数 */
 	private Integer loginFailureCount;
-	/** 用户头像字符串*/
-	private String avatar;
 	/** 前缀和编号json*/
 	private String prefixOrderStr;
 	/** 联系人*/
@@ -191,16 +189,7 @@ public class User extends BaseEntity {
 	public void setLoginFailureCount(Integer loginFailureCount) {
 		this.loginFailureCount = loginFailureCount;
 	}
-//	@Lob
-	//@Basic(fetch = FetchType.LAZY)
-	//@Column(columnDefinition = "text")
-	@Column(length = 10000)
-	public String getAvatar() {
-		return avatar;
-	}
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
-	}
+
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY , cascade={CascadeType.PERSIST})
 	@JsonIgnore
 	public List<Project> getProjects() {

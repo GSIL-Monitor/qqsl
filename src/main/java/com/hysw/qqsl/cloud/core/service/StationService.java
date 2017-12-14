@@ -89,6 +89,7 @@ public class StationService extends BaseService<Station, Long> {
             stationModel.setType(CommonEnum.StationType.valueOf(element.attributeValue("type").toUpperCase()));
             stationModel.setDescription(element.attributeValue("description"));
             stationModel.setPrice(Double.valueOf(element.attributeValue("price")));
+            stationModel.setServicePrice(Double.valueOf(element.attributeValue("servicePrice")));
             stationModels.add(stationModel);
         }
         return stationModels;
@@ -132,6 +133,7 @@ public class StationService extends BaseService<Station, Long> {
     public JSONObject stationModelToJson(StationModel stationModel) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("price", stationModel.getPrice());
+        jsonObject.put("servicePrice", stationModel.getServicePrice());
         jsonObject.put("name", stationModel.getName());
         jsonObject.put("type", stationModel.getType());
         jsonObject.put("description", stationModel.getDescription());
