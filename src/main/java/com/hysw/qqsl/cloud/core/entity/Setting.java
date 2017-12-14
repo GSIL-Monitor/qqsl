@@ -41,6 +41,17 @@ public class Setting implements Serializable {
 	 */
 	private String waterIP;
 
+	/**
+	 * 支付成功之后,前台指定的跳转页面的地址
+	 */
+	private String aliPayReturnUrl;
+
+	/**
+	 * 支付成功之后,向后台异步通知的接口地址
+	 */
+	private String aliPayNotifyUrl;
+
+
 	/** 建筑物 */
 	private String buildsModel;
 	private String buildsMater;
@@ -156,6 +167,21 @@ public class Setting implements Serializable {
 		this.waterIP = waterIP;
 	}
 
+	public String getAliPayReturnUrl() {
+		return aliPayReturnUrl;
+	}
+
+	public void setAliPayReturnUrl(String aliPayReturnUrl) {
+		this.aliPayReturnUrl = aliPayReturnUrl;
+	}
+
+	public String getAliPayNotifyUrl() {
+		return aliPayNotifyUrl;
+	}
+
+	public void setAliPayNotifyUrl(String aliPayNotifyUrl) {
+		this.aliPayNotifyUrl = aliPayNotifyUrl;
+	}
 
 	public String getBuildsModel() {
 		return buildsModel;

@@ -8,6 +8,7 @@ import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
@@ -15,6 +16,7 @@ import com.hysw.qqsl.cloud.pay.service.CommonService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.pay.service.TurnoverService;
 import com.hysw.qqsl.cloud.pay.service.aliPay.AliPayService;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,9 +61,11 @@ public class AliPayController {
     Log logger = LogFactory.getLog(this.getClass());
     private DecimalFormat df=new DecimalFormat("######0.00");
 
+    private Setting setting = SettingUtils.getInstance().getSetting();
+
     //private static final String RETURN_URL = "http://4107ce0a.all123.net/qqsl.web/tpls/productModule/paySuccess.html";
-    private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/aliPaySuccess.html";
-    private static final String NOTIFY_URL = "http://112.124.104.190:8080/qqsl/aliPay/notify";
+   /* private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/aliPaySuccess.html";
+    private static final String NOTIFY_URL = "http://112.124.104.190:8080/qqsl/aliPay/notify";*/
 
 
 //    //手机网站支付
@@ -193,8 +197,8 @@ public class AliPayController {
                        HttpServletResponse httpResponse) throws ServletException, IOException {
         AlipayClient alipayClient = aliPayService.getAlipayClient();
         AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();//创建API对应的request
-        alipayRequest.setReturnUrl(RETURN_URL);
-        alipayRequest.setNotifyUrl(NOTIFY_URL);//在公共参数中设置回跳和通知地址
+        alipayRequest.setReturnUrl(setting.getAliPayReturnUrl());
+        alipayRequest.setNotifyUrl(setting.getAliPayNotifyUrl());//在公共参数中设置回跳和通知地址
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
         if (System.currentTimeMillis()-trade.getCreateDate().getTime()>2*60*60*1000) {
                 return new Message(Message.Type.EXPIRED);
