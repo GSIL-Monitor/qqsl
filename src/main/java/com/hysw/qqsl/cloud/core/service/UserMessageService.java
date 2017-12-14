@@ -21,6 +21,8 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 	private UserMessageDao userMessageDao;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private PollingService pollingService;
 	
 	@Autowired
 	public void setBaseDao(UserMessageDao userMessageDao) {
@@ -47,6 +49,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		filters1.add(Filter.in("status", CommonEnum.MessageStatus.UNREAD));
 		filters2.add(Filter.between("createDate", dBefore, newDate));
 		List<UserMessage> userMessages= userMessageDao.findList(0, null, filters1,filters2);
+		pollingService.changeMessageStatus(user,false);
 		return userMessages;
 	}
 
@@ -67,6 +70,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setContent(content.toString());
 		userMessage.setType(UserMessage.Type.UNBIND_USER);
 		save(userMessage);
+		pollingService.changeMessageStatus(user,true);
 	}
 
 	/**
@@ -96,6 +100,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_PROJECT);
 		save(userMessage);
+		pollingService.changeMessageStatus(user,true);
     }
 
 	/**
@@ -126,6 +131,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_STATION);
 		save(userMessage);
+		pollingService.changeMessageStatus(user,true);
     }
 
 	/**
@@ -139,6 +145,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
 		save(userMessage);
+		pollingService.changeMessageStatus(certify.getUser(),true);
 	}
 
 	public void companyCertifyFail(Certify certify) {
@@ -148,6 +155,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
 		save(userMessage);
+		pollingService.changeMessageStatus(certify.getUser(),true);
 	}
 
 	public void personalCertifySuccess(Certify certify) {
@@ -157,6 +165,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
 		save(userMessage);
+		pollingService.changeMessageStatus(certify.getUser(),true);
 	}
 
 	public void companyCertifySuccess(Certify certify) {
@@ -166,6 +175,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(certify.getUser());
 		save(userMessage);
+		pollingService.changeMessageStatus(certify.getUser(),true);
 	}
 
 	public void emailNotice(User user,String message) {
@@ -175,6 +185,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setType(UserMessage.Type.CERTIFY);
 		userMessage.setUser(user);
 		save(userMessage);
+		pollingService.changeMessageStatus(user,true);
 	}
 
 	public void buyPackage(User user,String message){
@@ -184,6 +195,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setType(UserMessage.Type.BUY_PACKAGE);
 		userMessage.setUser(user);
 		save(userMessage);
+		pollingService.changeMessageStatus(user,true);
 	}
 
 	public void buyStation(User user,String message){
@@ -193,5 +205,6 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setType(UserMessage.Type.BUY_STATION);
 		userMessage.setUser(user);
 		save(userMessage);
+		pollingService.changeMessageStatus(user,true);
 	}
 }

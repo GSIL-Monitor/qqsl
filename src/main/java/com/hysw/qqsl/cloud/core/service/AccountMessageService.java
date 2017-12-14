@@ -30,6 +30,8 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     @Autowired
     private CooperateService cooperateService;
     @Autowired
+    private PollingService pollingService;
+    @Autowired
     public void setBaseDao(AccountMessageDao accountMessageDao){
         super.setBaseDao(accountMessageDao);
     }
@@ -49,6 +51,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
         accountMessage.setType(AccountMessage.Type.INVITE_ACCOUNT);
         accountMessageDao.save(accountMessage);
+        pollingService.changeMessageStatus(account,true);
     }
 
     /**
@@ -69,6 +72,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         filters1.add(Filter.in("status", CommonEnum.MessageStatus.UNREAD));
         filters2.add(Filter.between("createDate", dBefore, newDate));
         List<AccountMessage> accountMessages= accountMessageDao.findList(0, null, filters1,filters2);
+        pollingService.changeMessageStatus(account,false);
         return accountMessages;
     }
 
@@ -92,6 +96,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
+        pollingService.changeMessageStatus(account,true);
     }
 
     /**
@@ -115,8 +120,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
-
-
+        pollingService.changeMessageStatus(account,true);
     }
 
     /**

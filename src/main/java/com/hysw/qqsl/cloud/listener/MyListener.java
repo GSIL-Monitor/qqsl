@@ -60,6 +60,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private StorageLogService storageLogService;
 	@Autowired
 	private ProjectLogService projectLogService;
+	@Autowired
+	private PollingService pollingService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -132,6 +134,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			if (!SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
 				packageService.packageMax();
 			}
+			pollingService.init();
+			logger.info("初始化轮询状态");
 		}
 	}
 

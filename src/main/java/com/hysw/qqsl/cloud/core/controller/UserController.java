@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.Polling;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
@@ -63,6 +64,8 @@ public class UserController {
     private EmailService emailService;
     @Autowired
     private StorageLogService storageLogService;
+    @Autowired
+    private PollingService pollingService;
 
     /**
      * 注册时发送手机验证码
@@ -1020,6 +1023,15 @@ public class UserController {
         storageLogService.buildStorageLog();
         JSONArray jsonArray = storageLogService.getStorageCountLog(user,System.currentTimeMillis()-300*60*60*1000L,System.currentTimeMillis());
         return new Message(Message.Type.OK,jsonArray);
+    }
+
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"})
+    @RequestMapping(value = "/polling", method = RequestMethod.GET)
+    public @ResponseBody Message polling(){
+        User user = authentService.getUserFromSubject();
+        Polling polling=pollingService.findByUser(user.getId());
+        return new Message(Message.Type.OK,pollingService.toJson(polling));
     }
 }
 

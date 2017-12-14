@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.Polling;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
@@ -51,6 +52,8 @@ public class AccountController {
     private AccountMessageService accountMessageService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private PollingService pollingService;
 
     Log logger = LogFactory.getLog(this.getClass());
 
@@ -708,6 +711,15 @@ public class AccountController {
         }
         message = accountService.updateInfo(name,account.getId());
         return message;
+    }
+
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"})
+    @RequestMapping(value = "/polling", method = RequestMethod.GET)
+    public @ResponseBody Message polling(){
+        Account account = authentService.getAccountFromSubject();
+        Polling polling=pollingService.findByAccount(account.getId());
+        return new Message(Message.Type.OK,pollingService.toJson(polling));
     }
 
 }
