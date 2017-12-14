@@ -384,7 +384,7 @@ public class StationController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles({"user:hydrology"})
+    @RequiresRoles({"user:simple"})
     @RequestMapping(value = "/unShare", method = RequestMethod.POST)
     public @ResponseBody Message unShare(@RequestBody Map<String,Object> map){
         Message message = Message.parameterCheck(map);
@@ -408,7 +408,7 @@ public class StationController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles({"user:hydrology"})
+    @RequiresRoles({"user:simple"})
     @RequestMapping(value = "/shares", method = RequestMethod.POST)
     public @ResponseBody Message shares(@RequestBody Map<String,Object> map){
         Message message = Message.parameterCheck(map);
