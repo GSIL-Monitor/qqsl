@@ -339,7 +339,7 @@ public class InterestController {
         /*if (panorama.getReviewDate() != null) {
             return new Message(Message.Type.FAIL);
         }*/
-        if (!panorama.getUserId().equals(user.getId().toString())) {
+        if (!panorama.getUserId().equals(user.getId())) {
             return new Message(Message.Type.FAIL);
         }
         ossService.setBucketLife(panorama.getId() + "/","panorama");
