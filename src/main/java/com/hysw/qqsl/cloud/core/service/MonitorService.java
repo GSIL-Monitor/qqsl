@@ -88,7 +88,7 @@ public class MonitorService {
         for (int i = 0; i < applicationList.size(); i++) {
             Map<String, Object> map = (Map<String, Object>) applicationList.get(i);
             for (int j = 0; j < codes.size(); j++) {
-                if (map.get("unique").toString().equals(codes.get(j))) {
+                if (map.get("code").toString().equals(codes.get(j))) {
                     //将数据库中激活状态改为true
                     Sensor sensor = sensorService.findByCode(codes.get(j));
                     station = sensor.getStation();
