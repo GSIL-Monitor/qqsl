@@ -281,7 +281,6 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("email",account.getEmail());
         jsonObject.put("name",account.getName());
         jsonObject.put("phone",account.getPhone());
-        jsonObject.put("avatar",account.getAvatar());
         jsonObject.put("userName",account.getUserName());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());

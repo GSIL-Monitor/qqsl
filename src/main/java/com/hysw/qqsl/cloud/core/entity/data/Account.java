@@ -49,8 +49,6 @@ public class Account extends BaseEntity {
     private String loginIp;
     /** 连续登录失败次数 */
     private Integer loginFailureCount;
-    /** 用户头像字符串*/
-    private String avatar;
     /** 用户角色 */
     private String roles;
     /** 子账号消息 */
@@ -162,15 +160,6 @@ public class Account extends BaseEntity {
     public void setLoginFailureCount(Integer loginFailureCount) {
         this.loginFailureCount = loginFailureCount;
     }
-
-    @Column(length = 10000)
-    public String getAvatar() {
-        return avatar;
-    }
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
 
     public String getRoles() {
         return roles;
