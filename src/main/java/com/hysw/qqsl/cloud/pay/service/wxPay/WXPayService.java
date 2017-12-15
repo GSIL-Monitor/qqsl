@@ -4,6 +4,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class WXPayService {
         data.put("fee_type", "CNY");//符合ISO 4217标准的三位字母代码，默认人民币：CNY
         data.put("total_fee", String.valueOf(Math.round(trade.getPrice() * 100)));//订单总金额，单位为分
         data.put("spbill_create_ip", "218.244.134.139");//APP和网页支付提交用户端ip，Native支付填调用微信支付API的机器IP
-        data.put("notify_url", "http://5007c0d2.nat123.cc/qqsl/wxPay/payNotice");//异步接收微信支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。
+        data.put("notify_url", SettingUtils.getInstance().getSetting().getNat123()+"/qqsl/wxPay/payNotice");//异步接收微信支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。
         data.put("trade_type", "NATIVE");//JSAPI--公众号支付、NATIVE--原生扫码支付、APP--app支付，统一下单接口trade_type的传参可参考这里,MICROPAY--刷卡支付，刷卡支付有单独的支付接口，不调用统一下单接口
         data.put("product_id", String.valueOf(trade.getBaseType().ordinal()));//trade_type=NATIVE时（即扫码支付），此参数必传。此参数为二维码中包含的商品ID，商户自行定义。
         // data.put("time_expire", "20170112104120");

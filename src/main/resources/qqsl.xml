@@ -33,6 +33,7 @@
 	<setting name="packageModel" value="packageModel.xml"/>
 	<setting name="goods" value="goods.xml"/>
 	<setting name="station" value="station.xml"/>
+	<setting name="nat123" value="http://5007c0d2.nat123.cc" />
 </qqsl>
 
 

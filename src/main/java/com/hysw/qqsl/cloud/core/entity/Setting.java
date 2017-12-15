@@ -65,6 +65,8 @@ public class Setting implements Serializable {
 	private String packageModel;
 	private String goods;
 	private String station;
+
+	private String nat123;
  	
  	public String getStatus() {
 		return status;
@@ -261,5 +263,13 @@ public class Setting implements Serializable {
 
 	public void setStation(String station) {
 		this.station = station;
+	}
+
+	public String getNat123() {
+		return nat123;
+	}
+
+	public void setNat123(String nat123) {
+		this.nat123 = nat123;
 	}
 }
