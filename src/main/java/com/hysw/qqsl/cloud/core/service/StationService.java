@@ -656,7 +656,7 @@ public class StationService extends BaseService<Station, Long> {
         cell.setCellValue(type.equals("riverModel") ? "高程" : "流量（m3/s）");
         sheet.autoSizeColumn(2);
         JSONObject jsonObject;
-        for (int rowNum = 1; rowNum < jsonArray.size(); rowNum++) {
+        for (int rowNum = 1; rowNum <= jsonArray.size(); rowNum++) {
             jsonObject = jsonArray.getJSONObject(rowNum - 1);
             row = sheet.createRow(rowNum);
             for (int i = 0; i < 2; i++) {
