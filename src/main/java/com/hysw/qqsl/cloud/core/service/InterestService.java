@@ -150,7 +150,7 @@ public class InterestService extends BaseService<Interest, Long> {
     private JSONObject userJson(Long userId) {
         User user = userService.find(userId);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userName", user.getName());
+        jsonObject.put("userName", userService.nickName(userId));
         jsonObject.put("id", user.getId());
         jsonObject.put("phone", user.getPhone());
         return jsonObject;
