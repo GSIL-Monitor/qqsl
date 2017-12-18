@@ -129,7 +129,8 @@ public class AccountService extends BaseService<Account,Long> {
         account.setPassword(password);
         //默认新注册用户角色为account:simple
         account.setRoles(CommonAttributes.ROLES[4]);
-        accountDao.save(account);
+        save(account);
+        pollingService.addAccount(account);
         return new Message(Message.Type.OK);
     }
 
