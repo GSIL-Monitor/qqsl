@@ -140,4 +140,11 @@ public class PollingService {
         }
     }
 
+    public void addAccount(Account account) {
+        accountPolling.put(account.getId(), new Polling());
+    }
+
+    public void addUser(User user) {
+        userPolling.put(user.getId(), new Polling());
+    }
 }
