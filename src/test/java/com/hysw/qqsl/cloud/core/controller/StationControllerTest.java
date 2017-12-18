@@ -52,10 +52,7 @@ public class StationControllerTest extends BaseControllerTest {
 
     @Test
     public void getStations() throws Exception {
-        MvcResult result = HttpUtils.httpGet(mockMvc,"/station/lists");
-        assertNotNull(result.getResponse().getBufferSize());
-        String res = result.getResponse().getContentAsString();
-        JSONObject resultJson= JSONObject.fromObject(res);
+        JSONObject resultJson= HttpUtils.httpGetUrl(mockMvc,"/station/lists");
         JSONArray jsonArray = JSONArray.fromObject(resultJson.get("data"));
         assertNotNull(jsonArray);
     }
@@ -72,7 +69,13 @@ public class StationControllerTest extends BaseControllerTest {
 
     @Test
     public void deleteSensor() throws Exception {
-
+      /*  JSONObject resultJson= HttpUtils.httpGetUrl(mockMvc,"/station/lists");
+        JSONArray jsonArray = JSONArray.fromObject(resultJson.get("data"));
+        assertNotNull(jsonArray);
+        JSONObject stationJson = jsonArray.getJSONObject(0);
+        long id = stationJson.getJSONObject("sensor").getLong("id");*/
+        JSONObject resultJson= HttpUtils.httpDelete(mockMvc,"/station/deleteSensor/{id}",1l);
+        assertTrue("OK".equals(resultJson.getString("type")));
     }
 
     @Test

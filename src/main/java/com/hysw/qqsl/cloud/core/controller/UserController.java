@@ -1020,7 +1020,7 @@ public class UserController {
     public @ResponseBody Message getStorageCountLogs(@PathVariable("id") long id) {
         User user = new User();
         user.setId(id);
-        storageLogService.buildStorageLog();
+        //storageLogService.buildStorageLog();
         JSONArray jsonArray = storageLogService.getStorageCountLog(user,System.currentTimeMillis()-300*60*60*1000L,System.currentTimeMillis());
         return new Message(Message.Type.OK,jsonArray);
     }
