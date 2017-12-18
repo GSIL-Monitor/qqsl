@@ -43,6 +43,8 @@ public class AccountService extends BaseService<Account,Long> {
     private AccountMessageService accountMessageService;
     @Autowired
     private UserMessageService userMessageService;
+    @Autowired
+    private PollingService pollingService;
 
     @Autowired
     public void setBaseDao(AccountDao accountDao){
@@ -93,7 +95,8 @@ public class AccountService extends BaseService<Account,Long> {
         }
         //记录子账号邀请消息
         account.setUsers(users);
-        accountDao.save(account);
+        save(account);
+        pollingService.addAccount(account);
         accountMessageService.bindMsessage(user,account,true);
         noteCache.add(phone,note);
         return new Message(Message.Type.OK,makeSimpleAccountJson(account));
@@ -126,7 +129,8 @@ public class AccountService extends BaseService<Account,Long> {
         account.setPassword(password);
         //默认新注册用户角色为account:simple
         account.setRoles(CommonAttributes.ROLES[4]);
-        accountDao.save(account);
+        save(account);
+        pollingService.addAccount(account);
         return new Message(Message.Type.OK);
     }
 

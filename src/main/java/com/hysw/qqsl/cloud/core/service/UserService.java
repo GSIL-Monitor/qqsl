@@ -56,6 +56,8 @@ public class UserService extends BaseService<User, Long> {
 	@Autowired
 	private UserService userService;
 	@Autowired
+	private PollingService pollingService;
+	@Autowired
 	public void setBaseDao(UserDao userDao) {
 		super.setBaseDao(userDao);
 	}
@@ -291,6 +293,7 @@ public class UserService extends BaseService<User, Long> {
 		//默认新注册用户角色为web
 		user.setRoles(CommonAttributes.ROLES[2]);
 		save(user);
+		pollingService.addUser(user);
 //				激活试用版套餐
 		packageService.activateTestPackage(user);
 //		构建认证状态
