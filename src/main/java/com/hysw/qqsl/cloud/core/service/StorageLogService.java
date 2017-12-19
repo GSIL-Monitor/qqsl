@@ -8,6 +8,8 @@ import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
     private StorageLogDao storageLogDao;
     @Autowired
     private UserService userService;
+
+    Log logger = LogFactory.getLog(getClass());
     /**
      * 获取到的用户列表
      */
@@ -157,6 +161,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             deleteExpireStorageCountLogs(storageCountLogs);
             storageLogList = storageLogMapTwoHour.get(userIds.get(i));
             addNewStorageCountLog(storageCountLogs, storageLogList, userIds.get(i));
+            logger.info("存储日志数量:"+storageCountLogs.size());
             storageCountLogMap.put(userIds.get(i), storageCountLogs);
         }
     }
