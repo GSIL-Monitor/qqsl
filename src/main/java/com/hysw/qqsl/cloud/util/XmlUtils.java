@@ -10,7 +10,9 @@ import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -163,5 +165,22 @@ public class XmlUtils {
         System.out.println("df1:"+df1.format(d2)+" pk "+df2.format(d2));
         System.out.println("df1:"+df1.format(d3)+" pk "+df2.format(d3));
         System.out.println("df1:"+df1.format(d4)+" pk "+df2.format(d4));
+        List<String> list = new ArrayList<>();
+        list.add("11");
+        list.add("55");
+        list.add("sw");
+        list.add("33");
+        list.add("2sw");
+        System.out.println(list.size()+":"+list);
+        Iterator<String> iterator = list.iterator();
+        for (String s:list){
+            if(s.equals("11")){
+              list.remove(s);
+            }
+            if(s.equals("sw")){
+                list.remove(s);
+            }
+        }
+        System.out.println(list.size()+":"+list);
     }
 }

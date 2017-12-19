@@ -207,7 +207,10 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
         if (storageCountLogs.isEmpty()) {
             return;
         }
-        storageCountLogs.remove(0);
+        if(storageCountLogs.size()==360){
+            storageCountLogs.remove(0);
+            return;
+        }
        /* long now = System.currentTimeMillis();
         long delTimes = now - (MONTH_TIMES + TWO_HOUR_TIMES);
         StorageCountLog storageCountLog;
