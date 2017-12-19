@@ -673,6 +673,9 @@ public class UserController {
         if (user == null) {
             return new Message(Message.Type.EXIST);
         }
+        if (map.get("verification") == null) {
+            return new Message(Message.Type.FAIL);
+        }
         String verifyCode = map.get("verification").toString();
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {

@@ -536,6 +536,9 @@ public class AccountController {
         if (account == null) {
             return new Message(Message.Type.EXIST);
         }
+        if (map.get("verification") == null) {
+            return new Message(Message.Type.FAIL);
+        }
         String verifyCode = map.get("verification").toString();
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
