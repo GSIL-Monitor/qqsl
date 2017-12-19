@@ -9,7 +9,9 @@ import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 public class AliPayService {
 
     private AlipayClient alipayClient;
+    private Setting setting = SettingUtils.getInstance().getSetting();
     public AliPayService(){
         alipayClient = new DefaultAlipayClient(CommonAttributes.OPEN_API, CommonAttributes.APP_ID, CommonAttributes.APP_PRIVATE_KEY,
                 CommonAttributes.RESULT_TYPE, CommonAttributes.CHARSET, CommonAttributes.ALIPAY_PUBLIC_KEY, CommonAttributes.SIGN_TYPE);
@@ -39,6 +42,23 @@ public class AliPayService {
         return alipayClient;
     }
 
+    /**
+     * 支付成功之后,前台指定的跳转页面的地址
+     * @return
+     */
+    public String getReturnUrl(){
+        String returnUrl =  "http://"+setting.getAliPayIP()+"/tpls/productModule/aliPaySuccess.html";
+        return returnUrl;
+    }
+
+    /**
+     * 支付成功之后,向后台异步通知的接口地址
+     * @return
+     */
+    public String getNotifyUrl(){
+        String notifyUrl = "http://"+setting.getAliPayIP()+":8080/qqsl/aliPay/notify";
+        return notifyUrl;
+    }
     /**
      * 阿里订单查询
      * @param trade
@@ -108,4 +128,5 @@ public class AliPayService {
         //{"alipay_trade_refund_response":{"code":"10000","msg":"Success","buyer_logon_id":"221***@qq.com","buyer_user_id":"2088512714636913","fund_change":"N","gmt_refund_pay":"2017-08-03 14:52:30","open_id":"20881028868410491303826532716191","out_trade_no":"20150320010101008","refund_fee":"0.01","send_back_fee":"0.00","trade_no":"2017080121001004910201344195"},"sign":"u/i7OVxMvyIzgQAIyR4YVmk3s5Zfrk21QwQ7Hq88O5MxA+xR9e5WLyuXrd75T53ykSL5j+AvaV/g8vttgZznO8j0rmuY2b339g7BMxHxIpy2TVLt0tfSCYaH7wmlMxNgr1dQvxkm5BIiWeHmZl/5hrRqqtaf4IINREhs6iGVLMgLzW7r8dkmdu852xIwST9pEiulpaOCj1FfAA1HDPy8ikijkmbH2/eqNMM3TIJg93Dc+l9GUsNfVGfUq4MhPv+SETvXCl1RoPqirPwi/ds5Hh0QUMwHv1K09BY3xyAoCiAjuP23wA7cAQO5+YklzaVj+Wi29PdLnJKZqHN42ktnOg=="}
 
     }
+
 }

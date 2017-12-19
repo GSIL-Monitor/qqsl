@@ -17,10 +17,7 @@ public class CompanyControllerTest extends BaseControllerTest {
 
     @Test
     public void testQueryArticles() throws Exception{
-        MvcResult result = HttpUtils.httpGet(mockMvc,"/company/queryArticles");
-        assertNotNull(result.getResponse().getBufferSize());
-        String res = result.getResponse().getContentAsString();
-        JSONObject resultJson= JSONObject.fromObject(res);
+        JSONObject resultJson= HttpUtils.httpGetUrl(mockMvc,"/company/queryArticles");
         assertTrue("OK".equals(resultJson.getString("type")));
         assertNotNull(resultJson.get("data"));
         JSONArray jsonArray = JSONArray.fromObject(resultJson.get("data"));

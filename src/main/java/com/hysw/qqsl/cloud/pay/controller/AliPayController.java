@@ -61,7 +61,6 @@ public class AliPayController {
     Log logger = LogFactory.getLog(this.getClass());
     private DecimalFormat df=new DecimalFormat("######0.00");
 
-    private Setting setting = SettingUtils.getInstance().getSetting();
 
     //private static final String RETURN_URL = "http://4107ce0a.all123.net/qqsl.web/tpls/productModule/paySuccess.html";
    /* private static final String RETURN_URL = "http://112.124.104.190/tpls/productModule/aliPaySuccess.html";
@@ -197,8 +196,8 @@ public class AliPayController {
                        HttpServletResponse httpResponse) throws ServletException, IOException {
         AlipayClient alipayClient = aliPayService.getAlipayClient();
         AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();//创建API对应的request
-        alipayRequest.setReturnUrl(setting.getAliPayReturnUrl());
-        alipayRequest.setNotifyUrl(setting.getAliPayNotifyUrl());//在公共参数中设置回跳和通知地址
+        alipayRequest.setReturnUrl(aliPayService.getReturnUrl());
+        alipayRequest.setNotifyUrl(aliPayService.getNotifyUrl());//在公共参数中设置回跳和通知地址
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
         if (System.currentTimeMillis()-trade.getCreateDate().getTime()>2*60*60*1000) {
                 return new Message(Message.Type.EXPIRED);

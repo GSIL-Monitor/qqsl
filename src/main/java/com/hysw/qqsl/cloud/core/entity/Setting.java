@@ -42,14 +42,9 @@ public class Setting implements Serializable {
 	private String waterIP;
 
 	/**
-	 * 支付成功之后,前台指定的跳转页面的地址
+	 * 支付宝接口的ip地址
 	 */
-	private String aliPayReturnUrl;
-
-	/**
-	 * 支付成功之后,向后台异步通知的接口地址
-	 */
-	private String aliPayNotifyUrl;
+	private String aliPayIP;
 
 
 	/** 建筑物 */
@@ -169,20 +164,12 @@ public class Setting implements Serializable {
 		this.waterIP = waterIP;
 	}
 
-	public String getAliPayReturnUrl() {
-		return aliPayReturnUrl;
+	public String getAliPayIP() {
+		return aliPayIP;
 	}
 
-	public void setAliPayReturnUrl(String aliPayReturnUrl) {
-		this.aliPayReturnUrl = aliPayReturnUrl;
-	}
-
-	public String getAliPayNotifyUrl() {
-		return aliPayNotifyUrl;
-	}
-
-	public void setAliPayNotifyUrl(String aliPayNotifyUrl) {
-		this.aliPayNotifyUrl = aliPayNotifyUrl;
+	public void setAliPayIP(String aliPayIP) {
+		this.aliPayIP = aliPayIP;
 	}
 
 	public String getBuildsModel() {

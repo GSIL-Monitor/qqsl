@@ -46,9 +46,7 @@ public class UserControllerTest extends BaseControllerTest{
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.getStatus();
         String  requestJson = net.minidev.json.JSONObject.toJSONString(loginMap);
-        MvcResult result = HttpUtils.httpPost(mockMvc,requestJson,"/user/web/login");
-        String res = result.getResponse().getContentAsString();
-        JSONObject resultJson= JSONObject.fromObject(res);
+        JSONObject resultJson=  HttpUtils.httpPost(mockMvc,"/user/web/login",requestJson);
         assertTrue("OTHER".equals(resultJson.getString("type")));
         User user = authentService.getUserFromSubject();
         assertNull(user);
@@ -62,9 +60,7 @@ public class UserControllerTest extends BaseControllerTest{
         loginMap.put("loginType", "web");
         loginMap.put("cookie", DigestUtils.md5Hex(DigestUtils.md5Hex("111111")));
         String  requestJson = net.minidev.json.JSONObject.toJSONString(loginMap);
-        MvcResult result = HttpUtils.httpPost(mockMvc,requestJson,"/user/login");
-        String res = result.getResponse().getContentAsString();
-        JSONObject resultJson= JSONObject.fromObject(res);
+        JSONObject resultJson = HttpUtils.httpPost(mockMvc,"/user/login",requestJson);
         assertTrue("OK".equals(resultJson.getString("type")));
         assertNotNull(resultJson.getJSONObject("data"));
         assertNotNull(resultJson.getJSONObject("data").get("phone").equals("18661925010"));
