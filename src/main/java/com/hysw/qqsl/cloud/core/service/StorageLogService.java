@@ -211,15 +211,15 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             storageCountLogs.remove(0);
             return;
         }
-       /* long now = System.currentTimeMillis();
+        /*long now = System.currentTimeMillis();
         long delTimes = now - (MONTH_TIMES + TWO_HOUR_TIMES);
         StorageCountLog storageCountLog;
-        int size = storageCountLogs.size();
-        for (int i = 0; i < size; i++) {
-            storageCountLog = storageCountLogs.get(i);
-            if (storageCountLog.getCreateDate().getTime() < delTimes) {
-                storageCountLogs.remove(i);
-                i--;
+        Iterator<StorageCountLog> storageCountLogIterator = storageCountLogs.iterator();
+        while (storageCountLogIterator.hasNext()){
+            storageCountLog = storageCountLogIterator.next();
+            if(storageCountLog.getCreateDate().getTime() < delTimes){
+                storageCountLogIterator.remove();
+                return;
             }
         }*/
     }
