@@ -4,8 +4,7 @@
 	<!-- run:正式运行状态 dev:开发状态 -->
 	<setting name="status" value="dev" />
 	<setting name="waterIP" value="121.40.82.11" />
-	<setting name="aliPayReturnUrl" value="http://112.124.104.190/tpls/productModule/aliPaySuccess.html" />
-	<setting name="aliPayNotifyUrl" value="http://112.124.104.190:8080/qqsl/aliPay/notify"/>
+	<setting name="aliPayIP" value="112.124.104.190" />
 	<!-- 要素地址配置 -->
 	<setting name="agrProjectModel" value="agrProjectModel.xml" />
 	<setting name="watProjectModel" value="watProjectModel.xml" />
