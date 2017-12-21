@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" " http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+<goods>
+    <serve type ="panorama" name="全景效果图(个)" description="" price="1"/>
+    <serve type ="airSurvey" name="航测3D建模(个)" description="" price="2"/>
+<!--    <group name="5米分辨率正射影像" type="orthoPhoto" description="">
+    <serve alias ="orthoPhoto" name="5米分辨率正射影像(个)" price="11" number="1" description=""></serve>
+</group>-->
+</goods>

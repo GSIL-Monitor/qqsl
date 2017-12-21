@@ -3,30 +3,45 @@
 
 	<diskStore path="${java.io.tmpdir}/qqsl/cache" />
 	<!--<defaultCache maxElementsInMemory="1000" eternal="false" timeToIdleSeconds="120" timeToLiveSeconds="120" overflowToDisk="false"/>-->
-	<cache name="authorization" maxElementsInMemory="1000" eternal="true" timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="authorization" maxElementsInMemory="1000" eternal="true"  overflowToDisk="false" />
 
-	<cache name="elementGroupCache" maxElementsInMemory="1000" eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="elementGroupCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
-	<cache name="unitsCache" maxElementsInMemory="1000"  eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="unitsCache" maxElementsInMemory="1000"  eternal="true"   overflowToDisk="false" />
 
-	<cache name="infosCache" maxElementsInMemory="1000"  eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="infosCache" maxElementsInMemory="1000"  eternal="true"   overflowToDisk="false" />
 
-	<cache name="unitModelsCache" maxElementsInMemory="1000"  eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="unitModelsCache" maxElementsInMemory="1000"  eternal="true"   overflowToDisk="false" />
 
-	<cache name="projectCache" maxElementsInMemory="100000"  eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
-	<cache name="projectAllCache" maxElementsInMemory="1000"  eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="projectCache" maxElementsInMemory="100000"  eternal="true"   overflowToDisk="false" />
+	<cache name="projectAllCache" maxElementsInMemory="1000"  eternal="true"   overflowToDisk="false" />
 
-	<cache name="elementDBCache" maxElementsInMemory="100000"  eternal="true"   timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="elementDBCache" maxElementsInMemory="100000"  eternal="true"    overflowToDisk="false" />
 
-	<cache name="elementDataGroupsCache" maxElementsInMemory="1000"  eternal="true"   timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="elementDataGroupsCache" maxElementsInMemory="1000"  eternal="true"    overflowToDisk="false" />
 
-	<cache name="jsonTreeCache" maxElementsInMemory="1000" eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="jsonTreeCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
-	<cache name="buildGroupsCache" maxElementsInMemory="1000" eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="buildGroupsCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
-	<cache name="buildsCache" maxElementsInMemory="1000" eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="buildsCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
-	<cache name="attribeGroupsCache" maxElementsInMemory="1000" eternal="true"  timeToIdleSeconds="52560000" timeToLiveSeconds="52560000" overflowToDisk="false" />
+	<cache name="attribeGroupsCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
+	<cache name="packageModelCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
+	<cache name="goodsModelCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
+	<cache name="stationModelCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
+	<cache name="packageAllCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
+	<cache name="userAllCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
+	<cache name="certifyAllCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+	<!--部分日志缓存===>一周内-->
+	<cache name="projectLogPartCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
 
 	<!--name:缓存名称。-->
 	<!--maxElementsInMemory：缓存最大个数。-->

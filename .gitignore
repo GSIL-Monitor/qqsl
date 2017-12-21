@@ -1,14 +1,22 @@
 .idea/
-target/
 .DS_Store
+target/
 *.iml
 *.class
+classes/
+build/
+ui/
+.gradle/
+gradle/
+out/
+gradlew
+gradlew.bat
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
 # Package Files #
-# *.jar
+#*.jar
 *.war
 *.ear
 

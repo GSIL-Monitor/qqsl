@@ -1,12 +1,15 @@
 package com.hysw.qqsl.cloud.wechat.service;
 
-import com.hysw.qqsl.cloud.dao.WeChatDao;
-import com.hysw.qqsl.cloud.entity.Filter;
-import com.hysw.qqsl.cloud.entity.data.WeChat;
-import com.hysw.qqsl.cloud.service.BaseService;
-import com.hysw.qqsl.cloud.wechat.data.resp.*;
+import com.hysw.qqsl.cloud.wechat.dao.WeChatDao;
+import com.hysw.qqsl.cloud.core.entity.Filter;
+import com.hysw.qqsl.cloud.wechat.entity.data.WeChat;
+import com.hysw.qqsl.cloud.core.service.BaseService;
+import com.hysw.qqsl.cloud.wechat.entity.resp.Article;
+import com.hysw.qqsl.cloud.wechat.entity.resp.BaseMessage;
+import com.hysw.qqsl.cloud.wechat.entity.resp.NewsMessage;
+import com.hysw.qqsl.cloud.wechat.entity.resp.TextMessage;
 import com.hysw.qqsl.cloud.wechat.util.EncryptAndVerifiy;
-import com.hysw.qqsl.cloud.wechat.data.req.InputMessage;
+import com.hysw.qqsl.cloud.wechat.entity.req.InputMessage;
 import com.hysw.qqsl.cloud.wechat.util.MessageUtil;
 import com.thoughtworks.xstream.XStream;
 import org.springframework.beans.factory.annotation.Autowired;

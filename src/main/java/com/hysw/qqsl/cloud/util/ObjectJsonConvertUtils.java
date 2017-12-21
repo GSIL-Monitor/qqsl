@@ -1,18 +1,13 @@
 package com.hysw.qqsl.cloud.util;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.entity.build.BuildGroup;
-import com.hysw.qqsl.cloud.entity.data.Build;
-import com.hysw.qqsl.cloud.entity.element.*;
-import com.hysw.qqsl.cloud.entity.data.Project;
-import com.hysw.qqsl.cloud.entity.data.Project.Type;
-import com.hysw.qqsl.cloud.entity.element.Element;
-import com.hysw.qqsl.cloud.service.ElementGroupService;
-import com.hysw.qqsl.cloud.service.UnitService;
-import com.hysw.qqsl.cloud.service.BuildGroupService;
+import com.hysw.qqsl.cloud.core.entity.element.*;
+import com.hysw.qqsl.cloud.core.entity.data.Project;
+import com.hysw.qqsl.cloud.core.entity.data.Project.Type;
+import com.hysw.qqsl.cloud.core.entity.element.Element;
+import com.hysw.qqsl.cloud.core.service.ElementGroupService;
+import com.hysw.qqsl.cloud.core.service.UnitService;
 import net.sf.ehcache.*;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

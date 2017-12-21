@@ -2,10 +2,10 @@ package com.hysw.qqsl.cloud.util;
 import static org.junit.Assert.*;
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.entity.element.JsonTree;
-import com.hysw.qqsl.cloud.entity.element.Unit;
-import com.hysw.qqsl.cloud.entity.data.Project;
-import com.hysw.qqsl.cloud.service.ProjectService;
+import com.hysw.qqsl.cloud.core.entity.element.JsonTree;
+import com.hysw.qqsl.cloud.core.entity.element.Unit;
+import com.hysw.qqsl.cloud.core.entity.data.Project;
+import com.hysw.qqsl.cloud.core.service.ProjectService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -46,7 +46,7 @@
 		</property>
 	</bean>
 	<!-- 缓存管理器 -->
-	<bean id="authenticationRealm" class="com.hysw.qqsl.cloud.shiro.UserRealm">
+	<bean id="authenticationRealm" class="com.hysw.qqsl.cloud.core.shiro.UserRealm">
 		<property name="authorizationCacheName" value="authorization" />
 	</bean>
       <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">

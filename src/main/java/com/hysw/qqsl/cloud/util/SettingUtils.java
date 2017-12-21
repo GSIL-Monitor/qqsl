@@ -2,9 +2,14 @@ package com.hysw.qqsl.cloud.util;
 
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.controller.Message;
-import com.hysw.qqsl.cloud.entity.Setting;
+import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Setting;
+import com.hysw.qqsl.cloud.core.entity.data.Project;
+import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -17,6 +22,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -231,6 +237,17 @@ public class SettingUtils {
 		return regexResult(url,regex);
 	}
 
+	public static boolean rtmpRegex(String url){
+		if(!StringUtils.hasText(url)){
+			return false;
+		}
+		if(!url.startsWith("rtmp://rtmp.open.ys7.com/openlive/")){
+			return false;
+		}
+		String end = url.substring(url.lastIndexOf("/")+1);
+		return Pattern.compile("[A-z0-9]+\\.(?!\\.)").matcher(end).find();
+	}
+
 	private static boolean regexResult(String parameter, String regex) {
 		Pattern pattern = Pattern.compile(regex);
 		Matcher match = pattern.matcher(parameter);
@@ -305,4 +322,82 @@ public class SettingUtils {
 		}
 		return true;
 	}
+
+	/**
+	 * 检查坐标格式有效性ing转换为json格式
+	 *
+	 * @return
+	 */
+	public static Message checkCoordinateIsInvalid(String coordinate) {
+		String[] coordinates = coordinate.split(",");
+		if (coordinates.length != 3) {
+			return new Message(Message.Type.FAIL);
+		}
+		if (Double.valueOf(coordinates[0]) > 180 || Double.valueOf(coordinates[0]) < 0) {
+			return new Message(Message.Type.FAIL);
+		}
+		if (Double.valueOf(coordinates[1]) > 90 || Double.valueOf(coordinates[1]) < 0) {
+			return new Message(Message.Type.FAIL);
+		}
+		if (Double.valueOf(coordinates[2]) < 0) {
+			return new Message(Message.Type.FAIL);
+		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("longitude", coordinates[0]);
+		jsonObject.put("latitude", coordinates[1]);
+		jsonObject.put("elevation", coordinates[2]);
+		return new Message(Message.Type.OK, jsonObject);
+	}
+
+	/**
+	 * excle 文件的读取
+	 * @param is
+	 * @param str
+	 * @return
+	 * @throws IOException
+	 */
+	public static Workbook readExcel(InputStream is,  String str) throws IOException {
+		Workbook wb=null;
+		if (str.trim().toLowerCase().equals("xls")) {
+			wb = new HSSFWorkbook(is);
+		} else if (str.trim().toLowerCase().equals("xlsx")) {
+			wb = new XSSFWorkbook(is);
+		}
+		return wb;
+	}
+
+	/**
+	 * Map转Json
+	 * @param map
+	 * @return
+	 */
+	public static JSONObject convertMapToJson(Map<String, Object> map){
+		JSONObject jsonObject = new JSONObject();
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+			jsonObject.put(entry.getKey(),entry.getValue());
+		}
+		return jsonObject;
+	}
+
+	/**
+	 * 手机获取的验证码
+	 *
+	 * @return
+	 */
+	public static String createRandomVcode() {
+		// 验证码
+		String vcode = "";
+		for (int i = 0; i < 6; i++) {
+			vcode = vcode + (int) (Math.random() * 10);
+		}
+		return vcode;
+	}
+
+	public static void main(String[] args) {
+		String url = "rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd";
+		System.out.print(rtmpRegex(url));
+		Pattern pattern = Pattern.compile("[A-z0-9]+\\.(?!\\.)");
+		System.out.println(pattern.matcher("ba4b2fde89ab43739e3d3e74d8b08f4a.hd").find());
+	}
+
 }

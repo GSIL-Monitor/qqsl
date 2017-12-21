@@ -1,17 +1,22 @@
 package com.hysw.qqsl.cloud.util;
 
 import com.aliyun.oss.common.utils.IOUtils;
+import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.service.NoteCache;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 页面请求
@@ -19,6 +24,8 @@ import java.net.URL;
  */
 @Service("httpRequestUtil")
 public class HttpRequestUtil {
+    @Autowired
+    private NoteCache noteCache;
 
     /**
      *
@@ -27,7 +34,7 @@ public class HttpRequestUtil {
      * @param outputStr
      * @return
      */
-    public static JSONArray jsonArrayHttpRequest(String requestUrl, String requestMethod, String outputStr) {
+    public JSONArray jsonArrayHttpRequest(String requestUrl, String requestMethod, String outputStr) {
         JSONArray jsonArray = null;
         StringBuffer buffer = new StringBuffer();
         InputStream inputStream=null;
@@ -61,7 +68,7 @@ public class HttpRequestUtil {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "utf-8");
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-            String str = null;
+            String str;
             while ((str = bufferedReader.readLine()) != null) {
                 buffer.append(str);
             }
@@ -74,7 +81,7 @@ public class HttpRequestUtil {
             jsonArray = JSONArray.fromObject(buffer.toString());
         } catch (ConnectException ce) {
             ce.printStackTrace();
-            System.out.println("Application server connection timed out");
+            System.out.println("链接超时");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("http request error:{}");
@@ -85,6 +92,59 @@ public class HttpRequestUtil {
         return jsonArray;
     }
 
+    /**
+     * 发送请求获取身份证图片上的信息
+     * @param host
+     * @param path
+     * @param bodys
+     */
+    public JSONObject getIdMessage(String host, String path, String bodys) {
+        if (bodys.equals("")) {
+            return null;
+        }
+        String method = "POST";
+        String appcode = CommonAttributes.APPCODE;
+        Map<String, String> headers = new HashMap<>();
+        //最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+        headers.put("Authorization", "APPCODE " + appcode);
+        //根据API的要求，定义相对应的Content-Type
+        headers.put("Content-Type", "application/json; charset=UTF-8");
+        Map<String, String> querys = new HashMap<>();
+        try {
+            HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
+//            获取response的body
+            String resp=EntityUtils.toString(response.getEntity());
+            JSONObject jsonObject = JSONObject.fromObject(resp);
+            return jsonObject;
+        } catch (Exception e) {
+            Note note = new Note("18661925010","图形识别监测");
+            noteCache.add("18661925010",note);
+            return null;
+        }
+    }
 
+    /**
+     * 发送请求获取名字与身份证号是否一致
+     * @return false 一致  true 不一致，notPass
+     * @param path
+     */
+    public JSONObject nameAndIdIsSame(String host, String path, Map<String,String> querys){
+        String method = "GET";
+        String appcode = CommonAttributes.APPCODE;
+        Map<String, String> headers = new HashMap<String, String>();
+        //最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+        headers.put("Authorization", "APPCODE " + appcode);
+        try {
+            HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
+            //获取response的body
+            String resp=EntityUtils.toString(response.getEntity());
+            JSONObject jsonObject = JSONObject.fromObject(resp);
+            return jsonObject;
+        } catch (Exception e) {
+            Note note = new Note("18661925010","认证监测");
+            noteCache.add("18661925010",note);
+            return null;
+        }
+    }
 
 }

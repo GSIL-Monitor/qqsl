@@ -1,14 +1,12 @@
 package com.hysw.qqsl.cloud;
 
-import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.entity.data.Article;
-import com.hysw.qqsl.cloud.service.ArticleService;
+import com.hysw.qqsl.cloud.core.entity.data.Article;
+import com.hysw.qqsl.cloud.core.service.ArticleService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.jdbc.JdbcTestUtils;
 

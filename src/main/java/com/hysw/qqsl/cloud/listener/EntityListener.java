@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.listener;
 
-import com.hysw.qqsl.cloud.entity.data.BaseEntity;
+import com.hysw.qqsl.cloud.core.entity.data.BaseEntity;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;

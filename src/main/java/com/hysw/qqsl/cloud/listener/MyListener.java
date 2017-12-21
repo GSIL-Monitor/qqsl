@@ -1,7 +1,11 @@
 package com.hysw.qqsl.cloud.listener;
 
-import com.hysw.qqsl.cloud.service.*;
+import com.hysw.qqsl.cloud.core.service.EmailManager;
+import com.hysw.qqsl.cloud.core.service.*;
+import com.hysw.qqsl.cloud.pay.service.GoodsService;
+import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.util.ObjectJsonConvertUtils;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +44,24 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private BuildBelongService buildBelongService;
 	@Autowired
 	private SensorService sensorService;
+	@Autowired
+	private GoodsService goodsService;
+	@Autowired
+	private PackageService packageService;
+	@Autowired
+	private StationService stationService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private CertifyService certifyService;
+	@Autowired
+	private EmailManager emailManager;
+	@Autowired
+	private StorageLogService storageLogService;
+	@Autowired
+	private ProjectLogService projectLogService;
+	@Autowired
+	private PollingService pollingService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -51,6 +73,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			logger.info("发送短信的线程已启动");
 			new Thread(buildBelongService).start();
 			logger.info("建筑物线面归属线程启动");
+			new Thread(emailManager).start();
+			logger.info("邮件服务线程启动");
 			//将所有项目写入缓存
 			elementGroupService.getDriElementGroups();
 			elementGroupService.getConElementGroups();
@@ -78,9 +102,15 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			objectJsonConvertUtils.getHydJsonTree();
 			buildGroupService.getCompleteBuildGroups();
 			buildGroupService.getBuildsDynamic();
+			certifyService.certifyCache();
+			logger.info("加载认证缓存");
+			userService.userCache();
+			logger.info("加载用户缓存");
+			packageService.packageCache();
+			logger.info("加载套餐缓存");
 			//将所有项目写入缓存
-			projectService.projectCache();
-			logger.info("项目总数为："+projectService.findAll().size());
+            projectService.projectCache();
+            logger.info("项目总数为："+projectService.findAll().size());
 			//刷新infos
 			infoService.infosCache();
 			logger.info("项目信息总数："+infoService.getInfos().size());
@@ -90,6 +120,22 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			logger.info("初始化千寻账号");
 			sensorService.addCodeToCache();
 			logger.info("未绑定仪表加入缓存");
+			goodsService.putGoodsModelInCache();
+			logger.info("数据服务模板加载");
+			packageService.putPackageModelInCache();
+			logger.info("套餐模板加载");
+			stationService.putStationModelInCache();
+			logger.info("测站模板加载");
+			//存储日志缓存加载
+			storageLogService.buildStorageLog();
+			logger.info("存储日志缓存加载完成");
+			projectLogService.addNearlyWeekLog();
+			logger.info("加载近一周日志缓存");
+			if (!SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
+				packageService.packageMax();
+			}
+			pollingService.init();
+			logger.info("初始化轮询状态");
 		}
 	}
 
