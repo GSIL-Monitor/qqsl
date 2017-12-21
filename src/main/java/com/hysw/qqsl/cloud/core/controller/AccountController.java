@@ -7,6 +7,7 @@ import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.UserMessage;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -54,14 +55,13 @@ public class AccountController {
     @Autowired
     private PollingService pollingService;
 
-    private Log logger = LogFactory.getLog(this.getClass());
+    Log logger = LogFactory.getLog(this.getClass());
 
     /**
      * 发送验证码
-     * @param  phone 手机号
-     * @param session 会话控制
-     * @param flag 子账户是否存在
-     * @return FAIL 参数错误 EXIST 账号已存在 OK 成功
+     * @param  phone 手机号码
+     * @param session 此次交互的session
+     * @return message响应消息,短信是否发送成功
      */
     private Message sendVerify(String phone, HttpSession session,boolean flag){
         Message message = Message.parametersCheck(phone);
@@ -86,9 +86,9 @@ public class AccountController {
 
     /**
      * 注册时发送手机验证码
-     * @param  phone 手机号
-     * @param session 会话控制
-     * @return FAIL 参数错误 EXIST 账号已存在 OK 成功
+     * @param  phone 手机号码
+     * @param session 此次交互的session
+     * @return message响应消息,短信是否发送成功
      */
     @RequestMapping(value = "/phone/getRegistVerify", method = RequestMethod.GET)
     public
@@ -100,9 +100,9 @@ public class AccountController {
 
     /**
      * 修改密保手机发送验证码
-     * @param phone 手机号
-     * @param session 会话控制
-     * @return FAIL 参数错误 EXIST 账号已存在 OK 成功
+     * @param  phone 手机号码
+     * @param session 此次交互的session
+     * @return message响应消息,短信是否发送成功
      */
     @RequestMapping(value = "/phone/getUpdateVerify", method = RequestMethod.GET)
     public
@@ -114,9 +114,9 @@ public class AccountController {
 
     /**
      * 手机找回密码时发送验证码：
-     * @param phone:手机号
-     * @param session 会话控制
-     * @return OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
+     * @param phone 手机号码
+     * @param session  此次交互的session
+     * @return message响应消息OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/phone/getGetbackVerify", method = RequestMethod.GET)
     public
@@ -127,10 +127,10 @@ public class AccountController {
     }
 
     /**
-     * web端登录发送验证码
-     * @param code 手机号或邮箱
-     * @param session 会话控制
-     * @return
+     * web端登录发送验证码:
+     * @param code 登录凭证(手机号码或邮箱)
+     * @param session 此次交互的session
+     * @return message响应消息OK:发送成功,FIAL:手机号或邮箱不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/login/getLoginVerify", method = RequestMethod.GET)
     public
@@ -151,15 +151,17 @@ public class AccountController {
         if(SettingUtils.phoneRegex(code)){
             message = noteService.isSend(account.getPhone(), session);
         }else if(SettingUtils.emailRegex(code)){
-            return emailService.getVerifyCodeLogin(code,session);
+            message = emailService.getVerifyCodeLogin(code,session);
         }
         return message;
     }
 
+
     /**
      * email绑定时发送验证码
-     * @return
-     * OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
+     * @param email 要绑定的邮箱
+     * @param session 此次交互的session
+     * @return message响应消息OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/email/getBindVerify", method = RequestMethod.GET)
     public
@@ -183,9 +185,9 @@ public class AccountController {
 
     /**
      * email找回密码时发送验证码
-     * @param email
-     * @param session
-     * @return
+     * @param email 绑定的邮箱
+     * @param session 此次交互的session
+     * @return message响应消息OK:发送成功,FIAL:邮箱不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/email/getGetbackVerify", method = RequestMethod.GET)
     public
@@ -207,8 +209,9 @@ public class AccountController {
 
     /**
      * 子账号注册
-     * @param objectMap
-     * @return
+     * @param objectMap 包含用户名name,密码password,验证码verification
+     * @param session 此次交互的session
+     * @return message响应消息OK:注册成功,FIAL:信息不完整，OTHER:session过期,INVALID:验证码过期,NO_ALLOW:验证码错误,EXIST:帐号已存在
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public
@@ -244,9 +247,9 @@ public class AccountController {
 
     /**
      * 手机找回密码:忘记密码时找回密码
-     *
-     * @param session
-     * @return
+     * @param map 包含验证码verification,新密码password
+     * @param session 此次交互的session
+     * @return message响应消息OK:注册成功,FIAL:信息不全或session过期,INVALID:验证码过期,NO_ALLOW:验证码错误
      */
     @RequestMapping(value = "/phone/getbackPassword", method = RequestMethod.POST)
     public
@@ -276,9 +279,9 @@ public class AccountController {
 
     /**
      * 邮箱找回密码:忘记密码时找回密码
-     *
-     * @param session
-     * @return
+     * @param map 包含验证码verification,新密码password
+     * @param session 此次交互的session
+     * @return message响应消息OK:注册成功,FIAL:信息不全或session过期,INVALID:验证码过期,NO_ALLOW:验证码错误
      */
     @RequestMapping(value = "/email/getbackPassword", method = RequestMethod.POST)
     public
@@ -308,7 +311,7 @@ public class AccountController {
 
     /**
      * 修改密码:在基本资料的修改密码处点击保存时调用
-     * @param map
+     * @param map 包含新密码newPassword,老密码oldPassword
      * @return 完整子帐号信息
      */
     @RequiresAuthentication
@@ -337,9 +340,9 @@ public class AccountController {
 
     /**
      * 修改手机号码:在基本资料的修改手机号码处点击保存时调用
-     *
-     * @param map
-     * @return
+     * @param map 包含验证码verification
+     * @param session 此次交互的session
+     * @return 修改完手机号码的子帐号信息
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
@@ -370,8 +373,9 @@ public class AccountController {
 
     /**
      * 绑定邮箱\修改绑定邮箱：在基本资料里的绑定邮箱处点击保存时调用
-     * @param map
-     * @return
+     * @param map 包含验证码verification
+     * @param session 此次交互的session
+     * @return 修改完邮箱的子帐号信息
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
@@ -402,8 +406,7 @@ public class AccountController {
 
     /**
      * 获取子账户信息：在基本资料的基本信息处显示
-     *
-     * @return
+     * @return 完整的子帐号消息,包含子帐号消息
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
@@ -418,9 +421,8 @@ public class AccountController {
 
     /**
      * web端登录
-     *
-     * @param objectMap
-     * @throws
+     * @param objectMap 包含登录凭证code(手机号码或邮箱),密码password,cookie,如果cookie为空,需要验证码登录
+     * @return message响应消息OK:登录成功,FIAL:信息不全或code不合法或密码错误,EXIT:帐号不存在,OTHER:需要验证登录
      */
     @RequestMapping(value = "/web/login", method = RequestMethod.POST, produces = "application/json")
     public
@@ -435,7 +437,8 @@ public class AccountController {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
-        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
+        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())
+                ||map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
@@ -445,9 +448,6 @@ public class AccountController {
         Account account = accountService.findByPhoneOrEmial(code);
         if (account == null) {
             return new Message(Message.Type.EXIST) ;
-        }
-        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
         }
         if (!account.getPassword().equals(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
@@ -475,9 +475,8 @@ public class AccountController {
 
     /**
      * 移动端登录
-     *
-     * @param objectMap
-     * @throws
+     * @param objectMap 包含登录凭证code(手机号码或邮箱),密码password
+     * @return message响应消息OK:登录成功,FIAL:信息不全或code不合法或密码错误,EXIT:帐号不存在
      */
     @RequestMapping(value = "/phone/login", method = RequestMethod.POST, produces = "application/json")
     public
@@ -492,7 +491,8 @@ public class AccountController {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
-        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
+        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())
+                ||map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
@@ -502,9 +502,6 @@ public class AccountController {
         Account account = accountService.findByPhoneOrEmial(code);
         if (account == null) {
             return new Message(Message.Type.EXIST) ;
-        }
-        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
         }
         if (!account.getPassword().equals(map.get("password").toString())) {
             return new Message(Message.Type.FAIL);
@@ -517,9 +514,9 @@ public class AccountController {
 
     /**
      * web端验证码登录
-     *
-     * @param session
-     * @return
+     * @param map 包含验证码verification,密码password
+     * @param session 此次交互的session
+     * @return message响应消息OK:登录成功,FIAL:信息不全或密码错误,EXIT:帐号不存在
      */
     @RequestMapping(value = "/web/loginByVerify", method = RequestMethod.POST)
     public
@@ -558,9 +555,8 @@ public class AccountController {
 
     /**
      * 判断输入的用户密码是否正确
-     *
-     * @param map
-     * @return
+     * @param map 包含密码password
+     * @return message响应消息OK:密码正确,FIAL:密码错误
      */
     @RequestMapping(value = "/checkPassword", method = RequestMethod.POST)
     public
@@ -612,8 +608,8 @@ public class AccountController {
 
     /**
      * 子账号解绑企业
-     * @param id
-     * @return
+     * @param id 企业或用户的id
+     * @return message响应消息OK:解帮成功,UNKNOWN:未知错误
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"})
@@ -625,7 +621,7 @@ public class AccountController {
 
     /**
      * 子账户对应user列表
-     * @return
+     * @return message,包含所有与该子帐号绑定的user列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"})
@@ -638,8 +634,8 @@ public class AccountController {
 
     /**
      * 更新accountMessage
-     *
-     * @return
+     * @param ids 需要更新的accountMessage的id字符串
+     * @return message响应消息OK:更新成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
@@ -668,8 +664,8 @@ public class AccountController {
 
     /**
      * 删除accountMessage
-     * @param ids
-     * @return
+     * @param ids 需要更新的accountMessage的id字符串
+     * @return message响应消息OK:更新成功,EXIST:消息不存在
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
@@ -684,9 +680,8 @@ public class AccountController {
         AccountMessage accountMessage;
         String[] split = ids.split(",");
         for (String id : split) {
-            try {
-                accountMessage = accountMessageService.find(Long.valueOf(id));
-            } catch (Exception e) {
+            accountMessage = accountMessageService.find(Long.valueOf(id));
+            if (accountMessage==null){
                 return new Message(Message.Type.EXIST);
             }
             accountMessageService.remove(accountMessage);
@@ -696,8 +691,8 @@ public class AccountController {
 
     /**
      * 修改name
-     * @param map
-     * @return
+     * @param map 包含子帐号名字name
+     * @return message响应消息OK:更新成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"})
@@ -718,6 +713,10 @@ public class AccountController {
         return message;
     }
 
+    /**
+     * 循环获取子帐号信息,包含AccountMessage
+     * @return
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"})
     @RequestMapping(value = "/polling", method = RequestMethod.GET)
