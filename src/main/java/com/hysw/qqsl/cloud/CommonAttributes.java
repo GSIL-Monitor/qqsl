@@ -64,10 +64,10 @@ public final class CommonAttributes {
      */
     public static final String REGION_CN_HANGZHOU = "cn-hangzhou";
     public static final String STS_API_VERSION = "2015-04-01";
-    public static final String ROLE_ACCESSKEY_ID = "G8dGVLK2LAwWWxX3";
-    public static final String ROLE_ACCESSKEY_SECRET = "nmha7GAObJE1tFzYpRbqEB5TYU1ScK";
-    public static final String ROLE_ARN = "acs:ram::30150706:role/liu";
-    public static final String ROLE_SESSION_NAME = "liu";
+    public static final String ROLE_ACCESSKEY_ID = "LTAI7XrcW7gIc4Pt";
+    public static final String ROLE_ACCESSKEY_SECRET = "3PZasIKsom4JUMaH1egzqXCTaywu5P";
+    public static final String ROLE_ARN = "acs:ram::30150706:role/aliyunosstokengeneratorrole";
+    public static final String ROLE_SESSION_NAME = "AliyunOSSTokenGeneratorUser";
 
     /**
      * openoffice服务
