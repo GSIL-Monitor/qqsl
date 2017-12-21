@@ -181,6 +181,7 @@ public class InterestService extends BaseService<Interest, Long> {
         Object level=map.get("level");
         Object pictures=map.get("pictures");
         Object status=map.get("status");
+        Object userId = map.get("userId");
 //        Object advice=map.get("advice");
 //        Object reviewDate=map.get("reviewDate");
         if (name == null || category == null || coordinate == null || region == null || business == null) {
@@ -212,6 +213,9 @@ public class InterestService extends BaseService<Interest, Long> {
             interest.setPictures(pictures.toString());
         }
         interest.setStatus(Review.valueOf(Integer.valueOf(status.toString())));
+        if (userId != null) {
+            interest.setUserId(Long.valueOf(userId.toString()));
+        }
         save(interest);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", interest.getId());

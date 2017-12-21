@@ -47,8 +47,6 @@ public class UserController {
     @Autowired
     private NoteService noteService;
     @Autowired
-    private ArticleService articleService;
-    @Autowired
     private UserMessageService userMessageService;
     @Autowired
     private ContactService contactService;
@@ -69,11 +67,10 @@ public class UserController {
 
     /**
      * 注册时发送手机验证码
-     * 参数：phone:手机号
-     * 返回：OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
-     * @param phone
-     * @param session
-     * @return
+     * @param  phone 手机号码
+     * @param session 此次交互的session
+     * @return message响应消息,短信是否发送成功
+     * @return OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
      */
     @RequestMapping(value = "/phone/getRegistVerify", method = RequestMethod.GET)
     public
@@ -84,9 +81,10 @@ public class UserController {
     }
 
     /**
-     * 修改密保手机发送验证码：/user/phone/getUpdateVerify
-     * 参数：phone:手机号
-     * 返回：OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
+     * 修改密保手机发送验证码
+     * @param phone 手机号
+     * @param session 此次交互的session
+     * @return OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
      */
     @RequestMapping(value = "/phone/getUpdateVerify", method = RequestMethod.GET)
     public
@@ -99,8 +97,9 @@ public class UserController {
 
     /**
      * 手机找回密码时发送验证码：/user/phone/getGetbackVerify
-     * 参数：phone:手机号
-     * 返回：OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
+     * @param phone 手机号
+     * @param session 此次交互的session
+     * @return OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/phone/getGetbackVerify", method = RequestMethod.GET)
     public
@@ -111,8 +110,10 @@ public class UserController {
     }
 
     /**
-     * web端登录发送验证码: /user/phone/getLoginVerify
-     *
+     * web端登录发送验证码
+     * @param code 手机号或邮箱
+     * @param session 此次交互的session
+     * @return OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/login/getLoginVerify", method = RequestMethod.GET)
     public
@@ -141,10 +142,9 @@ public class UserController {
 
     /**
      * 发送验证码
-     *
-     * @param phone
-     * @param session
-     * @return
+     * @param phone 手机号
+     * @param session 此次交互的session
+     * @return OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在/账号已存在
      */
     private Message sendVerify(String phone, HttpSession session,boolean flag){
         Message message = Message.parametersCheck(phone);
@@ -170,9 +170,9 @@ public class UserController {
 
     /**
      * email绑定时发送验证码
-     *
-     * @return
-     * OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
+     * @param email 邮箱
+     * @param session 此次交互的session
+     * @return OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
      */
     @RequestMapping(value = "/email/getBindVerify", method = RequestMethod.GET)
     public
@@ -196,9 +196,9 @@ public class UserController {
 
     /**
      * email找回密码时发送验证码
-     * @param email
-     * @param session
-     * @return
+     * @param email 邮箱
+     * @param session 此次交互的session
+     * @return OK：验证码发送成功,FAIL 参数验证失败,EXIST 邮箱不存在
      */
     @RequestMapping(value = "/email/getGetbackVerify", method = RequestMethod.GET)
     public
@@ -220,8 +220,8 @@ public class UserController {
 
     /**
      * 用户注册
-     *
      * @param objectMap
+     * @param session
      * @return
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -244,7 +244,7 @@ public class UserController {
 
     /**
      * 手机找回密码:忘记密码时找回密码
-     *
+     * @param map
      * @param session
      * @return
      */
@@ -282,7 +282,7 @@ public class UserController {
 
     /**
      * 邮箱找回密码:忘记密码时找回密码
-     *
+     * @param map
      * @param session
      * @return
      */
@@ -350,6 +350,7 @@ public class UserController {
     /**
      * 修改手机号码:在基本资料的修改手机号码处点击保存时调用
      * @param map
+     * @param session
      * @return
      */
     @RequiresAuthentication
@@ -381,6 +382,7 @@ public class UserController {
     /**
      * 绑定邮箱\修改绑定邮箱：在基本资料里的绑定邮箱处点击保存时调用
      * @param map
+     * @param session
      * @return
      */
     @RequiresAuthentication
@@ -411,7 +413,6 @@ public class UserController {
 
     /**
      * 获取用户信息：在基本资料的基本信息处显示
-     *
      * @return
      */
     @RequiresAuthentication
@@ -427,7 +428,6 @@ public class UserController {
 
     /**
      * 获取用户列表(除自身)
-     *
      * @return
      */
     @RequiresAuthentication
@@ -444,7 +444,6 @@ public class UserController {
 
     /**
      * 获取用户列表
-     *
      * @return
      */
     @RequiresAuthentication
@@ -460,9 +459,8 @@ public class UserController {
 
     /**
      * web端登录
-     *
      * @param objectMap
-     * @throws
+     * @return
      */
     @RequestMapping(value = "/web/login", method = RequestMethod.POST, produces = "application/json")
     public
@@ -521,9 +519,8 @@ public class UserController {
 
     /**
      * 移动端登录
-     *
      * @param objectMap
-     * @throws
+     * @return
      */
     @RequestMapping(value = "/phone/login", method = RequestMethod.POST, produces = "application/json")
     public
@@ -567,9 +564,8 @@ public class UserController {
 
     /**
      * 微信用户登录
-     *
      * @param objectMap
-     * @throws
+     * @return
      */
     @RequestMapping(value = "/wechat/login", method = RequestMethod.POST, produces = "application/json")
     public
@@ -611,7 +607,6 @@ public class UserController {
      * @param objectMap
      * @return
      */
-
     @RequestMapping(value = "/weChat/autoLogin", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
@@ -651,7 +646,7 @@ public class UserController {
 
     /**
      * web端验证码登录
-     *
+     * @param map
      * @param session
      * @return
      */
@@ -696,7 +691,6 @@ public class UserController {
 
     /**
      * 判断输入的用户密码是否正确
-     *
      * @param map
      * @return
      */
@@ -721,12 +715,6 @@ public class UserController {
 
 
 //    =============================================================================================
-
-
-
-
-
-
 
 
     /**
@@ -766,8 +754,7 @@ public class UserController {
 
 
     /**
-     * 登陆
-     *
+     *登陆
      * @param user
      * @return
      */
@@ -812,7 +799,7 @@ public class UserController {
 
     /**
      * 更新userMessage
-     *
+     * @param ids
      * @return
      */
     @RequiresAuthentication
@@ -889,6 +876,7 @@ public class UserController {
 
     /**
      * 企业账号邀请子账号
+     * @param map
      * @return
      */
     @PackageIsExpire
@@ -922,8 +910,8 @@ public class UserController {
 
     /**
      * 企业解绑子账号
-     * @param map
-     * @return
+     * @param map 子账号id
+     * @return fail参数验证失败 exist子账户不存在 unknown ok 解绑成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -951,7 +939,9 @@ public class UserController {
     /**
      * 用户获取当前套餐详情时,查看套餐剩余空间,每天文件上传下载的空间变化情况,以及下载流量的使用情况
      * 注:上传和下载流量最大是空间大小的10倍。
-     * @return
+     * @param begin 起始时间
+     * @param end 结束时间
+     * @return fail 参数验证失败 ok请求成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -968,6 +958,7 @@ public class UserController {
 
     /**
      * 用于存储日志查看(后期删除)
+     * @param id
      * @return
      */
     @RequestMapping(value = "/storageCountLogs/{id}", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
@@ -979,6 +970,10 @@ public class UserController {
         return new Message(Message.Type.OK,jsonArray);
     }
 
+    /**
+     * 轮询
+     * @return ok 轮询状态
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"})
     @RequestMapping(value = "/polling", method = RequestMethod.GET)
