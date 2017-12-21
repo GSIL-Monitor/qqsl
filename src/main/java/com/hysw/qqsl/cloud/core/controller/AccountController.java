@@ -7,7 +7,6 @@ import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.data.UserMessage;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -55,14 +54,14 @@ public class AccountController {
     @Autowired
     private PollingService pollingService;
 
-    Log logger = LogFactory.getLog(this.getClass());
+    private Log logger = LogFactory.getLog(this.getClass());
 
     /**
      * 发送验证码
-     *
-     * @param  phone
-     * @param session
-     * @return
+     * @param  phone 手机号
+     * @param session 会话控制
+     * @param flag 子账户是否存在
+     * @return FAIL 参数错误 EXIST 账号已存在 OK 成功
      */
     private Message sendVerify(String phone, HttpSession session,boolean flag){
         Message message = Message.parametersCheck(phone);
@@ -87,9 +86,9 @@ public class AccountController {
 
     /**
      * 注册时发送手机验证码
-     * @param phone
-     * @param session
-     * @return
+     * @param  phone 手机号
+     * @param session 会话控制
+     * @return FAIL 参数错误 EXIST 账号已存在 OK 成功
      */
     @RequestMapping(value = "/phone/getRegistVerify", method = RequestMethod.GET)
     public
@@ -101,9 +100,9 @@ public class AccountController {
 
     /**
      * 修改密保手机发送验证码
-     * @param phone
-     * @param session
-     * @return
+     * @param phone 手机号
+     * @param session 会话控制
+     * @return FAIL 参数错误 EXIST 账号已存在 OK 成功
      */
     @RequestMapping(value = "/phone/getUpdateVerify", method = RequestMethod.GET)
     public
@@ -115,8 +114,9 @@ public class AccountController {
 
     /**
      * 手机找回密码时发送验证码：
-     * 参数：phone:手机号
-     * 返回：OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
+     * @param phone:手机号
+     * @param session 会话控制
+     * @return OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/phone/getGetbackVerify", method = RequestMethod.GET)
     public
@@ -127,8 +127,10 @@ public class AccountController {
     }
 
     /**
-     * web端登录发送验证码:
-     *
+     * web端登录发送验证码
+     * @param code 手机号或邮箱
+     * @param session 会话控制
+     * @return
      */
     @RequestMapping(value = "/login/getLoginVerify", method = RequestMethod.GET)
     public
