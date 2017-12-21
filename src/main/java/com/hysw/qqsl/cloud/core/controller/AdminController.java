@@ -45,6 +45,8 @@ public class AdminController {
     private ProjectService projectService;
     @Autowired
     private AuthentService authentService;
+    @Autowired
+    private ArticleService articleService;
 
     /**
      * 缓存的刷新，包括info.xml;projectModel.xml;elementGroup.xml
@@ -305,5 +307,56 @@ public class AdminController {
 //        List<JSONObject> logJsons = logService.getLogJsonsByProject(id);
 //        return new Message(Message.Type.OK,logJsons);
 //    }
+
+
+    /**
+     * 发布文章
+     *
+     * @param map
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/publish", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Message publishAriticle(
+            @RequestBody Map<String, String> map) {
+        if (!StringUtils.hasText(map.get("type")) ||
+                !StringUtils.hasText(map.get("content")) ||
+                !StringUtils.hasText(map.get("title"))) {
+            return new Message(Message.Type.FAIL);
+        }
+        String idStr = "";
+        if (map.get("id") != null && !map.get("id").equals("null")) {
+            idStr = map.get("id").toString();
+        }
+        int index = Integer.valueOf(map.get("type").toString());
+        String content = map.get("content").toString();
+        String title = map.get("title").toString();
+        content = articleService.replacePath(content);
+        return articleService.save(idStr, title, content, index);
+    }
+
+    /**
+     * 删除文章
+     *
+     * @param id
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteArticle/{id}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    Message deletetArticle(@PathVariable("id") Long id) {
+        Message message = Message.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        articleService.removeById(id);
+        return new Message(Message.Type.OK);
+
+    }
 
 }
