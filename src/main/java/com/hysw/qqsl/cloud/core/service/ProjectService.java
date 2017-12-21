@@ -114,7 +114,7 @@ public class ProjectService extends BaseService<Project, Long> {
      *
      * @return
      */
-    public Message refreshCache() {
+    public Message refreshCache() throws Exception{
         Cache cache1 = cacheManager.getCache("authorization");
         cache1.removeAll();
         Cache cache2 = cacheManager.getCache("elementGroupCache");
