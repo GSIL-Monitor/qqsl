@@ -211,7 +211,7 @@ public class AccountController {
      * 子账号注册
      * @param objectMap 包含用户名name,密码password,验证码verification
      * @param session 此次交互的session
-     * @return message响应消息OK:注册成功,FIAL:信息不完整，OTHER:session过期,INVALID:验证码过期,NO_ALLOW:验证码错误,EXIST:帐号已存在
+     * @return message响应消息OK:注册成功,FIAL:信息不完整,INVALID:验证码过期,NO_ALLOW:验证码错误,EXIST:帐号已存在
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public
@@ -225,9 +225,6 @@ public class AccountController {
         Map<String, Object> map = (Map<String, Object>) message.getData();
         Verification verification = (Verification) session
                 .getAttribute("verification");
-        if (verification == null) {
-            return new Message(Message.Type.OTHER);
-        }
         String name,password,code;
         name = map.get("name").toString();
         password = map.get("password").toString();

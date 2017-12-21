@@ -594,8 +594,6 @@ public class UserService extends BaseService<User, Long> {
 						break;
 					}
 				}
-				accounts.get(i).setUsers(users);
-				accountService.save(account);
 				accounts.remove(i);
 				break;
 			}
