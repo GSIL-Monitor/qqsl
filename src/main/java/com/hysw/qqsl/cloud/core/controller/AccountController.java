@@ -712,7 +712,7 @@ public class AccountController {
 
     /**
      * 循环获取子帐号信息,包含AccountMessage
-     * @return
+     * @return message响应消息OK:轮询响应成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"})
