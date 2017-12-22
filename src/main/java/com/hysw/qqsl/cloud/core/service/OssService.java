@@ -53,7 +53,7 @@ public class OssService extends BaseService<Oss,Long>{
 			.split(","));
 	private List<String> extensiones = Arrays
 			.asList(CommonAttributes.OFFICE_FILE_EXTENSION.split(","));
-
+	private static OssService ossService = null;
 
 	@Autowired
 	public void setBaseDao(OssDao ossDao){
@@ -75,6 +75,17 @@ public class OssService extends BaseService<Oss,Long>{
 			logger.info("sts响应失败");
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * uediter上传图片需要的ossService实体
+	 * @return
+	 */
+	public static OssService getInstance(){
+		if(ossService == null){
+			ossService = new OssService();
+		}
+		return ossService;
 	}
 
 	/**
