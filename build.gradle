@@ -12,6 +12,28 @@ repositories {
     mavenCentral()
 }
 
+javadoc {
+    sourceSets {
+        main {
+            java {
+                srcDir 'src'
+                exclude '**/test/**'
+            }
+        }
+    }
+    options {
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        author true
+        version true
+        splitIndex false
+        noDeprecated false
+        setMemberLevel(JavadocMemberLevel.PUBLIC)
+        links "http://docs.oracle.com/javase/7/docs/api"
+    }
+    failOnError false
+}
+
 dependencies {
     def springVersion = "4.3.9.RELEASE"
     def hamcrestVersion="1.3"

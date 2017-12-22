@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.core.controller;
 
-import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Admin;
