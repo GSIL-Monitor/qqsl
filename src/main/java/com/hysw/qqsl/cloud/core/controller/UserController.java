@@ -5,9 +5,9 @@ import com.hysw.qqsl.cloud.core.entity.Polling;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
-import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
 import com.hysw.qqsl.cloud.core.service.EmailService;
+import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import com.hysw.qqsl.cloud.wechat.entity.data.WeChat;
 import com.hysw.qqsl.cloud.wechat.service.GetAccessTokenService;
@@ -756,6 +756,8 @@ public class UserController {
     /**
      *登陆
      * @param user
+     * @param loginType
+     * @param openId
      * @return
      */
     private Message subjectLogin(User user, String loginType, Object openId) {
@@ -799,8 +801,8 @@ public class UserController {
 
     /**
      * 更新userMessage
-     * @param ids
-     * @return
+     * @param ids 需要更新的userMessageId串，用,分割
+     * @return FAIL参数验证失败OK更新成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -829,8 +831,8 @@ public class UserController {
 
     /**
      * 删除userMessage
-     * @param ids
-     * @return
+     * @param ids 需要删除的userMessageId串，用,分割
+     * @return FAIL参数验证失败OK删除成功EXIST用户信息不存在
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -858,7 +860,7 @@ public class UserController {
 
     /**
      * 获取用户的所有通讯录列表
-     * @return
+     * @return 通讯录列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -876,8 +878,8 @@ public class UserController {
 
     /**
      * 企业账号邀请子账号
-     * @param map
-     * @return
+     * @param map phone 手机号
+     * @return FAIL参数验证错误UNKNOWN手机号格式错误NO_ALLOW不允许创建子账号OK成功
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -911,7 +913,7 @@ public class UserController {
     /**
      * 企业解绑子账号
      * @param map 子账号id
-     * @return fail参数验证失败 exist子账户不存在 unknown ok 解绑成功
+     * @return FAIL参数验证失败 EXIST子账户不存在 UNKNOWN企业下不包含此子账户 OK 解绑成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -941,7 +943,7 @@ public class UserController {
      * 注:上传和下载流量最大是空间大小的10倍。
      * @param begin 起始时间
      * @param end 结束时间
-     * @return fail 参数验证失败 ok请求成功
+     * @return FAIL 参数验证失败 OK请求成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -972,7 +974,7 @@ public class UserController {
 
     /**
      * 轮询
-     * @return ok 轮询状态
+     * @return OK 轮询状态
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"})
