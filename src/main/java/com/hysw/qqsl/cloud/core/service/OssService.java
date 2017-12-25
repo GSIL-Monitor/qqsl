@@ -281,7 +281,7 @@ public class OssService extends BaseService<Oss,Long>{
 		if (dir != null) {
 			listObjectsRequest.setPrefix(dir + "/");
 		}
-		ObjectListing listing = null;
+		ObjectListing listing;
 		listing = client.listObjects(listObjectsRequest);
 		return listing.getObjectSummaries();
 	}
@@ -304,6 +304,16 @@ public class OssService extends BaseService<Oss,Long>{
 		return listing.getCommonPrefixes();
 	}
 
+	/**
+	 * 判断object是否存在
+	 * @param bucketName
+	 * @param key
+	 * @return
+	 */
+	private boolean isFound(String bucketName,String key){
+		boolean found = client.doesObjectExist(bucketName, key);
+		return found;
+	}
 
 	/**
 	 * 获取文件的属性
@@ -446,6 +456,9 @@ public class OssService extends BaseService<Oss,Long>{
 	public String getObjectUrl(String key,String bucketName) {
 		Calendar now = Calendar.getInstance();
 		now.add(Calendar.MINUTE, 30);
+		if(!isFound(bucketName,key)){
+			return null;
+		}
 		return client.generatePresignedUrl(bucketName, key, now.getTime())
 				.toString();
 	}
@@ -600,4 +613,5 @@ public class OssService extends BaseService<Oss,Long>{
 		OSSObject ossObject = client.getObject(bucketName, key);
 		return ossObject.getObjectContent();
 	}
+
 }
