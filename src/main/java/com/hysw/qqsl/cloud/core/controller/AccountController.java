@@ -59,7 +59,6 @@ public class AccountController {
     /**
      * 发送验证码
      * @param  phone 手机号码
-     * @param session 此次交互的session
      * @return message响应消息,短信是否发送成功
      */
     private Message sendVerify(String phone, HttpSession session,boolean flag){
@@ -86,7 +85,6 @@ public class AccountController {
     /**
      * 注册时发送手机验证码
      * @param  phone 手机号码
-     * @param session 此次交互的session
      * @return message响应消息,短信是否发送成功
      */
     @RequestMapping(value = "/phone/getRegistVerify", method = RequestMethod.GET)
@@ -100,7 +98,6 @@ public class AccountController {
     /**
      * 修改密保手机发送验证码
      * @param  phone 手机号码
-     * @param session 此次交互的session
      * @return message响应消息,短信是否发送成功
      */
     @RequestMapping(value = "/phone/getUpdateVerify", method = RequestMethod.GET)
@@ -114,7 +111,6 @@ public class AccountController {
     /**
      * 手机找回密码时发送验证码：
      * @param phone 手机号码
-     * @param session  此次交互的session
      * @return message响应消息OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/phone/getGetbackVerify", method = RequestMethod.GET)
@@ -128,7 +124,6 @@ public class AccountController {
     /**
      * web端登录发送验证码:
      * @param code 登录凭证(手机号码或邮箱)
-     * @param session 此次交互的session
      * @return message响应消息OK:发送成功,FIAL:手机号或邮箱不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/login/getLoginVerify", method = RequestMethod.GET)
@@ -159,7 +154,6 @@ public class AccountController {
     /**
      * email绑定时发送验证码
      * @param email 要绑定的邮箱
-     * @param session 此次交互的session
      * @return message响应消息OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/email/getBindVerify", method = RequestMethod.GET)
@@ -185,7 +179,6 @@ public class AccountController {
     /**
      * email找回密码时发送验证码
      * @param email 绑定的邮箱
-     * @param session 此次交互的session
      * @return message响应消息OK:发送成功,FIAL:邮箱不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/email/getGetbackVerify", method = RequestMethod.GET)
@@ -208,8 +201,7 @@ public class AccountController {
 
     /**
      * 子账号注册
-     * @param objectMap 包含用户名name,密码password,验证码verification
-     * @param session 此次交互的session
+     * @param objectMap 包含用户名name,密码password
      * @return message响应消息OK:注册成功,FIAL:信息不完整,INVALID:验证码过期,NO_ALLOW:验证码错误,EXIST:帐号已存在
      */
     @SuppressWarnings("unchecked")
@@ -244,8 +236,7 @@ public class AccountController {
 
     /**
      * 手机找回密码:忘记密码时找回密码
-     * @param map 包含验证码verification,新密码password
-     * @param session 此次交互的session
+     * @param map 新密码password
      * @return message响应消息OK:注册成功,FIAL:信息不全或session过期,INVALID:验证码过期,NO_ALLOW:验证码错误
      */
     @RequestMapping(value = "/phone/getbackPassword", method = RequestMethod.POST)
@@ -276,8 +267,7 @@ public class AccountController {
 
     /**
      * 邮箱找回密码:忘记密码时找回密码
-     * @param map 包含验证码verification,新密码password
-     * @param session 此次交互的session
+     * @param map 新密码password
      * @return message响应消息OK:注册成功,FIAL:信息不全或session过期,INVALID:验证码过期,NO_ALLOW:验证码错误
      */
     @RequestMapping(value = "/email/getbackPassword", method = RequestMethod.POST)
@@ -337,8 +327,7 @@ public class AccountController {
 
     /**
      * 修改手机号码:在基本资料的修改手机号码处点击保存时调用
-     * @param map 包含验证码verification
-     * @param session 此次交互的session
+     * @param map verification 验证码
      * @return 修改完手机号码的子帐号信息
      */
     @RequiresAuthentication
@@ -370,8 +359,7 @@ public class AccountController {
 
     /**
      * 绑定邮箱\修改绑定邮箱：在基本资料里的绑定邮箱处点击保存时调用
-     * @param map 包含验证码verification
-     * @param session 此次交互的session
+     * @param map verification 验证码
      * @return 修改完邮箱的子帐号信息
      */
     @RequiresAuthentication
@@ -513,8 +501,7 @@ public class AccountController {
 
     /**
      * web端验证码登录
-     * @param map 包含验证码verification,密码password
-     * @param session 此次交互的session
+     * @param map verification验证码,密码password
      * @return message响应消息OK:登录成功,FIAL:信息不全或密码错误,EXIT:帐号不存在
      */
     @RequestMapping(value = "/web/loginByVerify", method = RequestMethod.POST)
