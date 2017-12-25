@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.core.controller;
 
-import Jama.Matrix;
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.core.entity.data.Build;
 import com.hysw.qqsl.cloud.core.entity.data.Coordinate;
@@ -46,15 +45,12 @@ public class FieldController {
     private BuildService buildService;
     @Autowired
     private CoordinateService coordinateService;
-    @Autowired
-    private TransFromService transFromService;
 
 
     /**
      * 坐标文件上传
-     *
-     * @param request
-     * @return
+     * @param request projectId项目Id，baseLevelType坐标转换基准面类型，WGS84Type-WGS84坐标格式
+     * @return FAIL参数验证失败，EXIST项目不存在或者中心点为空，OTHER已达到最大限制数量，OK上传成功
      */
     @PackageIsExpire(value = "request")
     @RequiresAuthentication
@@ -83,7 +79,7 @@ public class FieldController {
         } catch (Exception e) {
             return new Message(Message.Type.FAIL);
         }
-        if(message.getType()==Message.Type.NO_ALLOW){
+        if(message.getType()!=Message.Type.OK){
             return message;
         }
         if (project == null) {
@@ -111,8 +107,8 @@ public class FieldController {
 
     /**
      * 移动端外业保存
-     * @param objectMap
-     * @return
+     * @param objectMap <ol><li>projectId项目id</li>，userId用户id，name采集人，deviceMac手机mac，coordinates点集合（type点线面类型，center中心点[longitude经度,latitude纬度,elevation高程]，description描述，?delete删除标记，?attribes属性[code组级，alias别名，value值]，alias别名，?position定位点[longitude经度,latitude纬度,elevation高程]）</ol>?可以不传
+     * @return FAIL参数验证失败，OK保存成功
      */
     @PackageIsExpire
     @RequiresAuthentication
