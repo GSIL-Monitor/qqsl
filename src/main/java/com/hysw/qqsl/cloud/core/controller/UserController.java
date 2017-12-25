@@ -772,25 +772,28 @@ public class UserController {
         } catch (IncorrectCredentialsException e) {
             return new Message(Message.Type.FAIL);
         }
-        if (loginType.equals("web")) {
-            user.setLoginType("web");
-            logger.info(user.getUserName() + ",web端登陆成功");
-        } else if (loginType.equals("phone")) {
-            user.setLoginType("phone");
-            logger.info(user.getUserName() + ",移动端登陆成功");
-            subject.getSession().setTimeout(24 * 7 * 60 * 60 * 1000);
-        } else {
-            user.setLoginType("weChat");
-            logger.info(user.getUserName() + ",微信端登陆成功");
-            subject.getSession().setTimeout(24 * 7 * 60 * 60 * 1000);
-            WeChat weChat1 = weChatService.findByUserId(user.getId());
-            if (openId != null&&weChat1==null) {
-                WeChat weChat = new WeChat();
-                weChat.setUserId(user.getId());
-                weChat.setOpenId(openId.toString());
-                weChat.setNickName(getUserBaseMessage.getNickName(openId.toString()));
-                weChatService.save(weChat);
-            }
+        switch (loginType) {
+            case "web":
+                user.setLoginType("web");
+                logger.info(user.getUserName() + ",web端登陆成功");
+                break;
+            case "phone":
+                user.setLoginType("phone");
+                logger.info(user.getUserName() + ",移动端登陆成功");
+                subject.getSession().setTimeout(24 * 7 * 60 * 60 * 1000);
+                break;
+            case "weChat":
+                user.setLoginType("weChat");
+                logger.info(user.getUserName() + ",微信端登陆成功");
+                subject.getSession().setTimeout(24 * 7 * 60 * 60 * 1000);
+                WeChat weChat1 = weChatService.findByUserId(user.getId());
+                if (openId != null&&weChat1==null) {
+                    WeChat weChat = new WeChat();
+                    weChat.setUserId(user.getId());
+                    weChat.setOpenId(openId.toString());
+                    weChat.setNickName(getUserBaseMessage.getNickName(openId.toString()));
+                    weChatService.save(weChat);
+                }
         }
         user.setLoginDate(new Date());
         subject.getSession().setAttribute("token", subject.getPrincipals().getPrimaryPrincipal());
@@ -818,10 +821,10 @@ public class UserController {
         List<UserMessage> userMessages = userMessageService.findByUser(user);
         String[] split = ids.split(",");
         for (String id : split) {
-            for (int i = 0; i < userMessages.size(); i++) {
-                if (userMessages.get(i).getId().toString().equals(id)) {
-                    userMessages.get(i).setStatus(CommonEnum.MessageStatus.READED);
-                    userMessageService.save(userMessages.get(i));
+            for (UserMessage userMessage : userMessages) {
+                if (userMessage.getId().toString().equals(id)) {
+                    userMessage.setStatus(CommonEnum.MessageStatus.READED);
+                    userMessageService.save(userMessage);
                     break;
                 }
             }
@@ -868,8 +871,8 @@ public class UserController {
     public @ResponseBody Message getContacts(){
         User user = authentService.getUserFromSubject();
         List<Contact> contacts = contactService.findByUser(user);
-        for(int i=0;i<contacts.size();i++){
-            contacts.get(i).setUser(null);
+        for (Contact contact : contacts) {
+            contact.setUser(null);
         }
         return new Message(Message.Type.OK,contacts);
     }
@@ -960,8 +963,8 @@ public class UserController {
 
     /**
      * 用于存储日志查看(后期删除)
-     * @param id
-     * @return
+     * @param id 用户id
+     * @return 存储日志列表
      */
     @RequestMapping(value = "/storageCountLogs/{id}", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message getStorageCountLogs(@PathVariable("id") long id) {

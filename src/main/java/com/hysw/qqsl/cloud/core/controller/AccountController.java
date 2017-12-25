@@ -7,7 +7,6 @@ import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.data.UserMessage;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -55,7 +54,7 @@ public class AccountController {
     @Autowired
     private PollingService pollingService;
 
-    Log logger = LogFactory.getLog(this.getClass());
+    private Log logger = LogFactory.getLog(this.getClass());
 
     /**
      * 发送验证码
@@ -213,6 +212,7 @@ public class AccountController {
      * @param session 此次交互的session
      * @return message响应消息OK:注册成功,FIAL:信息不完整,INVALID:验证码过期,NO_ALLOW:验证码错误,EXIST:帐号已存在
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public
     @ResponseBody
@@ -421,6 +421,7 @@ public class AccountController {
      * @param objectMap 包含登录凭证code(手机号码或邮箱),密码password,cookie,如果cookie为空,需要验证码登录
      * @return message响应消息OK:登录成功,FIAL:信息不全或code不合法或密码错误,EXIT:帐号不存在,OTHER:需要验证登录
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/web/login", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
@@ -475,6 +476,7 @@ public class AccountController {
      * @param objectMap 包含登录凭证code(手机号码或邮箱),密码password
      * @return message响应消息OK:登录成功,FIAL:信息不全或code不合法或密码错误,EXIT:帐号不存在
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/phone/login", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
@@ -536,11 +538,11 @@ public class AccountController {
         if (map.get("verification") == null) {
             return new Message(Message.Type.FAIL);
         }
-        String verifyCode = map.get("verification").toString();
-        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+        String verifyCode = map.get("verification");
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password"))) {
             return new Message(Message.Type.FAIL);
         }
-        if (!account.getPassword().equals(map.get("password").toString())) {
+        if (!account.getPassword().equals(map.get("password"))) {
             return new Message(Message.Type.FAIL);
         }
         message = userService.checkCode(verifyCode,verification);
@@ -564,7 +566,7 @@ public class AccountController {
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
-        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password"))) {
             return new Message(Message.Type.FAIL);
         }
         Account account = authentService.getAccountFromSubject();
@@ -648,10 +650,10 @@ public class AccountController {
         List<AccountMessage> accountMessages = accountMessageService.findByAccount(account);
         String[] split = ids.split(",");
         for (String id : split) {
-            for (int i = 0; i < accountMessages.size(); i++) {
-                if (accountMessages.get(i).getId().toString().equals(id)) {
-                    accountMessages.get(i).setStatus(CommonEnum.MessageStatus.READED);
-                    accountMessageService.save(accountMessages.get(i));
+            for (AccountMessage accountMessage : accountMessages) {
+                if (accountMessage.getId().toString().equals(id)) {
+                    accountMessage.setStatus(CommonEnum.MessageStatus.READED);
+                    accountMessageService.save(accountMessage);
                     break;
                 }
             }
