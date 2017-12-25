@@ -107,7 +107,7 @@ public class FieldController {
 
     /**
      * 移动端外业保存
-     * @param objectMap <ol><li>projectId项目id</li>，userId用户id，name采集人，deviceMac手机mac，coordinates点集合（type点线面类型，center中心点[longitude经度,latitude纬度,elevation高程]，description描述，?delete删除标记，?attribes属性[code组级，alias别名，value值]，alias别名，?position定位点[longitude经度,latitude纬度,elevation高程]）</ol>?可以不传
+     * @param objectMap <ol><li>projectId项目id</li>，<li>userId用户id</li>，<li>name采集人</li>，<li>deviceMac手机mac</li>，<li>coordinates点集合（type点线面类型，center中心点[longitude经度,latitude纬度,elevation高程]，description描述，?delete删除标记，?attribes属性[code组级，alias别名，value值]，alias别名，?position定位点[longitude经度,latitude纬度,elevation高程]）</li></ol>?可以不传
      * @return FAIL参数验证失败，OK保存成功
      */
     @PackageIsExpire
@@ -125,9 +125,9 @@ public class FieldController {
 
     /**
      * 返回外业线面数据
-     * @param id
-     * @param type
-     * @return
+     * @param id 项目id
+     * @param type 来源 DESIGN设计，FIELD外业
+     * @return FAIL参数验证失败，EXIST项目不存在，OK成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -156,8 +156,9 @@ public class FieldController {
 //        return new Message(Message.Type.OK);
 //    }
 
-    /** 获取建筑物json数据
-     * @return
+    /**
+     * 获取建筑物json数据
+     * @return 建筑物列表
      */
     @RequestMapping(value = "/getSimpleBuildJsons", method = RequestMethod.GET)
     public @ResponseBody Message getSimpleBuildJsons(){
@@ -166,7 +167,7 @@ public class FieldController {
     }
     /**
      * 获取带有属性的建筑物结构（地质属性除外）
-     * @return
+     * @return 地质属性以外的建筑物列表
      */
     @RequestMapping(value = "/getBuildJsons", method = RequestMethod.GET)
     public @ResponseBody Message getBuildJsons(){
@@ -176,7 +177,7 @@ public class FieldController {
 
     /**
      * 获取地质属性的json结构
-     * @return
+     * @return 地质属性列表
      */
     @RequestMapping(value = "/getGeologyJson", method = RequestMethod.GET)
 //    @RequiresRoles(value = {"web"},logical = Logical.OR)
@@ -185,16 +186,13 @@ public class FieldController {
         return new Message(Message.Type.OK,jsonObject);
     }
 
-
     /**
      * 将外业内业坐标数据及建筑物写入excel
-     *
-     * @param baseLevelType
-     * @param projectId
-     * @param WGS84Type
-     * @param response
-     * @param type
-     * @return
+     * @param projectId 项目id
+     * @param type 来源 DESIGN设计，FIELD外业
+     * @param baseLevelType 坐标转换基准面类型
+     * @param WGS84Type WGS84坐标格式
+     * @return excel格式数据
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
@@ -256,8 +254,8 @@ public class FieldController {
 
     /**
      * 获取建筑物
-     * @param id
-     * @return
+     * @param id 建筑物id
+     * @return 建筑物对象
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -277,8 +275,8 @@ public class FieldController {
 
     /**
      * 新建建筑物
-     * @param objectMap
-     * @return
+     * @param objectMap <ol><li>type建筑物类型</li><li>centerCoor中心坐标</li><li>remark注释</li><li>projectId项目id</li></ol>
+     * @return FAIL参数验证失败，OK新建成功
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -294,8 +292,8 @@ public class FieldController {
 
     /**
      * 编辑建筑物
-     * @param objectMap
-     * @return
+     * @param objectMap <ol><li>id建筑物id</li><li>remark注释（可不传）</li><li>type建筑物类型（可不传）</li><li>attribes属性集<ol><li>alias别名</li><li>value值</li></ol></li></ol>
+     * @return FAIL参数验证失败，OK编辑成功，EXIST建筑物不存在
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -311,8 +309,8 @@ public class FieldController {
 
     /**
      * 删除建筑物
-     * @param id
-     * @return
+     * @param id 建筑物id
+     * @return FAIL参数验证失败，EXIST建筑物不存在，OK删除成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -333,9 +331,10 @@ public class FieldController {
 
     /**
      * 删除坐标线面上的某点(编辑线面)
-     * @param objectMap
-     * @return
+     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
+     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
      */
+    @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editShape", method = RequestMethod.POST)
@@ -379,8 +378,8 @@ public class FieldController {
 
     /**
      * 删除坐标线面
-     * @param id
-     * @return
+     * @param id 线面id
+     * @return FAIL参数验证失败，OK删除成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -402,8 +401,8 @@ public class FieldController {
 
     /**
      * 新建坐标线面
-     * @param objectMap
-     * @return
+     * @param objectMap <ol><li>line线面对象</li><li>projectId项目id</li><li>description描述</li></ol>
+     * @return FAIL参数验证失败，OTHER坐标格式错误，OK渐渐成功
      */
     @PackageIsExpire
     @RequiresAuthentication
