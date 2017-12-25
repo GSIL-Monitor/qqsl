@@ -39,8 +39,7 @@ public class AuthentController {
 
     /**
      * 拒绝访问
-     *
-     * @return
+     * @return message消息体,NO_AUTHORIZE:没有访问权限
      */
     @RequestMapping(value = "/refuse", method = {RequestMethod.GET, RequestMethod.POST})
     public
@@ -51,8 +50,7 @@ public class AuthentController {
 
     /**
      * session失效
-     *
-     * @return
+     * @return message消息体,NO_SESSION:session过期或失效
      */
     @RequestMapping(value = "/session", method = {RequestMethod.GET, RequestMethod.POST})
     public
@@ -62,6 +60,10 @@ public class AuthentController {
     }
 
 
+    /**
+     * 对当前访问对象构建相应的角色,权限信息
+     * @return JSONObject对象,包含角色role以及授权信息
+     */
     @RequiresAuthentication
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST, produces = "application/json")
     public
@@ -87,8 +89,7 @@ public class AuthentController {
 
     /**
      * 用户注销
-     *
-     * @return
+     * @return message消息体,OK:注销成功
      */
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public
@@ -103,7 +104,7 @@ public class AuthentController {
 
     /**
      * 移动端获取版本号
-     * @return
+     * @return message消息体,OK:获取成功,包含移动端版本号
      */
     @RequestMapping(value = "/mobile/version", method = RequestMethod.GET)
     public
@@ -114,8 +115,8 @@ public class AuthentController {
 
     /**
      * 更新移动端版本号
-     * @param map
-     * @return
+     * @param map map包含要提交的移动端版本号
+     * @return message消息体,FIAL:更新失败,OK:更新成功
      */
     @RequestMapping(value = "/mobile11/version", method = RequestMethod.POST)
     public
