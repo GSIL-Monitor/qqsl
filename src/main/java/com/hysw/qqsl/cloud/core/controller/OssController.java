@@ -88,7 +88,7 @@ public class OssController {
 	 * @return
 	 */
 	@RequiresAuthentication
-	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequiresRoles(value = {"user:simple","account:simple","admin:simple"}, logical = Logical.OR)
 	@RequestMapping(value = "/sts", method = RequestMethod.GET)
 	public @ResponseBody Message getSts() {
 		String sts = ossService.getStsToken();

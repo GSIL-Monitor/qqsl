@@ -117,7 +117,7 @@ public class AuthentController {
      * @param map
      * @return
      */
-    @RequestMapping(value = "/mobile/version", method = RequestMethod.POST)
+    @RequestMapping(value = "/mobile11/version", method = RequestMethod.POST)
     public
     @ResponseBody
     Message updateVersion(@RequestBody Map<String, Object> map) {
