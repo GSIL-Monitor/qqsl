@@ -6,7 +6,20 @@ package com.hysw.qqsl.cloud;
 public class CommonEnum {
 
     /**
-     * Created by leinuo on 17-4-6.
+     * 审核枚举
+     */
+    public enum Review {
+        //　待审核，未通过，通过
+        PENDING, NOTPASS, PASS;
+        public static Review valueOf(int ordinal) {
+            if (ordinal < 0 || ordinal >= values().length) {
+                throw new IndexOutOfBoundsException("Invalid ordinal");
+            }
+            return values()[ordinal];
+        }
+    }
+
+    /**
      * 属性组与属性的状态枚举
      */
     public enum Status {

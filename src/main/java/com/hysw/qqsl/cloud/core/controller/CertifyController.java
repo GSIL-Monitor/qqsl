@@ -5,7 +5,6 @@ import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
 import com.hysw.qqsl.cloud.core.service.CertifyCache;
 import com.hysw.qqsl.cloud.core.service.CertifyService;
-import com.hysw.qqsl.cloud.core.service.UserService;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -19,7 +18,7 @@ import java.util.Map;
  * 权限认证控制层
  *
  * @author chenl
- * @create 2017-08-29 上午10:59
+ * @since  2017-08-29 上午10:59
  */
 @Controller
 @RequestMapping("/certify")
@@ -33,7 +32,7 @@ public class CertifyController {
 
     /**
      * 获取实名认证信息
-     * @return
+     * @return 实名认证对象
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -45,7 +44,7 @@ public class CertifyController {
 
     /**
      * 获取企业认证信息
-     * @return
+     * @return 企业认证对象
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -57,8 +56,8 @@ public class CertifyController {
 
     /**
      * 身份证实名认证
-     * @param objectMap
-     * @return
+     * @param objectMap name姓名，identityId身份证号
+     * @return FAIL参数验证失败，EXIST认证已通过，不可更改，OK提交成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -75,8 +74,8 @@ public class CertifyController {
 
     /**
      * 企业实名认证
-     * @param objectMap
-     * @return
+     * @param objectMap legal法人姓名，companyName企业名称，companyAddress企业地址，companyPhone企业电话，companyLicence社会统一编码
+     * @return FAIL参数验证失败，EXIST认证已通过，不可更改，OK提交成功，NO_ALLOW个人认证未通过不能进行企业认证
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -93,7 +92,7 @@ public class CertifyController {
 
     /**
      * 获取所有认证信息
-     * @return
+     * @return 认证信息列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -104,8 +103,8 @@ public class CertifyController {
 
     /**
      * 获取用户认证信息
-     *
-     * @return
+     * @param id 认证id
+     * @return 认证对象
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -126,7 +125,7 @@ public class CertifyController {
 
     /**
      * 手动调用认证流程
-     * @return
+     * @return OK认证完毕
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)

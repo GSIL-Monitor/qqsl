@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
-import com.hysw.qqsl.cloud.core.entity.Review;
+import com.hysw.qqsl.cloud.CommonEnum;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
@@ -30,7 +30,7 @@ public class Panorama extends  BaseEntity {
     /** 行政区 */
     private String region;
     /** 审核状态 */
-    private Review status;
+    private CommonEnum.Review status;
     /** 审核意见 */
     private String advice;
     /** 审核时间 */
@@ -68,11 +68,11 @@ public class Panorama extends  BaseEntity {
         this.region = region;
     }
 
-    public Review getStatus() {
+    public CommonEnum.Review getStatus() {
         return status;
     }
 
-    public void setStatus(Review status) {
+    public void setStatus(CommonEnum.Review status) {
         this.status = status;
     }
 

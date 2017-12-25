@@ -1,12 +1,12 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.InterestDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Interest;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.Review;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -97,7 +97,7 @@ public class InterestService extends BaseService<Interest, Long> {
      */
     public List<Interest> findAllPass(Long userId){
         List<Filter> filters1 = new ArrayList<>();
-        filters1.add(Filter.eq("status", Review.PASS));
+        filters1.add(Filter.eq("status", CommonEnum.Review.PASS));
         List<Interest> interests;
         if (userId == null) {
             interests = interestDao.findList(0, null, filters1);
@@ -163,7 +163,7 @@ public class InterestService extends BaseService<Interest, Long> {
      */
     public List<Interest> findAllPending() {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("status", Review.PENDING));
+        filters.add(Filter.eq("status", CommonEnum.Review.PENDING));
         List<Interest> interests = interestDao.findList(0, null, filters);
         return interests;
     }
@@ -212,7 +212,7 @@ public class InterestService extends BaseService<Interest, Long> {
         if (pictures != null) {
             interest.setPictures(pictures.toString());
         }
-        interest.setStatus(Review.valueOf(Integer.valueOf(status.toString())));
+        interest.setStatus(CommonEnum.Review.valueOf(Integer.valueOf(status.toString())));
         if (userId != null) {
             interest.setUserId(Long.valueOf(userId.toString()));
         }

@@ -5,9 +5,9 @@ import com.hysw.qqsl.cloud.core.entity.Polling;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
-import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
 import com.hysw.qqsl.cloud.core.service.EmailService;
+import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import com.hysw.qqsl.cloud.wechat.entity.data.WeChat;
 import com.hysw.qqsl.cloud.wechat.service.GetAccessTokenService;
@@ -68,8 +68,6 @@ public class UserController {
     /**
      * 注册时发送手机验证码
      * @param  phone 手机号码
-     * @param session 此次交互的session
-     * @return message响应消息,短信是否发送成功
      * @return OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
      */
     @RequestMapping(value = "/phone/getRegistVerify", method = RequestMethod.GET)
@@ -83,7 +81,6 @@ public class UserController {
     /**
      * 修改密保手机发送验证码
      * @param phone 手机号
-     * @param session 此次交互的session
      * @return OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
      */
     @RequestMapping(value = "/phone/getUpdateVerify", method = RequestMethod.GET)
@@ -98,7 +95,6 @@ public class UserController {
     /**
      * 手机找回密码时发送验证码：/user/phone/getGetbackVerify
      * @param phone 手机号
-     * @param session 此次交互的session
      * @return OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/phone/getGetbackVerify", method = RequestMethod.GET)
@@ -112,7 +108,6 @@ public class UserController {
     /**
      * web端登录发送验证码
      * @param code 手机号或邮箱
-     * @param session 此次交互的session
      * @return OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在
      */
     @RequestMapping(value = "/login/getLoginVerify", method = RequestMethod.GET)
@@ -143,7 +138,6 @@ public class UserController {
     /**
      * 发送验证码
      * @param phone 手机号
-     * @param session 此次交互的session
      * @return OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在/账号已存在
      */
     private Message sendVerify(String phone, HttpSession session,boolean flag){
@@ -171,7 +165,6 @@ public class UserController {
     /**
      * email绑定时发送验证码
      * @param email 邮箱
-     * @param session 此次交互的session
      * @return OK:发送成功,FIAL:手机号不合法，EXIST：手机号已被使用
      */
     @RequestMapping(value = "/email/getBindVerify", method = RequestMethod.GET)
@@ -197,7 +190,6 @@ public class UserController {
     /**
      * email找回密码时发送验证码
      * @param email 邮箱
-     * @param session 此次交互的session
      * @return OK：验证码发送成功,FAIL 参数验证失败,EXIST 邮箱不存在
      */
     @RequestMapping(value = "/email/getGetbackVerify", method = RequestMethod.GET)
@@ -220,10 +212,10 @@ public class UserController {
 
     /**
      * 用户注册
-     * @param objectMap
-     * @param session
-     * @return
+     * @param objectMap verification验证码，userName用户名，password密码
+     * @return FAIL参数验证失败，INVALID验证码失效，NO_ALLOW验证码错误，OK注册成功
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public
     @ResponseBody
@@ -236,17 +228,13 @@ public class UserController {
         Map<String, Object> map = (Map<String, Object>) message.getData();
         Verification verification = (Verification) session
                 .getAttribute("verification");
-        if (verification == null) {
-            return new Message(Message.Type.OTHER);
-        }
         return userService.registerService(map, verification);
     }
 
     /**
      * 手机找回密码:忘记密码时找回密码
-     * @param map
-     * @param session
-     * @return
+     * @param map verification验证码，password密码
+     * @return FAIL参数验证失败，INVALID验证码失效，EXIST用户不存在，NO_ALLOW验证码错误，OK密码修改成功
      */
     @RequestMapping(value = "/phone/getbackPassword", method = RequestMethod.POST)
     public
@@ -258,7 +246,7 @@ public class UserController {
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.OTHER);
+            return new Message(Message.Type.INVALID);
         }
         User user = userService.findByPhone(verification.getPhone());
         if (user == null) {
@@ -282,9 +270,8 @@ public class UserController {
 
     /**
      * 邮箱找回密码:忘记密码时找回密码
-     * @param map
-     * @param session
-     * @return
+     * @param map verification验证码，password密码
+     * @return FAIL参数验证失败，INVALID验证码失效，EXIST用户不存在，NO_ALLOW验证码错误，OK密码修改成功
      */
     @RequestMapping(value = "/email/getbackPassword", method = RequestMethod.POST)
     public
@@ -296,7 +283,7 @@ public class UserController {
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.OTHER);
+            return new Message(Message.Type.INVALID);
         }
         User user = userService.findByEmail(verification.getEmail());
         if (user == null) {
@@ -320,8 +307,8 @@ public class UserController {
 
     /**
      * 修改密码:在基本资料的修改密码处点击保存时调用
-     * @param map
-     * @return
+     * @param map oldPassword原密码，newPassword新密码
+     * @return FAIL参数验证失败，UNKNOWN原密码错误，OTHER加密后的密码位数错误，OK修改成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -349,9 +336,8 @@ public class UserController {
 
     /**
      * 修改手机号码:在基本资料的修改手机号码处点击保存时调用
-     * @param map
-     * @param session
-     * @return
+     * @param map  verification验证码
+     * @return FAIL参数验证失败，INVALID验证码失效，NO_ALLOW验证码错误，OK绑定/修改成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -362,9 +348,6 @@ public class UserController {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
-        if (verification == null) {
-            return new Message(Message.Type.OTHER);
-        }
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return new Message(Message.Type.FAIL);
         }
@@ -381,9 +364,8 @@ public class UserController {
 
     /**
      * 绑定邮箱\修改绑定邮箱：在基本资料里的绑定邮箱处点击保存时调用
-     * @param map
-     * @param session
-     * @return
+     * @param map verification验证码
+     * @return FAIL参数验证失败，INVALID验证码失效，NO_ALLOW验证码错误，OK绑定/修改成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -394,9 +376,6 @@ public class UserController {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
-        if (verification == null) {
-            return new Message(Message.Type.OTHER);
-        }
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return new Message(Message.Type.FAIL);
         }
@@ -413,7 +392,7 @@ public class UserController {
 
     /**
      * 获取用户信息：在基本资料的基本信息处显示
-     * @return
+     * @return 用户对象
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -428,7 +407,7 @@ public class UserController {
 
     /**
      * 获取用户列表(除自身)
-     * @return
+     * @return 用户对象列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -444,7 +423,7 @@ public class UserController {
 
     /**
      * 获取用户列表
-     * @return
+     * @return 用户对象列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -459,9 +438,10 @@ public class UserController {
 
     /**
      * web端登录
-     * @param objectMap
-     * @return
+     * @param objectMap code 手机号或邮箱 password加密后密码 cookie
+     * @return 用户对象
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/web/login", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
@@ -519,9 +499,10 @@ public class UserController {
 
     /**
      * 移动端登录
-     * @param objectMap
-     * @return
+     * @param objectMap code 手机号或邮箱 password加密后密码
+     * @return 用户对象
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/phone/login", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
@@ -564,9 +545,10 @@ public class UserController {
 
     /**
      * 微信用户登录
-     * @param objectMap
-     * @return
+     * @param objectMap code 手机号或邮箱 password加密后密码
+     * @return 用户对象
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/wechat/login", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
@@ -604,9 +586,10 @@ public class UserController {
 
     /**
      * 根据openid自动登录
-     * @param objectMap
-     * @return
+     * @param objectMap code 获取openId的加密串
+     * @return 用户对象
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/weChat/autoLogin", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
@@ -646,9 +629,8 @@ public class UserController {
 
     /**
      * web端验证码登录
-     * @param map
-     * @param session
-     * @return
+     * @param map password加密后密码
+     * @return 用户对象
      */
     @RequestMapping(value = "/web/loginByVerify", method = RequestMethod.POST)
     public
@@ -671,15 +653,15 @@ public class UserController {
         if (map.get("verification") == null) {
             return new Message(Message.Type.FAIL);
         }
-        String verifyCode = map.get("verification").toString();
+        String verifyCode = map.get("verification");
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
             return new Message(Message.Type.UNKNOWN);
         }
-        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password"))) {
             return new Message(Message.Type.FAIL);
         }
-        if (!user.getPassword().equals(map.get("password").toString())) {
+        if (!user.getPassword().equals(map.get("password"))) {
             return new Message(Message.Type.FAIL);
         }
         message = userService.checkCode(verifyCode,verification);
@@ -691,8 +673,8 @@ public class UserController {
 
     /**
      * 判断输入的用户密码是否正确
-     * @param map
-     * @return
+     * @param map password MD5加密后密码
+     * @return FAIL参数验证失败，OK密码正确
      */
     @RequestMapping(value = "/checkPassword", method = RequestMethod.POST)
     public
@@ -703,7 +685,7 @@ public class UserController {
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
-        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password"))) {
             return new Message(Message.Type.FAIL);
         }
         User user = authentService.getUserFromSubject();
@@ -719,7 +701,7 @@ public class UserController {
 
     /**
      * 公众号与水利云账号是否绑定
-     * @return
+     * @return OK已绑定，EXIST未绑定微信用户，FAIL参数验证失败
      */
     @RequestMapping(value = "/bindingRelationship", method = RequestMethod.GET)
     public @ResponseBody Message bindingRelationship() {
@@ -736,7 +718,7 @@ public class UserController {
 
     /**
      * 解除公众号与水利云账号的绑定
-     * @return
+     * @return OK解绑成功，EXIST未绑定微信用户，FAIL参数验证失败
      */
     @RequestMapping(value = "/unbind", method = RequestMethod.POST)
     public @ResponseBody Message unbind() {
@@ -755,8 +737,10 @@ public class UserController {
 
     /**
      *登陆
-     * @param user
-     * @return
+     * @param user 用户
+     * @param loginType 登陆方式
+     * @param openId 微信id
+     * @return 用户对象
      */
     private Message subjectLogin(User user, String loginType, Object openId) {
         ShiroToken token = new ShiroToken();
@@ -770,25 +754,28 @@ public class UserController {
         } catch (IncorrectCredentialsException e) {
             return new Message(Message.Type.FAIL);
         }
-        if (loginType.equals("web")) {
-            user.setLoginType("web");
-            logger.info(user.getUserName() + ",web端登陆成功");
-        } else if (loginType.equals("phone")) {
-            user.setLoginType("phone");
-            logger.info(user.getUserName() + ",移动端登陆成功");
-            subject.getSession().setTimeout(24 * 7 * 60 * 60 * 1000);
-        } else {
-            user.setLoginType("weChat");
-            logger.info(user.getUserName() + ",微信端登陆成功");
-            subject.getSession().setTimeout(24 * 7 * 60 * 60 * 1000);
-            WeChat weChat1 = weChatService.findByUserId(user.getId());
-            if (openId != null&&weChat1==null) {
-                WeChat weChat = new WeChat();
-                weChat.setUserId(user.getId());
-                weChat.setOpenId(openId.toString());
-                weChat.setNickName(getUserBaseMessage.getNickName(openId.toString()));
-                weChatService.save(weChat);
-            }
+        switch (loginType) {
+            case "web":
+                user.setLoginType("web");
+                logger.info(user.getUserName() + ",web端登陆成功");
+                break;
+            case "phone":
+                user.setLoginType("phone");
+                logger.info(user.getUserName() + ",移动端登陆成功");
+                subject.getSession().setTimeout(24 * 7 * 60 * 60 * 1000);
+                break;
+            case "weChat":
+                user.setLoginType("weChat");
+                logger.info(user.getUserName() + ",微信端登陆成功");
+                subject.getSession().setTimeout(24 * 7 * 60 * 60 * 1000);
+                WeChat weChat1 = weChatService.findByUserId(user.getId());
+                if (openId != null&&weChat1==null) {
+                    WeChat weChat = new WeChat();
+                    weChat.setUserId(user.getId());
+                    weChat.setOpenId(openId.toString());
+                    weChat.setNickName(getUserBaseMessage.getNickName(openId.toString()));
+                    weChatService.save(weChat);
+                }
         }
         user.setLoginDate(new Date());
         subject.getSession().setAttribute("token", subject.getPrincipals().getPrimaryPrincipal());
@@ -799,8 +786,8 @@ public class UserController {
 
     /**
      * 更新userMessage
-     * @param ids
-     * @return
+     * @param ids 需要更新的userMessageId串，用,分割
+     * @return FAIL参数验证失败OK更新成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -816,10 +803,10 @@ public class UserController {
         List<UserMessage> userMessages = userMessageService.findByUser(user);
         String[] split = ids.split(",");
         for (String id : split) {
-            for (int i = 0; i < userMessages.size(); i++) {
-                if (userMessages.get(i).getId().toString().equals(id)) {
-                    userMessages.get(i).setStatus(CommonEnum.MessageStatus.READED);
-                    userMessageService.save(userMessages.get(i));
+            for (UserMessage userMessage : userMessages) {
+                if (userMessage.getId().toString().equals(id)) {
+                    userMessage.setStatus(CommonEnum.MessageStatus.READED);
+                    userMessageService.save(userMessage);
                     break;
                 }
             }
@@ -829,8 +816,8 @@ public class UserController {
 
     /**
      * 删除userMessage
-     * @param ids
-     * @return
+     * @param ids 需要删除的userMessageId串，用,分割
+     * @return FAIL参数验证失败OK删除成功EXIST用户信息不存在
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -858,7 +845,7 @@ public class UserController {
 
     /**
      * 获取用户的所有通讯录列表
-     * @return
+     * @return 通讯录列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -866,8 +853,8 @@ public class UserController {
     public @ResponseBody Message getContacts(){
         User user = authentService.getUserFromSubject();
         List<Contact> contacts = contactService.findByUser(user);
-        for(int i=0;i<contacts.size();i++){
-            contacts.get(i).setUser(null);
+        for (Contact contact : contacts) {
+            contact.setUser(null);
         }
         return new Message(Message.Type.OK,contacts);
     }
@@ -876,8 +863,8 @@ public class UserController {
 
     /**
      * 企业账号邀请子账号
-     * @param map
-     * @return
+     * @param map phone 手机号
+     * @return FAIL参数验证错误UNKNOWN手机号格式错误NO_ALLOW不允许创建子账号OK成功
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -911,7 +898,7 @@ public class UserController {
     /**
      * 企业解绑子账号
      * @param map 子账号id
-     * @return fail参数验证失败 exist子账户不存在 unknown ok 解绑成功
+     * @return FAIL参数验证失败 EXIST子账户不存在 UNKNOWN企业下不包含此子账户 OK 解绑成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -941,7 +928,7 @@ public class UserController {
      * 注:上传和下载流量最大是空间大小的10倍。
      * @param begin 起始时间
      * @param end 结束时间
-     * @return fail 参数验证失败 ok请求成功
+     * @return FAIL 参数验证失败 OK请求成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -958,8 +945,8 @@ public class UserController {
 
     /**
      * 用于存储日志查看(后期删除)
-     * @param id
-     * @return
+     * @param id 用户id
+     * @return 存储日志列表
      */
     @RequestMapping(value = "/storageCountLogs/{id}", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message getStorageCountLogs(@PathVariable("id") long id) {
@@ -972,7 +959,7 @@ public class UserController {
 
     /**
      * 轮询
-     * @return ok 轮询状态
+     * @return OK 轮询状态
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"})
