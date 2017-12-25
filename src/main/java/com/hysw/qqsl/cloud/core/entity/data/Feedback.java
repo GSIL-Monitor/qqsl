@@ -7,9 +7,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 问题建议-反馈实体类
+ * 反馈实体类
  *
- * @since 2017年12月25日
+ * @since 10.0，2017-12-25
  * @author 雪庭(flysic) qq: 119238122 github: https://github.com/flysic
  */
 @Entity
@@ -28,8 +28,8 @@ public class Feedback extends BaseEntity {
     private String review;
     /** 管理员回复时间 */
     private Date reviewDate;
-    /** 审核状态 */
-    private CommonEnum.Review status;
+    /** 反馈状态 */
+    private CommonEnum.FeedbackStatus status;
     /** 用户id */
     private long userId;
     /** 子账号id */
@@ -89,11 +89,11 @@ public class Feedback extends BaseEntity {
         this.reviewDate = reviewDate;
     }
 
-    public CommonEnum.Review getStatus() {
+    public CommonEnum.FeedbackStatus getStatus() {
         return status;
     }
 
-    public void setStatus(CommonEnum.Review status) {
+    public void setStatus(CommonEnum.FeedbackStatus status) {
         this.status = status;
     }
 
