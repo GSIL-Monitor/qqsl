@@ -50,6 +50,9 @@ public class ElementGroupController {
 
     /**
      * 保存单元下的复合单元列表
+     * @param object 包含单元别名alias,项目标识projectId,以及所要保存的单元下的复合要素elementGroup,
+     *               该单元有通讯录是还包含contact信息
+     * @return message消息体,OK:保存成功 NO_AUTHORIZE:当前对象没有对当前单元下的要素编辑权限
      */
     @PackageIsExpire
     @SuppressWarnings("unchecked")
@@ -71,10 +74,6 @@ public class ElementGroupController {
                 .get("elementGroup");
         Account account = authentService.getAccountFromSubject();
         //判断是否有要素编辑权限
-       /* boolean flagUser =elementService.authorityJudge(unit,simpleUser);
-        if(!flagUser){
-            return new Message(Message.Type.NO_AUTHORIZE);
-        }*/
         boolean flagUser =cooperateService.isEditElementUser(project,user,unit.getAlias());
         boolean flagAccount =cooperateService.isEditElementAccount(project,account,unit.getAlias());
         if(!flagUser&&!flagAccount){
@@ -98,8 +97,7 @@ public class ElementGroupController {
 
     /**
      * 添加要素数据
-     *
-     * @param object
+     * @param object 包含要素别名elementAlias,项目标识projectId,要添加的要素数据名称name,要素数据类型elementDataType
      * @return
      */
     @PackageIsExpire
@@ -128,9 +126,8 @@ public class ElementGroupController {
 
     /**
      * 删除要素数据
-     *
-     * @param jsonObject
-     * @return
+     * @param jsonObject 包含要删除的要素数据标识id
+     * @return message消息体,FAIL:删除失败,EXIST:要素数据不存在,OK:删除成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)

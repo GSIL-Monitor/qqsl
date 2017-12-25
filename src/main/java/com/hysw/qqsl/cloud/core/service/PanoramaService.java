@@ -1,12 +1,12 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.PanoramaDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.Review;
 import com.hysw.qqsl.cloud.pay.entity.PackageItem;
 import com.hysw.qqsl.cloud.pay.entity.PackageModel;
 import com.hysw.qqsl.cloud.pay.entity.ServeItem;
@@ -102,7 +102,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      */
     public List<Panorama> findAllPass(Long userId){
         List<Filter> filters1 = new ArrayList<>();
-        filters1.add(Filter.eq("status", Review.PASS));
+        filters1.add(Filter.eq("status", CommonEnum.Review.PASS));
         filters1.add(Filter.eq("share", true));
         List<Panorama> panoramas;
         if (userId == null) {
@@ -156,7 +156,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      */
     public List<Panorama> findAllPending() {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("status", Review.PENDING));
+        filters.add(Filter.eq("status", CommonEnum.Review.PENDING));
         filters.add(Filter.eq("share", true));
         List<Panorama> panoramas = panoramaDao.findList(0, null, filters);
         return panoramas;
@@ -184,7 +184,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panorama.setName(name.toString());
         panorama.setCoor(message.getData().toString());
        // panorama.setRegion(region.toString());
-        panorama.setStatus(Review.valueOf(Integer.valueOf(status.toString())));
+        panorama.setStatus(CommonEnum.Review.valueOf(Integer.valueOf(status.toString())));
         panorama.setShare(Boolean.valueOf(isShare.toString()));
         if (picture != null) {
             panorama.setPicture(picture.toString());

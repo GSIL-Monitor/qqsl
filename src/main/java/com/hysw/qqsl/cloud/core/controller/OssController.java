@@ -12,6 +12,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
@@ -29,8 +30,6 @@ public class OssController {
 
 	@Autowired
 	private OssService ossService;
-	@Autowired
-	private CoordinateService coordinateService;
 	@Autowired
 	private ApplicationTokenService applicationTokenService;
 	@Autowired
@@ -64,16 +63,14 @@ public class OssController {
 	 * @return
 	 */
 	@RequiresAuthentication
-	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequiresRoles(value = {"user:simple","account:simple","admin:simple"}, logical = Logical.OR)
 	@RequestMapping(value = "/getFileUrl", method = RequestMethod.GET)
 	public @ResponseBody Message getFileUrl(
 			@RequestParam("key") String key,@RequestParam("bucketName") String bucketName) {
-		try {
-			ossService.getObjectMetadata(key);
-		} catch (Exception e) {
+		String url = ossService.getObjectUrl(key, bucketName);
+		if (!StringUtils.hasText(url)){
 			return new Message(Message.Type.FAIL);
 		}
-		String url = ossService.getObjectUrl(key, bucketName);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("url", url);
 		return new Message(Message.Type.OK,jsonObject);
