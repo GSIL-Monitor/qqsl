@@ -1,9 +1,9 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.data.Interest;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.Review;
 import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -54,7 +54,7 @@ public class InterestController {
             return new Message(Message.Type.FAIL);
         }
         if (type.toString().equals(String.valueOf(Interest.Type.BASE.ordinal()))) {
-            map.put("status", Review.PASS.ordinal());
+            map.put("status", CommonEnum.Review.PASS.ordinal());
         } else {
             return new Message(Message.Type.FAIL);
         }
@@ -81,7 +81,7 @@ public class InterestController {
             return new Message(Message.Type.FAIL);
         }
         if (type.toString().equals(String.valueOf(Interest.Type.PERSONAL.ordinal()))) {
-            map.put("status", Review.PENDING.ordinal());
+            map.put("status", CommonEnum.Review.PENDING.ordinal());
         } else {
             return new Message(Message.Type.FAIL);
         }
@@ -110,7 +110,7 @@ public class InterestController {
         if(message.getType()==Message.Type.NO_ALLOW){
             return message;
         }
-        map.put("status", Review.PENDING.ordinal());
+        map.put("status", CommonEnum.Review.PENDING.ordinal());
         map.put("userId", user.getId());
         return panoramaService.savePanorama(map,new Panorama());
 //        panoramaService.reflectSaveProprety(map, new Panorama());
@@ -140,7 +140,7 @@ public class InterestController {
         for(int i=0;i<panoramas.size();i++){
             objectMap = panoramas.get(i);
             panoramaMap = (Map<String, Object>) objectMap.get("panorama");
-            panoramaMap.put("status", Review.PENDING.ordinal());
+            panoramaMap.put("status", CommonEnum.Review.PENDING.ordinal());
             panoramaMap.put("userId", user.getId());
             message = panoramaService.savePanorama(panoramaMap,new Panorama());
             if(message.getType()== Message.Type.OK){
@@ -173,7 +173,7 @@ public class InterestController {
             return new Message(Message.Type.FAIL);
         }
         if (type.toString().equals(String.valueOf(Interest.Type.BASE.ordinal()))) {
-            map.put("status", Review.PASS.ordinal());
+            map.put("status", CommonEnum.Review.PASS.ordinal());
         } else {
             return new Message(Message.Type.FAIL);
         }
@@ -209,7 +209,7 @@ public class InterestController {
             return new Message(Message.Type.FAIL);
         }
         if (type.toString().equals(String.valueOf(Interest.Type.PERSONAL.ordinal()))) {
-            map.put("status", Review.PENDING.ordinal());
+            map.put("status", CommonEnum.Review.PENDING.ordinal());
         } else {
             return new Message(Message.Type.FAIL);
         }
@@ -240,7 +240,7 @@ public class InterestController {
         if (user == null) {
             return new Message(Message.Type.EXIST);
         }
-        map.put("status", Review.PENDING.ordinal());
+        map.put("status", CommonEnum.Review.PENDING.ordinal());
         map.put("userId", user.getId());
         Panorama panorama = panoramaService.find(Long.valueOf(map.get("id").toString()));
         if(panorama==null){
@@ -498,7 +498,7 @@ public class InterestController {
             return message;
         }
         Interest interest = interestService.find(Long.valueOf(objectMap.get("id").toString()));
-        interest.setStatus(Review.PASS);
+        interest.setStatus(CommonEnum.Review.PASS);
         interest.setReviewDate(new Date());
         interestService.save(interest);
         return new Message(Message.Type.OK);
@@ -518,7 +518,7 @@ public class InterestController {
             return message;
         }
         Panorama panorama = panoramaService.find(Long.valueOf(objectMap.get("id").toString()));
-        panorama.setStatus(Review.PASS);
+        panorama.setStatus(CommonEnum.Review.PASS);
         panorama.setReviewDate(new Date());
         panoramaService.save(panorama);
         return new Message(Message.Type.OK);
@@ -541,7 +541,7 @@ public class InterestController {
             return new Message(Message.Type.FAIL);
         }
         Interest interest = interestService.find(Long.valueOf(objectMap.get("id").toString()));
-        interest.setStatus(Review.NOTPASS);
+        interest.setStatus(CommonEnum.Review.NOTPASS);
         if (objectMap.get("advice") == null) {
             return new Message(Message.Type.FAIL);
         }
@@ -568,7 +568,7 @@ public class InterestController {
             return new Message(Message.Type.FAIL);
         }
         Panorama panorama = panoramaService.find(Long.valueOf(objectMap.get("id").toString()));
-        panorama.setStatus(Review.NOTPASS);
+        panorama.setStatus(CommonEnum.Review.NOTPASS);
         if (objectMap.get("advice") == null) {
             return new Message(Message.Type.FAIL);
         }
