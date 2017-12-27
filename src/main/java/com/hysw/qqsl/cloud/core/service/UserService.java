@@ -476,7 +476,7 @@ public class UserService extends BaseService<User, Long> {
 	public JSONObject makeUserJson(User user){
 		JSONObject userJson = new JSONObject();
 		userJson.put("id",user.getId());
-		userJson.put("email",user.getEmail() );
+		userJson.put("email",user.getEmail());
 		setNickName(user,userJson);
 		if (user.getName() == null) {
 			userJson.put("name",user.getUserName());
