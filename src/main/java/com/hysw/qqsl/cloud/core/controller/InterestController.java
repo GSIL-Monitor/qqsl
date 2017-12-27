@@ -26,8 +26,6 @@ import java.util.Map;
 @RequestMapping("/interest")
 public class InterestController {
     @Autowired
-    private UserService userService;
-    @Autowired
     private InterestService interestService;
     @Autowired
     private PanoramaService panoramaService;
@@ -35,10 +33,12 @@ public class InterestController {
     private OssService ossService;
     @Autowired
     private AuthentService authentService;
+
     /**
      * 保存基础兴趣点
-     * @param objectMap
-     * @return
+     * @param objectMap <ol><li>name名称</li><li>type类别</li><li>category分类</li><li>coordinate坐标</li><li>region行政区</li><li>contact联系方式</li><li>content描述</li>
+     *                  <li>evaluate客户评价</li><li>business特色业务</li><li>level等级</li><li>pictures图片</li><li>userId用户id</li></ol>
+     * @return FAIL参数验证失败，OK保存成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -63,6 +63,12 @@ public class InterestController {
 //        return new Message(Message.Type.OK);
     }
 
+    /**
+     * 保存个性兴趣点
+     * @param objectMap <ol><li>name名称</li><li>type类别</li><li>category分类</li><li>coordinate坐标</li><li>region行政区</li><li>contact联系方式</li><li>content描述</li>
+     *                  <li>evaluate客户评价</li><li>business特色业务</li><li>level等级</li><li>pictures图片</li></ol>
+     * @return FAIL参数验证失败，OK保存成功，EXIST用户不存在
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/savePersonalInterest", method = RequestMethod.POST)
@@ -94,7 +100,7 @@ public class InterestController {
     /**
      * 保存全景
      * @param map
-     * @return
+     * @return FAIL参数验证失败，
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -107,7 +113,7 @@ public class InterestController {
         User user = authentService.getUserFromSubject();
         //是否可以保存全景
         message=panoramaService.isAllowSavePanorma(user);
-        if(message.getType()==Message.Type.NO_ALLOW){
+        if(message.getType()!=Message.Type.OK){
             return message;
         }
         map.put("status", CommonEnum.Review.PENDING.ordinal());
