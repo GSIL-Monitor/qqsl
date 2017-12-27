@@ -66,10 +66,14 @@ public class ProjectController {
     @Autowired
     private PollingService pollingService;
 
+
     /**
-     * 取得用户对应的项目列表
+     * 取得当前用户或子帐号对应的项目列表
      *
-     * @return
+     * @param start 起始值,默认为0;当用户项目数大于200时,start为上次获取到的
+     *              项目列表的size,循环获取,直到获取全部项目
+     * @return  message消息体,FAIL:参数不合理,OK:获取成功,包含项目列表,以及
+     *           此次获取的起始值和终止值组成的字符串
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
