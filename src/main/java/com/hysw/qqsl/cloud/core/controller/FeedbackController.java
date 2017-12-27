@@ -65,8 +65,6 @@ public class FeedbackController {
 
     /**
      * 用户取得自己的反馈列表
-     *
-     * @param userId 用户id
      * @return Message 返回数据封装，有type，data属性。其中type属性是返回标识
      * <ol>
      * <li>OK 取得成功，data属性是反馈的列表，列表中不需包含反馈内容(content)，
@@ -77,14 +75,12 @@ public class FeedbackController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/user/lists", method = RequestMethod.GET)
-    public @ResponseBody Message getUserFeedbacks(@RequestParam long userId) {
+    public @ResponseBody Message getUserFeedbacks() {
         return new Message(Message.Type.UNKNOWN);
     }
 
     /**
      * 子账号取得自己的反馈列表
-     *
-     * @param accountId 子账号id
      * @return Message 返回数据封装，有type,data属性。其中type属性是返回标识
      * <ol>
      * <li>OK 取得成功，data属性是反馈的列表，列表中不需包含反馈内容(content)，
@@ -95,7 +91,7 @@ public class FeedbackController {
     @RequiresAuthentication
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/account/lists", method = RequestMethod.GET)
-    public @ResponseBody Message getAccountFeedbacks(@RequestParam long accountId) {
+    public @ResponseBody Message getAccountFeedbacks() {
         return new Message(Message.Type.UNKNOWN);
     }
 
@@ -162,8 +158,8 @@ public class FeedbackController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple,user:simple,account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/account/lists", method = RequestMethod.GET)
-    public Message get(@RequestParam long id) {
+    @RequestMapping(value = "/account/lists/{id}", method = RequestMethod.GET)
+    public Message get(@PathVariable long id) {
         return new Message(Message.Type.UNKNOWN);
     }
 
