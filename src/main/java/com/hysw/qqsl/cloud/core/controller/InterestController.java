@@ -65,9 +65,26 @@ public class InterestController {
 
     /**
      * 保存个性兴趣点
-     * @param objectMap <ol><li>name名称</li><li>type类别</li><li>category分类</li><li>coordinate坐标</li><li>region行政区</li><li>contact联系方式</li><li>content描述</li>
-     *                  <li>evaluate客户评价</li><li>business特色业务</li><li>level等级</li><li>pictures图片</li></ol>
-     * @return FAIL参数验证失败，OK保存成功，EXIST用户不存在
+     * @param objectMap <br/>
+     *                  <ol>
+     *                      <li>name:名称</li>
+     *                      <li>type:类别</li>
+     *                      <li>category:分类</li>
+     *                      <li>coordinate:坐标</li>
+     *                      <li>region:行政区</li>
+     *                      <li>contact:联系方式</li>
+     *                      <li>content:描述</li>
+     *                      <li>evaluate:客户评价</li>
+     *                      <li>business:特色业务</li>
+     *                      <li>level:等级</li>
+     *                      <li>pictures:图片</li>
+     *                      </ol>
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL参数验证失败</li>
+     *     <li>OK保存成功</li>
+     *     <li>EXIST用户不存在</li>
+     * </ol>
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
