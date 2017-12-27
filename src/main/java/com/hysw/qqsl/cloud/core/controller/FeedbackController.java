@@ -158,8 +158,8 @@ public class FeedbackController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple,user:simple,account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/account/lists/{id}", method = RequestMethod.GET)
-    public Message get(@PathVariable long id) {
+    @RequestMapping(value = "/feedback/{id}", method = RequestMethod.GET)
+    public Message get(@PathVariable("id") long id) {
         return new Message(Message.Type.UNKNOWN);
     }
 
