@@ -6,11 +6,29 @@ package com.hysw.qqsl.cloud;
 public class CommonEnum {
 
     /**
+     * 反馈状态
+     */
+    public enum FeedbackStatus {
+        /** 已提交 */
+        SUBMIT,
+        /** 已拒绝 */
+        REFUSE,
+        /** 已采纳 */
+        ADOPTION,
+        /** 已实现 */
+        IMPLEMENT
+    }
+
+    /**
      * 审核枚举
      */
     public enum Review {
-        //　待审核，未通过，通过
-        PENDING, NOTPASS, PASS;
+        /** 待审核 */
+        PENDING,
+        /** 未通过 */
+        NOTPASS,
+        /** 通过 */
+        PASS;
         public static Review valueOf(int ordinal) {
             if (ordinal < 0 || ordinal >= values().length) {
                 throw new IndexOutOfBoundsException("Invalid ordinal");
