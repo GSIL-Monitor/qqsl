@@ -9,14 +9,26 @@ public class CommonEnum {
      * 反馈状态
      */
     public enum FeedbackStatus {
-        /** 已提交 */
-        SUBMIT,
-        /** 已拒绝 */
-        REFUSE,
-        /** 已采纳 */
-        ADOPTION,
-        /** 已实现 */
-        IMPLEMENT
+        /** 待处理 */
+        PENDING,
+        /** 已处理 */
+        COMPLETED;
+        // 已提交
+        //SUBMIT,
+        // 预审通过
+        // AUDIT,
+        // 已采纳
+        //ADOPTION,
+        // 已实现
+        //IMPLEMENT,
+        // 未采纳
+        //NO_ADOPTION
+        public static FeedbackStatus valueOf(int ordinal) {
+            if (ordinal < 0 || ordinal >= values().length) {
+                throw new IndexOutOfBoundsException("Invalid ordinal");
+            }
+            return values()[ordinal];
+        }
     }
 
     /**

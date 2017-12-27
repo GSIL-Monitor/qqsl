@@ -1,10 +1,12 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
 import com.hysw.qqsl.cloud.CommonEnum;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 反馈实体类
@@ -24,9 +26,9 @@ public class Feedback extends BaseEntity {
     private String content;
     /** 类型 */
     private Type type;
-    /** 管理员回复 */
+    /** 回复内容 */
     private String review;
-    /** 管理员回复时间 */
+    /** 回复时间 */
     private Date reviewDate;
     /** 反馈状态 */
     private CommonEnum.FeedbackStatus status;
@@ -39,11 +41,11 @@ public class Feedback extends BaseEntity {
      * 反馈类型
      */
     public enum Type {
-        // 功能建议
+        /** 功能建议 */
         SUGGEST,
-        // 产品缺陷
+        /** 产品缺陷 */
         DEFECT,
-        // 产品需求
+        /** 产品需求 */
         REQUIREMENT
     }
 
@@ -71,22 +73,6 @@ public class Feedback extends BaseEntity {
 
     public void setType(Type type) {
         this.type = type;
-    }
-
-    public String getReview() {
-        return review;
-    }
-
-    public void setReview(String review) {
-        this.review = review;
-    }
-
-    public Date getReviewDate() {
-        return reviewDate;
-    }
-
-    public void setReviewDate(Date reviewDate) {
-        this.reviewDate = reviewDate;
     }
 
     public CommonEnum.FeedbackStatus getStatus() {
