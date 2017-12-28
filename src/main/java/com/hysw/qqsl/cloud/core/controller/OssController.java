@@ -5,7 +5,6 @@ import java.util.*;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
 import com.hysw.qqsl.cloud.core.service.*;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -91,6 +90,7 @@ public class OssController {
 	 * @param object 包含文件存储路径treePath,以及项目标识projectId
 	 * @return message消息体,UNKNOWN:未知文件类型,FAIL:参数错误,OK:记录成功
 	 */
+	@SuppressWarnings("unchecked")
 	@RequiresAuthentication
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/create",method = RequestMethod.POST)

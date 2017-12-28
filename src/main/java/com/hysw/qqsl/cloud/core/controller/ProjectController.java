@@ -782,6 +782,7 @@ public class ProjectController {
 
     /**
      * 是否允许上传
+     * @param projectId
      * @return
      */
     @PackageIsExpire(value = "property")
@@ -803,6 +804,7 @@ public class ProjectController {
 
     /**
      * 是否允许下载
+     * @param projectId
      * @return
      */
     @RequiresAuthentication
@@ -822,6 +824,7 @@ public class ProjectController {
     }
     /**
      * 是否允许BIM
+     * @param map
      * @return
      */
     @PackageIsExpire
@@ -847,8 +850,17 @@ public class ProjectController {
 
     /**
      * 项目图标类型定制
-     * @param map
-     * @return
+     * @param map <br/>
+     *            <ol>
+     *            <li>id:项目id</li>
+     *            <li>iconType:图标类型</li>
+     *            </ol>
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>EXIST:实体对象不存在</li>
+     *     <li>OK:设置成功</li>
+     * </ol>
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -864,8 +876,12 @@ public class ProjectController {
 
     /**
      * 日志-->最近一周内
-     * @param projectId
-     * @return
+     * @param projectId 项目id
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>OK:拉取成功</li>
+     * </ol>
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -883,8 +899,12 @@ public class ProjectController {
 
     /**
      * 日志-->最近一月内
-     * @param projectId
-     * @return
+     * @param projectId 项目id
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>OK:拉取成功</li>
+     * </ol>
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -902,8 +922,12 @@ public class ProjectController {
 
     /**
      * 日志-->最近三月内
-     * @param projectId
-     * @return
+     * @param projectId 项目id
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>OK:拉取成功</li>
+     * </ol>
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -921,8 +945,12 @@ public class ProjectController {
 
     /**
      * 日志-->最近一年内
-     * @param projectId
-     * @return
+     * @param projectId 项目id
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>OK:拉取成功</li>
+     * </ol>
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
