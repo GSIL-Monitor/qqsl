@@ -23,12 +23,12 @@ public class FeedbackController {
     private Log logger = LogFactory.getLog(getClass());
 
     /**
-     * 管理员取得所有反馈列表,反馈下没有有回复列表，只需要显示列表
+     * 管理员取得所有反馈列表
      *
      * @return Message 返回数据封装，有type，data属性。其中type属性是返回标识
      * <ol>
      * <li>OK 取得成功，data属性是所有反馈的列表，列表中不需包含反馈内容(content)，
-     * 回复字段(review)，回复时间(reviewDate)</li>
+     * 回复字段(review)</li>
      * <li>UNKNOWN 未知错误</li>
      * </ol>
      */
@@ -40,9 +40,8 @@ public class FeedbackController {
     }
 
     /**
-     * 管理员回复，回复成功后，保存回复内容，反馈状态改为已处理(CommonEnum.FeedbackStatus.COMPLETED),
-     * 并向用户发送短信通知和邮件通知(如果有的话)，生成一条新的userMessage或accountMessage，
-     * 内容是：您的"xx"反馈管理员已经回复，请前往查看
+     * 管理员回复，回复成功后，保存回复内容，反馈状态改为已回复(CommonEnum.FeedbackStatus.REVIEWED),
+     * 生成一条新的userMessage或accountMessage，内容是：您的"xx"反馈管理员已经回复，请前往查看
      *
      * @param objectMap 以map形式封装的参数，key是字符串，value是任意对象
      * <ol>
@@ -68,7 +67,7 @@ public class FeedbackController {
      * @return Message 返回数据封装，有type，data属性。其中type属性是返回标识
      * <ol>
      * <li>OK 取得成功，data属性是反馈的列表，列表中不需包含反馈内容(content)，
-     * 回复字段(review)，回复时间(reviewDate)</li>
+     * 回复字段(review)</li>
      * <li>UNKNOWN 未知错误</li>
      * </ol>
      */
@@ -84,7 +83,7 @@ public class FeedbackController {
      * @return Message 返回数据封装，有type,data属性。其中type属性是返回标识
      * <ol>
      * <li>OK 取得成功，data属性是反馈的列表，列表中不需包含反馈内容(content)，
-     * 回复字段(review)，回复时间(reviewDate)</li>
+     * 回复字段(review)</li>
      * <li>UNKNOWN 未知错误</li>
      * </ol>
      */
