@@ -110,13 +110,13 @@ public class UpdateTest {
         admin1 = adminService.findByUserName("songfs");
         if (admin1 == null) {
             admin1 = new Admin();
-            admin1.setDepartment("宋发生");
+            admin1.setDepartment("宋生发");
             admin1.setEmail("123456@qq.com");
             admin1.setEnabled(true);
             admin1.setLocked(false);
-            admin1.setName("宋发生");
+            admin1.setName("宋生发");
             admin1.setPhone("13639750192");
-            admin1.setUserName("songfs");
+            admin1.setUserName("songsf");
             admin1.setRoles("admin:simple");
             admin1.setPassword(DigestUtils.md5Hex("qqsl"));
             adminService.save(admin1);

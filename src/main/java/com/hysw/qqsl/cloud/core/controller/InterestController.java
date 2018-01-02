@@ -36,10 +36,28 @@ public class InterestController {
 
     /**
      * 保存基础兴趣点
-     * @param objectMap <ol><li>name名称</li><li>type类别</li><li>category分类</li><li>coordinate坐标</li><li>region行政区</li><li>contact联系方式</li><li>content描述</li>
-     *                  <li>evaluate客户评价</li><li>business特色业务</li><li>level等级</li><li>pictures图片</li><li>userId用户id</li></ol>
+     * @param objectMap <ol>
+     *                  <li>interest</li>
+     *                  <li>
+     *                      <ol>
+     *                  <li>name名称</li>
+     *                  <li>type类别</li>
+     *                  <li>category分类</li>
+     *                  <li>coordinate坐标</li>
+     *                  <li>region行政区</li>
+     *                  <li>contact联系方式</li>
+     *                  <li>content描述</li>
+     *                  <li>evaluate客户评价</li>
+     *                  <li>business特色业务</li>
+     *                  <li>level等级</li>
+     *                  <li>pictures图片</li>
+     *                  <li>userId用户id</li>
+     *                  </ol>
+     *                  </li>
+     * </ol>
      * @return FAIL参数验证失败，OK保存成功
      */
+    @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/saveBaseInterest", method = RequestMethod.POST)
@@ -67,6 +85,9 @@ public class InterestController {
      * 保存个性兴趣点
      * @param objectMap <br/>
      *                  <ol>
+     *                  <li>interest</li>
+     *                  <li>
+     *                      <ol>
      *                      <li>name:名称</li>
      *                      <li>type:类别</li>
      *                      <li>category:分类</li>
@@ -79,6 +100,8 @@ public class InterestController {
      *                      <li>level:等级</li>
      *                      <li>pictures:图片</li>
      *                      </ol>
+     *                  </li>
+     *                  </ol>
      * @return <br/>
      * <ol>
      *     <li>FAIL参数验证失败</li>
@@ -86,6 +109,7 @@ public class InterestController {
      *     <li>EXIST用户不存在</li>
      * </ol>
      */
+    @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/savePersonalInterest", method = RequestMethod.POST)
@@ -116,8 +140,15 @@ public class InterestController {
 
     /**
      * 保存全景
-     * @param map
-     * @return FAIL参数验证失败，
+     * @param map <ol>
+     *            <li>name:名称(必传)</li>
+     *            <li>coor:坐标(必传)</li>
+     *            <li>region:行政区</li>
+     *            <li>isShare:是否共享(必传)</li>
+     *            <li>picture:图片</li>
+     *            <Li>shootDate:拍摄时间</Li>
+     * </ol>
+     * @return FAIL参数验证失败，OK保存成功,EXIST套餐不存在，NO_ALLOW不允许上传
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -142,9 +173,22 @@ public class InterestController {
 
     /**
      * 批量上传全景
-     * @param object
-     * @return
+     * @param object <ol>
+     *               <li>panorama</li>
+     *               <li>
+     *               <ol>
+     *            <li>name:名称(必传)</li>
+     *            <li>coor:坐标(必传)</li>
+     *            <li>region:行政区</li>
+     *            <li>isShare:是否共享(必传)</li>
+     *            <li>picture:图片</li>
+     *            <Li>shootDate:拍摄时间</Li>
+     * </ol>
+     *               </li>
+     * </ol>
+     * @return FAIL参数验证失败，OK保存成功,EXIST套餐不存在，NO_ALLOW不允许上传
      */
+    @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/savePanoramas", method = RequestMethod.POST)
@@ -153,15 +197,15 @@ public class InterestController {
         //是否可以保存全景
         Message message;
         message=panoramaService.isAllowSavePanorma(user);
-        if(message.getType()==Message.Type.NO_ALLOW){
+        if(message.getType()!=Message.Type.OK){
             return message;
         }
         List<Map<String,Object>> panoramas = (List<Map<String,Object>>) object;
         Map<String,Object> panoramaMap,objectMap;
         List<JSONObject> jsonObjects = new ArrayList<>();
         JSONObject jsonObject;
-        for(int i=0;i<panoramas.size();i++){
-            objectMap = panoramas.get(i);
+        for (Map<String, Object> panorama : panoramas) {
+            objectMap = panorama;
             panoramaMap = (Map<String, Object>) objectMap.get("panorama");
             panoramaMap.put("status", CommonEnum.Review.PENDING.ordinal());
             panoramaMap.put("userId", user.getId());
@@ -170,8 +214,6 @@ public class InterestController {
                 jsonObject = (JSONObject) message.getData();
                 jsonObject.put("name",panoramaMap.get("name"));
                 jsonObjects.add(jsonObject);
-            }else{
-                continue;
             }
         }
         return new Message(Message.Type.OK,jsonObjects);
@@ -179,9 +221,28 @@ public class InterestController {
 
     /**
      * 编辑基础兴趣点
-     * @param objectMap
-     * @return
+     * @param objectMap <ol>
+     *                  <li>interest</li>
+     *                  <li>
+     *                      <ol>
+     *                  <li>name名称</li>
+     *                  <li>type类别</li>
+     *                  <li>category分类</li>
+     *                  <li>coordinate坐标</li>
+     *                  <li>region行政区</li>
+     *                  <li>contact联系方式</li>
+     *                  <li>content描述</li>
+     *                  <li>evaluate客户评价</li>
+     *                  <li>business特色业务</li>
+     *                  <li>level等级</li>
+     *                  <li>pictures图片</li>
+     *                  <li>userId用户id</li>
+     *                  </ol>
+     *                  </li>
+     * </ol>
+     * @return FAIL参数验证失败，OK保存成功
      */
+    @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/updateBaseInterest", method = RequestMethod.POST)
@@ -211,9 +272,33 @@ public class InterestController {
 
     /**
      * 编辑兴趣点
-     * @param objectMap
-     * @return
+     * @param objectMap <br/>
+     *                  <ol>
+     *                  <li>interest</li>
+     *                  <li>
+     *                      <ol>
+     *                      <li>name:名称</li>
+     *                      <li>type:类别</li>
+     *                      <li>category:分类</li>
+     *                      <li>coordinate:坐标</li>
+     *                      <li>region:行政区</li>
+     *                      <li>contact:联系方式</li>
+     *                      <li>content:描述</li>
+     *                      <li>evaluate:客户评价</li>
+     *                      <li>business:特色业务</li>
+     *                      <li>level:等级</li>
+     *                      <li>pictures:图片</li>
+     *                      </ol>
+     *                  </li>
+     *                  </ol>
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL参数验证失败</li>
+     *     <li>OK保存成功</li>
+     *     <li>EXIST用户不存在</li>
+     * </ol>
      */
+    @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePersonalInterest", method = RequestMethod.POST)
@@ -248,8 +333,15 @@ public class InterestController {
 
     /**
      * 编辑全景
-     * @param map
-     * @return
+     * @param map <ol>
+     *            <li>name:名称(必传)</li>
+     *            <li>coor:坐标(必传)</li>
+     *            <li>region:行政区</li>
+     *            <li>isShare:是否共享(必传)</li>
+     *            <li>picture:图片</li>
+     *            <Li>shootDate:拍摄时间</Li>
+     * </ol>
+     * @return FAIL参数验证失败，OK保存成功,EXIST套餐不存在，NO_ALLOW不允许上传
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -277,8 +369,8 @@ public class InterestController {
 
     /**
      * 删除基础兴趣点
-     * @param id
-     * @return
+     * @param id 兴趣点id
+     * @return FAil参数验证失败，OK删除成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -305,8 +397,8 @@ public class InterestController {
 
     /**
      * 删除兴趣点
-     * @param id
-     * @return
+     * @param id 兴趣点id
+     * @return FAil参数验证失败，OK删除成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -340,8 +432,8 @@ public class InterestController {
 
     /**
      * 删除全景
-     * @param id
-     * @return
+     * @param id 全景id
+     * @return FAil参数验证失败，OK删除成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -352,9 +444,6 @@ public class InterestController {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        if (user == null) {
-            return new Message(Message.Type.EXIST);
-        }
         Panorama panorama = panoramaService.find(id);
         if (panorama == null) {
             return new Message(Message.Type.FAIL);
@@ -372,7 +461,7 @@ public class InterestController {
 
     /**
      * 获取兴趣点列表(包括用户自己的)
-     * @return
+     * @return 兴趣点列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -383,26 +472,26 @@ public class InterestController {
             return new Message(Message.Type.EXIST);
         }
         List<Interest> interests = interestService.findAllPass(user.getId());
-        List<JSONObject> interestsJson = interestService.interestsToJson(interests);
+        JSONArray interestsJson = interestService.interestsToJson(interests);
         return new Message(Message.Type.OK,interestsJson);
     }
 
     /**
      * 获取兴趣点列表(基础)
-     * @return
+     * @return 基础兴趣点列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/baseInterestList", method = RequestMethod.GET)
     public @ResponseBody Message baseInterestList(){
         List<Interest> interests = interestService.findAllBase();
-        List<JSONObject> interestsJson = interestService.interestsToJson(interests);
+        JSONArray interestsJson = interestService.interestsToJson(interests);
         return new Message(Message.Type.OK,interestsJson);
     }
 
     /**
      * 获取兴趣点列表(个性)
-     * @return
+     * @return 个性兴趣点列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -413,24 +502,24 @@ public class InterestController {
             return new Message(Message.Type.EXIST);
         }
         List<Interest> interests = interestService.findAllPersonal(user);
-        List<JSONObject> interestsJson = interestService.interestsToJson(interests);
+        JSONArray interestsJson = interestService.interestsToJson(interests);
         return new Message(Message.Type.OK,interestsJson);
     }
 
     /**
      * 获取兴趣点列表(所有通过的)
-     * @return
+     * @return 审核通过的兴趣点列表
      */
     @RequestMapping(value = "/interestPassList", method = RequestMethod.GET)
     public @ResponseBody Message interestAllPassList(){
         List<Interest> interests = interestService.findAllPass(null);
-        List<JSONObject> interestsJson = interestService.interestsToJson(interests);
+        JSONArray interestsJson = interestService.interestsToJson(interests);
         return new Message(Message.Type.OK, interestsJson);
     }
 
     /**
      * 获取全景列表
-     * @return
+     * @return 全景列表
      */
     @RequestMapping(value = "/panoramaList", method = RequestMethod.GET)
     public @ResponseBody Message panoramaList(){
@@ -445,10 +534,10 @@ public class InterestController {
         return new Message(Message.Type.OK,panoramasJson);
     }
 
-    /**
-     * 获取全景列表
-     * @return
-     */
+//    /**
+//     * 获取全景列表
+//     * @return
+//     */
    /* @RequestMapping(value = "/panoramaPassList", method = RequestMethod.GET)
     public @ResponseBody Message panoramaPassList(){
         List<Panorama> panoramas = panoramaService.findAllPass(null);
@@ -458,7 +547,7 @@ public class InterestController {
 */
     /**
      * 获取全景列表(个人)
-     * @return
+     * @return 个人上传的全景列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -473,13 +562,11 @@ public class InterestController {
         return new Message(Message.Type.OK,panoramasJson);
     }
 
-    /**
-     * 审核
-     */
+//    审核
 
     /**
      * 兴趣点审核列表
-     * @return
+     * @return 兴趣点审核列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -492,7 +579,7 @@ public class InterestController {
 
     /**
      * 全景审核列表
-     * @return
+     * @return 全景审核列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -503,14 +590,14 @@ public class InterestController {
         return new Message(Message.Type.OK,panoramasJson);
     }
 
-    /**
-     * 审核通过
-     */
+//    审核通过
 
     /**
      * 个人兴趣点审核通过
-     * @param objectMap
-     * @return
+     * @param objectMap <ol>
+     *                  <li>id:兴趣点id</li>
+     * </ol>
+     * @return FAIL参数验证失败，OK审核通过
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -529,8 +616,10 @@ public class InterestController {
 
     /**
      * 全景审核通过
-     * @param objectMap
-     * @return
+     * @param objectMap <ol>
+     *                  <li>id:全景id</li>
+     * </ol>
+     * @return FAIL参数验证失败，OK审核通过
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -549,8 +638,11 @@ public class InterestController {
 
     /**
      * 个人兴趣点审核未通过
-     * @param objectMap
-     * @return
+     * @param objectMap <ol>
+     *                  <li>id:兴趣点id</li>
+     *                  <li>advice:审核意见（可不传）</li>
+     * </ol>
+     * @return FAIL参数验证失败，OK审核未通过
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -576,8 +668,11 @@ public class InterestController {
 
     /**
      * 全景审核未通过
-     * @param objectMap
-     * @return
+     * @param objectMap <ol>
+     *                  <li>id:全景id</li>
+     *                  <li>advice:审核意见（可不传）</li>
+     * </ol>
+     * @return FAIL参数验证失败，OK审核未通过
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
@@ -603,8 +698,8 @@ public class InterestController {
 
     /**
      * 根据id获取兴趣点详细信息
-     * @param id
-     * @return
+     * @param id 兴趣点id
+     * @return 兴趣点详情
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -624,8 +719,8 @@ public class InterestController {
 
     /**
      * 根据id获取全景详细信息
-     * @param id
-     * @return
+     * @param id 全景id
+     * @return 全景详情
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
