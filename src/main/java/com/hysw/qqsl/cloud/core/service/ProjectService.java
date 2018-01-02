@@ -319,11 +319,10 @@ public class ProjectService extends BaseService<Project, Long> {
             return project;
         }
         int index = Integer.parseInt(map.get("type").toString());
-        //更新或保存项目前缀和序号字段
-        userService.setPrefixOrderJson(map.get("prefix").toString(), map.get("order").toString(), user);
         if (index >= 6 || index < 0) {
             throw new QQSLException("项目类型未知");
         }
+        //更新或保存项目前缀和序号字段
         userService.setPrefixOrderJson(map.get("prefix").toString(), map.get("order").toString(), user);
         project = makeProject(user, planningId, code, name, index);
         return project;
@@ -657,10 +656,10 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message removeById(Long id, User user) {
         Project project = find(id);
         if (project == null || project.getId() == null) {
-            return new Message(Message.Type.FAIL);
+            return new Message(Message.Type.EXIST);
         }
         if (!project.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.FAIL);
+            return new Message(Message.Type.NO_AUTHORIZE);
         }
         ossService.setBucketLife(project.getTreePath() + "/", "project");
         deleteProjectSpace(user,project.getCurSpaceNum());
