@@ -1,13 +1,23 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.data.Account;
+import com.hysw.qqsl.cloud.core.entity.data.Feedback;
+import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.service.AuthentService;
+import com.hysw.qqsl.cloud.core.service.FeedbackService;
+import net.sf.json.JSONArray;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,6 +29,10 @@ import java.util.Map;
 @Controller
 @RequestMapping("/feedback")
 public class FeedbackController {
+    @Autowired
+    private FeedbackService feedbackService;
+    @Autowired
+    private AuthentService authentService;
 
     private Log logger = LogFactory.getLog(getClass());
 
@@ -36,7 +50,9 @@ public class FeedbackController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/lists", method = RequestMethod.GET)
     public @ResponseBody Message getFeedbacks() {
-        return new Message(Message.Type.UNKNOWN);
+        List<Feedback> feedbacks = feedbackService.findAll();
+        JSONArray jsonArray=feedbackService.toJsons(feedbacks);
+        return new Message(Message.Type.OK,jsonArray);
     }
 
     /**
@@ -51,6 +67,7 @@ public class FeedbackController {
      * @return Message 返回数据封装，有type,data属性。其中type属性是返回标识
      * <ol>
      * <li>OK 回复成功</li>
+     * <li>FAIL 参数有误</li>
      * <li>UNKNOWN 未知错误</li>
      * </ol>
      */
@@ -59,7 +76,21 @@ public class FeedbackController {
     @RequestMapping(value = "/admin/review", method = RequestMethod.POST)
     public @ResponseBody
     Message doAdminReview(@RequestBody Map<String, Object> objectMap) {
-        return new Message(Message.Type.UNKNOWN);
+        Message message = Message.parameterCheck(objectMap);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        Object feedbackId = objectMap.get("feedbackId");
+        Object review = objectMap.get("review");
+        if (feedbackId == null || review == null) {
+            return new Message(Message.Type.FAIL);
+        }
+        Feedback feedback = feedbackService.find(Long.valueOf(feedbackId.toString()));
+        feedback.setStatus(CommonEnum.FeedbackStatus.REVIEWED);
+        feedback.setReview(review.toString());
+        feedback.setReviewDate(new Date());
+        feedbackService.save(feedback);
+        return new Message(Message.Type.OK);
     }
 
     /**
@@ -75,7 +106,9 @@ public class FeedbackController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/user/lists", method = RequestMethod.GET)
     public @ResponseBody Message getUserFeedbacks() {
-        return new Message(Message.Type.UNKNOWN);
+        User user = authentService.getUserFromSubject();
+        List<Feedback> feedbacks = feedbackService.findByUserId(user.getId());
+        return new Message(Message.Type.OK,feedbackService.toJsons(feedbacks));
     }
 
     /**
@@ -91,7 +124,9 @@ public class FeedbackController {
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/account/lists", method = RequestMethod.GET)
     public @ResponseBody Message getAccountFeedbacks() {
-        return new Message(Message.Type.UNKNOWN);
+        Account account = authentService.getAccountFromSubject();
+        List<Feedback> feedbacks=feedbackService.findByAccountId(account.getId());
+        return new Message(Message.Type.OK,feedbackService.toJsons(feedbacks));
     }
 
     /**
@@ -117,7 +152,11 @@ public class FeedbackController {
     @RequestMapping(value = "/user/submit", method = RequestMethod.POST)
     public @ResponseBody
     Message saveUserFeedback(@RequestBody Map<String, Object> objectMap) {
-        return new Message(Message.Type.UNKNOWN);
+        Message message = Message.parameterCheck(objectMap);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        return feedbackService.saveUserFeedback(objectMap);
     }
 
     /**
@@ -143,7 +182,11 @@ public class FeedbackController {
     @RequestMapping(value = "/account/submit", method = RequestMethod.POST)
     public @ResponseBody
     Message saveAccountFeedback(@RequestBody Map<String, Object> objectMap) {
-        return new Message(Message.Type.UNKNOWN);
+        Message message = Message.parameterCheck(objectMap);
+        if (message.getType() == Message.Type.FAIL) {
+            return message;
+        }
+        return feedbackService.saveAccountFeedback(objectMap);
     }
 
     /**
@@ -159,7 +202,13 @@ public class FeedbackController {
     @RequiresRoles(value = {"admin:simple,user:simple,account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/feedback/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") long id) {
-        return new Message(Message.Type.UNKNOWN);
+        Feedback feedback;
+        try {
+            feedback = feedbackService.find(id);
+        } catch (Exception e) {
+            return new Message(Message.Type.UNKNOWN);
+        }
+        return new Message(Message.Type.OK,feedbackService.toJson(feedback));
     }
 
 }
