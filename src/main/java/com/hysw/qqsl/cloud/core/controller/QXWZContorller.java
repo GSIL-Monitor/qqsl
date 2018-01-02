@@ -15,7 +15,7 @@ import java.util.Map;
  * 千寻控制层
  *
  * @author chenl
- * @create 2017-09-20 下午2:23
+ * @since  2017-09-20 下午2:23
  */
 @Controller
 @RequestMapping("/qxwz")
@@ -27,12 +27,19 @@ public class QXWZContorller {
     @Autowired
     private ApplicationTokenService applicationTokenService;
 
-
     /**
      * 请求千寻账号密码
-     *
-     * @param token
-     * @return
+     * @param token 加密口令
+     * @param mac 手机mac
+     * @param projectId 项目id
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>EXIST:套餐不存在</li>
+     *     <li>EXPIRED:已过期</li>
+     *     <li>OK:有对应权限</li>
+     *     <li>NO_ALLOW:不允许链接</li>
+     * </ol>
      */
 //    @IsExpire
     @RequestMapping(value = "/getAccount", method = RequestMethod.GET)
@@ -51,7 +58,7 @@ public class QXWZContorller {
         } catch (Exception e) {
             return new Message(Message.Type.FAIL);
         }
-        if(message.getType()==Message.Type.NO_ALLOW){
+        if(message.getType()!=Message.Type.OK){
             return message;
         }
         if (applicationTokenService.decrypt(token)) {
@@ -62,8 +69,13 @@ public class QXWZContorller {
 
     /**
      * 是否拥有千寻连接权限
-     * @param projectId
-     * @return
+     * @param projectId 项目id
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>EXPIRED:已过期</li>
+     *     <li>OK:有对应权限</li>
+     * </ol>
      */
 //    @IsExpire
     @RequestMapping(value = "/isAllowQxwz", method = RequestMethod.GET)
@@ -75,8 +87,17 @@ public class QXWZContorller {
 
     /**
      * 增加千寻账户
-     * @param object
-     * @return
+     * @param object <br/>
+     *               <ol>
+     *               <li>userName:千寻账号</li>
+     *               <li>password:密码</li>
+     *               <li>timeout:过期时间</li>
+     *               </ol>
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>OK:添加成功</li>
+     * </ol>
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
@@ -90,9 +111,17 @@ public class QXWZContorller {
     }
 
     /**
-     * 增加千寻账户
-     * @param object
-     * @return
+     * 编辑千寻账户
+     * @param object <br/>
+     *               <ol>
+     *               <li>id:千寻实体id</li>
+     *               <li>timeout:过期时间</li>
+     *               </ol>
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>OK:更新成功</li>
+     * </ol>
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
@@ -107,8 +136,8 @@ public class QXWZContorller {
 
     /**
      * 删除千寻账户
-     * @param id
-     * @return
+     * @param id 千寻实体id
+     * @return OK 删除成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
@@ -119,7 +148,7 @@ public class QXWZContorller {
 
     /**
      * 千寻账户列表（使用情况）
-     * @return
+     * @return 千寻账号列表
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
@@ -130,8 +159,16 @@ public class QXWZContorller {
 
     /**
      * 心跳
-     * @param objectMap
-     * @return
+     * @param objectMap <br/>
+     *                  <ol>
+     *                  <li>token:加密令牌</li>
+     *                  <li>userName:账号</li>
+     *                  </ol>
+     * @return <br/> <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>OK:更新成功</li>
+     * </ol>
      */
     @RequestMapping(value = "/heartBeat", method = RequestMethod.POST)
     public @ResponseBody Message heartBeat(@RequestBody  Map<String,String> objectMap) {
@@ -149,8 +186,18 @@ public class QXWZContorller {
 
     /**
      * 千寻过期时间
-     * @param objectMap
-     * @return
+     * @param objectMap <br/>
+     *                  <ol>
+     *                  <li>token:加密令牌</li>
+     *                  <li>userName:账号</li>
+     *                  <li>timeout:过期时间戳</li>
+     *                  </ol>
+     * @return <br/>
+     * <ol>
+     *     <li>FAIL:参数验证失败</li>
+     *     <li>EXIST:实体对象不存在</li>
+     *     <li>OK:设置成功</li>
+     * </ol>
      */
     @RequestMapping(value = "/setTimeout", method = RequestMethod.POST)
     public @ResponseBody Message setTimeout(@RequestBody  Map<String,String> objectMap) {
@@ -167,10 +214,14 @@ public class QXWZContorller {
         return new Message(Message.Type.FAIL);
     }
 
-    @RequestMapping(value = "/init", method = RequestMethod.GET)
-    public @ResponseBody Message init() {
-        positionService.format();
-        positionService.init();
-        return new Message(Message.Type.OK);
-    }
+//    /**
+//     * 初始化千寻账户缓存
+//     * @return OK初始化成功
+//     */
+//    @RequestMapping(value = "/init", method = RequestMethod.GET)
+//    public @ResponseBody Message init() {
+//        positionService.format();
+//        positionService.init();
+//        return new Message(Message.Type.OK);
+//    }
 }

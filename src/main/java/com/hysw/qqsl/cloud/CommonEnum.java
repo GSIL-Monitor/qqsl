@@ -11,8 +11,8 @@ public class CommonEnum {
     public enum FeedbackStatus {
         /** 待处理 */
         PENDING,
-        /** 已处理 */
-        COMPLETED;
+        /** 已回复 */
+        REVIEWED;
         // 已提交
         //SUBMIT,
         // 预审通过

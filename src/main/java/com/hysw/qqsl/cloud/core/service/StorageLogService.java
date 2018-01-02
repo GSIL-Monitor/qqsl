@@ -161,7 +161,7 @@ public class StorageLogService extends BaseService<StorageLog, Long> {
             deleteExpireStorageCountLogs(storageCountLogs);
             storageLogList = storageLogMapTwoHour.get(userIds.get(i));
             addNewStorageCountLog(storageCountLogs, storageLogList, userIds.get(i));
-            logger.info("存储日志数量:"+storageCountLogs.size());
+//            logger.info("存储日志数量:"+storageCountLogs.size());
             storageCountLogMap.put(userIds.get(i), storageCountLogs);
         }
     }

@@ -98,4 +98,20 @@ public class Feedback extends BaseEntity {
     public void setAccountId(long accountId) {
         this.accountId = accountId;
     }
+
+    public String getReview() {
+        return review;
+    }
+
+    public void setReview(String review) {
+        this.review = review;
+    }
+
+    public Date getReviewDate() {
+        return reviewDate;
+    }
+
+    public void setReviewDate(Date reviewDate) {
+        this.reviewDate = reviewDate;
+    }
 }
