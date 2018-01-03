@@ -101,8 +101,9 @@ public class ProjectController {
     /**
      * 保存新建的项目
      *
-     * @param objectMap
-     * @return
+     * @param objectMap 包含项目名称name,项目类型type,项目前缀prefix以及项目序号order,
+     *                  规划planning
+     * @return message消息体,FAIL:参数不全,或参数不合理;NO_ALLOW:套餐限制
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -139,7 +140,7 @@ public class ProjectController {
     /**
      * 获取项目类型
      *
-     * @return
+     * @return message OK:获取成功
      */
     @RequiresAuthentication
     @RequestMapping(value = "/typeSelects", method = RequestMethod.GET)
@@ -154,7 +155,7 @@ public class ProjectController {
      * 根据项目id得到单元树形结构json
      *
      * @param id 项目id
-     * @return
+     * @return message消息体,FAIL:参数错误;EXIT:项目不存在;NO_AUTHORIZE:没有操作权限,OK:获取成功,附带树形结构JSON数据
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -182,8 +183,8 @@ public class ProjectController {
 
     /**
      * 修改新建的项目
-     *
-     * @return
+     * @param objectMap 包含项目名称name,项目编号code,规划planning,以及项目id
+     * @return message消息体,FAIL:参数不全,或参数不合法,EXIT:项目编号已存在,OK:编辑成功
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -208,8 +209,8 @@ public class ProjectController {
 
     /**
      * 根据项目编号删除项目
-     *
-     * @param id
+     * @param id 项目id
+     * @return message消息体,FAIL:删除失败;EXIT:项目不存在;NO_AUTHORIZE:没有删除权限,OK:删除成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -231,7 +232,7 @@ public class ProjectController {
      *
      * @return
      */
-    @RequiresAuthentication
+  /*  @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/findByCode/{code}", method = RequestMethod.GET)
     public
@@ -249,12 +250,12 @@ public class ProjectController {
             return new Message(Message.Type.OK);
         }
         return new Message(Message.Type.FAIL);
-    }
+    }*/
 
     /**
      * 查询项目信息
      *
-     * @return
+     * @return message消息体,OK:获取成功,附带info消息
      */
 //    @RequiresAuthentication
     @RequestMapping(value = "/infos", method = RequestMethod.GET, produces= MediaType.APPLICATION_JSON_VALUE)
@@ -265,10 +266,10 @@ public class ProjectController {
     }
 
     /**
-     * 根据项目type得到项目模版单元树形结构json
+     * 根据项目type得到项目模版单元树形结构json,用于要素输出
      *
      * @param type 项目type
-     * @return
+     * @return message消息体,FAIL:参数错误或不合法,OK:项目模版单元树形结构json获取成功,附带json数据
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -282,16 +283,21 @@ public class ProjectController {
             return message;
         }
         Project project = new Project();
-        project.setType(Project.Type.valueOf(type));
+        try {
+            project.setType(Project.Type.valueOf(type));
+        }catch (IndexOutOfBoundsException e){
+            e.printStackTrace();
+            return new Message(Message.Type.FAIL);
+        }
         List<JsonTree> jsonTrees = objectJsonConvertUtils.getTemplateJsonTree(project);
         return new Message(Message.Type.OK, jsonTrees);
     }
 
     /**
-     * 根据项目id，单元别名，得到单元
-     * @param id
-     * @param alias
-     * @return
+     * 根据项目id，单元别名，得到单元(附带要素值)
+     * @param id 项目id
+     * @param alias 单元别名
+     * @return message消息体,FAIL:参数错误,NO_AUTHORIZE:无权操作,OK:获取成功,附带单元json数据
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -327,8 +333,9 @@ public class ProjectController {
 
     /**
      * 取得要素输出界面需要的要素值
-     *
-     * @return Message
+     * @param alias 单元别名
+     * @param projectType 项目类型
+     * @return message消息体,FAIL:参数不全,OK:获取成功,附带所有此类项目的单元json数据
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -362,8 +369,8 @@ public class ProjectController {
     /**
      * 根据项目id得到项目包括项目信息和项目简介以及短信
      *
-     * @param id
-     * @return
+     * @param id 项目id
+     * @return message消息体,FAIL:参数错误,NO_AUTHORIZE:没有操作权限,OK:获取成功,包含"introduce"简介 ,"note"短信,"stage"对于阶段的权限
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -388,8 +395,8 @@ public class ProjectController {
     /**
      * 根据项目id得到项目及项目简介信息
      *
-     * @param id
-     * @return
+     * @param id 项目id
+     * @return messasge消息体,FAIL:参数错误;EXIST:项目不存在,OK:获取成功,附带项目简介,中心坐标,设计和外业信息
      */
     @RequestMapping(value = "/projectIntroduce/{id}", method = RequestMethod.GET)
     public
@@ -409,8 +416,8 @@ public class ProjectController {
 
     /**
      * 向项目的业主和负责人发送短信
-     * @param objectMap
-     * @return
+     * @param objectMap 包含contact字符串,以及消息内容sendMsg
+     * @return message消息体,FAIL:参数不合法,OK:发送成功
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -463,9 +470,12 @@ public class ProjectController {
 //        message = elementService.saveFileLog(simpleUser,map);
 //        return message;
 //    }
+
     /**
      * 根据请求的项目返回相应类型的外业测量要素
-     * @return
+     * @param id 项目id
+     * @param alias 单元别名
+     * @return message消息体,FAIl:参数错误,OK:获取成功,附带单元数据
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -482,8 +492,8 @@ public class ProjectController {
 
     /**
      * 添加全景地图连接
-     * @param object
-     * @return
+     * @param object 包含项目id,全景url
+     * @return message消息体,UNKNOWN:参数不合法,OK:编辑成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -502,11 +512,10 @@ public class ProjectController {
         return new Message(Message.Type.OK);
     }
 
-
     /**
      * 企业间分享项目
-     * @param map
-     * @return
+     * @param map 包含projectIds,userIds
+     * @return message消息体,FAIL:分享失败,OK:分享成功
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -522,10 +531,11 @@ public class ProjectController {
         User own = authentService.getUserFromSubject();
         return shareService.shares(projectIds,userIds,own);
     }
+
     /**
      * 取消企业间分享项目
-     * @param map
-     * @return
+     * @param map 项目标识projectId,企业标识:userIds
+     * @return message消息体 FAIL:取消失败,UNKNOWN:项目不存在,OK:取消成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -551,7 +561,8 @@ public class ProjectController {
 
     /**
      * 企业账号查看子账号协同情况
-     * @return
+     * @param accountId 子帐号标识accountId
+     * @return message消息体,FAIL:参数错误,UNKNOWN:子帐号不存在,OK:获取成功,包含对应项目的协同权限
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -568,9 +579,11 @@ public class ProjectController {
         }
         return cooperateService.viewCooperate(user,account);
     }
+
     /**
      * 企业账号取消子账号查看权限
-     * @return
+     * @param map 包含项目标识projectId,以及子帐号标识accountIds
+     * @return message消息体,FAIL:参数错误,UNKNOWN:项目不存在或没有操作权限,OK:取消成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -593,8 +606,8 @@ public class ProjectController {
 
     /**
      * 将一个项目的多个权限分享给一个子账号
-     * @param map
-     * @return
+     * @param map 包含项目标识projectId,以及权限类型types,子帐号标识accountId
+     * @return message消息体,FAIL:参数不合法,OK:分享成功
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -605,13 +618,9 @@ public class ProjectController {
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
-        if(map.get("projectId")==null||!StringUtils.hasText(map.get("projectId").toString())){
-            new Message(Message.Type.FAIL);
-        }
-        if(map.get("types")==null||!StringUtils.hasText(map.get("types").toString())){
-            new Message(Message.Type.FAIL);
-        }
-        if(map.get("accountId")==null||!StringUtils.hasText(map.get("accountId").toString())){
+        if(map.get("projectId")==null||!StringUtils.hasText(map.get("projectId").toString())
+                ||map.get("types")==null||!StringUtils.hasText(map.get("types").toString())
+                ||map.get("accountId")==null||!StringUtils.hasText(map.get("accountId").toString())){
             new Message(Message.Type.FAIL);
         }
         Long projectId = Long.valueOf(map.get("projectId").toString());
@@ -627,8 +636,8 @@ public class ProjectController {
 
     /**
      * 将多个项目的一个权限分享给一个子账号
-     * @param map
-     * @return
+     * @param map 包含项目标识projectIds,以及权限类型type,子帐号标识accountId
+     * @return message消息体,FAIL:参数不合法,OTHER:子帐号信息不全,OK:分享成功
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -639,13 +648,9 @@ public class ProjectController {
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
-        if(map.get("projectIds")==null||!StringUtils.hasText(map.get("projectIds").toString())){
-            new Message(Message.Type.FAIL);
-        }
-        if(map.get("type")==null||!StringUtils.hasText(map.get("type").toString())){
-            new Message(Message.Type.FAIL);
-        }
-        if(map.get("accountId")==null||!StringUtils.hasText(map.get("accountId").toString())){
+        if(map.get("projectIds")==null||!StringUtils.hasText(map.get("projectIds").toString())
+                ||map.get("type")==null||!StringUtils.hasText(map.get("type").toString())
+                ||map.get("accountId")==null ||!StringUtils.hasText(map.get("accountId").toString())){
             new Message(Message.Type.FAIL);
         }
         String type = map.get("type").toString();
@@ -664,8 +669,8 @@ public class ProjectController {
 
     /**
      * 注销子账号编辑权限
-     * @param map
-     * @return
+     * @param map 包含项目标识projectId,以及权限类型type
+     * @return FAIL:参数错误,OK:注销成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -675,10 +680,8 @@ public class ProjectController {
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
-        if(map.get("projectId")==null||!StringUtils.hasText(map.get("projectId").toString())){
-            new Message(Message.Type.FAIL);
-        }
-        if(map.get("types")==null||!StringUtils.hasText(map.get("types").toString())){
+        if(map.get("projectId")==null||!StringUtils.hasText(map.get("projectId").toString())
+                ||map.get("types")==null||!StringUtils.hasText(map.get("types").toString())){
             new Message(Message.Type.FAIL);
         }
         Long projectId = Long.valueOf(map.get("projectId").toString());
@@ -691,10 +694,10 @@ public class ProjectController {
 
     /**
      * 判断当前访问对象是否对项目有编辑或查看的权限
-     * @param user
-     * @param account
-     * @param project
-     * @return
+     * @param user 企业或用户
+     * @param account 子帐号
+     * @param project 项目
+     * @return false无权限,true有权限
      */
     private boolean isOperate(User user,Account account,Project project){
         if(user!=null){
@@ -721,9 +724,9 @@ public class ProjectController {
     }
 
     /**
-     * 上传文件大小
-     * @param map
-     * @return
+     * 记录上传文件大小
+     * @param map 包含项目标识projectId,fileSize:文件大小,fileNames:文件名,ailas:单元别名
+     * @return message消息体,FAIL:记录失败;OK:记录成功
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -739,9 +742,9 @@ public class ProjectController {
     }
 
     /**
-     * 下载文件大小
-     * @param map
-     * @return
+     * 记录下载文件大小
+     * @param map 包含项目标识projectId,fileSize:文件大小,fileNames:文件名,ailas:单元别名
+     * @return  message消息体,FAIL:记录失败;OK:记录成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -764,9 +767,9 @@ public class ProjectController {
     }
 
     /**
-     * 删除文件大小
-     * @param map
-     * @return
+     * 记录删除文件大小
+     * @param map 包含项目标识projectId,fileSize:文件大小,fileNames:文件名,ailas:单元别名
+     * @return   message消息体,FAIL:记录失败;OK:记录成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -782,8 +785,8 @@ public class ProjectController {
 
     /**
      * 是否允许上传
-     * @param projectId
-     * @return
+     * @param projectId 项目标识
+     * @return message消息体,NO_ALLOW:不允许上传;OK:允许上传
      */
     @PackageIsExpire(value = "property")
     @RequiresAuthentication
@@ -804,8 +807,8 @@ public class ProjectController {
 
     /**
      * 是否允许下载
-     * @param projectId
-     * @return
+     * @param projectId 项目标识
+     * @return message消息体,NO_ALLOW:不允许下载;OK:允许下载
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -822,10 +825,11 @@ public class ProjectController {
         }
         return projectService.isAllowDownload(user);
     }
+
     /**
      * 是否允许BIM
-     * @param map
-     * @return
+     * @param map 包含projectId
+     * @return message消息体,NO_ALLOW:不允许BIM;OK:允许BIM
      */
     @PackageIsExpire
     @RequiresAuthentication
@@ -876,7 +880,7 @@ public class ProjectController {
 
     /**
      * 日志-->最近一周内
-     * @param projectId 项目id
+
      * @return <br/>
      * <ol>
      *     <li>FAIL:参数验证失败</li>
@@ -899,7 +903,6 @@ public class ProjectController {
 
     /**
      * 日志-->最近一月内
-     * @param projectId 项目id
      * @return <br/>
      * <ol>
      *     <li>FAIL:参数验证失败</li>

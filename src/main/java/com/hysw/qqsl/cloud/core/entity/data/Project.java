@@ -126,7 +126,14 @@ public class Project extends BaseEntity {
         /**
          * 供水保障工程
          */
-        WATER_SUPPLY
+        WATER_SUPPLY;
+
+        public static Type valueOf(int ordinal) {
+            if (ordinal < 0 || ordinal >= values().length) {
+                throw new IndexOutOfBoundsException("Invalid ordinal");
+            }
+            return values()[ordinal];
+        }
     }
 
     /**
