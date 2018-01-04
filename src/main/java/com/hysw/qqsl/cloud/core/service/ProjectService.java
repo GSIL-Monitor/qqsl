@@ -1055,13 +1055,13 @@ public class ProjectService extends BaseService<Project, Long> {
         for (Element element : elements) {
             jsonElement = null;
             if (element.getValue() != null) {
-                if (element.getUnit() != null) {
-                    jsonElement = new JsonElement(element.getName(),
-                            element.getValue() + element.getUnit());
-                } else {
+//                if (element.getUnit() != null) {
+//                    jsonElement = new JsonElement(element.getName(),
+//                            element.getValue() + element.getUnit());
+//                } else {
                     jsonElement = new JsonElement(element.getName(),
                             element.getValue());
-                }
+//                }
             }
             if (element.getElementDataStr() != null) {
                 jsonElement = new JsonElement(element.getName(),

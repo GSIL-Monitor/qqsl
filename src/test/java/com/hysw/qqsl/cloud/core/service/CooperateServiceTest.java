@@ -39,82 +39,82 @@ public class CooperateServiceTest extends BaseTest {
 
     }
 
-    /**
-     * 测试授予查看权限
-     * @throws Exception
-     */
-    @Test
-    public void registViews() throws Exception{
-        User user = userService.findByPhoneOrEmial("18661925010");
-        Account account = userService.getAccountsByUserId(user.getId()).get(0);
-        assertNotNull(account);
-        List<Project> projects = projectService.findByUser(user);
-        assertTrue(projects.size()>0);
-        String ids ="";
-        for(int i=0;i<projects.size();i++){
-            ids = ids+projects.get(i).getId()+",";
-            if(StringUtils.hasText(projects.get(i).getViews())){
-                projects.get(i).setViews(null);
-                projectService.save(projects.get(i));
-            }
-        }
-       // cooperateService.views(ids,account);
-        projects = projectService.findByUser(user);
-        for(int i=0;i<projects.size();i++){
-            assertTrue(projects.get(i).getViews().contains("qqsl"));
-        }
-    }
+//    /**
+//     * 测试授予查看权限
+//     * @throws Exception
+//     */
+//    @Test
+//    public void registViews() throws Exception{
+//        User user = userService.findByPhoneOrEmial("18661925010");
+//        List<Account> accounts = userService.getAccountsByUserId(user.getId());
+//        assertNotNull(accounts);
+//        List<Project> projects = projectService.findByUser(user);
+//        assertTrue(projects.size()>0);
+//        String ids ="";
+//        for(int i=0;i<projects.size();i++){
+//            ids = ids+projects.get(i).getId()+",";
+//            if(StringUtils.hasText(projects.get(i).getViews())){
+//                projects.get(i).setViews(null);
+//                projectService.save(projects.get(i));
+//            }
+//        }
+//       // cooperateService.views(ids,account);
+//        projects = projectService.findByUser(user);
+//        for(int i=0;i<projects.size();i++){
+//            assertTrue(projects.get(i).getViews().contains("qqsl"));
+//        }
+//    }
 
-    /**
-     * 测试将多个项目的一个权限分享给一个子账号
-     * @throws Exception
-     */
-    @Test
-    public void registEdits() throws Exception{
-        User user = userService.findByPhoneOrEmial("18661925010");
-        Account account = userService.getAccountsByUserId(user.getId()).get(0);
-        assertNotNull(account);
-        List<Project> projects = projectService.findByUser(user);
-        assertTrue(projects.size()>0);
-        List<Integer> ids = new ArrayList<>();
-        Long l;
-        for(int i=0;i<projects.size();i++){
-            l = new Long(projects.get(i).getId());
-            ids.add(Integer.valueOf((l.intValue())));
-            if(StringUtils.hasText(projects.get(i).getViews())){
-                projects.get(i).setCooperate(null);
-                projectService.save(projects.get(i));
-            }
-        }
-        String type = "VISIT_PREPARATION_ELEMENT";
-        cooperateService.cooperate(ids,type,account,user);
-        projects = projectService.findByUser(user);
-        for(int i=0;i<projects.size();i++){
-            assertTrue(projects.get(i).getCooperate().contains("preparation"));
-        }
-    }
-
-    /**
-     * 测试将一个项目的多个权限分享给一个子账号
-     * @throws Exception
-     */
-    @Test
-    public void registEdit() throws Exception{
-        User user = userService.findByPhoneOrEmial("18661925010");
-        Account account = userService.getAccountsByUserId(user.getId()).get(0);
-        assertNotNull(account);
-        List<Project> projects = projectService.findByUser(user);
-        assertTrue(projects.size()>0);
-        projects.get(0).setCooperate(null);
-        projectService.save(projects.get(0));
-        String type = "VISIT_INVITE_FILE,VISIT_BUILDING_ELEMENT,VISIT_MAINTENANCE_FILE,VISIT_PREPARATION_ELEMENT";
-        cooperateService.cooperateMult(projects.get(0),type,account,user);
-        Project project= projectService.find(projects.get(0).getId());
-        //{"invite":{"file":{"id":1,"name":"qqsl","phone":"18661925010","createTime":1495103128463}},"preparation":{"element":{"id":1,"name":"qqsl","phone":"18661925010","createTime":1495103128593}},"building":{"element":{"id":1,"name":"qqsl","phone":"18661925010","createTime":1495103128587}},"maintenance":{"file":{"id":1,"name":"qqsl","phone":"18661925010","createTime":1495103128591}}}
-        JSONObject jsonObject = JSONObject.fromObject(project.getCooperate());
-        assertTrue(!jsonObject.getJSONObject("invite").isEmpty()&&
-                jsonObject.getJSONObject("invite").getJSONObject("file").getLong("id")==account.getId());
-
-    }
+//    /**
+//     * 测试将多个项目的一个权限分享给一个子账号
+//     * @throws Exception
+//     */
+//    @Test
+//    public void registEdits() throws Exception{
+//        User user = userService.findByPhoneOrEmial("18661925010");
+//        Account account = userService.getAccountsByUserId(user.getId()).get(0);
+//        assertNotNull(account);
+//        List<Project> projects = projectService.findByUser(user);
+//        assertTrue(projects.size()>0);
+//        List<Integer> ids = new ArrayList<>();
+//        Long l;
+//        for(int i=0;i<projects.size();i++){
+//            l = new Long(projects.get(i).getId());
+//            ids.add(Integer.valueOf((l.intValue())));
+//            if(StringUtils.hasText(projects.get(i).getViews())){
+//                projects.get(i).setCooperate(null);
+//                projectService.save(projects.get(i));
+//            }
+//        }
+//        String type = "VISIT_PREPARATION_ELEMENT";
+//        cooperateService.cooperate(ids,type,account,user);
+//        projects = projectService.findByUser(user);
+//        for(int i=0;i<projects.size();i++){
+//            assertTrue(projects.get(i).getCooperate().contains("preparation"));
+//        }
+//    }
+//
+//    /**
+//     * 测试将一个项目的多个权限分享给一个子账号
+//     * @throws Exception
+//     */
+//    @Test
+//    public void registEdit() throws Exception{
+//        User user = userService.findByPhoneOrEmial("18661925010");
+//        Account account = userService.getAccountsByUserId(user.getId()).get(0);
+//        assertNotNull(account);
+//        List<Project> projects = projectService.findByUser(user);
+//        assertTrue(projects.size()>0);
+//        projects.get(0).setCooperate(null);
+//        projectService.save(projects.get(0));
+//        String type = "VISIT_INVITE_FILE,VISIT_BUILDING_ELEMENT,VISIT_MAINTENANCE_FILE,VISIT_PREPARATION_ELEMENT";
+//        cooperateService.cooperateMult(projects.get(0),type,account,user);
+//        Project project= projectService.find(projects.get(0).getId());
+//        //{"invite":{"file":{"id":1,"name":"qqsl","phone":"18661925010","createTime":1495103128463}},"preparation":{"element":{"id":1,"name":"qqsl","phone":"18661925010","createTime":1495103128593}},"building":{"element":{"id":1,"name":"qqsl","phone":"18661925010","createTime":1495103128587}},"maintenance":{"file":{"id":1,"name":"qqsl","phone":"18661925010","createTime":1495103128591}}}
+//        JSONObject jsonObject = JSONObject.fromObject(project.getCooperate());
+//        assertTrue(!jsonObject.getJSONObject("invite").isEmpty()&&
+//                jsonObject.getJSONObject("invite").getJSONObject("file").getLong("id")==account.getId());
+//
+//    }
 
 }

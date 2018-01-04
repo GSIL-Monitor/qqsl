@@ -688,7 +688,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		    return me;
         }
         Map<List<Graph>, List<Build>> map = (Map<List<Graph>, List<Build>>) me.getData();
-        List<Graph> list = null;
+		List<Graph> list = null;
 		List<Build> builds = null;
 		for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
 			list = entry.getKey();
