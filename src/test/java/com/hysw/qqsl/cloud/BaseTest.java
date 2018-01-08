@@ -4,10 +4,7 @@ import com.hysw.qqsl.cloud.core.service.UserService;
 import com.hysw.qqsl.cloud.listener.TestExecutionListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -38,10 +35,10 @@ public class BaseTest {
 	public void setUp() {
 	}
 
-//	@Test
-//	public void test() {
-//		Assert.assertTrue(true);
-//	}
+	@Test
+	public void test() {
+		Assert.assertTrue(true);
+	}
 
 	@After
 	public void tearDown() throws Exception {

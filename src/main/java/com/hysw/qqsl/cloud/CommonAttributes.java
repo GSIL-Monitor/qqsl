@@ -45,7 +45,7 @@ public final class CommonAttributes {
     public static final String BUCKET_NAME = "qqsl";
     public static final String BUCKET_IMAGE = "qqslimage";
     //	public static final String[] OSSIMAGE= {"http://localhost:8080/qqsl//","http://localhost:8080/qqsl/","http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
-    public static final String[] OSSIMAGE = {"http://218.244.134.139:8080/qqsl//", "http://218.244.134.139:8080/qqsl/", "http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
+    public static final String[] OSSIMAGE = {"http://localhost:8080/qqsl//", "http://localhost:8080/qqsl/", "http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
     /**
      * 支付宝相关参数
      */

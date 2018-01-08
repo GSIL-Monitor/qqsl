@@ -35,15 +35,6 @@ public class FeedbackService extends BaseService<Feedback, Long> {
     }
 
     /**
-     * 获取反馈列表
-     * @return 反馈列表
-     */
-    public List<Feedback> getFeedbackList() {
-
-        return null;
-    }
-
-    /**
      * 反馈列表转Json
      * @param feedbacks 反馈列表
      * @return json列表

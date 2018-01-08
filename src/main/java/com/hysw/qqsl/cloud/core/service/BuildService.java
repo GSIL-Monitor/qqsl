@@ -66,10 +66,10 @@ public class BuildService extends BaseService<Build,Long> {
 //        filters.add(Filter.eq(""))
 //    }
 
-    public List<Build> findByProjectAndAlias(Project project,String alias) {
+    public List<Build> findByProjectAndAlias(Project project) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("project", project));
-        filters.add(Filter.eq("alias", alias));
+//        filters.add(Filter.eq("alias", alias));
         filters.add(Filter.eq("cut", false));
         List<Build> list = buildDao.findList(0, null, filters);
         return list;

@@ -343,7 +343,7 @@ public class AdminController {
         int index = Integer.valueOf(map.get("type").toString());
         String content = map.get("content").toString();
         String title = map.get("title").toString();
-        content = articleService.replacePath(content);
+        // content = articleService.replacePath(content);
         return articleService.save(idStr, title, content, index);
     }
 
