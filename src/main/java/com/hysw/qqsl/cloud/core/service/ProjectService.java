@@ -1163,10 +1163,10 @@ public class ProjectService extends BaseService<Project, Long> {
     /**
      * 上传文件大小计入项目与套餐中
      * @param map
-     * @param user
+     * @param o
      * @return
      */
-    public Message uploadFileSize(Map<String, Object> map, User user) {
+    public Message uploadFileSize(Map<String, Object> map, Object o) {
         Object projectId = map.get("projectId");
         Object fileSize = map.get("fileSize");
         Object fileNames = map.get("fileNames");//用于记录日志
@@ -1175,8 +1175,11 @@ public class ProjectService extends BaseService<Project, Long> {
             return new Message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
-        Package aPackage = packageService.findByUser(user);
-        if (project == null || aPackage == null) {
+        if (project == null) {
+            return new Message(Message.Type.FAIL);
+        }
+        Package aPackage = packageService.findByUser(project.getUser());
+        if (aPackage == null) {
             return new Message(Message.Type.FAIL);
         }
         try {
@@ -1191,7 +1194,7 @@ public class ProjectService extends BaseService<Project, Long> {
         storageLogService.saveStorageLog(aPackage, "upload", fileSize);
         Map<String, String> aliases = new LinkedHashMap<>();
         aliases.put(alias.toString(),fileNames.toString());
-        projectLogService.saveLog(project,user,aliases,ProjectLog.Type.FILE_UPLOAD);
+        projectLogService.saveLog(project,o,aliases,ProjectLog.Type.FILE_UPLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
         return new Message(Message.Type.OK, jsonObject);
@@ -1200,10 +1203,10 @@ public class ProjectService extends BaseService<Project, Long> {
     /**
      * 下载文件大小计入套餐中
      * @param map
-     * @param user
+     * @param o
      * @return
      */
-    public Message downloadFileSize(Map<String, Object> map, User user) {
+    public Message downloadFileSize(Map<String, Object> map, Object o) {
         Object projectId = map.get("projectId");
         Object fileSize = map.get("fileSize");
         Object fileName = map.get("fileName");//用于记录日志
@@ -1211,7 +1214,11 @@ public class ProjectService extends BaseService<Project, Long> {
         if (projectId == null || fileSize == null || fileName == null || alias == null) {
             return new Message(Message.Type.FAIL);
         }
-        Package aPackage = packageService.findByUser(user);
+        Project project = find(Long.valueOf(projectId.toString()));
+        if (project == null) {
+            return new Message(Message.Type.FAIL);
+        }
+        Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
             return new Message(Message.Type.FAIL);
         }
@@ -1224,7 +1231,7 @@ public class ProjectService extends BaseService<Project, Long> {
         storageLogService.saveStorageLog(aPackage,"download",fileSize);
         Map<String, String> aliases = new LinkedHashMap<>();
         aliases.put(alias.toString(),fileName.toString());
-        projectLogService.saveLog(find(Long.valueOf(projectId.toString())),user,aliases,ProjectLog.Type.FILE_UPLOAD);
+        projectLogService.saveLog(find(Long.valueOf(projectId.toString())),o,aliases,ProjectLog.Type.FILE_DOWNLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
         return new Message(Message.Type.OK, jsonObject);

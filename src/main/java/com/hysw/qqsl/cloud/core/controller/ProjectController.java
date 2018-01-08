@@ -737,8 +737,11 @@ public class ProjectController {
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
-        User user = authentService.getUserFromSubject();
-        return projectService.uploadFileSize(map,user);
+        Object o = authentService.getUserFromSubject();
+        if (o == null) {
+            o = authentService.getAccountFromSubject();
+        }
+        return projectService.uploadFileSize(map,o);
     }
 
     /**
@@ -754,16 +757,11 @@ public class ProjectController {
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
-        User user = authentService.getUserFromSubject();
-        if (user == null) {
-            Object projectId = map.get("projectId");
-            if (projectId == null) {
-                return new Message(Message.Type.FAIL);
-            }
-            Project project = projectService.find(Long.valueOf(projectId.toString()));
-            user = project.getUser();
+        Object o = authentService.getUserFromSubject();
+        if (o == null) {
+            o = authentService.getAccountFromSubject();
         }
-        return projectService.downloadFileSize(map,user);
+        return projectService.downloadFileSize(map,o);
     }
 
     /**

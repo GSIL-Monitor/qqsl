@@ -124,7 +124,7 @@ public class CoordinateServiceTest extends BaseTest {
 		} catch (Exception e) {
 			flag = true;
 		}
-		Assert.assertTrue(flag);
+        Assert.assertTrue(flag);
 	}
 
 	/**
@@ -134,6 +134,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa2xlsx() throws IOException {
+        boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 
 		FileItem fileItem = factory.createItem("file",
@@ -145,8 +146,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 11);
+        try {
+        	coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+        } catch (Exception e) {
+            flag = true;
+        }
+        Assert.assertTrue(flag);
 	}
 
 	/**
@@ -156,6 +161,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa2xls() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 
 		FileItem fileItem = factory.createItem("file",
@@ -167,8 +173,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 11);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -178,6 +188,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa3xlsx() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 
 		FileItem fileItem = factory.createItem("file",
@@ -189,8 +200,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -200,6 +215,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa3xls() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 
 		FileItem fileItem = factory.createItem("file",
@@ -211,8 +227,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -222,7 +242,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa4xlsx() throws IOException {
-
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "4.xlsx");
@@ -233,8 +253,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -244,6 +268,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa4xls() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "4.xls");
@@ -254,8 +279,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -265,6 +294,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa5xlsx() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "5.xlsx");
@@ -275,8 +305,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -286,6 +320,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa5xls() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "5.xls");
@@ -296,8 +331,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -307,6 +346,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa6xlsx() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "6.xlsx");
@@ -317,8 +357,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -328,6 +372,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa6xls() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "6.xls");
@@ -338,8 +383,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -349,6 +398,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa7xlsx() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "7.xlsx");
@@ -359,8 +409,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -370,6 +424,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa7xls() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "7.xls");
@@ -380,8 +435,12 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 10);
+		try {
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(flag);
 	}
 
 	/**
@@ -391,6 +450,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa8xlsx() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "8.xlsx");
@@ -401,8 +461,19 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 11);
+		List<Graph> list = null;
+		try {
+			Message message = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			Map<List<Graph>, List<Build>> map = (Map<List<Graph>, List<Build>>) message.getData();
+			for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
+				list = entry.getKey();
+				break;
+			}
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(!flag);
+		Assert.assertTrue(list.size()==10);
 	}
 
 	/**
@@ -412,6 +483,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaaa8xls() throws IOException {
+		boolean flag = false;
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "8.xls");
@@ -422,8 +494,19 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list.size() == 11);
+		List<Graph> list = null;
+		try {
+			Message message = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			Map<List<Graph>, List<Build>> map = (Map<List<Graph>, List<Build>>) message.getData();
+			for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
+				list = entry.getKey();
+				break;
+			}
+		} catch (Exception e) {
+			flag = true;
+		}
+		Assert.assertTrue(!flag);
+		Assert.assertTrue(list.size()==10);
 	}
 
 	/**
@@ -432,7 +515,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void aaaaa9txt() throws IOException {
+	public void aaaaa9txt() throws Exception {
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "9.txt");
@@ -443,8 +526,8 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		List<Graph> list = coordinateService.readExcels(testFile.getInputStream(), "102",s);
-//		Assert.assertTrue(list == null);
+		Message message=coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		Assert.assertTrue(message.getType()== Message.Type.FAIL);
 	}
 
 	/**
