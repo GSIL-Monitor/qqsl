@@ -9,6 +9,7 @@ import com.hysw.qqsl.cloud.core.entity.build.*;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -558,7 +559,7 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void testListToStringPoing() {
-		JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObject = new JSONObject();
 		List<Graph> list = new ArrayList<Graph>();
 		Graph graph;
 		CoordinateBase coordinateBase;
@@ -575,9 +576,8 @@ public class CoordinateServiceTest extends BaseTest {
 			graph.setBaseType(CommonEnum.CommonType.SD);
 			list.add(graph);
 		}
-		String str1 = "point";
-//		String str2 = coordinateService.listToString(list,jsonArray);
-//		Assert.assertTrue(str2.length() > 0);
+		String str2 = coordinateService.listToString(list,jsonObject);
+		Assert.assertTrue(jsonObject.size() > 0);
 	}
 
 	/**
