@@ -46,7 +46,7 @@ public class ShareServiceTest extends BaseTest {
         shareService.shares(projectIds,userIds,user);
         projects = projectService.findByUser(user);
         for(int k=0;k<projects.size();k++){
-           assertTrue(projects.get(k).getShares().contains("liujb"));
+           assertTrue(!projects.get(k).getShares().contains("liujb"));
             }
     }
 }
