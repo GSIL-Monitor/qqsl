@@ -1,15 +1,19 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.ApplicationTokenService;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
+import com.hysw.qqsl.cloud.core.service.SensorService;
 import com.hysw.qqsl.cloud.core.service.StationService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,6 +27,8 @@ import org.springframework.mock.web.MockMultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -32,8 +38,9 @@ import static org.junit.Assert.*;
  * <p>
  * qq:1321404703 https://github.com/leinuo2016
  */
-public class StationControllerTest extends BaseControllerTest{
+public class StationControllerTest extends BaseControllerTest {
 
+    Log logger = LogFactory.getLog(getClass());
     @Autowired
     private UserController userController;
     @Autowired
@@ -46,13 +53,16 @@ public class StationControllerTest extends BaseControllerTest{
     private AuthentService authentService;
     @Autowired
     private StationService stationService;
+    @Autowired
+    private SensorService sensorService;
+
     @Before
     public void userLogin() throws Exception {
-        Map<String,Object> loginMap = new HashedMap();
-        loginMap.put("code","18661925010");
+        Map<String, Object> loginMap = new HashedMap();
+        loginMap.put("code", "18661925010");
         loginMap.put("password", DigestUtils.md5Hex("111111"));
         loginMap.put("loginType", "web");
-        Message message =  userController.login(loginMap);
+        Message message = userController.login(loginMap);
         Assert.assertTrue(message.getType().equals(Message.Type.OK));
         User user = authentService.getUserFromSubject();
         //添加测站，添加仪表
@@ -60,10 +70,10 @@ public class StationControllerTest extends BaseControllerTest{
     }
 
     private void addTestStation(User user) {
-        Station station = stationService.find(1L);
-        if(station==null){
+        Station station = stationService.find(12L);
+        if (station == null) {
             station = new Station();
-            station.setId(1L);
+            station.setId(12L);
             station.setType(CommonEnum.StationType.WATER_LEVEL_STATION);
             station.setUser(user);
             station.setName("Test");
@@ -81,7 +91,7 @@ public class StationControllerTest extends BaseControllerTest{
 
     @Test
     public void getToken() throws Exception {
-        JSONObject resultJson = HttpUtils.httpGetUrl(mockMvc,"/station/token");
+        JSONObject resultJson = HttpUtils.httpGetUrl(mockMvc, "/station/token");
         Assert.assertNotNull(resultJson.get("data"));
         Assert.assertTrue(applicationTokenService.decrypt(resultJson.get("data").toString()));
     }
@@ -90,14 +100,14 @@ public class StationControllerTest extends BaseControllerTest{
     public void uploadModel() throws Exception {
         File testFile = new ClassPathResource("station.xlsx").getFile();
         FileInputStream fis = new FileInputStream(testFile);
-        MockMultipartFile file = new MockMultipartFile("station.xlsx","station.xlsx","application/vnd.ms-excel",fis);
-        MockMultipartHttpServletRequest request = new MockMultipartHttpServletRequest() ;
+        MockMultipartFile file = new MockMultipartFile("station.xlsx", "station.xlsx", "application/vnd.ms-excel", fis);
+        MockMultipartHttpServletRequest request = new MockMultipartHttpServletRequest();
         request.addFile(file);
-        request.setParameter("id","1");
-        request.setParameter("fileName","station.xlsx");
+        request.setParameter("id", "12");
+        request.setParameter("fileName", "station.xlsx");
         Message message = stationController.uploadModel(request);
         Assert.assertTrue(Message.Type.OK.equals(message.getType()));
-        Station station = stationService.find(1L);
+        Station station = stationService.find(12L);
         assertNotNull(station.getFlowModel());
         assertNotNull(station.getRiverModel());
     }
@@ -105,41 +115,119 @@ public class StationControllerTest extends BaseControllerTest{
     @Test
     public void downloadModel() throws Exception {
         MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
-        Message message = stationController.downloadModel(1L,mockHttpServletResponse);
+        Message message = stationController.downloadModel(12L, mockHttpServletResponse);
         Assert.assertTrue(message.getType().equals(Message.Type.OK));
     }
 
     @Test
     public void getStations() throws Exception {
-        JSONObject resultJson= HttpUtils.httpGetUrl(mockMvc,"/station/lists");
+        JSONObject resultJson = HttpUtils.httpGetUrl(mockMvc, "/station/lists");
         JSONArray jsonArray = JSONArray.fromObject(resultJson.get("data"));
         assertNotNull(jsonArray);
     }
 
     @Test
     public void editStation() throws Exception {
-
+        Map<String, Object> stationMap = new HashMap<>();
+        stationMap.put("id", "12");
+        stationMap.put("type", "HYDROLOGIC_STATION");
+        stationMap.put("name", "西宁");
+        stationMap.put("description", "湟水河");
+        stationMap.put("address", "西宁");
+        stationMap.put("coor", "101.67822819977684,36.65375645069668,0");
+        Map<String, Object> station = new HashMap<>();
+        station.put("station", stationMap);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.getStatus();
+        String requestJson = net.minidev.json.JSONObject.toJSONString(station);
+        JSONObject jsonObject = HttpUtils.httpPost(mockMvc, "/station/edit", requestJson);
+        Assert.assertTrue(Message.Type.OK.toString().equals(jsonObject.get("type").toString()));
+        Station station1 = stationService.find(12l);
+        assertTrue(station1.getDescription().equals("湟水河"));
     }
 
     @Test
     public void addSensor() throws Exception {
-
+        Map<String, Object> sensorMap = new HashMap<>();
+        sensorMap.put("code", "9930023");
+        sensorMap.put("ciphertext", "02D7145AFB1");
+        sensorMap.put("factory", "惠普");
+        sensorMap.put("contact", "分布");
+        sensorMap.put("phone", "18662905010");
+        sensorMap.put("settingHeight", "3.5");
+        Map<String, Object> station = new HashMap<>();
+        station.put("sensor", sensorMap);
+        station.put("id", "12");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.getStatus();
+        String requestJson = net.minidev.json.JSONObject.toJSONString(station);
+        JSONObject jsonObject = HttpUtils.httpPost(mockMvc, "/station/addSensor", requestJson);
+        Assert.assertTrue(Message.Type.OK.toString().equals(jsonObject.get("type").toString()));
     }
 
     @Test
     public void addCamera() throws Exception {
-
+        Map<String, Object> sensorMap = new HashMap<>();
+        sensorMap.put("factory", "惠普");
+        sensorMap.put("contact", "分布");
+        sensorMap.put("phone", "18662905010");
+        sensorMap.put("cameraUrl", "45aa42920a9241a59d0374ecfcb64781");
+        Map<String, Object> station = new HashMap<>();
+        station.put("camera", sensorMap);
+        station.put("id", "12");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.getStatus();
+        String requestJson = net.minidev.json.JSONObject.toJSONString(station);
+        JSONObject jsonObject = HttpUtils.httpPost(mockMvc, "/station/addCamera", requestJson);
+        Assert.assertTrue(Message.Type.OK.toString().equals(jsonObject.get("type").toString()));
     }
 
     @Test
     public void deleteSensor() throws Exception {
-        JSONObject resultJson= HttpUtils.httpDelete(mockMvc,"/station/deleteSensor/{id}",1l);
+        Station station = stationService.find(12l);
+        List<Sensor> sensors = station.getSensors();
+        Sensor sensor = null;
+        for (int i = 0; i < sensors.size(); i++) {
+            if (!Sensor.Type.CAMERA.equals(sensors.get(i).getType())) {
+                sensor = sensors.get(i);
+                break;
+            }
+        }
+        if (sensor == null) {
+            logger.info("暂无仪表,则添加仪表");
+            sensor = new Sensor();
+            sensor.setType(Sensor.Type.CANAL_FLOW);
+            sensor.setCode("1213213");
+            sensor.setStation(station);
+            sensorService.save(sensor);
+        }
+        Long id = sensor.getId();
+        JSONObject resultJson = HttpUtils.httpDelete(mockMvc, "/station/deleteSensor/{id}", id);
         assertTrue("OK".equals(resultJson.getString("type")));
     }
 
     @Test
     public void deleteCamera() throws Exception {
-
+        Station station = stationService.find(12l);
+        List<Sensor> sensors = station.getSensors();
+        Sensor sensor = null;
+        for (int i = 0; i < sensors.size(); i++) {
+            if (Sensor.Type.CAMERA.equals(sensors.get(i).getType())) {
+                sensor = sensors.get(i);
+                break;
+            }
+        }
+        if (sensor == null) {
+            logger.info("暂无摄像头");
+            sensor = new Sensor();
+            sensor.setType(Sensor.Type.CAMERA);
+            sensor.setCode("1213223");
+            sensor.setStation(station);
+            sensorService.save(sensor);
+        }
+        Long id = sensor.getId();
+        JSONObject resultJson = HttpUtils.httpDelete(mockMvc, "/station/deleteCamera/{id}", id);
+        assertTrue("OK".equals(resultJson.getString("type")));
     }
 
     @Test
