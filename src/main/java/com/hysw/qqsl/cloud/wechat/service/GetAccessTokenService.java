@@ -39,7 +39,7 @@ public class GetAccessTokenService {
     }
 
     public String getToken(){
-        return token;
+        return this.token;
     }
 
     /**

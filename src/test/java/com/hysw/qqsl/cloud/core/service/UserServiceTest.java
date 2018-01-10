@@ -2,18 +2,17 @@ package com.hysw.qqsl.cloud.core.service;
 
 import java.util.List;
 
-import com.hysw.qqsl.cloud.core.service.ContactService;
-import com.hysw.qqsl.cloud.core.service.NoteService;
-import com.hysw.qqsl.cloud.core.service.UserService;
-import com.hysw.qqsl.cloud.util.SettingUtils;
+import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
+import com.hysw.qqsl.cloud.pay.service.PackageService;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.junit.Assert;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.core.controller.Message;
@@ -65,18 +64,18 @@ public class UserServiceTest extends BaseTest{
 		Long times = System.currentTimeMillis();
 		String userName = "hysw"+times;
 		User user = userService.findByUserName(userName);
-		assertTrue(user.getId()==null);
+		assertTrue(user==null);
 		//获取手机验证码
-		String phone = "18661925010";
+		String phone = "18661925012";
 		//查看手机号码是否注册
         user = userService.findByPhone(phone);
-		assertTrue(user.getId()!=null);
+		assertTrue(user==null);
     	Verification verification = new Verification();
     	verification.setCode(code);
     	verification.setPhone(phone);
 		//发送验证码
 		MockHttpSession session = new MockHttpSession();
-		Message message = noteService.isSend(user.getPhone(), session);
+		Message message = noteService.isSend(phone, session);
 		assertTrue(message.getType()== Message.Type.OK);
 		//手机验证码验证
 		Verification verification1 = (Verification) session.getAttribute("verification");
@@ -157,40 +156,11 @@ public class UserServiceTest extends BaseTest{
 	}
 
 	/**
-	 * 用户信息修改业务测试
-	 */
-	@Test
-	public void testUpdate(){
-		User user = new User();
-			user.setName("青海鸿源");
-			user.setUserName("qqslUpdate");
-			user.setEmail("119238122@qq.com");
-			user.setPassword(DigestUtils.md5Hex("abc"));
-//			user.setType(User.Type.USER);
-			userService.save(user);
-		String newName = "hyswljb";
-		String newEmail = "1321404703@qq.com";
-		String newpassword = DigestUtils.md5Hex("111222");
-		Message message;
-		try {
-			message = userService.update(user.getUserName(),newName,newEmail,newpassword);
-			assertTrue(message.getType()==Message.Type.OK);
-			user = userService.findByUserName(user.getUserName());
-			assertNotNull(user.getId());
-		} catch (QQSLException e) {
-			//logger.info(e.getMessage());
-			return;
-		}
-		userService.remove(user);
-	}
-
-	/**
 	 * 修改手机号业务测试
 	 */
 	@Test
 	public void testChangePhone(){
 		String newPhone = "18661925010";
-		String code = SettingUtils.createRandomVcode();
 		//检查该手机号是否注册
 		User user = userService.findByPhone(newPhone);
 		assertTrue(user.getId()!=null);
@@ -254,18 +224,6 @@ public class UserServiceTest extends BaseTest{
 		assertTrue(contacts.size()>0);
 	}
 
-   /**
-    * 取得所有类型为USER的用户
-    */
-   @Test
-   public void testiFindUsers(){
-	   User user=new User();
-	   user.setId(1l);
-	   List<User> users = userService.findUsersNeOwn(user);
-	   assertTrue(users.size()>0);
-//	   assertTrue(users.get(0).getType()== User.Type.USER);
-   }
-
 	/**
 	 * 通过手机号码找到用户
 	 */
@@ -274,8 +232,7 @@ public class UserServiceTest extends BaseTest{
 		User user  = userService.findByPhone(phone);
 		assertTrue(user.getId()!=null);
 		User user1  = userService.findByPhone("18661925011");
-		assertTrue(user1.getId()==null);
-
+		assertTrue(user1!=null);
 	}
 
    /**
@@ -287,7 +244,7 @@ public class UserServiceTest extends BaseTest{
 	   User user1 = userService.findByPhoneOrEmial("18661925010");
 	   assertTrue(user1.getId()!=null);
 	   User user2 = userService.findByPhoneOrEmial("18661925555");
-	   assertTrue(user2.getId()==null);
+	   assertTrue(user2==null);
    }
 
 
@@ -300,7 +257,7 @@ public class UserServiceTest extends BaseTest{
 	}
   @Test
   public void testMakeUserJson(){
-	  User user = userService.find(1l);
+	  User user = userService.findByDao(1l);
 	  JSONObject userJson = userService.makeUserJson(user);
 	  assertTrue(Long.valueOf(userJson.get("id").toString()).equals(user.getId()));
   }

@@ -13,6 +13,7 @@ import com.hysw.qqsl.cloud.util.RSACoderUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 /**
  * Created by chenl on 17-3-23.
  */
+@Ignore
 public class RSACoderTest {
     private String publicKey;
     private String privateKey;
@@ -189,7 +191,7 @@ public class RSACoderTest {
         System.out.println(jiemi);
     }
 
-  //  @Test
+    @Test
     public void testAES111() throws Exception {
         String data = "9930023";
         //String.valueOf(System.currentTimeMillis());

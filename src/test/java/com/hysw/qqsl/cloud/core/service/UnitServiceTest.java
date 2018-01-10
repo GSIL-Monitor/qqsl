@@ -14,6 +14,7 @@ import com.hysw.qqsl.cloud.core.service.UnitService;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.DocumentException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class UnitServiceTest extends BaseTest {
 	private final String[] elementGroupXMLs = {"agrElementGroup.xml","conElementGroup.xml","driElementGroup.xml","floElementGroup.xml","hydElementGroup.xml","watElementGroup.xml"};
 	private final String[] pathPrefixs = {"agrXmlTest","conXmlTest","driXmlTest","floXmlTest","hydXmlTest","watXmlTest"};
 	/**每种类型的项目所拥有的单元个数*/
-	private final int size[] = {33,31,33,33,31,31};
+	private final int size[] = {31,31,31,31,31,31};
 	/** 设计  */
 	private final String unitAlias = "11";
 	private final String unitAlias1 = "22";
@@ -93,7 +94,7 @@ public class UnitServiceTest extends BaseTest {
 		assertEquals(watUnits.size(), size[5]);
 //		unitService.refreshUnitModelXML();
 		List<Unit> units = unitService.getAgrModel();
-		assertEquals(units, null);
+		assertEquals(units.size(), 31);
 
 	}
 	@Test
@@ -130,33 +131,33 @@ public class UnitServiceTest extends BaseTest {
 		testUnitReAlias();
 	}
 	@Test
-	public void testAgrUnitsModel(){
+	public void testAgrUnitsModel() throws XMLFileException, DocumentException {
 		testUnitAndElementGroup(agrXMLs,elementGroupXMLs[0],pathPrefixs[0]);
-		testUnits(agrXMLs,pathPrefixs[0],size[0]);
+		testUnits(agrXMLs,pathPrefixs[0],33);
 	}
 	@Test
-	public void testconUnitsModel(){
+	public void testconUnitsModel() throws XMLFileException, DocumentException {
 		testUnitAndElementGroup(conXMLs,elementGroupXMLs[1],pathPrefixs[1]);
 		testUnits(conXMLs,pathPrefixs[1],size[1]);
 	}
 	@Test
-	public void testDriUnitsModel(){
+	public void testDriUnitsModel() throws XMLFileException, DocumentException {
 		testUnitAndElementGroup(driXMLs,elementGroupXMLs[2],pathPrefixs[2]);
-		testUnits(driXMLs,pathPrefixs[2],size[2]);
+		testUnits(driXMLs,pathPrefixs[2],33);
 	}
 	@Test
-	public void testFloUnitsModel(){
+	public void testFloUnitsModel() throws XMLFileException, DocumentException {
 		testUnitAndElementGroup(floXMLs,elementGroupXMLs[3],pathPrefixs[3]);
-		testUnits(floXMLs,pathPrefixs[3],size[3]);
+		testUnits(floXMLs,pathPrefixs[3],33);
 	}
 	
 	@Test
-	public void testHydUnitsModel(){
+	public void testHydUnitsModel() throws XMLFileException, DocumentException {
 		testUnitAndElementGroup(hydXMLs,elementGroupXMLs[4],pathPrefixs[4]);
 		testUnits(hydXMLs,pathPrefixs[4],size[4]);
 	}
 	@Test
-	public void testWatUnitsModel(){
+	public void testWatUnitsModel() throws XMLFileException, DocumentException {
 		testUnitAndElementGroup(watXMLs,elementGroupXMLs[5],pathPrefixs[5]);
 		testUnits(watXMLs,pathPrefixs[5],size[5]);
 	}
@@ -166,13 +167,9 @@ public class UnitServiceTest extends BaseTest {
 	 * @param elementGroupXML
 	 */
 	private void testUnitAndElementGroup(String[] XMLs,
-			String elementGroupXML,String path) {
+			String elementGroupXML,String path) throws DocumentException, XMLFileException {
 		List<Unit> units = null;
-		try {
-			 units = unitService.readProjectModelXML(path+"/"+XMLs[0]);
-		} catch (Exception e) {
-	        logger.info(e.getMessage());
-		}
+		units = unitService.readProjectModelXML(path+"/"+XMLs[0]);
 		List<ElementGroup> elementGroups = elementGroupService.getElementGroups(path+"/"+elementGroupXML);
 		try {
 			unitAndElementGroup(units, elementGroups);

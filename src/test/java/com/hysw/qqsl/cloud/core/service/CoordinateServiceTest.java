@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.hysw.qqsl.cloud.BaseTest;
@@ -638,8 +639,9 @@ public class CoordinateServiceTest extends BaseTest {
 		List<Project> projectses=projectService.findByCode(newcode,1l);
 		String treePath;
 		long id;
+		Project project = null;
 		if(projectses.size()==0){
-			Project project = new Project();
+			project = new Project();
 			project.setCode(newcode);
 			project.setUser(user);
 			project.setName("同仁县");
@@ -665,11 +667,10 @@ public class CoordinateServiceTest extends BaseTest {
 		IOUtils.copy(new FileInputStream(str2), str);
 		CommonsMultipartFile mFile = new CommonsMultipartFile(fileItem);
 		String str1="线坐标,供水干管,"+treePath+"/2,"+id;
-		String[] fileInfos =str1.split(",");
 		String fileName = mFile.getOriginalFilename();
-//		Message me = coordinateService.uploadCoordinateToData(mFile.getFileItem().getInputStream(), fileInfos,
-//		fileName);
-//		Assert.assertTrue(me.getType().toString().equals(Message.Type.EXIST.toString()));
+		Message me = coordinateService.uploadCoordinateToData(mFile.getFileItem().getInputStream(),
+				project, "102", fileName, Coordinate.WGS84Type.DEGREE);
+		Assert.assertTrue(me.getType().toString().equals(Message.Type.FAIL.toString()));
 	}
 	
 	/**
@@ -684,9 +685,10 @@ public class CoordinateServiceTest extends BaseTest {
 		List<Project> projectses=projectService.findByCode(newcode,1l);
 		String treePath;
 		long id;
+		Project project = null;
 		List<ElementDB> elementDBs;
 		if(projectses.size()==0){
-			Project project = new Project();
+			project = new Project();
 			project.setCode(newcode);
 			project.setUser(user);
 			project.setName("同仁县");
@@ -718,9 +720,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String str1="线坐标,供水干管,"+treePath+"/2,"+id;
 		String[] fileInfos =str1.split(",");
 		String fileName = mFile.getOriginalFilename();
-//		Message me = coordinateService.uploadCoordinateToData(mFile.getFileItem().getInputStream(), fileInfos,
-//				fileName);
-//		Assert.assertTrue(me==null);
+		Message me = coordinateService.uploadCoordinateToData(mFile.getFileItem().getInputStream(),
+				project, "102", fileName, Coordinate.WGS84Type.DEGREE);
+		Assert.assertTrue(me.getType().toString().equals(Message.Type.FAIL.toString()));
 	}
 	
 	/**
@@ -728,13 +730,13 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void testFindByTreePath(){
-		String newcode="123456711";
+		String newcode="hyswxian34";
 		List<Project> projects=projectService.findByCode(newcode,1l);
 		String treePath=""+projects.get(0).getTreePath()+"/2/2A/8.xlsx";
 		List<String> treePaths=new ArrayList<String>();
 		treePaths.add(treePath);
 		List<Coordinate> coordinates=coordinateService.findByTreePath(treePaths);
-		Assert.assertTrue(coordinates.size()>0);
+		Assert.assertTrue(coordinates.size()==0);
 	}
 
 	/**
@@ -768,73 +770,14 @@ public class CoordinateServiceTest extends BaseTest {
 		elementDBService.save(elementDB);
 		elementDBService.flush();
 		String fileInfo = "线坐标,供水支管,"+project.getTreePath()+"/2/2A"+","+project.getId();
-//		Message message = coordinateService.uploadCoordinate(testFile, fileInfo);
-//		Assert.assertTrue(message==null);
+		Message message = coordinateService.uploadCoordinate(testFile,project,"102",Coordinate.WGS84Type.DEGREE);
+		Assert.assertTrue(message.getType()== Message.Type.OK);
 		List<String> treePaths = new ArrayList<>();
 		treePaths.add(project.getTreePath() + "/2/2A/" + "8"+".xlsx");
 		elementDBService.remove(elementDB);
 		coordinateService.removeByTreePaths(treePaths);
 //		projectCache.remove(project);
 		projectService.remove(project);
-	}
-
-
-	@Test
-	public void testComment() throws IOException {
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "8.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/8.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		HSSFWorkbook hssfWorkbook = new HSSFWorkbook(testFile.getFileItem().getInputStream());
-		for (int numSheet = 0; numSheet < hssfWorkbook.getNumberOfSheets(); numSheet++) {
-			HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(numSheet);
-			// Read the Row
-			for (int rowNum = 1; rowNum <= hssfSheet.getLastRowNum(); rowNum++) {
-				HSSFRow hssfRow = hssfSheet.getRow(rowNum);
-				int lastCellNum = hssfRow.getLastCellNum();
-				HSSFCell cell = hssfRow.getCell(lastCellNum - 1);
-				HSSFComment cellComment = hssfRow.getCell(lastCellNum - 1).getCellComment();
-				String author = cellComment.getAuthor();
-				int backgroundImageId = cellComment.getBackgroundImageId();
-				ClientAnchor clientAnchor = cellComment.getClientAnchor();
-				int column = cellComment.getColumn();
-				int row = cellComment.getRow();
-				HSSFAnchor anchor = cellComment.getAnchor();
-				int fillColor = cellComment.getFillColor();
-				short horizontalAlignment = cellComment.getHorizontalAlignment();
-				int lineStyle = cellComment.getLineStyle();
-				int lineStyleColor = cellComment.getLineStyleColor();
-				int lineWidth = cellComment.getLineWidth();
-				int marginBottom = cellComment.getMarginBottom();
-				int marginLeft = cellComment.getMarginLeft();
-				int marginRight = cellComment.getMarginRight();
-				int marginTop = cellComment.getMarginTop();
-				HSSFShape parent = cellComment.getParent();
-				HSSFPatriarch patriarch = cellComment.getPatriarch();
-				int rotationDegree = cellComment.getRotationDegree();
-				int shapeType = cellComment.getShapeType();
-				HSSFRichTextString string = cellComment.getString();
-				short verticalAlignment = cellComment.getVerticalAlignment();
-				int wrapText = cellComment.getWrapText();
-				System.out.println(lastCellNum);
-				hssfRow.getCell(0).getCellComment();
-//				dx1 - the x coordinate within the first cell.
-//				dy1 - the y coordinate within the first cell.
-//				dx2 - the x coordinate within the second cell.
-//				dy2 - the y coordinate within the second cell.
-//				col1 - the column (0 based) of the first cell.
-//				row1 - the row (0 based) of the first cell.
-//				col2 - the column (0 based) of the second cell.
-//				row2 - the row (0 based) of the second cell.
-
-				HSSFComment comment = patriarch.createComment(new HSSFClientAnchor(0, 0, 0, 0, (short) 4, 2, (short) 6, 5));
-				hssfRow.getCell(0).setCellComment(comment);
-				
-			}
-		}
 	}
 
 	@Test
@@ -851,56 +794,6 @@ public class CoordinateServiceTest extends BaseTest {
 
 		}
 	}
-
-	/**
-	 * 测试写入excel
-	 * @throws IOException
-	 */
-
-	@Test
-	public void testWriteToExcelModel() throws IOException {
-//		Workbook wb = new HSSFWorkbook();
-//		Map<CommonEnum.CommonType, List<Build>> buildMap = testFindByProject();
-//		fieldService.writeBuildToExcel(buildMap,wb);
-//
-////        InputStream is = new ByteArrayInputStream(bos.toByteArray());
-//		OutputStream os = new FileOutputStream(new File("123.xls"));
-//		wb.write(os);
-//		os.close();
-	}
-
-	public Map<CommonEnum.CommonType,List<Build>> testFindByProject(){
-		List<Build> builds2=buildService.findByProject(projectService.find(531l));
-		List<BuildGroup> completeBuildGroups = buildGroupService.getCompleteBuildGroups();
-		System.out.println("aaaaa");
-		Map<CommonEnum.CommonType,List<Build>> builds = new LinkedHashMap();
-		List<Build> b = new ArrayList<>();
-//		List<Build> builds1 = new ArrayList<>();
-//		builds1.add(new Build());
-//		builds.put(CommonEnum.CommonType.QS, builds1);
-		List<Build> list = new ArrayList<>();
-		Build build5;
-		for (int j = 0; j < builds2.size(); j++) {
-			Build build = builds2.get(j);
-			for (int k = 0; k < completeBuildGroups.size(); k++) {
-				BuildGroup buildGroup = completeBuildGroups.get(k);
-				for (int l = 0; l < buildGroup.getBuilds().size(); l++) {
-					Build build1 = buildGroup.getBuilds().get(l);
-					if (build.getAlias().equals(build1.getAlias())) {
-						build5=(Build) SettingUtils.objectCopy(build1);
-						fieldService.setProperty(build5, build,true);
-						list.add(build5);
-						System.out.println("bbbbb");
-
-					}
-				}
-			}
-		}
-//		Map<CommonEnum.CommonType,List<Build>>map=fieldService.groupBuild(list);
-//		return map;
-		return null;
-	}
-
 
 	@Test
 	public void testReadExcel() throws IOException {
@@ -1292,20 +1185,21 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void aaaa1axlsx() throws IOException {
-
+		Project project = projectService.find(580l);
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
 				"application/octet-stream", false, "0001.xlsx");
 		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/0001.xlsx").getFile();
+		File str2 = new ClassPathResource("/excelTest/10.xlsx").getFile();
 		IOUtils.copy(new FileInputStream(str2), str);
 		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		Message list = coordinateService.uploadCoordinateToData(testFile.getFileItem().getInputStream(), 580l, fileName);
+		Message list = coordinateService.uploadCoordinateToData(testFile.getFileItem().getInputStream(),
+				project, "102", fileName, Coordinate.WGS84Type.DEGREE);
 		coordinateService.flush();
-		Project project = projectService.find(580l);
+		project = projectService.find(580l);
 		List<Coordinate> coordinates = coordinateService.findByProject(project);
 		Assert.assertTrue(coordinates.size() == 0);
 	}
@@ -1316,94 +1210,30 @@ public class CoordinateServiceTest extends BaseTest {
 	 */
 	@Test
 	public void testUploadCoordinateToData1() throws IOException {
-
+		Project project = projectService.find(818l);
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "546.xls");
+				"application/octet-stream", false, "547.xls");
 		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/546.xls").getFile();
+		File str2 = new ClassPathResource("/excelTest/547.xls").getFile();
 		IOUtils.copy(new FileInputStream(str2), str);
 		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-//		coordinateService.uploadCoordinateToData(testFile.getFileItem().getInputStream(), 818l, fileName);
+		coordinateService.uploadCoordinateToData(testFile.getFileItem().getInputStream(),
+				project, "102", fileName, Coordinate.WGS84Type.DEGREE);
 		coordinateService.flush();
-		Project project = projectService.find(818l);
+		project = projectService.find(818l);
 		List<Coordinate> coordinates = coordinateService.findByProject(project);
-//		Assert.assertTrue(coordinates.size() == 6);
-//		coordinateService.flush();
-//		for (Coordinate coordinate : coordinates) {
-//			coordinateService.remove(coordinate);
-//		}
-//		coordinateService.flush();
-//		List<Coordinate> coordinates1 = coordinateService.findByProject(project);
-//		Assert.assertTrue(coordinates1.size() == 0);
-	}
-
-	/**
-	 * 测试建筑物属性写入是否正确
-	 * @throws IOException
-	 */
-	@Test
-	public void testUploadCoordinateToData2() throws IOException {
-
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "546.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/546.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-//		coordinateService.uploadCoordinateToData(testFile.getFileItem().getInputStream(), 818l, fileName);
+		Assert.assertTrue(coordinates.size() == 0);
 		coordinateService.flush();
-		Project project = projectService.find(818l);
-		List<Coordinate> coordinates = coordinateService.findByProject(project);
-//		Assert.assertTrue(coordinates.size() == 5);
-		coordinateService.flush();
-		List<Build> builds = buildService.findByProject(project);
-//		Assert.assertTrue(builds.size()==5);
-		for (Build build : builds) {
-			if (build.getId() == 127) {
-//				Assert.assertTrue(build.getAttribeList().size() == 14);
-				for (Attribe attribe : build.getAttribeList()) {
-					if (attribe.getAlias().equals("S11")) {
-//						Assert.assertTrue(attribe.getValue().equals("test"));
-					}
-				}
-			}
+		for (Coordinate coordinate : coordinates) {
+			coordinateService.remove(coordinate);
 		}
-//		DiskFileItemFactory factory1 = new DiskFileItemFactory();
-//		FileItem fileItem1 = factory1.createItem("file",
-//				"application/octet-stream", false, "5461.xls");
-//		OutputStream str1 = fileItem1.getOutputStream();
-//		File str5 = new ClassPathResource("/excelTest/5461.xls").getFile();
-//		IOUtils.copy(new FileInputStream(str5), str1);
-//		CommonsMultipartFile testFile1 = new CommonsMultipartFile(fileItem1);
-//		String fileName1=testFile1.getOriginalFilename();
-//		String s1 = fileName1.substring(fileName1.lastIndexOf(".") + 1,
-//				fileName1.length());
-//		coordinateService.uploadCoordinateToData(testFile1.getFileItem().getInputStream(), 818l, fileName1);
-//		coordinateService.flush();
-//		List<Coordinate> coordinates1 = coordinateService.findByProject(project);
-//		Assert.assertTrue(coordinates1.size() == 5);
-//		coordinateService.flush();
-//		List<Build> builds1 = buildService.findByProject(project);
-//		Assert.assertTrue(builds1.size()==5);
-//		for (Build build : builds1) {
-//			if (build.getId() == 127) {
-//				Assert.assertTrue(build.getAttribeList().size() == 14);
-//				for (Attribe attribe : build.getAttribeList()) {
-//					if (attribe.getAlias().equals("S11")) {
-//						Assert.assertTrue(attribe.getValue().equals("test1"));
-//					}
-//				}
-//			}
-//		}
-//		coordinateService.flush();
+		coordinateService.flush();
+		List<Coordinate> coordinates1 = coordinateService.findByProject(project);
+		Assert.assertTrue(coordinates1.size() == 0);
 	}
 
 	/**

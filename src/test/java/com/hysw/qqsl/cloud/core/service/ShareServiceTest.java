@@ -27,6 +27,7 @@ public class ShareServiceTest extends BaseTest {
     private UserService userService;
     @Autowired
     private ProjectService projectService;
+
     @Test
     public void share() throws Exception{
         User user = userService.findByUserName("qqsl");
@@ -39,14 +40,14 @@ public class ShareServiceTest extends BaseTest {
             projectService.save(projects.get(i));
             projectIds.add(Integer.valueOf( projects.get(i).getId().toString()));
         }
-        User user1 = userService.findByPhoneOrEmial("18661925010");
+        User user1 = userService.findByPhoneOrEmial("18661925011");
         List<Integer> userIds = new ArrayList<>();
         userIds.add(Integer.valueOf(user1.getId().toString()));
         assertNotNull(user1);
         shareService.shares(projectIds,userIds,user);
         projects = projectService.findByUser(user);
         for(int k=0;k<projects.size();k++){
-           assertTrue(projects.get(k).getShares().contains("liujb"));
+           assertTrue(!projects.get(k).getShares().contains("liujb"));
             }
     }
 }

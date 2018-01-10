@@ -29,7 +29,6 @@ import static org.junit.Assert.assertTrue;
  * @author Administrator
  *
  */
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 public class ElementServiceTest extends BaseTest {
 
 	@Autowired

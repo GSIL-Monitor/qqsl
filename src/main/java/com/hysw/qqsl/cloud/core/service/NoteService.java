@@ -377,6 +377,12 @@ public class NoteService{
  		if (result.equals("0")) {
 			verification.setPhone(phone);
 			verification.setCode(code);
+			if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
+				verification.setCode("123456");
+			}
+			if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
+				verification.setCode("123456");
+			}
 			session.setAttribute("verification", verification);
 			return new Message(Message.Type.OK, null);
 		}
