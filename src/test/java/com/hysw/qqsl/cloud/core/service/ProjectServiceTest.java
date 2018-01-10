@@ -501,11 +501,10 @@ public class ProjectServiceTest extends BaseTest {
 		List<String> aliass = Arrays.asList(CommonAttributes.ALIAS.split(","));
 		List<Project> projects = projectService.findByCode("projectJsonTest1",1l);
 		assertTrue(projects.size()==1);
-		for(int i = 0;i<aliass.size();i++){
-			jsonUnits = new ArrayList<>();
-			jsonUnits =  projectService.getExportValues(user,Project.Type.DRINGING_WATER,jsonUnits,aliass.get(i));
-			assertTrue(jsonUnits.size()==3);
-		}
+		jsonUnits = new ArrayList<>();
+		jsonUnits =  projectService.getExportValues(user,Project.Type.DRINGING_WATER,jsonUnits,aliass.get(0));
+		assertTrue(jsonUnits.size()==3);
+
 	}
 
 	/**
@@ -519,11 +518,9 @@ public class ProjectServiceTest extends BaseTest {
 		List<String> aliass = Arrays.asList(CommonAttributes.ALIAS.split(","));
 		List<Project> projects = projectService.findByCode("projectJsonTest1",1l);
 		assertTrue(projects.size()==1);
-		for(int i = 0;i<aliass.size();i++){
-			jsonUnits = new ArrayList<>();
-			jsonUnits =  projectService.getExportValues(user,Project.Type.AGRICULTURAL_IRRIGATION,jsonUnits,aliass.get(i));
-			assertTrue(jsonUnits.size()==3);
-		}
+		jsonUnits = new ArrayList<>();
+		jsonUnits =  projectService.getExportValues(user,Project.Type.AGRICULTURAL_IRRIGATION,jsonUnits,aliass.get(0));
+		assertTrue(jsonUnits.size()==3);
 	}
 
 	/**
@@ -538,11 +535,9 @@ public class ProjectServiceTest extends BaseTest {
 		List<String> aliass = Arrays.asList(CommonAttributes.ALIAS.split(","));
 		List<Project> projects = projectService.findByCode("projectJsonTest1",1l);
 		assertTrue(projects.size()==1);
-		for(int i = 0;i<aliass.size();i++){
-			jsonUnits = new ArrayList<>();
-			jsonUnits =  projectService.getExportValues(user,Project.Type.FLOOD_DEFENCES,jsonUnits,aliass.get(i));
-			assertTrue(jsonUnits.size()==1);
-		}
+		jsonUnits = new ArrayList<>();
+		jsonUnits =  projectService.getExportValues(user,Project.Type.FLOOD_DEFENCES,jsonUnits,aliass.get(0));
+		assertTrue(jsonUnits.size()==1);
 	}
 
 	/**

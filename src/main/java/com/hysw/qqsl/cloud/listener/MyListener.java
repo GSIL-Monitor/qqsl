@@ -6,6 +6,7 @@ import com.hysw.qqsl.cloud.pay.service.GoodsService;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.util.ObjectJsonConvertUtils;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import com.hysw.qqsl.cloud.wechat.service.GetAccessTokenService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private ProjectLogService projectLogService;
 	@Autowired
 	private PollingService pollingService;
+	@Autowired
+	private GetAccessTokenService getAccessTokenService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -136,6 +139,9 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			}
 			pollingService.init();
 			logger.info("初始化轮询状态");
+			if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
+				getAccessTokenService.getAccessToken();
+			}
 		}
 	}
 

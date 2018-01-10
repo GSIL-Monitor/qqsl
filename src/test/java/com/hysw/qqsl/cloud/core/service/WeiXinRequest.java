@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.util.HttpRequestUtil;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -21,7 +22,11 @@ import java.net.URLEncoder;
 /**
  * Created by chenl on 17-6-26.
  */
-public class WeiXinRequest {
+public class WeiXinRequest extends BaseTest{
+    @Autowired
+    private CreateCode createCode;
+    @Autowired
+    private UploadFodderService uploadFodderService;
     private String httpsGetUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
     private String httpsPostUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
 
@@ -81,9 +86,6 @@ public class WeiXinRequest {
 
     @Test
     public void getFodderList(){
-        String a = "?__biz=MzA5ODM3NzEwNQ==&mid=100000006&idx=1&sn=1d388aeaaf4a8c3458618fa8b081bd3c&chksm=1093cdf827e444ee5638b185811ec25fe610c646cda492bdbfb8d6138e78a2fa79823f56cbf8#rd";
-        System.out.println(a.length());
-        UploadFodderService uploadFodderService = new UploadFodderService();
         uploadFodderService.getFodderList("news",0,19);
     }
 
@@ -95,7 +97,6 @@ public class WeiXinRequest {
 
     @Test
     public void testCreateCode() throws UnsupportedEncodingException {
-        CreateCode createCode = new CreateCode();
         createCode.createCode();
     }
 

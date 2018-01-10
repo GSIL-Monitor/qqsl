@@ -4,6 +4,7 @@ import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.wechat.util.WeChatHttpRequest;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -16,6 +17,7 @@ import java.util.Random;
  * 创建二维码
  * Created by chenl on 17-7-3.
  */
+@Service("createCode")
 public class CreateCode {
     @Autowired
     private GetAccessTokenService getAccessTokenService;

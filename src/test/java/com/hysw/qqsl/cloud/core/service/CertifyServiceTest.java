@@ -14,6 +14,7 @@ import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.binary.Base64;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -35,6 +36,7 @@ import java.util.Map;
  * @author chenl
  * @create 2017-08-30 下午2:36
  */
+@Ignore
 public class CertifyServiceTest extends BaseTest{
     @Autowired
     private CertifyService certifyService;

@@ -325,36 +325,6 @@ public class UserService extends BaseService<User, Long> {
 	}
 
 	/**
-	 * 用户信息修改
-	 * @param userName
-	 * @param name
-	 * @param email
-	 * @param password
-	 * @return
-     * @throws QQSLException
-     */
-	public Message update(String userName, String name,
-			String email, String password) throws QQSLException {
-		if(SettingUtils.parameterRegex(userName)==false){
-			throw new QQSLException(userName+" 用户名格式异常！");
-		}
-		User user = findByUserName(userName);
-		if (user == null) {
-			//用户不存在;
-			return new Message(Message.Type.FAIL);
-		}
-		if(password.length()!=32){
-			throw new QQSLException(password+" 密码格式异常！");
-		}
-		user.setEmail(email);
-		user.setName(name);
-		user.setPassword(password);
-		save(user);
-		authentService.updateSession(user);
-		return new Message(Message.Type.OK,makeUserJson(user));
-	}
-
-	/**
 	 * 修改用户密码
 	 * @param newPassword
 	 * @param id
