@@ -120,8 +120,8 @@ public class FeedbackController {
      * <li>UNKNOWN 未知错误</li>
      * </ol>
      */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/account/lists", method = RequestMethod.GET)
     public @ResponseBody Message getAccountFeedbacks() {
         Account account = authentService.getAccountFromSubject();

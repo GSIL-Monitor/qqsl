@@ -180,7 +180,7 @@ public class FeedbackService extends BaseService<Feedback, Long> {
      */
     public List<Feedback> findByAccountId(Long accountId) {
         List<Filter> filters = new LinkedList<>();
-        filters.add(Filter.eq("accoundId", accountId));
+        filters.add(Filter.eq("accountId", accountId));
         return feedbackDao.findList(0, null, filters);
     }
 
