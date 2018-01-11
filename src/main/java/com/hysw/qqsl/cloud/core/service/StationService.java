@@ -530,6 +530,9 @@ public class StationService extends BaseService<Station, Long> {
      * @return
      */
     public Message isHydrologyStation(Station station,String type){
+        if(!station.getType().equals(CommonEnum.StationType.WATER_LEVEL_STATION)){
+            return new Message(Message.Type.OK);
+        }
         List<Sensor> sensors = station.getSensors();
         if(sensors.size()==0){
             return new Message(Message.Type.OK);

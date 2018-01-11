@@ -193,9 +193,10 @@ public class RSACoderTest {
 
     @Test
     public void testAES111() throws Exception {
-        String data = String.valueOf(System.currentTimeMillis());
-//        String appliactionKey=CommonAttributes.tokenKey;
-//        String appliactioniv = CommonAttributes.tokenIv;
+        String data = "9930023";
+        //String.valueOf(System.currentTimeMillis());
+        //String appliactionKey=CommonAttributes.tokenKey;
+        //String appliactioniv = CommonAttributes.tokenIv;
         String appliactionKey=CommonAttributes.appliactionKey;
         String appliactioniv = CommonAttributes.appliactionIv;
         System.out.println(data);
@@ -206,7 +207,7 @@ public class RSACoderTest {
             bbb.append(s.substring(i,i+1));
         }
         System.out.println("激活码:"+bbb.toString());
-        String ccc = data;
+        String ccc = "9930023";
         if (assertjiami(bbb, ccc)) {
             System.out.println("激活成功");
         }else{

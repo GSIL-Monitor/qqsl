@@ -250,7 +250,7 @@ public abstract class RSACoder extends Coder {
         System.out.print("公钥:"+getPublicKey(keyMap));
         System.out.print("私钥:"+getPrivateKey(keyMap));*/
         RSACoderUtil rsaCoderUtil = new RSACoderUtil();
-        String data = "a=123";
+        String data = "12313123122";
         byte[] bytes = data.getBytes();
         String result = sign(bytes,privateKey);
         System.out.print(result);
