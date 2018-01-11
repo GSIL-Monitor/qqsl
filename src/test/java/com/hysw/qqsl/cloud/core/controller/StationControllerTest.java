@@ -27,6 +27,7 @@ import org.springframework.mock.web.MockMultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,22 +65,14 @@ public class StationControllerTest extends BaseControllerTest {
         loginMap.put("loginType", "web");
         Message message = userController.login(loginMap);
         Assert.assertTrue(message.getType().equals(Message.Type.OK));
-        User user = authentService.getUserFromSubject();
         //添加测站，添加仪表
-        addTestStation(user);
+        addTestStation();
     }
 
-    private void addTestStation(User user) {
+    private void addTestStation() {
         Station station = stationService.find(12L);
         if (station == null) {
-            station = new Station();
-            station.setId(12L);
-            station.setType(CommonEnum.StationType.WATER_LEVEL_STATION);
-            station.setUser(user);
-            station.setName("Test");
-            station.setCoor("{\"longitude\":\"101.67822819977684\",\"latitude\":\"36.65375645069668\",\"elevation\":\"0\"}");
-            station.setAddress("青海");
-            stationService.save(station);
+           save();
         }
     }
 
@@ -162,7 +155,7 @@ public class StationControllerTest extends BaseControllerTest {
         response.getStatus();
         String requestJson = net.minidev.json.JSONObject.toJSONString(station);
         JSONObject jsonObject = HttpUtils.httpPost(mockMvc, "/station/addSensor", requestJson);
-        Assert.assertTrue(Message.Type.OK.toString().equals(jsonObject.get("type").toString()));
+        Assert.assertTrue("OK".equals(jsonObject.get("type").toString()));
     }
 
     @Test
@@ -184,23 +177,7 @@ public class StationControllerTest extends BaseControllerTest {
 
     @Test
     public void deleteSensor() throws Exception {
-        Station station = stationService.find(12l);
-        List<Sensor> sensors = station.getSensors();
-        Sensor sensor = null;
-        for (int i = 0; i < sensors.size(); i++) {
-            if (!Sensor.Type.CAMERA.equals(sensors.get(i).getType())) {
-                sensor = sensors.get(i);
-                break;
-            }
-        }
-        if (sensor == null) {
-            logger.info("暂无仪表,则添加仪表");
-            sensor = new Sensor();
-            sensor.setType(Sensor.Type.CANAL_FLOW);
-            sensor.setCode("1213213");
-            sensor.setStation(station);
-            sensorService.save(sensor);
-        }
+        Sensor sensor = setUpData("sensor");
         Long id = sensor.getId();
         JSONObject resultJson = HttpUtils.httpDelete(mockMvc, "/station/deleteSensor/{id}", id);
         assertTrue("OK".equals(resultJson.getString("type")));
@@ -208,23 +185,7 @@ public class StationControllerTest extends BaseControllerTest {
 
     @Test
     public void deleteCamera() throws Exception {
-        Station station = stationService.find(12l);
-        List<Sensor> sensors = station.getSensors();
-        Sensor sensor = null;
-        for (int i = 0; i < sensors.size(); i++) {
-            if (Sensor.Type.CAMERA.equals(sensors.get(i).getType())) {
-                sensor = sensors.get(i);
-                break;
-            }
-        }
-        if (sensor == null) {
-            logger.info("暂无摄像头");
-            sensor = new Sensor();
-            sensor.setType(Sensor.Type.CAMERA);
-            sensor.setCode("1213223");
-            sensor.setStation(station);
-            sensorService.save(sensor);
-        }
+        Sensor sensor = setUpData("camera");
         Long id = sensor.getId();
         JSONObject resultJson = HttpUtils.httpDelete(mockMvc, "/station/deleteCamera/{id}", id);
         assertTrue("OK".equals(resultJson.getString("type")));
@@ -232,12 +193,40 @@ public class StationControllerTest extends BaseControllerTest {
 
     @Test
     public void editSensor() throws Exception {
-
+        Sensor sensor = setUpData("sensor");
+        Map<String, Object> sensorMap = new HashMap<>();
+        sensorMap.put("factory", "惠普update");
+        sensorMap.put("contact", "分布");
+        sensorMap.put("phone", "18662905010");
+        sensorMap.put("settingHeight", "3.5");
+        sensorMap.put("station",sensor.getStation().getId());
+        sensorMap.put("id", sensor.getId());
+        Map<String, Object> sensorMap1 = new HashMap<>();
+        sensorMap1.put("sensor", sensorMap);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.getStatus();
+        String requestJson = net.minidev.json.JSONObject.toJSONString(sensorMap1);
+        JSONObject jsonObject = HttpUtils.httpPost(mockMvc, "/station/editSensor", requestJson);
+        assertTrue("OK".equals(jsonObject.getString("type")));
     }
 
     @Test
     public void editCamera() throws Exception {
-
+        Sensor sensor = setUpData("camera");
+        Map<String, Object> sensorMap = new HashMap<>();
+        sensorMap.put("factory", "摄像头");
+        sensorMap.put("contact", "分布");
+        sensorMap.put("phone", "18662905010");
+        sensorMap.put("cameraUrl", "45aa42920a9241a59d0374ecfcb64781");
+        sensorMap.put("station",sensor.getStation().getId());
+        sensorMap.put("id", sensor.getId());
+        Map<String, Object> sensorMap1 = new HashMap<>();
+        sensorMap1.put("camera", sensorMap);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.getStatus();
+        String requestJson = net.minidev.json.JSONObject.toJSONString(sensorMap1);
+        JSONObject jsonObject = HttpUtils.httpPost(mockMvc, "/station/editCamera", requestJson);
+        assertTrue("OK".equals(jsonObject.getString("type")));
     }
 
     @Test
@@ -260,4 +249,50 @@ public class StationControllerTest extends BaseControllerTest {
 
     }
 
+    private void save(){
+       User user = authentService.getUserFromSubject();
+         Station station = new Station();
+            station.setId(12L);
+            station.setType(CommonEnum.StationType.WATER_LEVEL_STATION);
+            station.setUser(user);
+            station.setName("Test");
+            station.setCoor("{\"longitude\":\"101.67822819977684\",\"latitude\":\"36.65375645069668\",\"elevation\":\"0\"}");
+            station.setAddress("青海");
+            Long time = System.currentTimeMillis()+200*60000;
+            station.setExpireDate(new Date(time));
+
+            stationService.save(station);
+    }
+
+    private Sensor setUpData(String type){
+        Station station = stationService.find(12l);
+        if(station==null){
+            save();
+        }
+        List<Sensor> sensors = station.getSensors();
+        Sensor sensor = null;
+        for (int i = 0; i < sensors.size(); i++) {
+            if("camera".equals(type)&&Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
+                sensor = sensors.get(i);
+                break;
+            }
+            if (!"camera".equals(type)&&!Sensor.Type.CAMERA.equals(sensors.get(i).getType())) {
+                sensor = sensors.get(i);
+                break;
+            }
+        }
+        if (sensor == null) {
+            logger.info("暂无仪表,则添加仪表");
+            sensor = new Sensor();
+            if("camera".equals(type)){
+                sensor.setType(Sensor.Type.CAMERA);
+            }else {
+                sensor.setType(Sensor.Type.CANAL_FLOW);
+            }
+            sensor.setCode("1213213");
+            sensor.setStation(station);
+            sensorService.save(sensor);
+        }
+        return sensor;
+    }
 }

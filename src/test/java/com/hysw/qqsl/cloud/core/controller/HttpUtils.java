@@ -71,7 +71,7 @@ public class HttpUtils {
      */
     public static JSONObject httpGet(MockMvc mockMvc,String url,String paramName,Object param) throws Exception{
         boolean flag = paramName==null|| !StringUtils.hasText(paramName);
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = flag ? get(url).contentType(MediaType.APPLICATION_JSON):get(url,param).contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = flag ? get(url).contentType(MediaType.APPLICATION_JSON):get(url).param(paramName,param.toString()).contentType(MediaType.APPLICATION_JSON);
         MvcResult result = mockMvc.perform(mockHttpServletRequestBuilder).andExpect(status().isOk()).andReturn();
         assertNotNull(result.getResponse().getBufferSize());
         String res = result.getResponse().getContentAsString();

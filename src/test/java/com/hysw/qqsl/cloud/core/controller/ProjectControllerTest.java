@@ -1,8 +1,11 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 
+import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -26,6 +29,15 @@ public class ProjectControllerTest extends BaseControllerTest {
     private ProjectController projectController;
     @Autowired
     private UserController userController;
+    @Before
+    public void userLogin() throws Exception {
+        Map<String, Object> loginMap = new HashedMap();
+        loginMap.put("code", "18661925010");
+        loginMap.put("password", DigestUtils.md5Hex("111111"));
+        loginMap.put("loginType", "web");
+        Message message = userController.login(loginMap);
+        Assert.assertTrue(message.getType().equals(Message.Type.OK));
+    }
     @Test
     public void testInfos() throws Exception {
         mockMvc.perform(get("/project/infos")).
@@ -34,9 +46,11 @@ public class ProjectControllerTest extends BaseControllerTest {
 
     @Test
     public void testLists() throws Exception {
-         MvcResult result = mockMvc.perform(get("/project/lists").param("start","0")).
+         JSONObject jsonObject = HttpUtils.httpGet(mockMvc,"/project/lists","start","0");
+         Assert.assertNotNull(jsonObject);
+      /*   MvcResult result = mockMvc.perform(get("/project/lists").param("start","0")).
                  andExpect(status().isOk()).
-                 andDo(MockMvcResultHandlers.print()).andReturn();
+                 andDo(MockMvcResultHandlers.print()).andReturn();*/
     }
 
     @Test

@@ -174,7 +174,7 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("address", station.getAddress());
         jsonObject.put("coor", station.getCoor());
         jsonObject.put("description", station.getDescription());
-        jsonObject.put("exprieDate",station.getExpireDate().getTime());
+        jsonObject.put("exprieDate",station.getExpireDate()==null?null:station.getExpireDate().getTime());
         jsonObject.put("createDate", station.getCreateDate());
         jsonObject.put("instanceId", station.getInstanceId());
         jsonObject.put("picture", station.getPicture());
