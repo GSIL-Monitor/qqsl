@@ -6,6 +6,7 @@ import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.pay.entity.data.Turnover;
 import com.hysw.qqsl.cloud.util.TradeUtil;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,6 +27,7 @@ public class TurnoverServiceTest extends BaseTest {
 //    }
 
     @Test
+    @Ignore
     public void testFindByLastItem(){
         Turnover item = turnoverService.findByLastItem();
         Assert.assertTrue(item != null);

@@ -48,6 +48,10 @@ public class TradeServiceTest extends BaseTest {
 //        trade.setValidTime(1);
         trade.setInstanceId(TradeUtil.buildInstanceId());
         trade.setUser(userService.find(17l));
+        JSONObject remarkJson = new JSONObject();
+        Date expireDate = tradeService.getExpireDate(trade.getCreateDate(),"package");
+        remarkJson.put("expireDate",expireDate.getTime());
+        trade.setRemark(remarkJson.toString());
         tradeService.activateServe(trade);
         tradeService.flush();
         Assert.assertTrue(packageService.findByInstanceId(trade.getInstanceId()) != null);
@@ -91,6 +95,10 @@ public class TradeServiceTest extends BaseTest {
 //        trade.setValidTime(1);
         trade.setInstanceId(TradeUtil.buildInstanceId());
         trade.setUser(userService.find(17l));
+        JSONObject remarkJson = new JSONObject();
+        Date expireDate = tradeService.getExpireDate(trade.getCreateDate(),"package");
+        remarkJson.put("expireDate",expireDate.getTime());
+        trade.setRemark(remarkJson.toString());
         tradeService.activateServe(trade);
         tradeService.flush();
         Assert.assertTrue(stationService.findByInstanceId(trade.getInstanceId()) != null);
@@ -134,7 +142,7 @@ public class TradeServiceTest extends BaseTest {
         User user = userService.findByPhoneOrEmial("13028710937");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.UNKNOWN);
+        Assert.assertTrue(message.getType()==Message.Type.NO_CERTIFY);
     }
 
     /**

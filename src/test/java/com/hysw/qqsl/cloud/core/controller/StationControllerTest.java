@@ -63,6 +63,7 @@ public class StationControllerTest extends BaseControllerTest {
         loginMap.put("code", "18661925010");
         loginMap.put("password", DigestUtils.md5Hex("111111"));
         loginMap.put("loginType", "web");
+        loginMap.put("cookie", DigestUtils.md5Hex(DigestUtils.md5Hex("111111")));
         Message message = userController.login(loginMap);
         Assert.assertTrue(message.getType().equals(Message.Type.OK));
         //添加测站，添加仪表

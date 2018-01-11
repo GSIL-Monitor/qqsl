@@ -9,6 +9,10 @@ import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.map.HashedMap;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -35,7 +39,16 @@ public class UserControllerTest extends BaseControllerTest{
      * 测试准备,用户登录
      * @throws Exception
      */
-
+    @Before
+    public void userLogin() throws Exception {
+        Map<String, Object> loginMap = new HashedMap();
+        loginMap.put("code", "18661925010");
+        loginMap.put("password", DigestUtils.md5Hex("111111"));
+        loginMap.put("loginType", "web");
+        loginMap.put("cookie", DigestUtils.md5Hex(DigestUtils.md5Hex("111111")));
+        Message message = userController.login(loginMap);
+        Assert.assertTrue(message.getType().equals(Message.Type.OK));
+    }
 
     @Test
     public  void testLoginDev() throws Exception{
@@ -43,6 +56,7 @@ public class UserControllerTest extends BaseControllerTest{
         loginMap.put("code","18661925010");
         loginMap.put("password", DigestUtils.md5Hex("111111"));
         loginMap.put("loginType", "web");
+        loginMap.put("cookie", DigestUtils.md5Hex(DigestUtils.md5Hex("111111")));
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.getStatus();
         String  requestJson = net.minidev.json.JSONObject.toJSONString(loginMap);
@@ -69,6 +83,7 @@ public class UserControllerTest extends BaseControllerTest{
     }
 
     @Test
+    @Ignore
     public void testChangePassword() throws Exception{
         Map<String,Object> loginMap = new HashMap<>();
         loginMap.put("oldPassword", DigestUtils.md5Hex("111111"));

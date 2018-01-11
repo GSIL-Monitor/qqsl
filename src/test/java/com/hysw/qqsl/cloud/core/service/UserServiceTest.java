@@ -110,10 +110,10 @@ public class UserServiceTest extends BaseTest{
 		assertEquals(userName,user.getUserName());
 		assertEquals(password,user.getPassword());
 		//是否第一次登陆
-		assertNotNull(user.getLoginIp());
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		String ip = "117.22.173.240";
-		//是否替换或更新登陆次数ip
+//		assertNotNull(user.getLoginIp());
+//		MockHttpServletRequest request = new MockHttpServletRequest();
+//		String ip = "117.22.173.240";
+//		//是否替换或更新登陆次数ip
 	}
 
 	/**
