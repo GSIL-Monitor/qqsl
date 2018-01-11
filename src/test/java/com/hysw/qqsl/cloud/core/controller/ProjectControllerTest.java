@@ -55,21 +55,9 @@ public class ProjectControllerTest extends BaseControllerTest {
 
     @Test
     public void testrefreshCache() throws Exception {
-        mockMvc.perform(post("/project/refreshCache")).
+        MvcResult result = mockMvc.perform(post("/admin/refreshCache")).
                 andExpect(status().isOk()).andReturn();
-    }
-
-    @Test
-    public void testLists1() throws Exception {
-        Map<String,Object> loginMap = new HashMap<>();
-        loginMap.put("userName","qqsl");
-        loginMap.put("password", DigestUtils.md5Hex("abc"));
-        loginMap.put("loginType", "web");
-        MockHttpServletRequest req = new MockHttpServletRequest();
-        Message message1 =  userController.login(loginMap);
-        Assert.assertNotNull(message1);
-        Message message = projectController.getProjects(0);
-        Assert.assertNotNull(message);
+        Assert.assertNotNull(result);
     }
 
 }
