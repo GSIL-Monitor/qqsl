@@ -151,6 +151,10 @@ public class StationControllerTest extends BaseControllerTest {
         Map<String, Object> station = new HashMap<>();
         station.put("sensor", sensorMap);
         station.put("id", "12");
+        Sensor sensor = sensorService.findByCode("9930023");
+        if(sensor!=null){
+            sensorService.remove(sensor);
+        }
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.getStatus();
         String requestJson = net.minidev.json.JSONObject.toJSONString(station);
@@ -231,22 +235,59 @@ public class StationControllerTest extends BaseControllerTest {
 
     @Test
     public void editParameter() throws Exception {
-
+        Map<String,Object> parameterMap = new HashedMap();
+        parameterMap.put("maxValue","20");
+        parameterMap.put("minValue","10");
+        parameterMap.put("phone","18661905010");
+        parameterMap.put("sendStatus","true");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.getStatus();
+        Map<String,Object> map = new HashedMap();
+        map.put("id","12");
+        map.put("parameter",parameterMap);
+        String requestJson = net.minidev.json.JSONObject.toJSONString(map);
+        JSONObject jsonObject = HttpUtils.httpPost(mockMvc,"/station/editParameter",requestJson);
+        assertTrue("OK".equals(jsonObject.getString("type")));
     }
 
     @Test
     public void unShare() throws Exception {
-
+        Map<String,Object> map = new HashedMap();
+        map.put("userIds","3,24");
+        map.put("stationId","1");
+        String requestJson = net.minidev.json.JSONObject.toJSONString(map);
+        JSONObject jsonObject = HttpUtils.httpPost(mockMvc,"/station/unShare",requestJson);
+        assertTrue("OK".equals(jsonObject.getString("type")));
+        map.put("stationId","12");
+        requestJson = net.minidev.json.JSONObject.toJSONString(map);
+        jsonObject = HttpUtils.httpPost(mockMvc,"/station/unShare",requestJson);
+        assertTrue("OK".equals(jsonObject.getString("type")));
     }
-
     @Test
     public void shares() throws Exception {
-
+        Map<String,Object> map = new HashedMap();
+        map.put("userIds","3,24");
+        User user = authentService.getUserFromSubject();
+        List<Station> stations = stationService.findByUser(user);
+        if(stations.size()==0){
+            save();
+            stations = stationService.findByUser(user);
+        }
+        String ids = "";
+        for (int i=0;i<stations.size();i++){
+            ids = ids+stations.get(i).getId()+",";
+        }
+        map.put("stationIds",ids);
+        String requestJson = net.minidev.json.JSONObject.toJSONString(map);
+        JSONObject jsonObject = HttpUtils.httpPost(mockMvc,"/station/shares",requestJson);
+        assertTrue("OK".equals(jsonObject.getString("type")));
     }
 
     @Test
     public void getParameters() throws Exception {
-
+        String token = applicationTokenService.getToken();
+        JSONObject jsonObject = HttpUtils.httpGet(mockMvc,"/station/getParameters","token",token);
+        assertTrue("OK".equals(jsonObject.getString("type")));
     }
 
     private void save(){
@@ -260,7 +301,6 @@ public class StationControllerTest extends BaseControllerTest {
             station.setAddress("青海");
             Long time = System.currentTimeMillis()+200*60000;
             station.setExpireDate(new Date(time));
-
             stationService.save(station);
     }
 
