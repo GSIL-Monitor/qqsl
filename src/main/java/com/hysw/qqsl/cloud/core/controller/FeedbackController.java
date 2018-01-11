@@ -199,7 +199,7 @@ public class FeedbackController {
      * </ol>
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"admin:simple,user:simple,account:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"admin:simple","user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/feedback/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") long id) {
         Feedback feedback;
