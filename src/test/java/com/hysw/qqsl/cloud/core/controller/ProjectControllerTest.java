@@ -4,6 +4,7 @@ package com.hysw.qqsl.cloud.core.controller;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.shiro.SecurityUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,15 +30,21 @@ public class ProjectControllerTest extends BaseControllerTest {
     private ProjectController projectController;
     @Autowired
     private UserController userController;
+
     @Before
     public void userLogin() throws Exception {
+        if (SecurityUtils.getSubject().getSession() != null) {
+            SecurityUtils.getSubject().logout();
+        }
         Map<String, Object> loginMap = new HashedMap();
         loginMap.put("code", "18661925010");
         loginMap.put("password", DigestUtils.md5Hex("111111"));
         loginMap.put("loginType", "web");
+        loginMap.put("cookie", DigestUtils.md5Hex(DigestUtils.md5Hex("111111")));
         Message message = userController.login(loginMap);
         Assert.assertTrue(message.getType().equals(Message.Type.OK));
     }
+
     @Test
     public void testInfos() throws Exception {
         mockMvc.perform(get("/project/infos")).
@@ -46,8 +53,8 @@ public class ProjectControllerTest extends BaseControllerTest {
 
     @Test
     public void testLists() throws Exception {
-         JSONObject jsonObject = HttpUtils.httpGet(mockMvc,"/project/lists","start","0");
-         Assert.assertNotNull(jsonObject);
+        JSONObject jsonObject = HttpUtils.httpGet(mockMvc, "/project/lists", "start", "0");
+        Assert.assertNotNull(jsonObject);
       /*   MvcResult result = mockMvc.perform(get("/project/lists").param("start","0")).
                  andExpect(status().isOk()).
                  andDo(MockMvcResultHandlers.print()).andReturn();*/
@@ -55,21 +62,7 @@ public class ProjectControllerTest extends BaseControllerTest {
 
     @Test
     public void testrefreshCache() throws Exception {
-        mockMvc.perform(post("/project/refreshCache")).
+        MvcResult result = mockMvc.perform(post("/admin/refreshCache")).
                 andExpect(status().isOk()).andReturn();
     }
-
-    @Test
-    public void testLists1() throws Exception {
-        Map<String,Object> loginMap = new HashMap<>();
-        loginMap.put("userName","qqsl");
-        loginMap.put("password", DigestUtils.md5Hex("abc"));
-        loginMap.put("loginType", "web");
-        MockHttpServletRequest req = new MockHttpServletRequest();
-        Message message1 =  userController.login(loginMap);
-        Assert.assertNotNull(message1);
-        Message message = projectController.getProjects(0);
-        Assert.assertNotNull(message);
-    }
-
 }

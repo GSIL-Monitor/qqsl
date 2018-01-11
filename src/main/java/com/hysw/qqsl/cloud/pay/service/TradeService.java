@@ -607,7 +607,7 @@ public class TradeService extends BaseService<Trade, Long> {
      * 设置产品到期时间
      * @param date
      */
-    private Date getExpireDate(Date date,String type){
+    protected Date getExpireDate(Date date, String type){
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
         if("station".equals(type)){

@@ -27,7 +27,7 @@ public class ObjectJsonConvertUtilsTest extends BaseTest{
      Project project = new Project();
      project.setType(Project.Type.AGRICULTURAL_IRRIGATION);
      List<JsonTree> jsons = objectJsonConvertUtils.getAgrJsonTree();
-     assertEquals(jsons.size(),34);
+     assertEquals(jsons.size(),32);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class ObjectJsonConvertUtilsTest extends BaseTest{
         Project project = new Project();
         project.setType(Project.Type.CONSERVATION);
         List<JsonTree> jsons = objectJsonConvertUtils.getAgrJsonTree();
-        assertEquals(jsons.size(),34);
+        assertEquals(jsons.size(),32);
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ObjectJsonConvertUtilsTest extends BaseTest{
         Project project = new Project();
         project.setType(Project.Type.DRINGING_WATER);
         List<JsonTree> jsons = objectJsonConvertUtils.getAgrJsonTree();
-        assertEquals(jsons.size(),34);
+        assertEquals(jsons.size(),32);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ObjectJsonConvertUtilsTest extends BaseTest{
         Project project = new Project();
         project.setType(Project.Type.HYDROPOWER_ENGINEERING);
         List<JsonTree> jsons = objectJsonConvertUtils.getAgrJsonTree();
-        assertEquals(jsons.size(),34);
+        assertEquals(jsons.size(),32);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class ObjectJsonConvertUtilsTest extends BaseTest{
         Project project = new Project();
         project.setType(Project.Type.FLOOD_DEFENCES);
         List<JsonTree> jsons = objectJsonConvertUtils.getAgrJsonTree();
-        assertEquals(jsons.size(),34);
+        assertEquals(jsons.size(),32);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class ObjectJsonConvertUtilsTest extends BaseTest{
         Project project = new Project();
         project.setType(Project.Type.WATER_SUPPLY);
         List<JsonTree> jsons = objectJsonConvertUtils.getAgrJsonTree();
-        assertEquals(jsons.size(),34);
+        assertEquals(jsons.size(),32);
     }
 
     /**
