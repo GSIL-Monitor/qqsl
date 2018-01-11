@@ -419,8 +419,8 @@ public class StationController {
         User own = authentService.getUserFromSubject();
         String stationIdsStr = map.get("stationIds").toString();
         List<String> userIds = Arrays.asList(userIdsStr.split(","));
-        List<String> sensorIds = Arrays.asList(stationIdsStr.split(","));
-        stationService.shares(sensorIds,userIds,own);
+        List<String> stationIds = Arrays.asList(stationIdsStr.split(","));
+        stationService.shares(stationIds,userIds,own);
         return new Message(Message.Type.OK);
     }
 
