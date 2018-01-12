@@ -7,6 +7,8 @@ import com.hysw.qqsl.cloud.pay.entity.PackageModel;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.util.TradeUtil;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Assert;
@@ -24,6 +26,8 @@ public class PackageServiceTest extends BaseTest{
     private UserService userService;
     @Autowired
     private TradeService tradeService;
+    @Autowired
+    private CacheManager cacheManager;
 
     @Test
     public void testCache(){
@@ -81,6 +85,10 @@ public class PackageServiceTest extends BaseTest{
 
     @Test
     public void testInitCurTrafficNum(){
+        Cache cache = cacheManager.getCache("packageAllCache");
+        cache.remove("package");
+        packageService.packageCache();
+        packageService.findAll();
         packageService.initCurTrafficNum();
         packageService.flush();
         List<Package> packages = packageService.findAll();

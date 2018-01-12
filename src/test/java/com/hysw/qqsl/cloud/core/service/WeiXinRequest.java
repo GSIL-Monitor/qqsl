@@ -95,10 +95,10 @@ public class WeiXinRequest extends BaseTest{
         uploadFodderService.getFodder();
     }
 
-    @Test
-    public void testCreateCode() throws UnsupportedEncodingException {
-        createCode.createCode();
-    }
+//    @Test
+//    public void testCreateCode() throws UnsupportedEncodingException {
+//        createCode.createCode();
+//    }
 
     @Test
     public void testGetCodeToken(){
