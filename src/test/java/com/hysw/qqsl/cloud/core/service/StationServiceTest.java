@@ -106,7 +106,7 @@ public class StationServiceTest extends BaseTest {
 
     @Test
     public void testGetStations() {
-        User user = userService.find(16l);
+        User user = userService.find(1l);
         List<JSONObject> stations = stationService.getStations(user);
         Assert.assertTrue(stations.size()>0);
     }

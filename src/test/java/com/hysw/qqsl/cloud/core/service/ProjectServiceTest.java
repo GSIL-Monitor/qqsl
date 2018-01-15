@@ -823,11 +823,11 @@ public class ProjectServiceTest extends BaseTest {
 	@Test
 	public void testUploadFileSize(){
 		Map<String, Object> map = new HashMap<>();
-		map.put("projectId", 29);
+		map.put("projectId", 848);
 		map.put("fileSize", 134567);
 		map.put("alias","231A" );
 		map.put("fileNames", "aaaaaaaaaaaa");
-		User user = userService.find(17l);
+		User user = userService.find(1l);
 		Message message = projectService.uploadFileSize(map, user);
 		Assert.assertTrue(message.getType() == Message.Type.OK);
 	}
@@ -835,11 +835,11 @@ public class ProjectServiceTest extends BaseTest {
 	@Test
 	public void testDownloadFileSize(){
 		Map<String, Object> map = new HashMap<>();
-		map.put("projectId", 29);
+		map.put("projectId", 848);
 		map.put("fileSize", 134567);
 		map.put("alias","231A" );
 		map.put("fileName", "aaaaaaaaaaaa");
-		User user = userService.find(17l);
+		User user = userService.find(1l);
 		Message message = projectService.downloadFileSize(map, user);
 		Assert.assertTrue(message.getType() == Message.Type.OK);
 	}
@@ -847,11 +847,11 @@ public class ProjectServiceTest extends BaseTest {
 	@Test
 	public void testDeleteFileSize(){
 		Map<String, Object> map = new HashMap<>();
-		map.put("projectId", 29);
+		map.put("projectId", 848);
 		map.put("fileSize", 134567);
 		map.put("alias","231A" );
 		map.put("fileName", "aaaaaaaaaaaa");
-		User user = userService.find(17l);
+		User user = userService.find(1l);
 		Message message = projectService.deleteFileSize(map, user);
 		Assert.assertTrue(message.getType() == Message.Type.OK);
 	}

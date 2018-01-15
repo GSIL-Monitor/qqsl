@@ -95,7 +95,7 @@ public class BuildServiceTest extends BaseTest {
 
     @Test
     public void buildBuild(){
-        Build build1 = buildService.find(1l);
+        Build build1 = buildService.find(6106l);
         List<Attribe> attribes = build1.getAttribeList();
         Build build = getBuildModel(build1);
         String head;
@@ -153,7 +153,7 @@ public class BuildServiceTest extends BaseTest {
     @Test
     public void saveDucaoAttribe(){
         saveDucao();
-        Project project = projectService.find(531l);
+        Project project = projectService.find(848l);
         List<Build> builds = buildService.findByProjectAndAlias(project);
         Build build1 = builds.get(0);
         Build build = getBuildModel(build1);
