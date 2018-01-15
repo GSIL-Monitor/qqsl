@@ -337,7 +337,6 @@ public class UserService extends BaseService<User, Long> {
 		}
 		user.setPassword(newPassword);
 		save(user);
-		authentService.updateSession(user);
 		return new Message(Message.Type.OK,makeUserJson(user));
 	}
 
@@ -547,8 +546,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @param account
 	 * @return
 	 */
-	public Message unbindAccount(Account account) {
-		User user = authentService.getUserFromSubject();
+	public Message unbindAccount(Account account,User user) {
 		//收回权限
 		cooperateService.cooperateRevoke(user,account);
 		List<Account> accounts = getAccountsByUserId(user.getId());

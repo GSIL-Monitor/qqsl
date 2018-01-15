@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.controller;
 
 import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.Verification;
+import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Admin;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
@@ -17,6 +18,8 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,6 +49,8 @@ public class AdminController {
     private AuthentService authentService;
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private SessionDAO sessionDAO;
 
     /**
      * 缓存的刷新，包括info.xml;projectModel.xml;elementGroup.xml,
@@ -197,7 +202,25 @@ public class AdminController {
     public
     @ResponseBody
     Message getLandingNumber() {
-        List<JSONObject> userJsons = adminService.getLandingUsers();
+        Admin admin = authentService.getAdminFromSubject();
+        Collection<Session> sessions = sessionDAO.getActiveSessions();
+        List<User> users = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
+        User user;
+        Account account;
+        for(Session session:sessions){
+            user = authentService.getUserFromSession(session);
+            account = authentService.getAccountFromSession(session);
+            if(user!=null){
+                users.add(user);
+            }
+            if(account!=null){
+                accounts.add(account);
+            }
+        }
+        List<JSONObject> userJsons = userService.makeUserJsons(users);
+        JSONObject adminJson = adminService.makeAdminJson(admin);
+        userJsons.add(adminJson);
         return new Message(Message.Type.OK, userJsons);
     }
 

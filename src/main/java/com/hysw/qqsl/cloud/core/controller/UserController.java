@@ -331,6 +331,10 @@ public class UserController {
         }
         String newPassword = map.get("newPassword").toString();
         message = userService.updatePassword(newPassword,user.getId());
+        if(message.getType().equals(Message.Type.OK)){
+            user = userService.find(user.getId());
+            authentService.updateSession(user);
+        }
         return message;
     }
 
@@ -920,7 +924,8 @@ public class UserController {
         if(account==null){
             return new Message(Message.Type.EXIST);
         }
-        return userService.unbindAccount(account);
+        User user = authentService.getUserFromSubject();
+        return userService.unbindAccount(account,user);
     }
 
     /**
