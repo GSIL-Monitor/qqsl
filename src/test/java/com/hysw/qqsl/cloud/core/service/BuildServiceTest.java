@@ -41,7 +41,7 @@ public class BuildServiceTest extends BaseTest {
 
     @Test
     public void saveAttribe(){
-        Build build1 = buildService.find(1l);
+        Build build1 = buildService.find(6106l);
         Build build = getBuildModel(build1);
         List<Attribe> attribes = new ArrayList<>();
         assertNotNull(build);
@@ -65,12 +65,12 @@ public class BuildServiceTest extends BaseTest {
             List<Build> builds = buildGroups.get(i).getBuilds();
             for(int j=0;j<builds.size();j++){
                 build = builds.get(j);
-                if(build.getName().equals(build1.getName())){
+                if (build.getType() == build1.getType()) {
                     build.setId(build1.getId());
                     break;
                 }
             }
-            if(build != null && build.getName().equals(build1.getName())) break;
+            if(build != null && build.getType()==build1.getType()) break;
         }
         return build;
     }
