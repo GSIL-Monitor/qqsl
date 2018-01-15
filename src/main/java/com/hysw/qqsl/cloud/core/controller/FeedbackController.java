@@ -80,17 +80,7 @@ public class FeedbackController {
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
-        Object feedbackId = objectMap.get("feedbackId");
-        Object review = objectMap.get("review");
-        if (feedbackId == null || review == null) {
-            return new Message(Message.Type.FAIL);
-        }
-        Feedback feedback = feedbackService.find(Long.valueOf(feedbackId.toString()));
-        feedback.setStatus(CommonEnum.FeedbackStatus.REVIEWED);
-        feedback.setReview(review.toString());
-        feedback.setReviewDate(new Date());
-        feedbackService.save(feedback);
-        return new Message(Message.Type.OK);
+        return feedbackService.doAdminReview(objectMap);
     }
 
     /**
