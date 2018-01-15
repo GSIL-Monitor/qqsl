@@ -34,6 +34,7 @@ import javax.annotation.Resource;
         @ContextConfiguration(name = "child",locations = "classpath:applicationContext-shiro-test.xml"),
         @ContextConfiguration(name = "child",locations = "classpath:qqsl-servlet-test.xml")
 })
+@Ignore
 public class BaseControllerTest{
     @Autowired
     protected WebApplicationContext wac;

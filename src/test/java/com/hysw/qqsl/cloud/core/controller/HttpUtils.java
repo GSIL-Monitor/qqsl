@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import net.sf.json.JSONObject;
+import org.junit.Ignore;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * 测试用的http请求工具类
  */
+@Ignore
 public class HttpUtils {
 
     /**

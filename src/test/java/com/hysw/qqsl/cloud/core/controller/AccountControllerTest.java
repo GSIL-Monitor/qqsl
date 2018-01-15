@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * qq:1321404703 https://github.com/leinuo2016
  */
+@Ignore
 public class AccountControllerTest extends BaseControllerTest{
 
     @Autowired

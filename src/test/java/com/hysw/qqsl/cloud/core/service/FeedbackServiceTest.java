@@ -35,7 +35,7 @@ public class FeedbackServiceTest extends BaseTest {
     @Test
     public void testSaveUserFeedback(){
         Map<String, Object> objectMap = new LinkedHashMap<>();
-        objectMap.put("userId", 17);
+        objectMap.put("userId", 1);
         objectMap.put("title", "aaaa");
         objectMap.put("content", "bbb");
         objectMap.put("type", "SUGGEST");

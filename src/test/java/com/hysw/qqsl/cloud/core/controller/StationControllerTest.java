@@ -14,10 +14,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -39,6 +36,7 @@ import static org.junit.Assert.*;
  * <p>
  * qq:1321404703 https://github.com/leinuo2016
  */
+@Ignore
 public class StationControllerTest extends BaseControllerTest {
 
     Log logger = LogFactory.getLog(getClass());

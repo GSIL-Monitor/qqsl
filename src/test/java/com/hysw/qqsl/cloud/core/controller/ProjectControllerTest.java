@@ -4,10 +4,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.shiro.SecurityUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -21,6 +18,7 @@ import static org.junit.Assert.*;
  * <p>
  * qq:1321404703 https://github.com/leinuo2016
  */
+@Ignore
 public class ProjectControllerTest extends BaseControllerTest{
 
     @Autowired
