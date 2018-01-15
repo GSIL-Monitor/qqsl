@@ -7,6 +7,8 @@ import com.hysw.qqsl.cloud.core.entity.build.BuildGroup;
 import com.hysw.qqsl.cloud.core.entity.data.Build;
 import com.hysw.qqsl.cloud.core.entity.data.Attribe;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
+import net.sf.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -186,6 +188,13 @@ public class BuildServiceTest extends BaseTest {
                   save(attribeGroup.getAttribes(),build);
               }
     }
+    }
+
+    @Test
+    public void testBuildJson(){
+        Build build = buildService.find(6106l);
+        JSONObject jsonObject = buildService.buildJson(build);
+        Assert.assertNotNull(jsonObject);
     }
 
 }
