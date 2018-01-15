@@ -74,7 +74,9 @@ public class UserService extends BaseService<User, Long> {
 	}
 
 	public User findByDao(Long id){
-		return userDao.find(id);
+		User user = userDao.find(id);
+		user.getAccounts();
+		return user;
 	}
 
 	/**

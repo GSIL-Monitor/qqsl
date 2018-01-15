@@ -4,6 +4,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Article;
 import com.hysw.qqsl.cloud.core.service.ArticleService;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/10/28.
  */
+@Ignore
 public class JdbcTest extends BaseTest {
 
     @Autowired

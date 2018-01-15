@@ -27,6 +27,7 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/10/14.
  */
+@Ignore
 public class UserControllerTest extends BaseControllerTest{
 
 

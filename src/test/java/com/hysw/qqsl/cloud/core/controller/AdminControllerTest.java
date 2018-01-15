@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.controller;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * <p>
  * qq:1321404703 https://github.com/leinuo2016
  */
+@Ignore
 public class AdminControllerTest extends BaseControllerTest{
     @Before
     public void setUp(){

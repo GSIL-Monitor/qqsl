@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Administrator on 2016/10/20.
  */
+@Ignore
 public class ElementGroupControllerTest extends BaseControllerTest {
 
     public ElementGroupControllerTest() {

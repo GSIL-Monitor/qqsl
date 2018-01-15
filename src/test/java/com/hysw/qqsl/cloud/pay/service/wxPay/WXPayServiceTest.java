@@ -46,11 +46,11 @@ public class WXPayServiceTest extends BaseTest{
         System.out.println(wxPayService.unifiedOrderPay(trade));
     }
 
-    @Test
-    public void testorderClose(){
-        Trade trade = tradeService.findAll().get(0);
-        wxPayService.orderClose(trade);
-    }
+//    @Test
+//    public void testorderClose(){
+//        Trade trade = tradeService.findAll().get(0);
+//        wxPayService.orderClose(trade);
+//    }
 
     @Test
     public void testorderQuery(){

@@ -51,7 +51,7 @@ public class PackageServiceTest extends BaseTest{
         trade.setPayDate(new Date());
 //        trade.setValidTime(1);
         trade.setInstanceId(TradeUtil.buildInstanceId());
-        trade.setUser(userService.find(17l));
+        trade.setUser(userService.find(1l));
         JSONObject remarkJson = new JSONObject();
         Date expireDate = tradeService.getExpireDate(trade.getCreateDate(),"package");
         remarkJson.put("expireDate",expireDate.getTime());
@@ -63,7 +63,7 @@ public class PackageServiceTest extends BaseTest{
 
     @Test
     public void testRenewPackage(){
-        User user = userService.find(17l);
+        User user = userService.find(1l);
         Trade trade = new Trade();
         trade.setBuyType(Trade.BuyType.BUY);
         trade.setType(Trade.Type.PACKAGE);
@@ -71,7 +71,7 @@ public class PackageServiceTest extends BaseTest{
         trade.setPayDate(new Date());
 //        trade.setValidTime(1);
         trade.setInstanceId(packageService.findByUser(user).getInstanceId());
-        trade.setUser(userService.find(17l));
+        trade.setUser(userService.find(1l));
         JSONObject remarkJson = new JSONObject();
         Date expireDate = tradeService.getExpireDate(trade.getCreateDate(),"package");
         remarkJson.put("expireDate",expireDate.getTime());

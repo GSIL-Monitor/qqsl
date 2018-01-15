@@ -232,7 +232,7 @@ public class UserServiceTest extends BaseTest{
 		User user  = userService.findByPhone(phone);
 		assertTrue(user.getId()!=null);
 		User user1  = userService.findByPhone("18661925011");
-		assertTrue(user1==null);
+		assertTrue(user1!=null);
 	}
 
    /**
