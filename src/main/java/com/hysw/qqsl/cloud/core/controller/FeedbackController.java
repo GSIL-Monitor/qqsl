@@ -201,7 +201,7 @@ public class FeedbackController {
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple","user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/feedback/{id}", method = RequestMethod.GET)
-    public Message get(@PathVariable("id") long id) {
+    public @ResponseBody Message get(@PathVariable("id") long id) {
         Feedback feedback;
         try {
             feedback = feedbackService.find(id);
