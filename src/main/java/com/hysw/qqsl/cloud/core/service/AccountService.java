@@ -135,11 +135,11 @@ public class AccountService extends BaseService<Account,Long> {
     }
 
 
-    /**
+   /* *//**
      * 更新子账号信息
      * @param map
      * @param id
-     */
+     *//*
     public Message update(Map<String, Object> map, Long id) {
         Account account = find(id);
         String name = map.get("name").toString();
@@ -149,11 +149,9 @@ public class AccountService extends BaseService<Account,Long> {
         account.setEmail(email);
         account.setPassword(password);
         accountDao.save(account);
-        if (!SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
-            authentService.updateSession(account);
-        }
+        authentService.updateSession(account);
         return new Message(Message.Type.OK,makeAccountJson(account));
-    }
+    }*/
 
     /**
      * 修改子账号信息
@@ -164,9 +162,6 @@ public class AccountService extends BaseService<Account,Long> {
         Account account = accountDao.find(id);
         account.setName(name);
         save(account);
-        if (!SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
-            authentService.updateSession(account);
-        }
         return new Message(Message.Type.OK,makeAccountJson(account));
     }
     /**
@@ -182,9 +177,23 @@ public class AccountService extends BaseService<Account,Long> {
         }
         account.setPassword(password);
         save(account);
-        if (!SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
-            authentService.updateSession(account);
+        return new Message(Message.Type.OK,makeAccountJson(account));
+    }
+    /**
+     * 更改手机号
+     * @param newPhone
+     * @param id
+     * @return
+     *//*
+    public Message changePhone(String newPhone, Long id) {
+        Account account = findByPhone(newPhone);
+        if(account!=null){
+            return new Message(Message.Type.EXIST);
         }
+        account = find(id);
+        account.setPhone(newPhone);
+        accountDao.save(account);
+        authentService.updateSession(account);
         return new Message(Message.Type.OK,makeAccountJson(account));
     }
 //    /**
@@ -403,8 +412,7 @@ public class AccountService extends BaseService<Account,Long> {
      * @param user
      * @return
      */
-    public Message unbindUser(User user) {
-        Account account = authentService.getAccountFromSubject();
+    public Message unbindUser(User user,Account account) {
         List<User> users = getUsersByAccountId(account.getId());
         List<Account> accounts;
         boolean flag = false;

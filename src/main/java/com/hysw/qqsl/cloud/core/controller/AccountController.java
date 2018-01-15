@@ -322,6 +322,10 @@ public class AccountController {
         }
         String newPassword = map.get("newPassword").toString();
         message = accountService.updatePassword(newPassword,account.getId());
+        if(message.getType().equals(Message.Type.OK)){
+            account = accountService.find(account.getId());
+            authentService.updateSession(account);
+        }
         return message;
     }
 
@@ -602,7 +606,8 @@ public class AccountController {
     @RequestMapping(value = "/unbind/{id}", method = RequestMethod.POST)
     public @ResponseBody Message unbind(@PathVariable("id") Long id){
         User user = userService.find(id);
-        return accountService.unbindUser(user);
+        Account account = authentService.getAccountFromSubject();
+        return accountService.unbindUser(user,account);
     }
 
     /**
@@ -696,6 +701,10 @@ public class AccountController {
             name = account.getName();
         }
         message = accountService.updateInfo(name,account.getId());
+        if(message.getType().equals(Message.Type.OK)){
+            account = accountService.find(account.getId());
+            authentService.updateSession(account);
+        }
         return message;
     }
 

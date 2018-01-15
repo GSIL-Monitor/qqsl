@@ -98,7 +98,7 @@ public class AdminService extends BaseService<Admin,Long>{
      * 获取在线用户(管理员包含在内)
      * @return
      */
-    public List<JSONObject> getLandingUsers() {
+  /*  public List<JSONObject> getLandingUsers(Admin admin) {
         Collection<Session> sessions = sessionDAO.getActiveSessions();
         List<User> users = new ArrayList<>();
         List<Account> accounts = new ArrayList<>();
@@ -115,10 +115,10 @@ public class AdminService extends BaseService<Admin,Long>{
             }
         }
         List<JSONObject> userJsons = userService.makeUserJsons(users);
-        JSONObject adminJson = makeAdminJson(authentService.getAdminFromSubject());
+        JSONObject adminJson = makeAdminJson(admin);
         userJsons.add(adminJson);
         return userJsons;
-    }
+    }*/
 
 //    /**
 //     * 用户角色编辑
