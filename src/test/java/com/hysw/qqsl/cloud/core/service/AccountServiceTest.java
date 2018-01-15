@@ -190,18 +190,18 @@ public class AccountServiceTest extends BaseTest{
 
     }
 
-    /**
-     * 更新信息
-     */
-    @Test
-    public void testUpdate(){
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("name","aaa");
-        map.put("email","123456789@qq.com");
-        map.put("password",DigestUtils.md5Hex("111111"));
-        Message message = accountService.update(map, 1l);
-        Assert.assertTrue(message.getType()== Message.Type.OK);
-    }
+//    /**
+//     * 更新信息
+//     */
+//    @Test
+//    public void testUpdate(){
+//        Map<String, Object> map = new LinkedHashMap<>();
+//        map.put("name","aaa");
+//        map.put("email","123456789@qq.com");
+//        map.put("password",DigestUtils.md5Hex("111111"));
+//        Message message = accountService.update(map, 1l);
+//        Assert.assertTrue(message.getType()== Message.Type.OK);
+//    }
 
     /**
      * 修改name
