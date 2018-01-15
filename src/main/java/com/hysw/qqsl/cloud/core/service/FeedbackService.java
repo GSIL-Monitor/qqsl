@@ -62,9 +62,9 @@ public class FeedbackService extends BaseService<Feedback, Long> {
 //        if (feedback.getReview() != null) {
 //            jsonObject.put("review", feedback.getReview());
 //        }
-//        if (feedback.getReviewDate() != null) {
-//            jsonObject.put("reviewDate", feedback.getReviewDate().getTime());
-//        }
+        if (feedback.getReviewDate() != null) {
+            jsonObject.put("reviewDate", feedback.getReviewDate().getTime());
+        }
         jsonObject.put("status", feedback.getStatus());
         jsonObject.put("title", feedback.getTitle());
         jsonObject.put("type", feedback.getType());
