@@ -152,7 +152,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         AccountMessage accountMessage = new AccountMessage();
         Account account = accountService.find(feedback.getUserId());
         accountMessage.setAccount(account);
-        accountMessage.setContent("尊敬的水利云用户您好，关于您反馈的消息，管理员已经回复。");
+        accountMessage.setContent("尊敬的水利云用户您好，关于您反馈的消息，管理员已经对您提出的问题进行了回复。");
         accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
         accountMessage.setType(AccountMessage.Type.FEEDBACK);
         accountMessageDao.save(accountMessage);
