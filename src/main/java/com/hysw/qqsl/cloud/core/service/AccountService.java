@@ -196,14 +196,31 @@ public class AccountService extends BaseService<Account,Long> {
         authentService.updateSession(account);
         return new Message(Message.Type.OK,makeAccountJson(account));
     }
+//    /**
+//     * 更改手机号
+//     * @param newPhone
+//     * @param id
+//     * @return
+//     */
+//    public Message changePhone(String newPhone, Long id) {
+//        Account account = findByPhone(newPhone);
+//        if(account!=null){
+//            return new Message(Message.Type.EXIST);
+//        }
+//        account = find(id);
+//        account.setPhone(newPhone);
+//        accountDao.save(account);
+//        authentService.updateSession(account);
+//        return new Message(Message.Type.OK,makeAccountJson(account));
+//    }
 
-    public Account findByPhoneOrUserName(String param){
-        Account account = findByPhone(param);
-        if(account!=null){
-            return account;
-        }
-        return findByUserName(param);
-    }*/
+//    public Account findByPhoneOrUserName(String param){
+//        Account account = findByPhone(param);
+//        if(account!=null){
+//            return account;
+//        }
+//        return findByUserName(param);
+//    }
 
     /**
      * 根据手机号查询子账号
@@ -425,14 +442,14 @@ public class AccountService extends BaseService<Account,Long> {
         return new Message(Message.Type.OK);
     }
 
-    public List<JSONObject> makeAccountJsons(List<Account> accounts) {
-        JSONArray jsonArray = new JSONArray();
-        JSONObject accountJson;
-        for(int i=0;i<accounts.size();i++){
-            accountJson = makeSimpleAccountJson(accounts.get(i));
-            jsonArray.add(accountJson);
-        }
-        return jsonArray;
-    }
+//    public List<JSONObject> makeAccountJsons(List<Account> accounts) {
+//        JSONArray jsonArray = new JSONArray();
+//        JSONObject accountJson;
+//        for(int i=0;i<accounts.size();i++){
+//            accountJson = makeSimpleAccountJson(accounts.get(i));
+//            jsonArray.add(accountJson);
+//        }
+//        return jsonArray;
+//    }
 
 }

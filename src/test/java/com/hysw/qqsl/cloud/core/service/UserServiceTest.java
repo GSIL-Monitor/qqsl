@@ -1,6 +1,8 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
@@ -9,6 +11,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -248,7 +251,7 @@ public class UserServiceTest extends BaseTest{
    }
 
 
-
+  @Test
   public void testMakeUserJsons(){
 		List<User> users =  userService.findAll();
 		List<JSONObject> userJsons = userService.makeUserJsons(users);
@@ -270,6 +273,37 @@ public class UserServiceTest extends BaseTest{
 			users.get(i).setLoginIp(null);
 			userService.save(users.get(i));
 		}
+	}
+
+	@Test
+	public void testGetAuthenticate(){
+		JSONObject jsonObject = userService.getAuthenticate(userService.find(1l));
+		Assert.assertNotNull(jsonObject);
+	}
+
+	@Test
+	public void testRegisterService(){
+		Map<String, Object> map = new LinkedHashMap<>();
+		map.put("verification", 123456);
+		map.put("userName", "aaa");
+		map.put("password", DigestUtils.md5Hex("123456"));
+		Verification verification=new Verification();
+		verification.setCode("123456");
+		verification.setPhone("13519779005");
+		Message message = userService.registerService(map,verification);
+		Assert.assertTrue(message.getType()== Message.Type.OK);
+	}
+
+	@Test
+	public void testUpdatePassword(){
+		Message message = userService.updatePassword(DigestUtils.md5Hex("123456"), 1l);
+		Assert.assertTrue(message.getType()== Message.Type.OK);
+	}
+
+	@Test
+	public void testIsAllowCreateAccount(){
+		boolean b = userService.isAllowCreateAccount(userService.find(1l));
+		Assert.assertTrue(!b);
 	}
 
 

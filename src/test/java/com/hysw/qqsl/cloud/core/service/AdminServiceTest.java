@@ -3,11 +3,11 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.core.entity.data.Admin;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.service.AdminService;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 import java.util.Date;
 
@@ -81,7 +81,7 @@ public class AdminServiceTest extends BaseTest{
         admin.setUserName("admin");
         adminService.save(admin);
         Admin admin1 = adminService.find(admin.getId());
-        Assert.notNull(admin1);
+        Assert.assertNotNull(admin1);
     }
 
     @Test
@@ -93,5 +93,11 @@ public class AdminServiceTest extends BaseTest{
        }else{
            logger.info("false--");
        }
+    }
+
+    @Test
+    public void testGetAuthenticate(){
+        JSONObject jsonObject = adminService.getAuthenticate(adminService.find(1l));
+        Assert.assertNotNull(jsonObject);
     }
 }

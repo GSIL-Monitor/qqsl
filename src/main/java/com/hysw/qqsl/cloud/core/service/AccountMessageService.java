@@ -32,6 +32,8 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     @Autowired
     private PollingService pollingService;
     @Autowired
+    private AccountService accountService;
+    @Autowired
     public void setBaseDao(AccountMessageDao accountMessageDao){
         super.setBaseDao(accountMessageDao);
     }
@@ -144,5 +146,16 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         filters.add(Filter.eq("account", account.getId()));
         List<AccountMessage> accountMessages = accountMessageDao.findList(0, null, filters);
         return accountMessages;
+    }
+
+    public void feedbackMessage(Feedback feedback) {
+        AccountMessage accountMessage = new AccountMessage();
+        Account account = accountService.find(feedback.getUserId());
+        accountMessage.setAccount(account);
+        accountMessage.setContent("尊敬的水利云用户您好，关于您反馈的消息，管理员已经对您提出的问题进行了回复。");
+        accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
+        accountMessage.setType(AccountMessage.Type.FEEDBACK);
+        accountMessageDao.save(accountMessage);
+        pollingService.changeMessageStatus(account,true);
     }
 }

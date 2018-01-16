@@ -4,6 +4,7 @@ import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.Setting;
+import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.StationService;
 import com.hysw.qqsl.cloud.core.service.UserService;
@@ -20,7 +21,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class TradeServiceTest extends BaseTest {
@@ -298,5 +301,39 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("goodsNum", "a");
         message = tradeService.createGoodsTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
+    }
+
+    @Test
+    public void testRenewPackageTrade(){
+        Package aPackage = packageService.findByUser(userService.find(1l));
+        Message message = tradeService.renewPackageTrade(aPackage.getInstanceId(), userService.find(1l));
+        Assert.assertTrue(message.getType() == Message.Type.OK);
+    }
+
+    @Test
+    public void testRenewStationTrade(){
+        Station station = stationService.find(1l);
+        Message message = tradeService.renewStationTrade(station.getInstanceId(), userService.find(1l));
+        Assert.assertTrue(message.getType() == Message.Type.OK);
+    }
+
+    @Test
+    public void testUpdatePackageTrade(){
+        Package aPackage = packageService.findByUser(userService.find(1l));
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("instanceId",aPackage.getInstanceId() );
+        map.put("packageType", CommonEnum.PackageType.SUN);
+        Message message = tradeService.updatePackageTrade(map, userService.find(1l));
+        Assert.assertTrue(message.getType() == Message.Type.OK);
+    }
+
+    @Test
+    public  void testExpireCheck(){
+        tradeService.expireCheck();
+    }
+
+    @Test
+    public void testCheckTradeHaveNopay(){
+        Assert.assertTrue(tradeService.checkTradeHaveNopay(userService.find(1l)));
     }
 }

@@ -333,7 +333,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
 	 */
 	public Message updatePassword(String newPassword, Long id) {
-		User user = find(id);
+		User user = findByDao(id);
 		if(newPassword.length()!=32){
 			return new Message(Message.Type.OTHER);
 		}

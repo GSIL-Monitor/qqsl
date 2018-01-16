@@ -12,6 +12,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,10 @@ public class FeedbackService extends BaseService<Feedback, Long> {
     private AccountService accountService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserMessageService userMessageService;
+    @Autowired
+    private AccountMessageService accountMessageService;
     @Autowired
     public void setBaseDao(FeedbackDao feedbackDao) {
         super.setBaseDao(feedbackDao);
@@ -62,9 +67,9 @@ public class FeedbackService extends BaseService<Feedback, Long> {
 //        if (feedback.getReview() != null) {
 //            jsonObject.put("review", feedback.getReview());
 //        }
-//        if (feedback.getReviewDate() != null) {
-//            jsonObject.put("reviewDate", feedback.getReviewDate().getTime());
-//        }
+        if (feedback.getReviewDate() != null) {
+            jsonObject.put("reviewDate", feedback.getReviewDate().getTime());
+        }
         jsonObject.put("status", feedback.getStatus());
         jsonObject.put("title", feedback.getTitle());
         jsonObject.put("type", feedback.getType());
@@ -193,5 +198,24 @@ public class FeedbackService extends BaseService<Feedback, Long> {
         List<Filter> filters = new LinkedList<>();
         filters.add(Filter.eq("userId", userId));
         return feedbackDao.findList(0, null, filters);
+    }
+
+    public Message doAdminReview(Map<String, Object> objectMap) {
+        Object feedbackId = objectMap.get("feedbackId");
+        Object review = objectMap.get("review");
+        if (feedbackId == null || review == null) {
+            return new Message(Message.Type.FAIL);
+        }
+        Feedback feedback = find(Long.valueOf(feedbackId.toString()));
+        feedback.setStatus(CommonEnum.FeedbackStatus.REVIEWED);
+        feedback.setReview(review.toString());
+        feedback.setReviewDate(new Date());
+        save(feedback);
+        if (feedback.getUserId() != 0) {
+            userMessageService.feedbackMessage(feedback);
+        } else if (feedback.getAccountId() != 0) {
+            accountMessageService.feedbackMessage(feedback);
+        }
+        return new Message(Message.Type.OK);
     }
 }
