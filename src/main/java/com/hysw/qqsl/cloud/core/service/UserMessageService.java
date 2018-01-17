@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.UserMessageDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;

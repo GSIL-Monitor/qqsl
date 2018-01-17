@@ -862,4 +862,10 @@ public class ProjectServiceTest extends BaseTest {
 		map.put("projectId", 29);
 		map.put("fileSize", 134567);
 	}
+
+	@Test
+	public void testRefreshCache() throws Exception {
+		Message message = projectService.refreshCache();
+		Assert.assertTrue(message.getType() == Message.Type.OK);
+	}
 }

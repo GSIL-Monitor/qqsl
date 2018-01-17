@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.hysw.qqsl.cloud.core.entity.data.UserMessage;
 import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import net.sf.json.JSONObject;
@@ -46,6 +47,10 @@ public class UserServiceTest extends BaseTest{
     private ContactService contactService;
 	@Autowired
 	private NoteService noteService;
+	@Autowired
+	private AccountService accountService;
+	@Autowired
+	private ProjectService projectService;
 
     private static final String code = "123456";
 	private static final String errorCode = "123451";
@@ -306,5 +311,16 @@ public class UserServiceTest extends BaseTest{
 		Assert.assertTrue(!b);
 	}
 
+	@Test
+	public void testUnbindAccount(){
+		Message message = userService.unbindAccount(accountService.find(1l), userService.find(1l));
+		Assert.assertTrue(message.getType()== Message.Type.OK);
+	}
+
+	@Test
+	public void testIsOwn(){
+		Message message = userService.isOwn(userService.find(1l), projectService.find(848l), accountService.find(1l));
+		Assert.assertTrue(message.getType()== Message.Type.OK);
+	}
 
 }
