@@ -47,4 +47,32 @@ public class ApplicationTokenServiceTest extends BaseTest {
         boolean decrypt = applicationTokenService.decrypt("sgaagagagasga");
         Assert.assertTrue(!decrypt);
     }
+
+    /**
+     * 解密token
+     */
+    @Test
+    public void testDecrypt(){
+        long l = System.currentTimeMillis();
+        String token = null;
+        try {
+            token = RSACoderUtil.encryptAES(String.valueOf(l), CommonAttributes.tokenKey, CommonAttributes.tokenIv);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean decrypt = applicationTokenService.decrypt(token);
+        Assert.assertTrue(decrypt);
+        boolean decrypt1 = applicationTokenService.decrypt("7FE5B9C7687ACD21E6A4036AB2BCDA3F");
+        Assert.assertTrue(!decrypt1);
+        boolean decrypt2 = applicationTokenService.decrypt("a");
+        Assert.assertTrue(!decrypt2);
+        boolean decrypt3 = applicationTokenService.decrypt("");
+        Assert.assertTrue(!decrypt3);
+        boolean decrypt4 = applicationTokenService.decrypt("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        Assert.assertTrue(!decrypt4);
+        boolean decrypt5= applicationTokenService.decrypt("111111111111111111111111111111111111111111111111");
+        Assert.assertTrue(!decrypt5);
+        boolean decrypt6 = applicationTokenService.decrypt("--------------------------------------------------");
+        Assert.assertTrue(!decrypt6);
+    }
 }
