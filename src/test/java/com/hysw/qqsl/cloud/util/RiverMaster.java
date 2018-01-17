@@ -54,6 +54,7 @@ public class RiverMaster {
             jsonObject.put("town", row.getCell(3).getStringCellValue());
             jsonObject.put("village", row.getCell(4).getStringCellValue());
             jsonObject.put("villageMaster", row.getCell(5).getStringCellValue());
+            jsonObject.put("range", row.getCell(6).getStringCellValue());
             jsonArray.add(jsonObject);
         }
         return jsonArray;
@@ -67,7 +68,7 @@ public class RiverMaster {
         JSONObject jsonObject,village;
         JSONObject town =null;
         JSONArray villages = null;
-        JSONObject object;
+        String controyName = "";
         String  riverName = "";
         List<String> list = new ArrayList<>();
         for(int i =0;i<jsonArray.size();i++){
@@ -87,14 +88,16 @@ public class RiverMaster {
                     towns.add(town);
                 }
                 town = new JSONObject();
+                controyName = StringUtils.hasText(jsonObject.getString("country").trim())?jsonObject.getString("country").trim():controyName;
                 town.put("name",jsonObject.getString("name").trim());
-                town.put("country",jsonObject.getString("country").trim());
+                town.put("country",controyName);
                 town.put("town",jsonObject.getString("town").trim());
                 villages = new JSONArray();
             }
             village = new JSONObject();
             village.put("name",jsonObject.getString("village").trim());
             village.put("master",jsonObject.getString("villageMaster").trim());
+            village.put("range",jsonObject.getString("range").trim());
             villages.add(village);
             if(i==jsonArray.size()-1){
                 tail(villages,towns,town,riverName,townInfos);
@@ -119,7 +122,7 @@ public class RiverMaster {
         Map<String,Object> map = getInfo(filePath);
         Workbook wb = null;
         try {
-            wb = SettingUtils.readExcel("RiverMasterInfo.xlsx");
+            wb = SettingUtils.readExcel(filePath);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,7 +134,8 @@ public class RiverMaster {
         }
         FileOutputStream fileOut = null;
         try {
-            fileOut = new FileOutputStream("masterInfo.xls");
+            String fileName = filePath.substring(0,filePath.indexOf(".")+1)+"xls";
+            fileOut = new FileOutputStream(fileName);
             wb.write(fileOut);
         } catch (IOException e) {
             e.printStackTrace();
@@ -160,7 +164,7 @@ public class RiverMaster {
             if(StringUtils.hasText(row.getCell(0).getStringCellValue())){
                 System.out.println("riverName: "+row.getCell(0).getStringCellValue());
                 JSONArray jsonArray = (JSONArray) map.get("townInfo");
-                    Cell cell = row.createCell(6);
+                    Cell cell = row.createCell(7);
                     for(int j =0;j<jsonArray.size();j++){
                         JSONObject jsonObject = (JSONObject) jsonArray.get(j);
                         if(jsonObject.get("riverName").equals(row.getCell(0).getStringCellValue().trim())){
@@ -175,6 +179,7 @@ public class RiverMaster {
 
     public static void main(String[] agrs) {
        RiverMaster riverMaster =new RiverMaster();
-       riverMaster.wirteToExcle("RiverMasterInfo.xlsx");
+       riverMaster.wirteToExcle("riverMaster(huangyuan).xls");
+       riverMaster.wirteToExcle("riverMaster(huangzhong).xlsx");
     }
 }
