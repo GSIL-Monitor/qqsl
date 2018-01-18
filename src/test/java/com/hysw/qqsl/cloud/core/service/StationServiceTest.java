@@ -3,11 +3,14 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.StationModel;
+import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -58,7 +61,7 @@ public class StationServiceTest extends BaseTest {
     /**
      * 恢复第八次迭代的水位站
      */
-    @Test
+    @Ignore
     public void testRestoreStation() throws ParseException {
         Station station = null;
         // 湟水河1#
@@ -135,6 +138,7 @@ public class StationServiceTest extends BaseTest {
             station.setCoor("{\"longitude\":\"101.67822819977684\",\"latitude\":\"36.65375645069668\",\"elevation\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
+            station.setTransform(true);
         }
         // 湟水河2#
         if (instanceId.equals(huangshh02_instanceId)==true) {
@@ -180,6 +184,7 @@ public class StationServiceTest extends BaseTest {
             station.setCoor("{\"longitude\":\"101.74519193239226\",\"latitude\":\"36.62518183074351\",\"elevation\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
+            station.setTransform(true);
         }
         user = userService.find(16l);
         station.setUser(user);
@@ -255,5 +260,12 @@ public class StationServiceTest extends BaseTest {
         }
         return "[]";
     }
+
+    @Test
+    public void getParameters() {
+        JSONArray array = stationService.getParameters();
+        Assert.assertNotNull(array);
+    }
+
 
 }
