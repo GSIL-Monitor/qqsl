@@ -35,62 +35,6 @@ public class InterestService extends BaseService<Interest, Long> {
     }
 
 
-//    public void reflectSaveProprety(Map<String,Object> map,Object obj){
-//        Class<?> clazz = null;
-//        try {
-//            clazz = Class.forName(super.entityClass.getName());
-//        } catch (ClassNotFoundException e) {
-//            return;
-//        }
-//        for (Map.Entry<String, Object> entry : map.entrySet()) {
-//            setPropretyValue(entry.getKey(),entry.getValue().toString(),obj,clazz);
-//        }
-//        save((Interest) obj);
-//    }
-//    private void setPropretyValue(String parm, String value, Object obj, Class<?> clazz){
-//        // 可以直接对 private 的属性赋值
-//        Field field = null;
-//        try {
-//            field = clazz.getDeclaredField(parm);
-//        } catch (NoSuchFieldException e) {
-//            return;
-//        }
-//        Type type = field.getGenericType();
-//        String s;
-//        String s1 = type.toString().substring(type.toString().lastIndexOf(".")+1);
-//        if (s1.contains("$")) {
-//            s = s1.substring(s1.lastIndexOf("$") + 1);
-//        }else{
-//            s = s1;
-//        }
-//        field.setAccessible(true);
-//        try {
-//            if (s.toLowerCase().equals("string")) {
-//                field.set(obj, value);
-//            }
-//            if (s.toLowerCase().equals("long")) {
-//                field.set(obj, Long.valueOf(value));
-//            }
-//            if (s.toLowerCase().equals("int")) {
-//                field.set(obj, Integer.valueOf(value));
-//            }
-//            if (s.toLowerCase().equals("date")) {
-//                field.set(obj, Date.valueOf(value));
-//            }
-//            if (s.toLowerCase().equals("review")) {
-//                field.set(obj, Review.valueOf(value));
-//            }
-//            if (s.toLowerCase().equals("category")) {
-//                field.set(obj, Interest.Category.valueOf(value));
-//            }
-//            if (s.toLowerCase().equals("type")) {
-//                field.set(obj, Interest.Type.valueOf(value));
-//            }
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     /**
      * 查询所有审核通过的兴趣点和用户自己建立的兴趣点
      * @return
