@@ -55,8 +55,6 @@ public class StationService extends BaseService<Station, Long> {
     @Autowired
     private MonitorService monitorService;
     @Autowired
-    private AuthentService authentService;
-    @Autowired
     private UserMessageService userMessageService;
 
     @Autowired
