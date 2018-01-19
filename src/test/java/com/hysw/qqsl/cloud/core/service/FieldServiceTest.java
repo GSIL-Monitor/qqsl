@@ -27,6 +27,8 @@ public class FieldServiceTest extends BaseTest {
     @Autowired
     private ProjectService projectService;
     @Autowired
+    private BuildService buildService;
+    @Autowired
     private BuildBelongService buildBelongService;
     @Autowired
     private BuildGroupService buildGroupService;
@@ -70,6 +72,21 @@ public class FieldServiceTest extends BaseTest {
     public void testWriteExcel(){
         Workbook workbook = fieldService.writeExcel(projectService.find(848l), Build.Source.FIELD, Coordinate.WGS84Type.DEGREE);
         Assert.assertTrue(workbook.getNumberOfSheets()!=0);
+    }
+
+    @Test
+    public void testNewBuild(){
+        String s = "{\"type\":\"QS\", \"centerCoor\":{\"longitude\":\"101.49382902737608\", \"latitude\":\"36.72807717821667\", \"elevation\":\"0\"}, \"projectId\":\"848\", \"remark\":\"qw\"}";
+        JSONObject jsonObject = JSONObject.fromObject(s);
+        Map<String, Object> map = (Map<String, Object>) jsonObject;
+        Message message = fieldService.newBuild(map);
+        Assert.assertTrue(message.getType() == Message.Type.OK);
+        buildService.flush();
+        s = "{\"type\":\"QS\", \"centerCoor\":{\"longitude\":\"101.49382902737608\", \"latitude\":\"36.72807717821667\", \"elevation\":\"0\"}, \"id\":\"6106\", \"projectId\":\"848\", \"remark\":\"qw1\"}";
+        jsonObject = JSONObject.fromObject(s);
+        map = (Map<String, Object>) jsonObject;
+        message = fieldService.editBuild(map);
+        Assert.assertTrue(message.getType() == Message.Type.OK);
     }
 
 }
