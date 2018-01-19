@@ -71,7 +71,7 @@ public class PositionServiceTest extends BaseTest {
         DiffConnPoll diffConnPoll = diffConnPollService.find(1l);
         positionService.deleteOneCache(diffConnPoll);
         Assert.assertTrue(positionService.getUseds().size() == 0);
-        Assert.assertTrue(positionService.getUnuseds().size() == 1);
+        Assert.assertTrue(positionService.getUnuseds().size() == 2);
         Assert.assertTrue(positionService.getTimeout().size() == 0);
     }
 
@@ -89,6 +89,6 @@ public class PositionServiceTest extends BaseTest {
     @Test
     public void testIsAllowConnectQXWZ(){
         Message message = positionService.isAllowConnectQXWZ(848l);
-        Assert.assertTrue(message.getType()== Message.Type.NO_ALLOW);
+        Assert.assertTrue(message.getType()== Message.Type.OK);
     }
 }
