@@ -87,7 +87,7 @@ public class AccountService extends BaseService<Account,Long> {
             users = account.getUsers();
             for(int i=0;i<users.size();i++){
                 if(users.get(i).getId().equals(user.getId())){
-                    return MessageService.message(Message.Type.EXIST);
+                    return MessageService.message(Message.Type.bDATA_EXIST);
                 }
             }
             users.add(user);
@@ -98,7 +98,7 @@ public class AccountService extends BaseService<Account,Long> {
         pollingService.addAccount(account);
         accountMessageService.bindMsessage(user,account,true);
         noteCache.add(phone,note);
-        return MessageService.message(Message.Type.OK,makeSimpleAccountJson(account));
+        return MessageService.message(Message.Type.bOK,makeSimpleAccountJson(account));
     }
 
     /**
@@ -119,7 +119,7 @@ public class AccountService extends BaseService<Account,Long> {
         Account account = findByPhone(phone);
         // 用户已存在
         if (account!= null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.bDATA_EXIST);
         }else{
             account = new Account();
         }
@@ -130,7 +130,7 @@ public class AccountService extends BaseService<Account,Long> {
         account.setRoles(CommonAttributes.ROLES[4]);
         save(account);
         pollingService.addAccount(account);
-        return MessageService.message(Message.Type.OK);
+        return MessageService.message(Message.Type.bOK);
     }
 
 
@@ -161,7 +161,7 @@ public class AccountService extends BaseService<Account,Long> {
         Account account = accountDao.find(id);
         account.setName(name);
         save(account);
-        return MessageService.message(Message.Type.OK,makeAccountJson(account));
+        return MessageService.message(Message.Type.bOK,makeAccountJson(account));
     }
     /**
      * 修改子账号密码
@@ -172,11 +172,11 @@ public class AccountService extends BaseService<Account,Long> {
     public Message updatePassword(String password,Long id) {
         Account account = find(id);
         if(password.length()!=32){
-            return MessageService.message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.bPASSWORD_ERROR);
         }
         account.setPassword(password);
         save(account);
-        return MessageService.message(Message.Type.OK,makeAccountJson(account));
+        return MessageService.message(Message.Type.bOK,makeAccountJson(account));
     }
     /**
      * 更改手机号
@@ -432,13 +432,13 @@ public class AccountService extends BaseService<Account,Long> {
             }
         }
         if(!flag){
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.bFAIL);
         }
         account.setUsers(users);
         accountDao.save(account);
         //记录子账号解绑企业的消息
         userMessageService.unbindMessage(account,user);
-        return MessageService.message(Message.Type.OK);
+        return MessageService.message(Message.Type.bOK);
     }
 
 //    public List<JSONObject> makeAccountJsons(List<Account> accounts) {

@@ -346,7 +346,7 @@ public class NoteService{
            Note note;
            for(String contact:contacts){
         	   if(!SettingUtils.phoneRegex(contact)){
-        		   return MessageService.message(Message.Type.FAIL);
+        		   return MessageService.message(Message.Type.bFAIL);
         	   }
            }
            for(String contact:contacts){
@@ -356,7 +356,7 @@ public class NoteService{
         	   noteCache.add(contact, note);
            }
            logger.info(contacts.size()+"条短信加入缓存");					   
-           return MessageService.message(Message.Type.OK);
+           return MessageService.message(Message.Type.bOK);
 	}
 
 	/**
@@ -369,7 +369,7 @@ public class NoteService{
 	public Message isSend(String phone,
 						  HttpSession session) {
 		if(!StringUtils.hasText(phone)){
-			return MessageService.message(Message.Type.FAIL, null);
+			return MessageService.message(Message.Type.bFAIL, null);
 		}
 		Verification verification = new Verification();
 		String code = SettingUtils.createRandomVcode();
@@ -384,9 +384,9 @@ public class NoteService{
 				verification.setCode("123456");
 			}
 			session.setAttribute("verification", verification);
-			return MessageService.message(Message.Type.OK, null);
+			return MessageService.message(Message.Type.bOK, null);
 		}
-		return MessageService.message(Message.Type.FAIL, null);
+		return MessageService.message(Message.Type.bFAIL, null);
 	}
 
 
