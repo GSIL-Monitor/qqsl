@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.FeedbackDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
@@ -133,7 +133,7 @@ public class FeedbackService extends BaseService<Feedback, Long> {
         Object content = objectMap.get("content");
         Object type = objectMap.get("type");
         if (accountId == null || title == null || content == null || type == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Feedback feedback = new Feedback();
         feedback.setAccountId(Long.valueOf(accountId.toString()));
@@ -142,7 +142,7 @@ public class FeedbackService extends BaseService<Feedback, Long> {
         feedback.setType(Feedback.Type.valueOf(type.toString()));
         feedback.setStatus(CommonEnum.FeedbackStatus.PENDING);
         save(feedback);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -166,7 +166,7 @@ public class FeedbackService extends BaseService<Feedback, Long> {
         Object content = objectMap.get("content");
         Object type = objectMap.get("type");
         if (userId == null || title == null || content == null || type == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Feedback feedback = new Feedback();
         feedback.setUserId(Long.valueOf(userId.toString()));
@@ -175,7 +175,7 @@ public class FeedbackService extends BaseService<Feedback, Long> {
         feedback.setType(Feedback.Type.valueOf(type.toString()));
         feedback.setStatus(CommonEnum.FeedbackStatus.PENDING);
         save(feedback);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -204,7 +204,7 @@ public class FeedbackService extends BaseService<Feedback, Long> {
         Object feedbackId = objectMap.get("feedbackId");
         Object review = objectMap.get("review");
         if (feedbackId == null || review == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Feedback feedback = find(Long.valueOf(feedbackId.toString()));
         feedback.setStatus(CommonEnum.FeedbackStatus.REVIEWED);
@@ -216,6 +216,6 @@ public class FeedbackService extends BaseService<Feedback, Long> {
         } else if (feedback.getAccountId() != 0) {
             accountMessageService.feedbackMessage(feedback);
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 }

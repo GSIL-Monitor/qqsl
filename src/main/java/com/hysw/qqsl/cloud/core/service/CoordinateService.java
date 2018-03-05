@@ -3,7 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.CoordinateDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
@@ -16,7 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.*;
-import org.aspectj.util.LangUtil;
 import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,7 +68,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	public Message readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		Workbook wb = SettingUtils.readExcel(is,s);
 		if(wb==null){
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		return readExcel(central, wb, project,wgs84Type);
 	}
@@ -112,7 +111,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		}
 		Map<List<Graph>, List<Build>> map = new LinkedHashMap<>();
 		map.put(graphs, builds1);
-        return new Message(Message.Type.OK, map);
+        return MessageService.message(Message.Type.OK, map);
     }
 
 	/**
@@ -214,14 +213,14 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					if (comment.equals("coor1")) {
 						String[] split = d.split(",");
 						if (split.length != 3) {
-                            return new Message(Message.Type.OTHER);
+                            return MessageService.message(Message.Type.OTHER);
 						}
 						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
 						if (jsonObject1 == null) {
-							return new Message(Message.Type.OTHER);
+							return MessageService.message(Message.Type.OTHER);
 						}
 //						if (!SettingUtils.coordinateParameterCheck(split[0], split[1], split[2])) {
-//							return new Message(Message.Type.OTHER);
+//							return MessageService.message(Message.Type.OTHER);
 //						}
 						build2 = fieldService.allEqual(builds, String.valueOf(jsonObject1.get("longitude")), String.valueOf(jsonObject1.get("latitude")),split[2]);
 						if (build2!= null) {
@@ -235,14 +234,14 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					}else if (comment.equals("coor2")) {
 						String[] split = d.split(",");
 						if (split.length != 3) {
-                            return new Message(Message.Type.OTHER);
+                            return MessageService.message(Message.Type.OTHER);
 						}
 						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
 						if (jsonObject1 == null) {
-							return new Message(Message.Type.OTHER);
+							return MessageService.message(Message.Type.OTHER);
 						}
 //						if (!SettingUtils.coordinateParameterCheck(split[0], split[1], split[2])) {
-//                            return new Message(Message.Type.OTHER);
+//                            return MessageService.message(Message.Type.OTHER);
 //						}
 						jsonObject = new JSONObject();
 						jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
@@ -680,7 +679,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			me = readExcels(is, central, s, project,wgs84Type);
 		} catch (Exception e) {
 			logger.info("坐标文件或格式异常");
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}finally {
 			IOUtils.safeClose(is);
 		}
@@ -696,7 +695,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			break;
 		}
 		if (list == null || list.size() == 0) {
-			return new Message(Message.Type.OK);
+			return MessageService.message(Message.Type.OK);
 		}
 		return saveCoordinate(list, builds, project);
 	}
@@ -753,7 +752,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				pointToBuild(entry.getValue(),builds,project,coordinate.getId());
 			}
 		}
-		return new Message(Message.Type.OK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	/**
@@ -902,20 +901,20 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		if (mFile.getSize() > CONVERT_MAX_SZIE) {
 			// return "文件过大无法上传";
 			logger.debug("文件过大");
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		InputStream is;
 		try {
 			is = mFile.getInputStream();
 		} catch (IOException e) {
 			logger.info("坐标文件或格式异常");
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		me = uploadCoordinateToData(is,project,central,fileName,wgs84Type);
 		if (me != null) {
 			return me;
 		}
-		return new Message(Message.Type.OK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	/**
@@ -928,7 +927,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		Object projectId = objectMap.get("projectId");
 		Object description = objectMap.get("description");
 		if (line == null || projectId == null || description == null) {
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		Message message=checkCoordinateFormat(line);
 		if (message.getType() == Message.Type.OTHER) {
@@ -941,7 +940,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		coordinate.setProject(project);
 		coordinate.setDescription(description.toString());
 		save(coordinate);
-		return new Message(Message.Type.OK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	public List<Coordinate> findByDate(){
@@ -967,9 +966,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		for (Object o : coordinate) {
 			jsonObject = JSONObject.fromObject(o);
 			if (jsonObject.size() != 3) {
-				return new Message(Message.Type.OTHER);
+				return MessageService.message(Message.Type.OTHER);
 			}
 		}
-		return new Message(Message.Type.OK);
+		return MessageService.message(Message.Type.OK);
 	}
 }

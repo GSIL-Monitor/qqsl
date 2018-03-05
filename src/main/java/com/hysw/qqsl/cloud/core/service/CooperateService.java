@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -190,7 +190,7 @@ public class CooperateService {
         boolean flag;
         Message message = isOwn(own,ids,account);
         if(!message.getType().equals(Message.Type.OK)){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         CooperateVisit.Type type1 = CooperateVisit.Type.valueOf(type);
         for (int i = 0; i < ids.size(); i++) {
@@ -207,7 +207,7 @@ public class CooperateService {
                 }
             }
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -224,10 +224,10 @@ public class CooperateService {
             project = projectService.find((long) (ids.get(i)));
             message = userService.isOwn(own,project,account);
           if(!message.getType().equals(Message.Type.OK)){
-              return new Message(Message.Type.FAIL);
+              return MessageService.message(Message.Type.FAIL);
           }
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -259,7 +259,7 @@ public class CooperateService {
                 resultJson.add(jsonObject);
             }
         }
-        return new Message(Message.Type.OK, resultJson);
+        return MessageService.message(Message.Type.OK, resultJson);
     }
 
     /**
@@ -333,7 +333,7 @@ public class CooperateService {
             }
         }
         saveCooperate(cooperate);
-       return new Message(Message.Type.OK);
+       return MessageService.message(Message.Type.OK);
     }
 
 
@@ -345,7 +345,7 @@ public class CooperateService {
      */
     public Message unCooperate(Project project, List<String> typeList,User own) {
         if(!project.getUser().getId().equals(own.getId())){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Cooperate cooperate = makeCooperate(project);
         List<String> commTypes = Arrays.asList(CommonAttributes.COOPERATES);
@@ -364,7 +364,7 @@ public class CooperateService {
             accountMessageService.cooperate(type, project, account, false);
         }
         saveCooperate(cooperate);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**

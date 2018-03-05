@@ -1,9 +1,8 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.Setting;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.DiffConnPoll;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -134,10 +133,10 @@ public class PositionService {
         try {
             project = projectService.find(Long.valueOf(id));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (project == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         Position position = null;
         for (int i = 0; i < useds.size(); i++) {
@@ -150,7 +149,7 @@ public class PositionService {
         if (position == null) {
             if (unuseds.size() == 0) {
 //                链接池已满
-                return new Message(Message.Type.UNKNOWN);
+                return MessageService.message(Message.Type.UNKNOWN);
             }
             Random random = new Random();
             int i = random.nextInt(unuseds.size());
@@ -169,7 +168,7 @@ public class PositionService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new Message(Message.Type.OK, s);
+        return MessageService.message(Message.Type.OK, s);
     }
 
 //    /**
@@ -202,9 +201,9 @@ public class PositionService {
             }
         }
         if (flag) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 
@@ -265,12 +264,12 @@ public class PositionService {
 //        if (setting.getStatus().equals("run")) {
         diffConnPoll = diffConnPollService.findByUserName(userName);
         if (diffConnPoll == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         try {
             diffConnPoll.setTimeout(Long.valueOf(timeout));
         }catch (Exception e){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         diffConnPollService.save(diffConnPoll);
 //        }else{
@@ -312,7 +311,7 @@ public class PositionService {
 //
 //        }
         editPosition(diffConnPoll);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -368,18 +367,18 @@ public class PositionService {
         int i = findByUserInUseds(project.getUser());
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         if (aPackage.getExpireDate().getTime() < System.currentTimeMillis()) {
-            return new Message(Message.Type.EXPIRED);
+            return MessageService.message(Message.Type.EXPIRED);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.FINDCM && i < packageItem.getLimitNum()) {
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             }
         }
-        return new Message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.NO_ALLOW);
     }
 
     /**

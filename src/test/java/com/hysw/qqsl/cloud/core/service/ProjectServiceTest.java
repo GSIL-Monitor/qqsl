@@ -8,7 +8,6 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonTest;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
 import com.hysw.qqsl.cloud.core.entity.element.*;
-import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDB;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDataGroup;
 import net.sf.json.JSONArray;
@@ -22,7 +21,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import org.springframework.util.StringUtils;

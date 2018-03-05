@@ -4,19 +4,16 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.*;
-import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
-import com.hysw.qqsl.cloud.core.entity.Note;
-import com.hysw.qqsl.cloud.core.entity.Setting;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.pay.service.CommonService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.pay.service.TurnoverService;
 import com.hysw.qqsl.cloud.pay.service.aliPay.AliPayService;
-import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +28,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -200,11 +196,11 @@ public class AliPayController {
         alipayRequest.setNotifyUrl(aliPayService.getNotifyUrl());//在公共参数中设置回跳和通知地址
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
         if (System.currentTimeMillis()-trade.getCreateDate().getTime()>2*60*60*1000) {
-                return new Message(Message.Type.EXPIRED);
+                return MessageService.message(Message.Type.EXPIRED);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String type = tradeService.convertType(trade);
         JSONObject jsonObject = new JSONObject();
@@ -224,7 +220,7 @@ public class AliPayController {
         httpResponse.getWriter().write(form);//直接将完整的表单html输出到页面
         httpResponse.getWriter().flush();
         httpResponse.getWriter().close();
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 //    /**
@@ -254,10 +250,10 @@ public class AliPayController {
 //        JSONObject jsonObject1 = JSONObject.fromObject(jsonObject.get("alipay_trade_precreate_response"));
 //        if (response.isSuccess()) {
 //            System.out.println("调用成功");
-//            return new Message(Message.Type.OK, jsonObject1);
+//            return MessageService.message(Message.Type.OK, jsonObject1);
 //        } else {
 //            System.out.println("调用失败");
-//            return new Message(Message.Type.FAIL);
+//            return MessageService.message(Message.Type.FAIL);
 //        }
 //    }
 
@@ -277,15 +273,15 @@ public class AliPayController {
     @ResponseBody
     Message refund(@PathVariable("out_trade_no") String out_trade_no) throws ServletException, IOException, AlipayApiException {
         if (out_trade_no == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
         if (trade == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         trade.setStatus(Trade.Status.REFUND);
         trade.setRefundDate(new Date());
@@ -305,11 +301,11 @@ public class AliPayController {
     @RequestMapping(value = "/admin/queryTrade/{out_trade_no}", method = RequestMethod.GET)
     public @ResponseBody Message queryTrade(@PathVariable("out_trade_no") String out_trade_no) throws ServletException, IOException, AlipayApiException {
         if (out_trade_no == null||out_trade_no.equals("")) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
         if (trade == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         return  aliPayService.queryTrade(trade);
     }
@@ -325,17 +321,17 @@ public class AliPayController {
     @RequestMapping(value = "/admin/refreshTrade", method = RequestMethod.POST)
     public @ResponseBody
     Message refreshOrder(@RequestBody Map<String, Object> objectMap) throws AlipayApiException {
-        Message message = Message.parameterCheck(objectMap);
+        Message message = MessageService.parameterCheck(objectMap);
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
         Object outTradeNo = objectMap.get("outTradeNo");
         if (outTradeNo == null) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo.toString());
         if (trade == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         message = aliPayService.queryTrade(trade);
         JSONObject jsonObject = JSONObject.fromObject(message.getData());
@@ -353,11 +349,11 @@ public class AliPayController {
                         tradeService.activateServe(trade);
                     }
                 }.start();
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             } else if (trade.getStatus() == Trade.Status.REFUND) {
                 return aliPayService.refund(trade);
             }
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 }

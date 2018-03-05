@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.SensorDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
@@ -81,7 +81,7 @@ public class SensorService extends BaseService<Sensor,Long>{
         }
         if(map.get("phone")!=null&&StringUtils.hasText(map.get("phone").toString())){
             if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return new Message(Message.Type.OTHER);
+                return MessageService.message(Message.Type.OTHER);
             }
             infoJson.put("phone",map.get("phone").toString());
         }
@@ -90,10 +90,10 @@ public class SensorService extends BaseService<Sensor,Long>{
                 Double settingHeight = Double.valueOf(map.get("settingHeight").toString());
                 sensor.setSettingHeight(Double.valueOf(map.get("settingHeight").toString()));
                 if (settingHeight>100.0||settingHeight<0.0){
-                    return new Message(Message.Type.FAIL);
+                    return MessageService.message(Message.Type.FAIL);
                 }
             }catch (NumberFormatException e){
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
         }
         //当前测站为水位站时,只能绑定一个仪表,一个摄像头
@@ -111,7 +111,7 @@ public class SensorService extends BaseService<Sensor,Long>{
         if(!Sensor.Type.CAMERA.equals(sensor.getType())){
             monitorService.add(code);
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -123,19 +123,19 @@ public class SensorService extends BaseService<Sensor,Long>{
     private Message isHydrologyStation(Sensor sensor,Station station){
         List<Sensor> sensors = station.getSensors();
         if(sensors.size()==0){
-            return new Message(Message.Type.OK);
+            return MessageService.message(Message.Type.OK);
         }
         for(int i = 0;i<sensors.size();i++){
             if(Sensor.Type.CAMERA.equals(sensors.get(i).getType())&&sensors.get(i).getType().equals(sensor.getType())){
                 logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                return new Message(Message.Type.EXIST);
+                return MessageService.message(Message.Type.EXIST);
             }
             if(!Sensor.Type.CAMERA.equals(sensor.getType())&&sensors.get(i).getType().equals(sensor.getType())){
                 logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                return new Message(Message.Type.EXIST);
+                return MessageService.message(Message.Type.EXIST);
             }
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -213,7 +213,7 @@ public class SensorService extends BaseService<Sensor,Long>{
         JSONObject infoJson =  sensor.getInfo()==null?new JSONObject():JSONObject.fromObject(sensor.getInfo());
         if(map.get("phone")!=null&&StringUtils.hasText(map.get("phone").toString())){
             if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
             infoJson.put("phone",map.get("phone").toString());
         }
@@ -228,16 +228,16 @@ public class SensorService extends BaseService<Sensor,Long>{
                 Double settingHeight = Double.valueOf(map.get("settingHeight").toString());
                 sensor.setSettingHeight(settingHeight);
                 if (settingHeight>100.0||settingHeight<0.0){
-                    return new Message(Message.Type.FAIL);
+                    return MessageService.message(Message.Type.FAIL);
                 }
             }catch (NumberFormatException e){
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
 
         }
         sensor.setInfo(infoJson.isEmpty()?null:infoJson.toString());
         sensorDao.save(sensor);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -247,12 +247,12 @@ public class SensorService extends BaseService<Sensor,Long>{
      */
     public Message editCamera(Map<String, Object> cameraMap,Sensor sensor) {
         if(!Sensor.Type.CAMERA.equals(sensor.getType())){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         JSONObject infoJson = new JSONObject();
         if(cameraMap.get("phone")!=null&&StringUtils.hasText(cameraMap.get("phone").toString())){
             if(!SettingUtils.phoneRegex(cameraMap.get("phone").toString())){
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
             infoJson.put("phone",cameraMap.get("phone").toString());
         }
@@ -266,11 +266,11 @@ public class SensorService extends BaseService<Sensor,Long>{
         if(cameraMap.get("cameraUrl")!=null&&StringUtils.hasText(cameraMap.get("cameraUrl").toString())){
             String cameraUrl = cameraMap.get("cameraUrl").toString();
             if(!SettingUtils.parameterRegex(cameraUrl)){
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
             sensor.setCameraUrl(cameraUrl);
         }
         sensorDao.save(sensor);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 }

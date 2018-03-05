@@ -2,13 +2,10 @@ package com.hysw.qqsl.cloud.pay.service.aliPay;
 
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
 
 /**
  * Create by leinuo on 17-9-13 下午6:06

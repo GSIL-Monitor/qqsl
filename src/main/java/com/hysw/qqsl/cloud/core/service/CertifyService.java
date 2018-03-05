@@ -3,10 +3,9 @@ package com.hysw.qqsl.cloud.core.service;
 import com.aliyun.oss.OSSException;
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.CertifyDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -15,13 +14,10 @@ import net.sf.ehcache.CacheManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
-import org.junit.After;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,20 +55,20 @@ public class CertifyService extends BaseService<Certify, Long> {
         Object name = objectMap.get("name");
         Object identityId = objectMap.get("identityId");
         if (name == null || identityId == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Certify certify;
         try {
             certify = findByUser(user);
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (certify == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS) {
 //                认证已通过，不可更改
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         certify.setName(name.toString());
         certify.setIdentityId(identityId.toString());
@@ -81,7 +77,7 @@ public class CertifyService extends BaseService<Certify, Long> {
         save(certify);
         user.setPersonalStatus(CommonEnum.CertifyStatus.AUTHEN);
         userService.save(user);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -91,7 +87,7 @@ public class CertifyService extends BaseService<Certify, Long> {
      */
     public Message getPersonalCertify(User user) {
         Certify certify = findByUser(user);
-        return new Message(Message.Type.OK,personalCertifyToJson(certify));
+        return MessageService.message(Message.Type.OK,personalCertifyToJson(certify));
     }
 
     /**
@@ -142,28 +138,28 @@ public class CertifyService extends BaseService<Certify, Long> {
         Object companyPhone = objectMap.get("companyPhone");
         Object companyLicence = objectMap.get("companyLicence");
         if (legal == null || companyName == null || companyAddress == null || companyPhone == null || companyLicence == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Certify certify;
         try {
             certify = findByUser(user);
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (certify == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (certify.getPersonalStatus() != CommonEnum.CertifyStatus.PASS) {
 //            个人认证未通过不能进行企业认证
-            return new Message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.NO_ALLOW);
         }
         if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS||findByCompanyLicence(companyLicence.toString())) {
 //            认证已通过，不可更改
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
 //        企业许可证编号
        /* if (findByCompanyLicence(companyLicence.toString())) {
-            return new Message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.OTHER);
         }*/
         certify.setLegal(legal.toString());
         certify.setCompanyName(companyName.toString());
@@ -175,7 +171,7 @@ public class CertifyService extends BaseService<Certify, Long> {
         save(certify);
         user.setCompanyStatus(CommonEnum.CertifyStatus.AUTHEN);
         userService.save(user);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -200,7 +196,7 @@ public class CertifyService extends BaseService<Certify, Long> {
      */
     public Message getCompanyCertify(User user) {
         Certify certify = findByUser(user);
-        return new Message(Message.Type.OK,companyCertifyToJson(certify));
+        return MessageService.message(Message.Type.OK,companyCertifyToJson(certify));
     }
 
     /**
@@ -328,7 +324,7 @@ public class CertifyService extends BaseService<Certify, Long> {
             jsonObject.put("modifyDate", certify.getModifyDate().getTime());
             jsonArray.add(jsonObject);
         }
-        return new Message(Message.Type.OK, jsonArray);
+        return MessageService.message(Message.Type.OK, jsonArray);
     }
 
     /**

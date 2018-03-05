@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.PanoramaDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
@@ -124,7 +124,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         Object shootDate = map.get("shootDate");
         panorama.setShootDate((Date)shootDate);
         if (name == null || coor == null || isShare == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Message message = SettingUtils.checkCoordinateIsInvalid(coor.toString());
         if (!Message.Type.OK.equals(message.getType())) {
@@ -142,7 +142,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         save(panorama);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", panorama.getId());
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     public List<Panorama> findByuser(User user) {
@@ -185,15 +185,15 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     public Message isAllowSavePanorma(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         int size = findByuser(user).size();
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.PANO && size < packageItem.getLimitNum()) {
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             }
         }
-        return new Message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.NO_ALLOW);
     }
 }

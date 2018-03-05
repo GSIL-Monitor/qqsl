@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.DiffConnPollDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.DiffConnPoll;
@@ -62,22 +62,22 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
     public Message isAllowConnectQXWZ(Long id) {
         Project project = projectService.find(id);
         if (project == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (aPackage.getExpireDate().getTime() < System.currentTimeMillis()) {
-            return new Message(Message.Type.EXPIRED);
+            return MessageService.message(Message.Type.EXPIRED);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.FINDCM) {
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             }
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
 
@@ -91,18 +91,18 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
         Object password = object.get("password");
         Object timeout = object.get("timeout");
         if (userName == null || password == null||timeout==null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         try {
             Long.valueOf(timeout.toString());
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         DiffConnPoll diffConnPoll = new DiffConnPoll(userName.toString(),password.toString(),Long.valueOf(timeout.toString()));
         diffConnPollService.save(diffConnPoll);
         Position position = new Position(diffConnPoll.getId(), diffConnPoll.getUserName(), diffConnPoll.getPassword(), System.currentTimeMillis(), diffConnPoll.getTimeout());
         positionService.setPosition(position);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -114,7 +114,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
         Object id = object.get("id");
         Object timeout = object.get("timeout");
         if (id == null || timeout==null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         DiffConnPoll diffConnPoll;
         long l;
@@ -122,12 +122,12 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
             l=Long.valueOf(timeout.toString());
             diffConnPoll = find(Long.valueOf(id.toString()));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         diffConnPoll.setTimeout(l);
         diffConnPollService.save(diffConnPoll);
         positionService.editTimeout(Long.valueOf(id.toString()),l);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -139,7 +139,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
         DiffConnPoll diffConnPoll = diffConnPollService.find(id);
         positionService.deleteOneCache(diffConnPoll);
         diffConnPollService.remove(diffConnPoll);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -176,6 +176,6 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
             jsonObject.put("using", false);
             jsonArray.add(jsonObject);
         }
-        return new Message(Message.Type.OK,jsonArray);
+        return MessageService.message(Message.Type.OK,jsonArray);
     }
 }

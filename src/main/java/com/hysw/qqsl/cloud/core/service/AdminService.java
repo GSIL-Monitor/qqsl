@@ -1,20 +1,12 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.AdminDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Admin;
-import com.hysw.qqsl.cloud.core.entity.data.DiffConnPoll;
-import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.element.Position;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -145,7 +137,7 @@ public class AdminService extends BaseService<Admin,Long>{
 //           user.setRoles(role);
 //        }
 //        userService.save(user);
-//        return new Message(Message.Type.OK);
+//        return MessageService.message(Message.Type.OK);
 //    }
 //
 }

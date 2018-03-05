@@ -1,36 +1,22 @@
 package com.hysw.qqsl.cloud.annotation.service;
 
-import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
 import com.hysw.qqsl.cloud.annotation.util.StationIsExpire;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.*;
-import com.hysw.qqsl.cloud.core.entity.element.Position;
 import com.hysw.qqsl.cloud.core.service.*;
-import com.hysw.qqsl.cloud.pay.entity.PackageItem;
-import com.hysw.qqsl.cloud.pay.entity.PackageModel;
-import com.hysw.qqsl.cloud.pay.entity.ServeItem;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
-import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
-import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
-import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.hamcrest.core.Is;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
@@ -119,7 +105,7 @@ public class AspectService {
             }
         }
         if (value == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Object id = null;
         Station station = null;
@@ -145,16 +131,16 @@ public class AspectService {
             station = stationService.find(Long.valueOf(id.toString()));
         }
         if (station==null||!station.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         if (station.getExpireDate().getTime() > System.currentTimeMillis()) {
             try {
                 return (Message) joinPoint.proceed();
             } catch (Throwable e) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
         }
-        return new Message(Message.Type.EXPIRED);
+        return MessageService.message(Message.Type.EXPIRED);
     }
 
     /**
@@ -179,7 +165,7 @@ public class AspectService {
                 }
             }
             if (value == null) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
             if (value.equals("request")) {
                 Object[] args = joinPoint.getArgs();
@@ -192,7 +178,7 @@ public class AspectService {
                 Map<String, Object> map = (Map<String, Object>) SettingUtils.objectCopy(Arrays.asList(joinPoint.getArgs()).get(0));
                 Object projectId = map.get("projectId");
                 if (projectId == null) {
-                    return new Message(Message.Type.FAIL);
+                    return MessageService.message(Message.Type.FAIL);
                 }
                 Project project = projectService.find(Long.valueOf(projectId.toString()));
                 user = project.getUser();
@@ -200,7 +186,7 @@ public class AspectService {
             if (value.equals("property")) {
                 Object projectId = (joinPoint.getArgs())[0];
                 if (projectId == null) {
-                    return new Message(Message.Type.FAIL);
+                    return MessageService.message(Message.Type.FAIL);
                 }
                 Project project = projectService.find(Long.valueOf(projectId.toString()));
                 user = project.getUser();
@@ -208,16 +194,16 @@ public class AspectService {
         }
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         if (aPackage.getExpireDate().getTime() > System.currentTimeMillis()) {
             try {
                 return (Message) joinPoint.proceed();
             } catch (Throwable e) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
         }
-        return new Message(Message.Type.EXPIRED);
+        return MessageService.message(Message.Type.EXPIRED);
     }
 
 
@@ -233,10 +219,10 @@ public class AspectService {
             try {
                 return (Message) joinPoint.proceed();
             } catch (Throwable e) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
         }
-        return new Message(Message.Type.EXIST);
+        return MessageService.message(Message.Type.EXIST);
     }
 
 
@@ -246,7 +232,7 @@ public class AspectService {
 //        if(log.isInfoEnabled()){
 //            log.info("afterReturn " + joinPoint);
 //        }
-//        return new Message(Message.Type.FAIL);
+//        return MessageService.message(Message.Type.FAIL);
 //    }
 
 //    //配置抛出异常后通知,使用在方法aspect()上注册的切入点

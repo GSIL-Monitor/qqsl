@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.AccountDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.Note;
@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Create by leinuo on 17-4-26 下午6:30
@@ -88,7 +87,7 @@ public class AccountService extends BaseService<Account,Long> {
             users = account.getUsers();
             for(int i=0;i<users.size();i++){
                 if(users.get(i).getId().equals(user.getId())){
-                    return new Message(Message.Type.EXIST);
+                    return MessageService.message(Message.Type.EXIST);
                 }
             }
             users.add(user);
@@ -99,7 +98,7 @@ public class AccountService extends BaseService<Account,Long> {
         pollingService.addAccount(account);
         accountMessageService.bindMsessage(user,account,true);
         noteCache.add(phone,note);
-        return new Message(Message.Type.OK,makeSimpleAccountJson(account));
+        return MessageService.message(Message.Type.OK,makeSimpleAccountJson(account));
     }
 
     /**
@@ -120,7 +119,7 @@ public class AccountService extends BaseService<Account,Long> {
         Account account = findByPhone(phone);
         // 用户已存在
         if (account!= null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }else{
             account = new Account();
         }
@@ -131,7 +130,7 @@ public class AccountService extends BaseService<Account,Long> {
         account.setRoles(CommonAttributes.ROLES[4]);
         save(account);
         pollingService.addAccount(account);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 
@@ -150,7 +149,7 @@ public class AccountService extends BaseService<Account,Long> {
         account.setPassword(password);
         accountDao.save(account);
         authentService.updateSession(account);
-        return new Message(Message.Type.OK,makeAccountJson(account));
+        return MessageService.message(Message.Type.OK,makeAccountJson(account));
     }*/
 
     /**
@@ -162,7 +161,7 @@ public class AccountService extends BaseService<Account,Long> {
         Account account = accountDao.find(id);
         account.setName(name);
         save(account);
-        return new Message(Message.Type.OK,makeAccountJson(account));
+        return MessageService.message(Message.Type.OK,makeAccountJson(account));
     }
     /**
      * 修改子账号密码
@@ -173,11 +172,11 @@ public class AccountService extends BaseService<Account,Long> {
     public Message updatePassword(String password,Long id) {
         Account account = find(id);
         if(password.length()!=32){
-            return new Message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.OTHER);
         }
         account.setPassword(password);
         save(account);
-        return new Message(Message.Type.OK,makeAccountJson(account));
+        return MessageService.message(Message.Type.OK,makeAccountJson(account));
     }
     /**
      * 更改手机号
@@ -188,13 +187,13 @@ public class AccountService extends BaseService<Account,Long> {
     public Message changePhone(String newPhone, Long id) {
         Account account = findByPhone(newPhone);
         if(account!=null){
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         account = find(id);
         account.setPhone(newPhone);
         accountDao.save(account);
         authentService.updateSession(account);
-        return new Message(Message.Type.OK,makeAccountJson(account));
+        return MessageService.message(Message.Type.OK,makeAccountJson(account));
     }
 //    /**
 //     * 更改手机号
@@ -205,13 +204,13 @@ public class AccountService extends BaseService<Account,Long> {
 //    public Message changePhone(String newPhone, Long id) {
 //        Account account = findByPhone(newPhone);
 //        if(account!=null){
-//            return new Message(Message.Type.EXIST);
+//            return MessageService.message(Message.Type.EXIST);
 //        }
 //        account = find(id);
 //        account.setPhone(newPhone);
 //        accountDao.save(account);
 //        authentService.updateSession(account);
-//        return new Message(Message.Type.OK,makeAccountJson(account));
+//        return MessageService.message(Message.Type.OK,makeAccountJson(account));
 //    }
 
 //    public Account findByPhoneOrUserName(String param){
@@ -433,13 +432,13 @@ public class AccountService extends BaseService<Account,Long> {
             }
         }
         if(!flag){
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         account.setUsers(users);
         accountDao.save(account);
         //记录子账号解绑企业的消息
         userMessageService.unbindMessage(account,user);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 //    public List<JSONObject> makeAccountJsons(List<Account> accounts) {

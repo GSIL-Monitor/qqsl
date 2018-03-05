@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.pay.controller;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import com.hysw.qqsl.cloud.pay.service.TurnoverService;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -42,7 +43,7 @@ public class TurnoverController {
             Date endDate = new Date(end);
             return turnoverService.getTurnoverListBetweenDate(beginDate, endDate);
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
     }
 

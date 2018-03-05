@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 
@@ -346,7 +346,7 @@ public class NoteService{
            Note note;
            for(String contact:contacts){
         	   if(!SettingUtils.phoneRegex(contact)){
-        		   return new Message(Message.Type.FAIL);
+        		   return MessageService.message(Message.Type.FAIL);
         	   }
            }
            for(String contact:contacts){
@@ -356,7 +356,7 @@ public class NoteService{
         	   noteCache.add(contact, note);
            }
            logger.info(contacts.size()+"条短信加入缓存");					   
-           return new Message(Message.Type.OK);
+           return MessageService.message(Message.Type.OK);
 	}
 
 	/**
@@ -369,7 +369,7 @@ public class NoteService{
 	public Message isSend(String phone,
 						  HttpSession session) {
 		if(!StringUtils.hasText(phone)){
-			return new Message(Message.Type.FAIL, null);
+			return MessageService.message(Message.Type.FAIL, null);
 		}
 		Verification verification = new Verification();
 		String code = SettingUtils.createRandomVcode();
@@ -384,9 +384,9 @@ public class NoteService{
 				verification.setCode("123456");
 			}
 			session.setAttribute("verification", verification);
-			return new Message(Message.Type.OK, null);
+			return MessageService.message(Message.Type.OK, null);
 		}
-		return new Message(Message.Type.FAIL, null);
+		return MessageService.message(Message.Type.FAIL, null);
 	}
 
 

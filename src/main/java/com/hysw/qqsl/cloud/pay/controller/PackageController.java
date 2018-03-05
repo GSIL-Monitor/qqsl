@@ -1,8 +1,9 @@
 package com.hysw.qqsl.cloud.pay.controller;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import org.apache.shiro.authz.annotation.Logical;
@@ -38,6 +39,6 @@ public class PackageController {
     Message getPackage() {
         User user = authentService.getUserFromSubject();
         Package aPackage = packageService.findByUser(user);
-        return new Message(Message.Type.OK,packageService.toJson(aPackage));
+        return MessageService.message(Message.Type.OK,packageService.toJson(aPackage));
     }
 }

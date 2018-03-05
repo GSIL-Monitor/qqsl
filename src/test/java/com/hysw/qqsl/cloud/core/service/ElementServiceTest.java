@@ -2,20 +2,15 @@ package com.hysw.qqsl.cloud.core.service;
 
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.element.Unit;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.service.ElementService;
-import com.hysw.qqsl.cloud.core.service.ProjectService;
-import com.hysw.qqsl.cloud.core.service.UnitService;
-import com.hysw.qqsl.cloud.core.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.pay.service.wxPay;
 
-import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -49,12 +49,12 @@ public class WXPayService {
             if (r.get("result_code").equals("SUCCESS") && r.get("return_code").equals("SUCCESS")) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("qrCode",r.get("code_url"));
-                return new Message(Message.Type.OK,jsonObject);
+                return MessageService.message(Message.Type.OK,jsonObject);
             }
         } catch (NullPointerException e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -91,14 +91,14 @@ public class WXPayService {
             JSONObject jsonObject=new JSONObject();
             if (r.get("result_code").equals("SUCCESS") && r.get("return_code").equals("SUCCESS")) {
                 jsonObject.put("tradeState",r.get("trade_state"));
-                return new Message(Message.Type.OK,jsonObject);
+                return MessageService.message(Message.Type.OK,jsonObject);
             }else{
                 jsonObject.put("tradeState",r.get("err_code"));
                 System.out.println(jsonObject);
-                return new Message(Message.Type.OK,jsonObject);
+                return MessageService.message(Message.Type.OK,jsonObject);
             }
         } catch (NullPointerException e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
     }
 
@@ -124,7 +124,7 @@ public class WXPayService {
      */
     public Message refund(Trade trade) {
         if (trade.getType() != Trade.Type.GOODS) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("out_trade_no", trade.getOutTradeNo());
@@ -142,12 +142,12 @@ public class WXPayService {
         }
         try {
             if (r.get("result_code").equals("SUCCESS") && r.get("return_code").equals("SUCCESS")) {
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             }
         } catch (NullPointerException e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**

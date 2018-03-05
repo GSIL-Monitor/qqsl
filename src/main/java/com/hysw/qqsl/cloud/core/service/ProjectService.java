@@ -4,10 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
-import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.entity.element.*;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
@@ -34,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.ProjectDao;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 
@@ -189,7 +187,7 @@ public class ProjectService extends BaseService<Project, Long> {
         projectLogService.addNearlyWeekLog();
         logger.info("加载近一周日志缓存");
         logger.info("缓存刷新完成");
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -200,12 +198,12 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message getProjects(int start, User simpleUser) {
         List<Share> shares = shareService.getShares(simpleUser);
         if (shares.size() == 0) {
-            return new Message(Message.Type.OK, new JSONArray(), "0,0");
+            return MessageService.message(Message.Type.OK, new JSONArray(), "0,0");
         }
         int i = start;
         int end = i + CommonAttributes.LIMIT;
         if (i >= shares.size()) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         List<Share> shares1 = new ArrayList<>();
         if (shares.size() < CommonAttributes.LIMIT) {
@@ -225,7 +223,7 @@ public class ProjectService extends BaseService<Project, Long> {
             jsonObject = makeProjectJsons(shares1.get(j).getProject(),true);
             projectJsons.add(jsonObject);
         }
-        Message message = new Message(Message.Type.OK, projectJsons, start + "," + String.valueOf(shares.size()));
+        Message message = MessageService.message(Message.Type.OK, projectJsons, start + "," + String.valueOf(shares.size()));
         return message;
     }
 
@@ -241,10 +239,10 @@ public class ProjectService extends BaseService<Project, Long> {
         int i = start;
         int end = i + CommonAttributes.LIMIT;
         if (cooperates.size() == 0) {
-            return new Message(Message.Type.OK, new JSONArray(), "0,0");
+            return MessageService.message(Message.Type.OK, new JSONArray(), "0,0");
         }
         if (i >= cooperates.size()) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         List<Cooperate> cooperates1 = new ArrayList<>();
         if (cooperates.size() < CommonAttributes.LIMIT) {
@@ -264,7 +262,7 @@ public class ProjectService extends BaseService<Project, Long> {
             jsonObject = makeProjectJsons(cooperates1.get(j).getProject(),false);
             projectJsons.add(jsonObject);
         }
-        Message message = new Message(Message.Type.OK, projectJsons, start + "," + String.valueOf(cooperates.size()));
+        Message message = MessageService.message(Message.Type.OK, projectJsons, start + "," + String.valueOf(cooperates.size()));
         return message;
     }
 
@@ -285,7 +283,7 @@ public class ProjectService extends BaseService<Project, Long> {
         // 构建对应阶段的权限
         JSONObject stageJson = cooperateService.getStageJson(project,object);
         projectJson.put("stage", stageJson);
-        return new Message(Message.Type.OK, projectJson);
+        return MessageService.message(Message.Type.OK, projectJson);
     }
 
 
@@ -337,7 +335,7 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message createProject(Project project) {
         List<Project> projects = findByCode(project.getCode(), project.getUser().getId());
         if (projects.size() != 0) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         infoService
                 .saveInfo(project, 11, infoService.getPlanning(Integer
@@ -348,7 +346,7 @@ public class ProjectService extends BaseService<Project, Long> {
         userService.save(project.getUser());
         Share share = shareService.makeShare(project);
         JSONObject projectJson = makeProjectJsons(share.getProject(),false);
-        return new Message(Message.Type.OK, projectJson);
+        return MessageService.message(Message.Type.OK, projectJson);
     }
 
     /**
@@ -656,15 +654,15 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message removeById(Long id, User user) {
         Project project = find(id);
         if (project == null || project.getId() == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         if (!project.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.NO_AUTHORIZE);
         }
         ossService.setBucketLife(project.getTreePath() + "/", "project");
         deleteProjectSpace(user,project.getCurSpaceNum());
         super.remove(project);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -697,16 +695,16 @@ public class ProjectService extends BaseService<Project, Long> {
             project1.setName(project.getName());
             project1.setCode(project.getCode());
             save(project1);
-            return new Message(Message.Type.OK);
+            return MessageService.message(Message.Type.OK);
         }
         // 有，就比对项目id，再更新
         if (project1.getId().equals(projects.get(0).getId())) {
             project1.setName(project.getName());
             project1.setCode(project.getCode());
             save(project1);
-            return new Message(Message.Type.OK);
+            return MessageService.message(Message.Type.OK);
         } else {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
     }
 
@@ -1172,22 +1170,22 @@ public class ProjectService extends BaseService<Project, Long> {
         Object fileNames = map.get("fileNames");//用于记录日志
         Object alias = map.get("alias");
         if (projectId == null || fileSize == null || fileNames == null || alias == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
         if (project == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         try {
             project.setCurSpaceNum(project.getCurSpaceNum() + Long.valueOf(fileSize.toString()));
             aPackage.setCurSpaceNum(aPackage.getCurSpaceNum() + Long.valueOf(fileSize.toString()));
             aPackage.setCurTrafficNum(aPackage.getCurTrafficNum()+Long.valueOf(fileSize.toString()));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         save(project);
         packageService.save(aPackage);
@@ -1197,7 +1195,7 @@ public class ProjectService extends BaseService<Project, Long> {
         projectLogService.saveLog(project,o,aliases,ProjectLog.Type.FILE_UPLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
-        return new Message(Message.Type.OK, jsonObject);
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
     /**
@@ -1212,20 +1210,20 @@ public class ProjectService extends BaseService<Project, Long> {
         Object fileName = map.get("fileName");//用于记录日志
         Object alias = map.get("alias");
         if (projectId == null || fileSize == null || fileName == null || alias == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
         if (project == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         try {
             aPackage.setCurTrafficNum(aPackage.getCurTrafficNum()+Long.valueOf(fileSize.toString()));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         packageService.save(aPackage);
         storageLogService.saveStorageLog(aPackage,"download",fileSize);
@@ -1234,7 +1232,7 @@ public class ProjectService extends BaseService<Project, Long> {
         projectLogService.saveLog(find(Long.valueOf(projectId.toString())),o,aliases,ProjectLog.Type.FILE_DOWNLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
-        return new Message(Message.Type.OK, jsonObject);
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
 
@@ -1251,7 +1249,7 @@ public class ProjectService extends BaseService<Project, Long> {
         Object fileSize = map.get("fileSize");
         Object fileName = map.get("fileName");
         if (projectId == null || fileSize == null || alias == null || fileName == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
         if (user == null) {
@@ -1259,13 +1257,13 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         Package aPackage = packageService.findByUser(user);
         if (project == null || aPackage == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         try {
             project.setCurSpaceNum(project.getCurSpaceNum() - Long.valueOf(fileSize.toString()));
             aPackage.setCurSpaceNum(aPackage.getCurSpaceNum() - Long.valueOf(fileSize.toString()));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         save(project);
         packageService.save(aPackage);
@@ -1273,7 +1271,7 @@ public class ProjectService extends BaseService<Project, Long> {
         Map<String, String> aliases = new LinkedHashMap<>();
         aliases.put(alias.toString(),fileName.toString());
         projectLogService.saveLog(project,user,aliases,ProjectLog.Type.FILE_DELETE);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -1284,15 +1282,15 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message isAllowUpload(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return new Message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.NO_ALLOW);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.SPACE && aPackage.getCurSpaceNum() <= packageItem.getLimitNum() && aPackage.getCurTrafficNum() <= packageItem.getLimitNum() * 10l) {
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             }
         }
-        return new Message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.NO_ALLOW);
     }
 
     /**
@@ -1303,15 +1301,15 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message isAllowDownload(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return new Message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.NO_ALLOW);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.SPACE && aPackage.getCurTrafficNum() <= packageItem.getLimitNum() * 10) {
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             }
         }
-        return new Message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.NO_ALLOW);
     }
 
     /**
@@ -1322,30 +1320,30 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message isAllowCreateProject(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return new Message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.NO_ALLOW);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         long l = findByUser(user).size();
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.PROJECT && l < packageItem.getLimitNum()) {
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             }
         }
-        return new Message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.NO_ALLOW);
     }
 
     public Message isAllowBim(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return new Message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.NO_ALLOW);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.BIMSERVE) {
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             }
         }
-        return new Message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.NO_ALLOW);
     }
 
     /**
@@ -1359,22 +1357,22 @@ public class ProjectService extends BaseService<Project, Long> {
         Object id = map.get("id");
         Object iconType = map.get("iconType");
         if (id == null || iconType == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Project project;
         try {
             project = find(Long.valueOf(id.toString()));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (project == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         if (!project.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         project.setIconType(Project.IconType.valueOf(iconType.toString()));
         save(project);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 }

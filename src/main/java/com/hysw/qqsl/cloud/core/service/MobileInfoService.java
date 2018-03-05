@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.MobileInfoDao;
 import com.hysw.qqsl.cloud.core.entity.data.MobileInfo;
 import net.sf.json.JSONObject;
@@ -32,7 +32,7 @@ public class MobileInfoService extends BaseService<MobileInfo,Long> {
         MobileInfo mobileInfo = mobileInfoDao.find(1L);
         mobileInfo.setVersion(version);
         mobileInfoDao.save(mobileInfo);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -43,6 +43,6 @@ public class MobileInfoService extends BaseService<MobileInfo,Long> {
         MobileInfo mobileInfo = mobileInfoDao.find(1L);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("version",mobileInfo.getVersion());
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 }

@@ -1,10 +1,12 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
 import com.hysw.qqsl.cloud.core.service.CertifyCache;
 import com.hysw.qqsl.cloud.core.service.CertifyService;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -37,7 +39,8 @@ public class CertifyController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/getPersonalCertify", method = RequestMethod.GET)
-    public @ResponseBody Message getPersonalCertify() {
+    public @ResponseBody
+    Message getPersonalCertify() {
         User user = authentService.getUserFromSubject();
         return certifyService.getPersonalCertify(user);
     }
@@ -63,7 +66,7 @@ public class CertifyController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/personalCertify", method = RequestMethod.POST)
     public @ResponseBody Message personalCertify(@RequestBody Map<String,Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
+        Message message = MessageService.parameterCheck(objectMap);
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
@@ -81,7 +84,7 @@ public class CertifyController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/companyCertify", method = RequestMethod.POST)
     public @ResponseBody Message companyCertify(@RequestBody Map<String,Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
+        Message message = MessageService.parameterCheck(objectMap);
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
@@ -115,12 +118,12 @@ public class CertifyController {
         try {
             certify = certifyService.find(id);
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (certify == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
-        return new Message(Message.Type.OK, certifyService.certifyToJson(certify));
+        return MessageService.message(Message.Type.OK, certifyService.certifyToJson(certify));
     }
 
     /**
@@ -133,7 +136,7 @@ public class CertifyController {
     public @ResponseBody
     Message certification() {
         certifyCache.certification();
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 

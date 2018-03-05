@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.element.Unit;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDataGroup;
@@ -77,7 +78,7 @@ public class ElementGroupController {
         boolean flagUser =cooperateService.isEditElementUser(project,user,unit.getAlias());
         boolean flagAccount =cooperateService.isEditElementAccount(project,account,unit.getAlias());
         if(!flagUser&&!flagAccount){
-            return new Message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.NO_AUTHORIZE);
         }
         // 保存要素，要素数据，项目简介，更新noteStr
         if(account!=null){
@@ -92,7 +93,7 @@ public class ElementGroupController {
         if (contactMap != null && contactMap.size() > 0) {
             contactService.doSaveContact(contactMap,project.getUser());
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -108,7 +109,7 @@ public class ElementGroupController {
     public
     @ResponseBody
     Message makeElementDataGroup(@RequestBody Object object) {
-        Message message = Message.parameterCheck(object);
+        Message message = MessageService.parameterCheck(object);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
@@ -121,7 +122,7 @@ public class ElementGroupController {
             elementAlias, elementDataGroupName,elementDataGroupType, projectId);
         elementDataGroupService.saveElementDataGroup(elementDataGroup);
         elementDataGroup.setElementDB(null);
-        return new Message(Message.Type.OK, elementDataGroup);
+        return MessageService.message(Message.Type.OK, elementDataGroup);
     }
 
     /**
@@ -136,17 +137,17 @@ public class ElementGroupController {
     @ResponseBody
     Message deleteElementData( @RequestBody JSONObject jsonObject) {
         Long elementDataGroupId = Long.valueOf(jsonObject.get("id").toString());
-        Message message = Message.parametersCheck(elementDataGroupId);
+        Message message = MessageService.parametersCheck(elementDataGroupId);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
         Long id = Long.valueOf(elementDataGroupId);
         ElementDataGroup elementDataGroup = elementDataGroupService.find(id);
         if (elementDataGroup == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         elementDataGroupService.remove(id);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 

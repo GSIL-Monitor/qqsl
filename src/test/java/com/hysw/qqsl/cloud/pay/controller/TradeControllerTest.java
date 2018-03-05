@@ -1,11 +1,9 @@
 package com.hysw.qqsl.cloud.pay.controller;
 
-import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.core.controller.BaseControllerTest;
 import com.hysw.qqsl.cloud.core.controller.HttpUtils;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.controller.UserController;
-import com.hysw.qqsl.cloud.wechat.util.WeChatHttpRequest;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;

@@ -2,11 +2,8 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Interest;
-import com.hysw.qqsl.cloud.core.entity.data.Panorama;
-import com.hysw.qqsl.cloud.core.service.InterestService;
-import com.hysw.qqsl.cloud.core.service.PanoramaService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Assert;

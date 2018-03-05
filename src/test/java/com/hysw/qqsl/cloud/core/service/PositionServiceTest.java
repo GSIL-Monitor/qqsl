@@ -2,13 +2,9 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.DiffConnPoll;
 import com.hysw.qqsl.cloud.core.entity.element.Position;
-import com.hysw.qqsl.cloud.core.service.ApplicationTokenService;
-import com.hysw.qqsl.cloud.core.service.DiffConnPollService;
-import com.hysw.qqsl.cloud.core.service.FieldService;
-import com.hysw.qqsl.cloud.core.service.PositionService;
 import com.hysw.qqsl.cloud.util.RSACoderUtil;
 import net.sf.json.JSONObject;
 import org.junit.Assert;

@@ -2,12 +2,13 @@ package com.hysw.qqsl.cloud.pay.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.StationModel;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.BaseService;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import com.hysw.qqsl.cloud.core.service.StationService;
 import com.hysw.qqsl.cloud.pay.dao.TradeDao;
 import com.hysw.qqsl.cloud.pay.entity.GoodsModel;
@@ -115,19 +116,19 @@ public class TradeService extends BaseService<Trade, Long> {
     public Message createPackageTrade(Map<String, Object> objectMap, User user) {
         Object packageType = objectMap.get("packageType");
         if (packageType == null||packageType.toString().equals("TEST")) {
-            return new Message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.NO_ALLOW);
         }
         PackageModel packageModel = getPackageModel(packageType.toString());
         if (packageModel == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
 //        空间大小以及子账户数是否满足套餐限制,套餐是否已过期
         if (packageService.isRequirementPackage(user.getId(), packageModel)) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
 //        未通过企业认证的用户不能购买套餐等级大于10的套餐
         if (packageModel.getLevel() > CommonAttributes.PROJECTLIMIT && !(user.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || user.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
-            return new Message(Message.Type.NO_CERTIFY);
+            return MessageService.message(Message.Type.NO_CERTIFY);
         }
         Trade trade = new Trade();
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
@@ -146,7 +147,7 @@ public class TradeService extends BaseService<Trade, Long> {
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("trade", tradeToJson(trade));
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -172,11 +173,11 @@ public class TradeService extends BaseService<Trade, Long> {
     public Message createStationTrade(Map<String, Object> objectMap, User user) {
         Object stationType = objectMap.get("stationType");
         if (stationType == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         StationModel stationModel = getStationModel(stationType.toString());
         if (stationModel == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = new Trade();
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
@@ -195,7 +196,7 @@ public class TradeService extends BaseService<Trade, Long> {
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("trade", tradeToJson(trade));
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -224,11 +225,11 @@ public class TradeService extends BaseService<Trade, Long> {
         Object remark = objectMap.get("remark");
         Object goodsNum = objectMap.get("goodsNum");
         if (goodsType == null || remark == null || goodsNum == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         GoodsModel goodsModel = getGoodsModel(goodsType.toString());
         if (goodsModel == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = new Trade();
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
@@ -236,7 +237,7 @@ public class TradeService extends BaseService<Trade, Long> {
         try {
             trade.setGoodsNum(Integer.valueOf(goodsNum.toString()));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         trade.setPrice(goodsModel.getPrice()*trade.getGoodsNum());
         trade.setUser(user);
@@ -248,7 +249,7 @@ public class TradeService extends BaseService<Trade, Long> {
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("trade", tradeToJson(trade));
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -275,18 +276,18 @@ public class TradeService extends BaseService<Trade, Long> {
     public Message renewPackageTrade(String instanceId, User user) {
         Package aPackage = packageService.findByInstanceId(instanceId);
         if (aPackage == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (!aPackage.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
 //        套餐为测试版不可续费
         if (aPackage.getType() == CommonEnum.PackageType.TEST) {
-            return new Message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.NO_ALLOW);
         }
         PackageModel packageModel = getPackageModel(aPackage.getType().toString());
         if (packageModel == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = new Trade();
         trade.setStatus(Trade.Status.NOPAY);
@@ -305,7 +306,7 @@ public class TradeService extends BaseService<Trade, Long> {
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("trade", tradeToJson(trade));
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -317,14 +318,14 @@ public class TradeService extends BaseService<Trade, Long> {
     public Message renewStationTrade(String instanceId, User user) {
         Station station=stationService.findByInstanceId(instanceId);
         if (station == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (!station.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         StationModel stationModel = getStationModel(station.getType().toString());
         if (stationModel == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = new Trade();
         trade.setStatus(Trade.Status.NOPAY);
@@ -343,7 +344,7 @@ public class TradeService extends BaseService<Trade, Long> {
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("trade", tradeToJson(trade));
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -362,7 +363,7 @@ public class TradeService extends BaseService<Trade, Long> {
         Map<String, Object> map = (Map<String, Object>) message.getData();
         Package aPackage=(Package) (map.get("aPackage"));
         if (!aPackage.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         PackageModel newPackageModel=(PackageModel)(map.get("newPackageModel"));
         PackageModel oldPackageModel=(PackageModel)(map.get("oldPackageModel"));
@@ -394,7 +395,7 @@ public class TradeService extends BaseService<Trade, Long> {
         save(trade);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("trade", tradeToJson(trade));
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -476,7 +477,7 @@ public class TradeService extends BaseService<Trade, Long> {
         double diff=diffPrice((Package) (map.get("aPackage")),(PackageModel)(map.get("newPackageModel")),(PackageModel)(map.get("oldPackageModel")));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("diff", diff);
-        return new Message(Message.Type.OK, jsonObject);
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
     /**
@@ -487,31 +488,31 @@ public class TradeService extends BaseService<Trade, Long> {
      */
     private Message getIndividualTemplates(Object instanceId, Object packageType) {
         if (instanceId == null || packageType == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Package aPackage = packageService.findByInstanceId(instanceId.toString());
         if (aPackage == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
 //        获取原始套餐模板
         PackageModel oldPackageModel = getPackageModel(aPackage.getType().toString());
         if (oldPackageModel == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
 //        获取新的套餐模板
         PackageModel newPackageModel = getPackageModel(packageType.toString());
         if (newPackageModel == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
 //        新套餐等级不能小于原套餐等级
         if (newPackageModel.getLevel() <= oldPackageModel.getLevel()) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         Map<String, Object> map = new HashMap<>();
         map.put("aPackage", aPackage);
         map.put("oldPackageModel", oldPackageModel);
         map.put("newPackageModel", newPackageModel);
-        return new Message(Message.Type.OK, map);
+        return MessageService.message(Message.Type.OK, map);
     }
 
 

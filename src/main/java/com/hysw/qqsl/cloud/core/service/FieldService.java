@@ -2,18 +2,11 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.build.AttribeGroup;
 import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
 import com.hysw.qqsl.cloud.core.entity.build.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.*;
-import com.hysw.qqsl.cloud.core.entity.element.Position;
-import com.hysw.qqsl.cloud.pay.entity.PackageItem;
-import com.hysw.qqsl.cloud.pay.entity.PackageModel;
-import com.hysw.qqsl.cloud.pay.entity.ServeItem;
-import com.hysw.qqsl.cloud.pay.entity.data.Package;
-import com.hysw.qqsl.cloud.pay.service.PackageService;
-import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -62,7 +55,7 @@ public class FieldService {
         Object deviceMac = objectMap.get("deviceMac");
         List<Object> coordinates = (List<Object>) objectMap.get("coordinates");
         if (projectId == null || userId == null || name == null || deviceMac == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.aFAIL);
         }
         Project project = projectService.find(Long.valueOf(projectId.toString()));
         List<Build> builds1 = buildService.findByProjectAndSource(project, Build.Source.FIELD);
@@ -72,16 +65,16 @@ public class FieldService {
             Map<String,Object> coordinate= (Map<String, Object>) coordinates.get(i);
             Object type = coordinate.get("type");
             if (type == null) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.aFAIL);
             }
             Object center = coordinate.get("center");
             Object remark = coordinate.get("description");
             Object delete = coordinate.get("delete");
             if (remark == null) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.aFAIL);
             }
             if (center == null) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.aFAIL);
             }
             Object longitude = ((Map<String,String>)center).get("longitude");
             Object latitude = ((Map<String,String>)center).get("latitude");
@@ -90,10 +83,10 @@ public class FieldService {
             Object description = coordinate.get("description");
             Object alias = coordinate.get("alias");
             if (longitude == null || latitude == null || elevation == null || description == null||alias==null) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.aFAIL);
             }
             if (!SettingUtils.coordinateParameterCheck(longitude, latitude, elevation)) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.aFAIL);
             }
             coordinateBase = new CoordinateBase();
             coordinateBases = new ArrayList<>();
@@ -191,7 +184,7 @@ public class FieldService {
         coordinate2.setCoordinateStr(jsonArray.toString());
         coordinate2.setSource(Build.Source.FIELD);
         coordinateService.save(coordinate2);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.aOK);
     }
 
     /**
@@ -1079,7 +1072,7 @@ public class FieldService {
         Object remark = objectMap.get("remark");
         Object projectId = objectMap.get("projectId");
         if (projectId == null || type == null || centerCoor == null || remark == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.aFAIL);
         }
         Build build1 = null;
         List<Build> builds = buildGroupService.getBuilds();
@@ -1108,7 +1101,7 @@ public class FieldService {
 //        }
 //        build1.setAttribeList(attribes1);
         buildService.save(build1);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.aOK);
     }
 
 
@@ -1122,11 +1115,11 @@ public class FieldService {
         Object remark = objectMap.get("remark");
         Object type = objectMap.get("type");
         if (id == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.aFAIL);
         }
         Build build = buildService.find(Long.valueOf(id.toString()));
         if (build == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.aDATA_NOEXIST);
         }
         if ((build.getAttribeList() == null || build.getAttribeList().size() == 0) && type != null) {
             build.setType(CommonEnum.CommonType.valueOf(type.toString()));
@@ -1137,7 +1130,7 @@ public class FieldService {
         if (attribes != null) {
             for (Map<String, Object> map : (List<Map<String, Object>>) attribes) {
                 if (map.get("alias") == null || map.get("value") == null) {
-                    return new Message(Message.Type.FAIL);
+                    return MessageService.message(Message.Type.aFAIL);
                 }
                 attribe = new Attribe();
                 attribe.setAlias(map.get("alias").toString());
@@ -1151,7 +1144,7 @@ public class FieldService {
             build.setRemark(remark.toString());
         }
         buildService.save(build);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.aOK);
     }
 
 
@@ -1189,14 +1182,14 @@ public class FieldService {
     public Message isAllowUploadCoordinateFile(Long id) {
         Project project = projectService.find(Long.valueOf(id));
         if (project == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.aDATA_NOEXIST);
         }
         List<Coordinate> coordinates = coordinateService.findByProject(project);
         if (coordinates.size()< CommonAttributes.COORDINATELIMIT) {
-            return new Message(Message.Type.OK);
+            return MessageService.message(Message.Type.aOK);
         }
 //        超过限制数量，返回已达到最大限制数量
-        return new Message(Message.Type.OTHER);
+        return MessageService.message(Message.Type.aPACKAGE_LIMIT);
     }
 
     /**

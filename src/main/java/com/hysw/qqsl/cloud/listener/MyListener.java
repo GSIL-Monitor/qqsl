@@ -65,6 +65,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private PollingService pollingService;
 	@Autowired
 	private GetAccessTokenService getAccessTokenService;
+	@Autowired
+	private MessageService messageService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {

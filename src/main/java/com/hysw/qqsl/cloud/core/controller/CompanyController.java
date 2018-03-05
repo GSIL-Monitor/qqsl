@@ -1,7 +1,9 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Article;
 import com.hysw.qqsl.cloud.core.service.ArticleService;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,12 +36,12 @@ public class CompanyController {
     public
     @ResponseBody
     Message queryArticle(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
+        Message message = MessageService.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         Article article = articleService.findById(id);
-        return new Message(Message.Type.OK, articleService.makeArticleJson(article));
+        return MessageService.message(Message.Type.OK, articleService.makeArticleJson(article));
     }
     /**
      * 查询所有的文章
@@ -50,7 +52,7 @@ public class CompanyController {
     @ResponseBody
     Message queryArticles() {
         List<JSONObject> articles = articleService.findArticles();
-        return new Message(Message.Type.OK, articles);
+        return MessageService.message(Message.Type.OK, articles);
     }
 
 }

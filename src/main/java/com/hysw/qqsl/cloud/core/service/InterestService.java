@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.InterestDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
@@ -129,10 +129,10 @@ public class InterestService extends BaseService<Interest, Long> {
 //        Object advice=map.get("advice");
 //        Object reviewDate=map.get("reviewDate");
         if (name == null || category == null || coordinate == null || region == null || business == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.bFAIL);
         }
         Message message = SettingUtils.checkCoordinateIsInvalid(coordinate.toString());
-        if (!Message.Type.OK.equals(message.getType())) {
+        if (message.getType() != Message.Type.bOK) {
             return message;
         }
         interest.setCoordinate(message.getData().toString());
@@ -163,7 +163,7 @@ public class InterestService extends BaseService<Interest, Long> {
         save(interest);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", interest.getId());
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.bOK,jsonObject);
     }
 
     public List<Interest> findAllBase() {

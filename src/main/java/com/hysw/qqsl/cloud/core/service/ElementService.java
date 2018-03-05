@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.element.ElementGroup;
@@ -433,7 +432,7 @@ public class ElementService {
 //		List<String> aliases = new ArrayList<>();
 //		Object logType = map.get("type");
 //		if (logType == null || map.get("alias") == null) {
-//			return new Message(Message.Type.FAIL);
+//			return MessageService.message(Message.Type.FAIL);
 //		}
 //		aliases.add(map.get("alias").toString());
 //		ProjectLog.Type type = null;
@@ -454,6 +453,6 @@ public class ElementService {
 //		}
 //		elementDBService.save(elementDB);
 //		addLogTimeToProject(project,map.get("alias").toString(),"file");
-//		return new Message(Message.Type.OK);
+//		return MessageService.message(Message.Type.OK);
 //	}
 }

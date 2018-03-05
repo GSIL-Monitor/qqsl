@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.entity.project.Share;
@@ -85,7 +85,7 @@ public class ShareService {
         User user = null;
         //判断项目归属
         if(!isOwn(projectIds,own)){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         for (int i = 0; i < projectIds.size(); i++) {
             projectId = Long.valueOf(projectIds.get(i));
@@ -106,7 +106,7 @@ public class ShareService {
                 }
             }
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**

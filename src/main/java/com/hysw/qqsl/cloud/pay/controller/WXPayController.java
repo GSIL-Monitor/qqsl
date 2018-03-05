@@ -1,13 +1,9 @@
 package com.hysw.qqsl.cloud.pay.controller;
 
-import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
-import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
-import com.hysw.qqsl.cloud.core.service.EmailService;
-import com.hysw.qqsl.cloud.core.service.NoteCache;
-import com.hysw.qqsl.cloud.core.service.UserMessageService;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.pay.service.CommonService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
@@ -60,18 +56,18 @@ public class WXPayController {
     @RequestMapping(value = "/unifiedOrderPay/{outTradeNo}", method = RequestMethod.GET)
     public @ResponseBody Message unifiedOrderPay(@PathVariable("outTradeNo") String outTradeNo) {
         if (outTradeNo == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo);
         if (trade == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         if (System.currentTimeMillis()-trade.getCreateDate().getTime()>2*60*60*1000) {
-            return new Message(Message.Type.EXPIRED);
+            return MessageService.message(Message.Type.EXPIRED);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         return wxPayService.unifiedOrderPay(trade);
     }
@@ -86,15 +82,15 @@ public class WXPayController {
     @RequestMapping(value = "/refund/{outTradeNo}", method = RequestMethod.GET)
     public @ResponseBody Message refund(@PathVariable("outTradeNo") String outTradeNo) {
         if (outTradeNo == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo);
         if (trade == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         User user = authentService.getUserFromSubject();
         if (trade.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         trade.setStatus(Trade.Status.REFUND);
         trade.setRefundDate(new Date());
@@ -174,11 +170,11 @@ public class WXPayController {
     @RequestMapping(value = "/admin/queryTrade/{outTradeNo}", method = RequestMethod.GET)
     public @ResponseBody Message orderQuery(@PathVariable("outTradeNo") String outTradeNo) {
         if (outTradeNo == null||outTradeNo.equals("")) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo);
         if (trade == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         return wxPayService.orderQuery(trade);
     }
@@ -193,17 +189,17 @@ public class WXPayController {
     @RequestMapping(value = "/admin/refreshTrade", method = RequestMethod.POST)
     public @ResponseBody
     Message refreshOrder(@RequestBody Map<String, Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
+        Message message = MessageService.parameterCheck(objectMap);
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
         Object outTradeNo = objectMap.get("outTradeNo");
         if (outTradeNo == null) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo.toString());
         if (trade == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         message = wxPayService.orderQuery(trade);
         JSONObject jsonObject = JSONObject.fromObject(message.getData());
@@ -221,12 +217,12 @@ public class WXPayController {
                         tradeService.activateServe(trade);
                     }
                 }.start();
-                return new Message(Message.Type.OK);
+                return MessageService.message(Message.Type.OK);
             } else if (trade.getStatus() == Trade.Status.REFUND) {
                 return wxPayService.refund(trade);
             }
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
 //    /**

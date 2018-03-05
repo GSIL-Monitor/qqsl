@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.core.controller;
 import java.util.*;
 
 import com.hysw.qqsl.cloud.annotation.util.*;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.ProjectLog;
 import com.hysw.qqsl.cloud.core.service.*;
@@ -78,7 +79,8 @@ public class ProjectController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/lists", method = RequestMethod.GET)
-    public @ResponseBody Message getProjects(@RequestParam int start) {
+    public @ResponseBody
+    Message getProjects(@RequestParam int start) {
         Message message;
         User user = authentService.getUserFromSubject();
         if(user !=null){
@@ -94,7 +96,7 @@ public class ProjectController {
             pollingService.changeCooperateStatus(account, false);
             return message;
         }
-        return new Message(Message.Type.UNKNOWN);
+        return MessageService.message(Message.Type.UNKNOWN);
     }
 
 
@@ -113,7 +115,7 @@ public class ProjectController {
     @ResponseBody
     Message createProject(
             @RequestBody Map<String, String> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
+        Message message = MessageService.parameterCheck(objectMap);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
@@ -129,10 +131,10 @@ public class ProjectController {
             message = projectService.createProject(project);
         } catch (QQSLException e) {
             e.printStackTrace();
-            return new Message(Message.Type.FAIL,e.getMessage());
+            return MessageService.message(Message.Type.FAIL,e.getMessage());
         } catch (Exception e1){
             e1.printStackTrace();
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         return message;
     }
@@ -148,7 +150,7 @@ public class ProjectController {
     @ResponseBody
     Message getSelects() {
         List<Info> infos = infoService.getInfos();
-        return new Message(Message.Type.OK, infos.get(7));
+        return MessageService.message(Message.Type.OK, infos.get(7));
     }
 
     /**
@@ -164,21 +166,21 @@ public class ProjectController {
     @ResponseBody
     Message getTreeJsons(
             @PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
+        Message message = MessageService.parametersCheck(id);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
         Project project = projectService.find(id);
         if (project == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         User user = authentService.getUserFromSubject();
         Account account = authentService.getAccountFromSubject();
         if(!isOperate(user,account,project)){
-            return new Message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.NO_AUTHORIZE);
         }
         List<Unit> units = projectService.buildTemplate(project);
-        return new Message(Message.Type.OK, objectJsonConvertUtils.getJsons(project,units));
+        return MessageService.message(Message.Type.OK, objectJsonConvertUtils.getJsons(project,units));
     }
 
     /**
@@ -191,7 +193,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public @ResponseBody Message updateProject(@RequestBody Map<String, String> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
+        Message message = MessageService.parameterCheck(objectMap);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
@@ -202,7 +204,7 @@ public class ProjectController {
             message = projectService.updateProject(newProject);
         } catch (QQSLException e) {
             e.printStackTrace();
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         return message;
     }
@@ -219,7 +221,7 @@ public class ProjectController {
     @ResponseBody
     Message removeProjectByCode(
             @PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
+        Message message = MessageService.parametersCheck(id);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
@@ -247,9 +249,9 @@ public class ProjectController {
         String code = (String) object;
         List<Project> projects = projectService.findByCode(code,user.getId());
         if (projects.size() == 0) {
-            return new Message(Message.Type.OK);
+            return MessageService.message(Message.Type.OK);
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }*/
 
     /**
@@ -262,7 +264,7 @@ public class ProjectController {
     public
     @ResponseBody
     Message getInfos() {
-        return new Message(Message.Type.OK, infoService.getInfos());
+        return MessageService.message(Message.Type.OK, infoService.getInfos());
     }
 
     /**
@@ -278,7 +280,7 @@ public class ProjectController {
     @ResponseBody
     Message getTemplateJsons(
             @PathVariable("type") String type) {
-        Message message = Message.parametersCheck(type);
+        Message message = MessageService.parametersCheck(type);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
@@ -287,10 +289,10 @@ public class ProjectController {
             project.setType(Project.Type.valueOf(type));
         }catch (IndexOutOfBoundsException e){
             e.printStackTrace();
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         List<JsonTree> jsonTrees = objectJsonConvertUtils.getTemplateJsonTree(project);
-        return new Message(Message.Type.OK, jsonTrees);
+        return MessageService.message(Message.Type.OK, jsonTrees);
     }
 
     /**
@@ -306,7 +308,7 @@ public class ProjectController {
     @ResponseBody
     Message getUnit(@RequestParam long id,
                     @RequestParam String alias) {
-        Message message = Message.parametersCheck(id,alias);
+        Message message = MessageService.parametersCheck(id,alias);
         if(message.getType()== Message.Type.FAIL){
             return message ;
         }
@@ -315,10 +317,10 @@ public class ProjectController {
         Project project = projectService.find(id);
         Unit unit = projectService.buildUnitByUnitAlias(project, alias);
         if (unit == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if(!isOperate(user,account,project)){
-            return new Message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.NO_AUTHORIZE);
         }
         projectService.buildUnitAction(project, unit,user,account);
         if(user!=null){
@@ -328,7 +330,7 @@ public class ProjectController {
         }
         //构建单元json串
         JSONObject unitJson = unitService.makeUnitJson(unit);
-        return new Message(Message.Type.OK, unitJson);
+        return MessageService.message(Message.Type.OK, unitJson);
     }
 
     /**
@@ -344,7 +346,7 @@ public class ProjectController {
     @ResponseBody
     Message getValues(@RequestParam String alias,
                       @RequestParam String projectType) {
-        Message message = Message.parametersCheck(alias,projectType);
+        Message message = MessageService.parametersCheck(alias,projectType);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
@@ -353,7 +355,7 @@ public class ProjectController {
         Account account = authentService.getAccountFromSubject();
         // 取得项目id列表
         if (projectType.length() == 0 || alias.equals(CommonAttributes.TOP_TREE_ID)) {
-            return new Message(Message.Type.OK, jsonUnits);
+            return MessageService.message(Message.Type.OK, jsonUnits);
         }
         Project.Type type = Project.Type.valueOf(projectType);
         if(user!=null){
@@ -362,7 +364,7 @@ public class ProjectController {
         if(account!=null){
             jsonUnits =  projectService.getExportValues(account,type,jsonUnits,alias);
         }
-        return new Message(Message.Type.OK, jsonUnits);
+        return MessageService.message(Message.Type.OK, jsonUnits);
     }
 
 
@@ -378,7 +380,7 @@ public class ProjectController {
     public
     @ResponseBody
     Message getProject(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
+        Message message = MessageService.parametersCheck(id);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
@@ -386,7 +388,7 @@ public class ProjectController {
         Account account = authentService.getAccountFromSubject();
         Project project = projectService.find(id);
         if(!isOperate(user,account,project)){
-            return new Message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.NO_AUTHORIZE);
         }
         message = projectService.getProjectBySubject(id,user==null?account:user);
         return message;
@@ -402,16 +404,16 @@ public class ProjectController {
     public
     @ResponseBody
     Message getProjectIntroduce(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
+        Message message = MessageService.parametersCheck(id);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
         Project project = projectService.find(id);
         if (project == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.EXIST);
         }
         JSONObject projectJson = projectService.makeProjectJson(project,false);
-        return new Message(Message.Type.OK, projectJson);
+        return MessageService.message(Message.Type.OK, projectJson);
     }
 
     /**
@@ -427,7 +429,7 @@ public class ProjectController {
     @ResponseBody
     Message sendMessage(
             @RequestBody Map<String, String> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
+        Message message = MessageService.parameterCheck(objectMap);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
@@ -481,13 +483,13 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/uploadModel", method = RequestMethod.GET)
     public @ResponseBody Message uploadModel(@RequestParam long id,@RequestParam String alias) {
-        Message message = Message.parametersCheck(id,alias);
+        Message message = MessageService.parametersCheck(id,alias);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
         Project project=projectService.find(id);
         Unit unit = projectService.buildUnitByUnitAlias(project, alias);
-        return new Message(Message.Type.OK,unit);
+        return MessageService.message(Message.Type.OK,unit);
     }
 
     /**
@@ -505,11 +507,11 @@ public class ProjectController {
         Object url = map.get("url");
         if(url!=null&&StringUtils.hasText(url.toString())){
             if(!SettingUtils.httpUrlRegex(url.toString())){
-                return new Message(Message.Type.UNKNOWN);
+                return MessageService.message(Message.Type.UNKNOWN);
             }
         }
         projectService.editPanoramicUrl(url,project);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -522,7 +524,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/share", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message share(@RequestBody Map<String,Object> map) {
-        Message message = Message.parameterCheck(map);
+        Message message = MessageService.parameterCheck(map);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
@@ -541,22 +543,22 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/unShare", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message unShare(@RequestBody Map<String,Object> map) {
-        Message message = Message.parameterCheck(map);
+        Message message = MessageService.parameterCheck(map);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
         Long projectId = Long.valueOf(map.get("projectId").toString());
         Project project = projectService.find(projectId);
         if(project==null){
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         List<Integer> userIds = (List<Integer>) map.get("userIds");
         User own = authentService.getUserFromSubject();
         if(!project.getUser().getId().equals(own.getId())){
-            new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         shareService.unShares(project,userIds,own);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -568,14 +570,14 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/viewCooperate", method = RequestMethod.GET, produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message viewCooperate(@RequestParam long accountId) {
-        Message  message = Message.parametersCheck(accountId);
+        Message  message = MessageService.parametersCheck(accountId);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
         Account account = accountService.find(accountId);
         User user = authentService.getUserFromSubject();
         if(account==null){
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         return cooperateService.viewCooperate(user,account);
     }
@@ -589,7 +591,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/unView", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message unViews(@RequestBody Map<String,Object> map) {
-        Message  message = Message.parameterCheck(map);
+        Message  message = MessageService.parameterCheck(map);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
@@ -598,10 +600,10 @@ public class ProjectController {
         Project project = projectService.find(projectId);
         User own = authentService.getUserFromSubject();
         if(project==null||!project.getUser().getId().equals(own.getId())){
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.UNKNOWN);
         }
         cooperateService.unViews(project,accountIds,own);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -614,14 +616,14 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/cooperateMul", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message cooperateMult(@RequestBody Map<String,Object> map) {
-        Message  message = Message.parameterCheck(map);
+        Message  message = MessageService.parameterCheck(map);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
         if(map.get("projectId")==null||!StringUtils.hasText(map.get("projectId").toString())
                 ||map.get("types")==null||!StringUtils.hasText(map.get("types").toString())
                 ||map.get("accountId")==null||!StringUtils.hasText(map.get("accountId").toString())){
-            new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Long projectId = Long.valueOf(map.get("projectId").toString());
         Long accountId = Long.valueOf(map.get("accountId").toString());
@@ -644,24 +646,24 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/cooperateSim", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message cooperateSim(@RequestBody Map<String,Object> map) {
-        Message  message = Message.parameterCheck(map);
+        Message  message = MessageService.parameterCheck(map);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
         if(map.get("projectIds")==null||!StringUtils.hasText(map.get("projectIds").toString())
                 ||map.get("type")==null||!StringUtils.hasText(map.get("type").toString())
                 ||map.get("accountId")==null ||!StringUtils.hasText(map.get("accountId").toString())){
-            new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String type = map.get("type").toString();
         Long accountId = Long.valueOf(map.get("accountId").toString());
         List<Integer> projectIds = (List<Integer>) map.get("projectIds");
         Account account = accountService.find(accountId);
         if(account==null){
-            new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if(account.getName()==null){
-            new Message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.OTHER);
         }
         User own = authentService.getUserFromSubject();
         return  cooperateService.cooperate(projectIds,type,account,own);
@@ -676,13 +678,13 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/unCooperate", method = RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message unCooperate(@RequestBody Map<String,Object> map) {
-        Message  message = Message.parameterCheck(map);
+        Message  message = MessageService.parameterCheck(map);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
         if(map.get("projectId")==null||!StringUtils.hasText(map.get("projectId").toString())
                 ||map.get("types")==null||!StringUtils.hasText(map.get("types").toString())){
-            new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Long projectId = Long.valueOf(map.get("projectId").toString());
         Project project = projectService.find(projectId);
@@ -720,7 +722,7 @@ public class ProjectController {
     @RequestMapping(value = "/infos1", method = RequestMethod.GET, produces= MediaType.APPLICATION_JSON_VALUE)
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     public @ResponseBody Message getInfos1() {
-        return new Message(Message.Type.OK, infoService.getInfos());
+        return MessageService.message(Message.Type.OK, infoService.getInfos());
     }
 
     /**
@@ -733,7 +735,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/reportUploadFileInfo", method = RequestMethod.POST)
     public @ResponseBody Message uploadFileSize(@RequestBody Map<String, Object> map) {
-        Message message = Message.parameterCheck(map);
+        Message message = MessageService.parameterCheck(map);
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
@@ -753,7 +755,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/reportDownloadFileInfo", method = RequestMethod.POST)
     public @ResponseBody Message downloadFileSize(@RequestBody Map<String, Object> map) {
-        Message message = Message.parameterCheck(map);
+        Message message = MessageService.parameterCheck(map);
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
@@ -773,7 +775,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/deleteFileSize", method = RequestMethod.POST)
     public @ResponseBody Message deleteFileSize(@RequestBody Map<String, Object> map) {
-        Message message = Message.parameterCheck(map);
+        Message message = MessageService.parameterCheck(map);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
@@ -791,7 +793,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowUpload", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message isAllowUpload(@RequestParam long projectId) {
-        Message message = Message.parametersCheck(projectId);
+        Message message = MessageService.parametersCheck(projectId);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
@@ -812,7 +814,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowDownload", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message isAllowDownload(@RequestParam long projectId) {
-        Message message = Message.parametersCheck(projectId);
+        Message message = MessageService.parametersCheck(projectId);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
@@ -834,7 +836,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/isAllowBim", method = RequestMethod.GET)
     public @ResponseBody Message isAllowBim(@RequestBody Map<String, Object> map) {
-        Message message = Message.parameterCheck(map);
+        Message message = MessageService.parameterCheck(map);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
@@ -842,7 +844,7 @@ public class ProjectController {
         if (user == null) {
             Object projectId = map.get("projectId");
             if (projectId == null) {
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
             Project project = projectService.find(Long.valueOf(projectId.toString()));
             user = project.getUser();
@@ -868,7 +870,7 @@ public class ProjectController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/iconType/update", method = RequestMethod.POST)
     public @ResponseBody Message iconTypeUpdate(@RequestBody Map<String, Object> map) {
-        Message message = Message.parameterCheck(map);
+        Message message = MessageService.parameterCheck(map);
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
@@ -893,10 +895,10 @@ public class ProjectController {
         try {
             projectLogs = projectLogService.findByProjectIdAndWeek(projectId);
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         JSONArray jsonArray=projectLogService.projectLogsToJson(projectLogs);
-        return new Message(Message.Type.OK, jsonArray);
+        return MessageService.message(Message.Type.OK, jsonArray);
     }
 
     /**
@@ -915,10 +917,10 @@ public class ProjectController {
         try {
             projectLogs = projectLogService.findByProjectIdAndMonth(projectId);
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         JSONArray jsonArray=projectLogService.projectLogsToJson(projectLogs);
-        return new Message(Message.Type.OK, jsonArray);
+        return MessageService.message(Message.Type.OK, jsonArray);
     }
 
     /**
@@ -938,10 +940,10 @@ public class ProjectController {
         try {
             projectLogs = projectLogService.findByProjectIdAndThreeMonth(projectId);
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         JSONArray jsonArray=projectLogService.projectLogsToJson(projectLogs);
-        return new Message(Message.Type.OK, jsonArray);
+        return MessageService.message(Message.Type.OK, jsonArray);
     }
 
     /**
@@ -961,24 +963,9 @@ public class ProjectController {
         try {
             projectLogs = projectLogService.findByProjectIdAndYear(projectId);
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         JSONArray jsonArray=projectLogService.projectLogsToJson(projectLogs);
-        return new Message(Message.Type.OK, jsonArray);
+        return MessageService.message(Message.Type.OK, jsonArray);
     }
-
-//    ?创建子账户限制条件(是否允许创建)
-//    ?每年最后一天套餐流量统计归0  管理员手动初始化套餐流量
-//    ?用户一旦创建就永久拥有测试版套餐
-//    /用户创建项目需要查看空间是否满足要求
-//    ?用户登录以后的各个操作首先判断套餐或测站是否过期aop
-//    /订单状态检查线程
-//    ?退款-先修改订单状态，再写入流水，最后发送退款请求
-//    /如果发生支付或者退款成功，但是服务或者退款不到账情况，需联系客服
-//    ?空间大小是否允许创建项目   删除项目 释放空间大小
-//    /坐标文件大小应记录在套餐使用空间中（外业与内业）
-//    ?master 增加仪表输出 方便寻找bug
-//    ?测试版套餐不可购买，套餐购买，需检查过期时间，过期后才能再次购买  测试版不可续费
-//    ?测试用例为所有用户增加测试版套餐
-//    千寻账号限制账户获取数量
-   }
+}

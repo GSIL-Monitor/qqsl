@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.pay.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.pay.entity.data.Turnover;
 import com.hysw.qqsl.cloud.util.TradeUtil;

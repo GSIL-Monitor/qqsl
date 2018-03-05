@@ -1,9 +1,8 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.Email;
-import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -136,7 +135,7 @@ public class EmailService {
         session.setAttribute("verification", verification);
         Email email1 =new Email(email, "水利云登录验证码", "尊敬的水利云用户您好，您的登录验证码为：" + code + ",5分钟内有效。");
         emailCache.add(createMimeMessage(email1));
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -153,7 +152,7 @@ public class EmailService {
         session.setAttribute("verification", verification);
         Email email1=new Email(email, "水利云重置密码验证码", "尊敬的水利云用户您好，您的重置密码验证码为："+code+",5分钟内有效。");
         emailCache.add(createMimeMessage(email1));
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -170,7 +169,7 @@ public class EmailService {
         session.setAttribute("verification", verification);
         Email email1=new Email(email, "水利云邮箱绑定验证码", "尊敬的水利云用户您好，您的邮箱绑定验证码为："+code+",5分钟内有效。");
         emailCache.add(createMimeMessage(email1));
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**

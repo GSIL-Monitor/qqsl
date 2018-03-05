@@ -1,13 +1,12 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.StationDao;
 import com.hysw.qqsl.cloud.core.entity.*;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.data.UserMessage;
 import com.hysw.qqsl.cloud.core.entity.station.Camera;
 import com.hysw.qqsl.cloud.core.entity.station.Share;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -32,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -298,7 +296,7 @@ public class StationService extends BaseService<Station, Long> {
         JSONObject model = new JSONObject();
         model.put("flowModel",station.getFlowModel());
         model.put("riverModel",station.getRiverModel());
-        return new Message(Message.Type.OK,model);
+        return MessageService.message(Message.Type.OK,model);
     }
 
     /**
@@ -446,7 +444,7 @@ public class StationService extends BaseService<Station, Long> {
             station.setCoor(message.getData().toString());
         }
         stationDao.save(station);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -457,25 +455,25 @@ public class StationService extends BaseService<Station, Long> {
      */
     public Message addSensor(Map<String, Object> map, Station station) {
         if(map.get("code")==null||!StringUtils.hasText(map.get("code").toString())){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if(map.get("ciphertext")==null||!StringUtils.hasText(map.get("ciphertext").toString())){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
         String ciphertext = map.get("ciphertext").toString();
-        //return new Message(Message.Type.OK);
+        //return MessageService.message(Message.Type.OK);
         //加密并验证密码是否一致
         boolean verify = monitorService.verify(code,ciphertext);
         if (verify) {
             Sensor sensor = sensorService.findByCode(code);
             if (sensor != null) {
-                return new Message(Message.Type.EXIST);
+                return MessageService.message(Message.Type.EXIST);
             }
              //注册成功
             return verify(map, station);
         } else {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
     }
 
@@ -496,7 +494,7 @@ public class StationService extends BaseService<Station, Long> {
         JSONObject infoJson = new JSONObject();
         if(cameraMap.get("phone")!=null&&StringUtils.hasText(cameraMap.get("phone").toString())){
             if(!SettingUtils.phoneRegex(cameraMap.get("phone").toString())){
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
             infoJson.put("phone",cameraMap.get("phone").toString());
         }
@@ -510,7 +508,7 @@ public class StationService extends BaseService<Station, Long> {
         if(cameraMap.get("cameraUrl")!=null&&StringUtils.hasText(cameraMap.get("cameraUrl").toString())){
             String cameraUrl = cameraMap.get("cameraUrl").toString();
             if(!SettingUtils.parameterRegex(cameraUrl)){
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
             sensor.setCameraUrl(cameraMap.get("cameraUrl").toString());
         }
@@ -519,7 +517,7 @@ public class StationService extends BaseService<Station, Long> {
         sensorService.save(sensor);
         JSONObject cameraJson = new JSONObject();
         cameraJson.put("id",sensor.getId());
-        return new Message(Message.Type.OK,cameraJson);
+        return MessageService.message(Message.Type.OK,cameraJson);
     }
 
     /**
@@ -529,28 +527,28 @@ public class StationService extends BaseService<Station, Long> {
      */
     public Message isHydrologyStation(Station station,String type){
         if(!station.getType().equals(CommonEnum.StationType.WATER_LEVEL_STATION)){
-            return new Message(Message.Type.OK);
+            return MessageService.message(Message.Type.OK);
         }
         List<Sensor> sensors = station.getSensors();
         if(sensors.size()==0){
-            return new Message(Message.Type.OK);
+            return MessageService.message(Message.Type.OK);
         }
         if(type.equals("camera")){
             for(int i = 0;i<sensors.size();i++){
                 if(Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
                     logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                    return new Message(Message.Type.EXIST);
+                    return MessageService.message(Message.Type.EXIST);
                 }
             }
         }else{
             for(int i = 0;i<sensors.size();i++){
                 if(!Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
                     logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                    return new Message(Message.Type.EXIST);
+                    return MessageService.message(Message.Type.EXIST);
                 }
             }
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -569,14 +567,14 @@ public class StationService extends BaseService<Station, Long> {
         }
         if(map.get("phone")!=null&&StringUtils.hasText(map.get("phone").toString())){
             if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return new Message(Message.Type.OTHER);
+                return MessageService.message(Message.Type.OTHER);
             }
             infoJson.put("phone",map.get("phone").toString());
         }
         if(map.get("settingHeight")!=null&&StringUtils.hasText(map.get("settingHeight").toString())){
                 Double settingHeight = Double.valueOf(map.get("settingHeight").toString());
                 if (settingHeight>100.0||settingHeight<0.0) {
-                    return new Message(Message.Type.FAIL);
+                    return MessageService.message(Message.Type.FAIL);
                 }
             sensor.setSettingHeight(settingHeight);
         }
@@ -592,7 +590,7 @@ public class StationService extends BaseService<Station, Long> {
         sensorService.save(sensor);
         monitorService.add(code);
         JSONObject seneorJson = sensorService.makeSensorJson(sensor);
-        return new Message(Message.Type.OK,seneorJson);
+        return MessageService.message(Message.Type.OK,seneorJson);
     }
 
     /* 测站续费
@@ -701,37 +699,37 @@ public class StationService extends BaseService<Station, Long> {
             if(map.get("maxValue")!=null){
                 maxValue = Double.valueOf(map.get("maxValue").toString());
                 if(maxValue<0||maxValue>100){
-                    return new Message(Message.Type.FAIL);
+                    return MessageService.message(Message.Type.FAIL);
                 }
                 if(map.get("minValue")!=null){
                     minValue = Double.valueOf(map.get("minValue").toString());
                     if(minValue<0||minValue>100){
-                        return new Message(Message.Type.FAIL);
+                        return MessageService.message(Message.Type.FAIL);
                     }
                     if (minValue>maxValue){
-                        return new Message(Message.Type.FAIL);
+                        return MessageService.message(Message.Type.FAIL);
                     }
                 }
             }
         }catch (NumberFormatException e){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if(map.get("phone")!=null){
             if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
         }
         if(map.get("sendStatus")!=null){
             boolean falg = "true".equals(map.get("sendStatus").toString())||"false".equals(map.get("sendStatus"));
             if(!falg){
-                return new Message(Message.Type.FAIL);
+                return MessageService.message(Message.Type.FAIL);
             }
         }
         JSONObject jsonObject = SettingUtils.convertMapToJson(map);
         station.setParameter(jsonObject.isEmpty()?null:jsonObject.toString());
         station.setTransform(true);
         stationDao.save(station);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 

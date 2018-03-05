@@ -1,8 +1,9 @@
 package com.hysw.qqsl.cloud.pay.service;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.service.BaseService;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import com.hysw.qqsl.cloud.pay.dao.TurnoverDao;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.pay.entity.data.Turnover;
@@ -73,6 +74,6 @@ public class TurnoverService extends BaseService<Turnover, Long> {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.between("createDate", begin, end));
         List<Turnover> list = turnoverDao.findList(0, null, filters);
-        return new Message(Message.Type.OK, list);
+        return MessageService.message(Message.Type.OK, list);
     }
 }

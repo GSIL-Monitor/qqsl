@@ -1,7 +1,9 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.service.ApplicationTokenService;
 import com.hysw.qqsl.cloud.core.service.DiffConnPollService;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import com.hysw.qqsl.cloud.core.service.PositionService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -48,15 +50,15 @@ public class QXWZContorller {
         //是否可以获取千寻账号
         Message message;
         if (token.length() == 0) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (mac == null || mac.trim().length() == 0 || mac.equals("null")|| projectId == null || projectId.trim().length() == 0 || projectId.equals("null")) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         try {
             message = positionService.isAllowConnectQXWZ(Long.valueOf(projectId));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if(message.getType()!=Message.Type.OK){
             return message;
@@ -64,7 +66,7 @@ public class QXWZContorller {
         if (applicationTokenService.decrypt(token)) {
             return positionService.randomPosition(mac.trim(),projectId);
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -103,7 +105,7 @@ public class QXWZContorller {
     @RequiresRoles(value = {"admin:simple"})
     @RequestMapping(value = "/admin/create",method = RequestMethod.POST)
     public @ResponseBody Message create(@RequestBody Map<String,Object> object){
-        Message message = Message.parameterCheck(object);
+        Message message = MessageService.parameterCheck(object);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
@@ -127,7 +129,7 @@ public class QXWZContorller {
     @RequiresRoles(value = {"admin:simple"})
     @RequestMapping(value = "/admin/edit",method = RequestMethod.POST)
     public @ResponseBody Message edit(@RequestBody Map<String,Object> object){
-        Message message = Message.parameterCheck(object);
+        Message message = MessageService.parameterCheck(object);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
@@ -172,7 +174,7 @@ public class QXWZContorller {
      */
     @RequestMapping(value = "/heartBeat", method = RequestMethod.POST)
     public @ResponseBody Message heartBeat(@RequestBody  Map<String,String> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
+        Message message = MessageService.parameterCheck(objectMap);
         if(message.getType()==Message.Type.FAIL){
             return message;
         }
@@ -181,7 +183,7 @@ public class QXWZContorller {
         if (applicationTokenService.decrypt(token)) {
             return positionService.changeDate(userName);
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -201,7 +203,7 @@ public class QXWZContorller {
      */
     @RequestMapping(value = "/setTimeout", method = RequestMethod.POST)
     public @ResponseBody Message setTimeout(@RequestBody  Map<String,String> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
+        Message message = MessageService.parameterCheck(objectMap);
         if (message.getType() == Message.Type.FAIL) {
             return message;
         }
@@ -211,7 +213,7 @@ public class QXWZContorller {
         if (applicationTokenService.decrypt(token)) {
             return positionService.changeTimeout(userName,timeout);
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
 //    /**
@@ -222,6 +224,6 @@ public class QXWZContorller {
 //    public @ResponseBody Message init() {
 //        positionService.format();
 //        positionService.init();
-//        return new Message(Message.Type.OK);
+//        return MessageService.message(Message.Type.OK);
 //    }
 }
