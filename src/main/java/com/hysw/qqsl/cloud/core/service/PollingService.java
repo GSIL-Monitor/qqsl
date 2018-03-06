@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 轮询服务
  * @anthor Administrator
  * @since 10:21 2017/12/14
  */

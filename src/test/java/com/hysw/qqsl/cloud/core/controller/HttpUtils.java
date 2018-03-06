@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import net.sf.json.JSONObject;
+import org.junit.Ignore;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * 测试用的http请求工具类
  */
+@Ignore
 public class HttpUtils {
 
     /**
@@ -71,7 +73,7 @@ public class HttpUtils {
      */
     public static JSONObject httpGet(MockMvc mockMvc,String url,String paramName,Object param) throws Exception{
         boolean flag = paramName==null|| !StringUtils.hasText(paramName);
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = flag ? get(url).contentType(MediaType.APPLICATION_JSON):get(url,param).contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = flag ? get(url).contentType(MediaType.APPLICATION_JSON):get(url).param(paramName,param.toString()).contentType(MediaType.APPLICATION_JSON);
         MvcResult result = mockMvc.perform(mockHttpServletRequestBuilder).andExpect(status().isOk()).andReturn();
         assertNotNull(result.getResponse().getBufferSize());
         String res = result.getResponse().getContentAsString();

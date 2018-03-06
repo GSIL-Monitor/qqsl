@@ -74,7 +74,9 @@ public class UserService extends BaseService<User, Long> {
 	}
 
 	public User findByDao(Long id){
-		return userDao.find(id);
+		User user = userDao.find(id);
+		user.getAccounts();
+		return user;
 	}
 
 	/**
@@ -325,49 +327,18 @@ public class UserService extends BaseService<User, Long> {
 	}
 
 	/**
-	 * 用户信息修改
-	 * @param userName
-	 * @param name
-	 * @param email
-	 * @param password
-	 * @return
-     * @throws QQSLException
-     */
-	public Message update(String userName, String name,
-			String email, String password) throws QQSLException {
-		if(SettingUtils.parameterRegex(userName)==false){
-			throw new QQSLException(userName+" 用户名格式异常！");
-		}
-		User user = findByUserName(userName);
-		if (user == null) {
-			//用户不存在;
-			return new Message(Message.Type.FAIL);
-		}
-		if(password.length()!=32){
-			throw new QQSLException(password+" 密码格式异常！");
-		}
-		user.setEmail(email);
-		user.setName(name);
-		user.setPassword(password);
-		save(user);
-		authentService.updateSession(user);
-		return new Message(Message.Type.OK,makeUserJson(user));
-	}
-
-	/**
 	 * 修改用户密码
 	 * @param newPassword
 	 * @param id
 	 * @return
 	 */
 	public Message updatePassword(String newPassword, Long id) {
-		User user = find(id);
+		User user = findByDao(id);
 		if(newPassword.length()!=32){
 			return new Message(Message.Type.OTHER);
 		}
 		user.setPassword(newPassword);
 		save(user);
-		authentService.updateSession(user);
 		return new Message(Message.Type.OK,makeUserJson(user));
 	}
 
@@ -577,8 +548,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @param account
 	 * @return
 	 */
-	public Message unbindAccount(Account account) {
-		User user = authentService.getUserFromSubject();
+	public Message unbindAccount(Account account,User user) {
 		//收回权限
 		cooperateService.cooperateRevoke(user,account);
 		List<Account> accounts = getAccountsByUserId(user.getId());
@@ -594,8 +564,6 @@ public class UserService extends BaseService<User, Long> {
 						break;
 					}
 				}
-				accounts.get(i).setUsers(users);
-				accountService.save(account);
 				accounts.remove(i);
 				break;
 			}

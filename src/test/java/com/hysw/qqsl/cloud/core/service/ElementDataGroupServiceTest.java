@@ -13,6 +13,9 @@ import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.ElementDataGroupService;
 import com.hysw.qqsl.cloud.core.service.ProjectService;
 import com.hysw.qqsl.cloud.core.service.UserService;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,6 +36,8 @@ public class ElementDataGroupServiceTest extends BaseTest {
     private ProjectService projectService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CacheManager cacheManager;
     @BeforeClass
     public static void testStart(){
     }
@@ -112,12 +117,12 @@ public class ElementDataGroupServiceTest extends BaseTest {
     @Test
     public void testRefreshElementDataGroups(){
         //刷新缓存
-//        elementDataGroupService.refreshElementDataGroups();
-        List<ElementDataGroup> elementDataSimpleGroups = elementDataGroupService.testGetSimpleElementDataGroups();
-        //验证是否置空
-        assertTrue(elementDataSimpleGroups==null);
+        Cache cache = cacheManager.getCache("elementDataGroupsCache");
+        cache.remove("simpleGroups");
+        Element simpleGroups = cache.get("simpleGroups");
+        assertTrue(simpleGroups == null);
         //验证是否读取成功
-        elementDataSimpleGroups = elementDataGroupService.getElementDataSimpleGroups();
+        List<ElementDataGroup> elementDataSimpleGroups = elementDataGroupService.getElementDataSimpleGroups();
         assertTrue(elementDataSimpleGroups.size()==109);
 
     }

@@ -4,6 +4,7 @@ import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.Setting;
+import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.StationService;
 import com.hysw.qqsl.cloud.core.service.UserService;
@@ -20,7 +21,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class TradeServiceTest extends BaseTest {
@@ -47,7 +50,11 @@ public class TradeServiceTest extends BaseTest {
         trade.setPayDate(new Date());
 //        trade.setValidTime(1);
         trade.setInstanceId(TradeUtil.buildInstanceId());
-        trade.setUser(userService.find(17l));
+        trade.setUser(userService.find(1l));
+        JSONObject remarkJson = new JSONObject();
+        Date expireDate = tradeService.getExpireDate(trade.getCreateDate(),"package");
+        remarkJson.put("expireDate",expireDate.getTime());
+        trade.setRemark(remarkJson.toString());
         tradeService.activateServe(trade);
         tradeService.flush();
         Assert.assertTrue(packageService.findByInstanceId(trade.getInstanceId()) != null);
@@ -58,7 +65,7 @@ public class TradeServiceTest extends BaseTest {
         trade.setPayDate(new Date());
 //        trade.setValidTime(1);
         trade.setInstanceId(trade.getInstanceId());
-        trade.setUser(userService.find(17l));
+        trade.setUser(userService.find(1l));
         tradeService.activateServe(trade);
         tradeService.flush();
         packageService.flush();
@@ -70,7 +77,7 @@ public class TradeServiceTest extends BaseTest {
         trade.setPayDate(new Date());
 //        trade.setValidTime(1);
         trade.setInstanceId(trade.getInstanceId());
-        trade.setUser(userService.find(17l));
+        trade.setUser(userService.find(1l));
         tradeService.activateServe(trade);
         tradeService.flush();
         packageService.flush();
@@ -91,6 +98,10 @@ public class TradeServiceTest extends BaseTest {
 //        trade.setValidTime(1);
         trade.setInstanceId(TradeUtil.buildInstanceId());
         trade.setUser(userService.find(17l));
+        JSONObject remarkJson = new JSONObject();
+        Date expireDate = tradeService.getExpireDate(trade.getCreateDate(),"package");
+        remarkJson.put("expireDate",expireDate.getTime());
+        trade.setRemark(remarkJson.toString());
         tradeService.activateServe(trade);
         tradeService.flush();
         Assert.assertTrue(stationService.findByInstanceId(trade.getInstanceId()) != null);
@@ -101,7 +112,7 @@ public class TradeServiceTest extends BaseTest {
         trade.setPayDate(new Date());
 //        trade.setValidTime(1);
         trade.setInstanceId(trade.getInstanceId());
-        trade.setUser(userService.find(17l));
+        trade.setUser(userService.find(1l));
         tradeService.activateServe(trade);
         tradeService.flush();
         stationService.flush();
@@ -117,7 +128,7 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "YOUTH");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.OK);
@@ -131,10 +142,10 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "SUN");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.UNKNOWN);
+        Assert.assertTrue(message.getType()==Message.Type.NO_CERTIFY);
     }
 
     /**
@@ -145,7 +156,7 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "SUN");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
         user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.OK);
@@ -159,7 +170,7 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "TEST");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.NO_ALLOW);
@@ -173,7 +184,7 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "TEST1");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Message message = tradeService.createPackageTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
     }
@@ -184,7 +195,7 @@ public class TradeServiceTest extends BaseTest {
      */
 //    @Test
     public void testCreatePackageTrade6() throws InterruptedException {
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Package aPackage = packageService.findByUser(user);
         CommonEnum.PackageType type = aPackage.getType();
         List<Trade> trades = tradeService.findByUser(user);
@@ -227,7 +238,7 @@ public class TradeServiceTest extends BaseTest {
     public void testCreateStationTrade() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("stationType", "HYDROLOGIC_STATION");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Message message = tradeService.createStationTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.OK);
     }
@@ -239,7 +250,7 @@ public class TradeServiceTest extends BaseTest {
     public void testCreateStationTrade1() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("stationType", "HYDROLOGIC_STATION1");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Message message = tradeService.createStationTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
     }
@@ -253,7 +264,7 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("goodsType", "PANORAMA");
         jsonObject.put("remark", "test");
         jsonObject.put("goodsNum", "2");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Message message = tradeService.createGoodsTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.OK);
     }
@@ -267,7 +278,7 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("goodsType", "PANORAMA1");
         jsonObject.put("remark", "test");
         jsonObject.put("goodsNum", "2");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Message message = tradeService.createGoodsTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
     }
@@ -281,7 +292,7 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("goodsType", "PANORAMA1");
         jsonObject.put("remark", "test");
         jsonObject.put("goodsNum", "");
-        User user = userService.findByPhoneOrEmial("13028710937");
+        User user = userService.findByPhoneOrEmial("18661925010");
         Message message = tradeService.createGoodsTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
         jsonObject = new JSONObject();
@@ -290,5 +301,39 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("goodsNum", "a");
         message = tradeService.createGoodsTrade(jsonObject, user);
         Assert.assertTrue(message.getType()==Message.Type.FAIL);
+    }
+
+    @Test
+    public void testRenewPackageTrade(){
+        Package aPackage = packageService.findByUser(userService.find(1l));
+        Message message = tradeService.renewPackageTrade(aPackage.getInstanceId(), userService.find(1l));
+        Assert.assertTrue(message.getType() == Message.Type.OK);
+    }
+
+    @Test
+    public void testRenewStationTrade(){
+        Station station = stationService.find(1l);
+        Message message = tradeService.renewStationTrade(station.getInstanceId(), userService.find(1l));
+        Assert.assertTrue(message.getType() == Message.Type.OK);
+    }
+
+    @Test
+    public void testUpdatePackageTrade(){
+        Package aPackage = packageService.findByUser(userService.find(1l));
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("instanceId",aPackage.getInstanceId() );
+        map.put("packageType", CommonEnum.PackageType.SUN);
+        Message message = tradeService.updatePackageTrade(map, userService.find(1l));
+        Assert.assertTrue(message.getType() == Message.Type.OK);
+    }
+
+    @Test
+    public  void testExpireCheck(){
+        tradeService.expireCheck();
+    }
+
+    @Test
+    public void testCheckTradeHaveNopay(){
+        Assert.assertTrue(tradeService.checkTradeHaveNopay(userService.find(1l)));
     }
 }

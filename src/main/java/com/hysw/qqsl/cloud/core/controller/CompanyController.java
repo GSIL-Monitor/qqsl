@@ -28,8 +28,7 @@ public class CompanyController {
 
     /**
      * 查看具体文章
-     *
-     * @return
+     * @return message消息体包含文章信息,FAIL:参数不正确,OK:查看成功
      */
     @RequestMapping(value = "/queryArticle/{id}", method = RequestMethod.GET)
     public
@@ -44,8 +43,7 @@ public class CompanyController {
     }
     /**
      * 查询所有的文章
-     *
-     * @return
+     * @return message消息体包含文章信息,FAIL:参数不正确,OK:查看成功
      */
     @RequestMapping(value = "/queryArticles", method = RequestMethod.GET)
     public

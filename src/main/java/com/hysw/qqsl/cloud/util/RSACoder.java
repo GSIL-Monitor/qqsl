@@ -249,8 +249,10 @@ public abstract class RSACoder extends Coder {
        /* Map<String, Object> keyMap = initKey();
         System.out.print("公钥:"+getPublicKey(keyMap));
         System.out.print("私钥:"+getPrivateKey(keyMap));*/
+       //sensorMap.put("code", "9930023");
+       // sensorMap.put("ciphertext", "02D7145AFB1");
         RSACoderUtil rsaCoderUtil = new RSACoderUtil();
-        String data = "a=123";
+        String data = "9930023";
         byte[] bytes = data.getBytes();
         String result = sign(bytes,privateKey);
         System.out.print(result);

@@ -69,7 +69,6 @@ public class FieldService {
 //        List<Attribe> attribes1=attribeService.findByBuilds(builds1);
         List<Coordinate> coordinates1 = coordinateService.findByProjectAndSource(project, Build.Source.FIELD);
         for (int i = 0; i < coordinates.size(); i++) {
-            boolean flag = false;
             Map<String,Object> coordinate= (Map<String, Object>) coordinates.get(i);
             Object type = coordinate.get("type");
             if (type == null) {
@@ -110,12 +109,11 @@ public class FieldService {
             graphs.add(graph);
             if (attribes != null) {
                 build = isSameBuild(builds1, longitude.toString(), latitude.toString());
-                if (delete != null && Boolean.valueOf(delete.toString()) == true) {
+                if (delete != null && Boolean.valueOf(delete.toString())) {
                     buildService.remove(build);
                     continue;
                 }
                 if (build == null) {
-                    flag = true;
                     build = new Build();
                     build.setProject(project);
                     build.setType(CommonEnum.CommonType.valueOf(type.toString()));
@@ -518,7 +516,7 @@ public class FieldService {
     }
 
     /**
-     * 将设计数据输出到excel
+     * 设计数据输出到excel将
      * @param code
      * @param jsonArray1
      * @param wb

@@ -4,6 +4,7 @@ import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.wechat.util.WeChatHttpRequest;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -16,29 +17,30 @@ import java.util.Random;
  * 创建二维码
  * Created by chenl on 17-7-3.
  */
+@Service("createCode")
 public class CreateCode {
     @Autowired
     private GetAccessTokenService getAccessTokenService;
 
     private final String createCode = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=ACCESS_TOKEN";
     private final String downloadCode = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=TICKET";
-    public void createCode() throws UnsupportedEncodingException {
-        String createCode1 = createCode.replace("ACCESS_TOKEN", getAccessTokenService.getToken());
-        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("expire_seconds", 1800);
-        jsonObject.put("action_name", "QR_LIMIT_SCENE");
-        JSONObject jsonObject1 = new JSONObject();
-        Random random = new Random();
-        jsonObject1.put("scene_id", random.nextInt(99999) + 1);
-        JSONObject jsonObject2 = new JSONObject();
-        jsonObject2.put("scene", jsonObject1);
-        jsonObject.put("action_info", jsonObject2);
-        System.out.println(jsonObject);
-        JSONObject request = WeChatHttpRequest.jsonObjectHttpRequest(createCode1, "POST", jsonObject.toString());
-        String ticket = request.get("ticket").toString();
-        String downloadCode1 = downloadCode.replace("TICKET", URLEncoder.encode(ticket, "utf-8"));
-        JSONObject request1 = jsonObjectHttpRequest(downloadCode1, "GET", null);
-    }
+//    public void createCode() throws UnsupportedEncodingException {
+//        String createCode1 = createCode.replace("ACCESS_TOKEN", getAccessTokenService.getToken());
+//        JSONObject jsonObject = new JSONObject();
+////        jsonObject.put("expire_seconds", 1800);
+//        jsonObject.put("action_name", "QR_LIMIT_SCENE");
+//        JSONObject jsonObject1 = new JSONObject();
+//        Random random = new Random();
+//        jsonObject1.put("scene_id", random.nextInt(99999) + 1);
+//        JSONObject jsonObject2 = new JSONObject();
+//        jsonObject2.put("scene", jsonObject1);
+//        jsonObject.put("action_info", jsonObject2);
+//        System.out.println(jsonObject);
+//        JSONObject request = WeChatHttpRequest.jsonObjectHttpRequest(createCode1, "POST", jsonObject.toString());
+//        String ticket = request.get("ticket").toString();
+//        String downloadCode1 = downloadCode.replace("TICKET", URLEncoder.encode(ticket, "utf-8"));
+//        JSONObject request1 = jsonObjectHttpRequest(downloadCode1, "GET", null);
+//    }
 
     public static JSONObject jsonObjectHttpRequest(String requestUrl, String requestMethod, String outputStr) {
         JSONObject jsonObject = null;

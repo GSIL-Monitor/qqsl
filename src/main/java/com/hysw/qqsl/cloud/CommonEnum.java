@@ -6,7 +6,50 @@ package com.hysw.qqsl.cloud;
 public class CommonEnum {
 
     /**
-     * Created by leinuo on 17-4-6.
+     * 反馈状态
+     */
+    public enum FeedbackStatus {
+        /** 待处理 */
+        PENDING,
+        /** 已回复 */
+        REVIEWED;
+        // 已提交
+        //SUBMIT,
+        // 预审通过
+        // AUDIT,
+        // 已采纳
+        //ADOPTION,
+        // 已实现
+        //IMPLEMENT,
+        // 未采纳
+        //NO_ADOPTION
+        public static FeedbackStatus valueOf(int ordinal) {
+            if (ordinal < 0 || ordinal >= values().length) {
+                throw new IndexOutOfBoundsException("Invalid ordinal");
+            }
+            return values()[ordinal];
+        }
+    }
+
+    /**
+     * 审核枚举
+     */
+    public enum Review {
+        /** 待审核 */
+        PENDING,
+        /** 未通过 */
+        NOTPASS,
+        /** 通过 */
+        PASS;
+        public static Review valueOf(int ordinal) {
+            if (ordinal < 0 || ordinal >= values().length) {
+                throw new IndexOutOfBoundsException("Invalid ordinal");
+            }
+            return values()[ordinal];
+        }
+    }
+
+    /**
      * 属性组与属性的状态枚举
      */
     public enum Status {

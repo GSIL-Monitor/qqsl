@@ -367,6 +367,30 @@ public class SettingUtils {
 	}
 
 	/**
+	 * excle 文件的读取
+	 * @param filePath
+	 * @return
+	 * @throws IOException
+	 */
+	public static Workbook readExcel(String filePath) throws IOException {
+		File file = null;
+		try {
+			file = new ClassPathResource(filePath).getFile();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		Workbook wb=null;
+		InputStream is  = new FileInputStream(file);
+		String str = filePath.substring(filePath.lastIndexOf(".")+1);
+		if (str.trim().toLowerCase().equals("xls")) {
+			wb = new HSSFWorkbook(is);
+		} else if (str.trim().toLowerCase().equals("xlsx")) {
+			wb = new XSSFWorkbook(is);
+		}
+		return wb;
+	}
+
+	/**
 	 * Map转Json
 	 * @param map
 	 * @return

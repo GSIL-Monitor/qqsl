@@ -41,7 +41,7 @@ public class Message {
 		/** 是否存在*/
 		EXIST, 
 		/** 验证码失效*/
-		INVALID,  
+		INVALID,
 		/** 无权限*/
 		NO_AUTHORIZE, 
 		/** session失效*/

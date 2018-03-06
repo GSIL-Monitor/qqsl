@@ -7,6 +7,8 @@ import com.hysw.qqsl.cloud.core.entity.build.BuildGroup;
 import com.hysw.qqsl.cloud.core.entity.data.Build;
 import com.hysw.qqsl.cloud.core.entity.data.Attribe;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
+import net.sf.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,21 +43,21 @@ public class BuildServiceTest extends BaseTest {
 
     @Test
     public void saveAttribe(){
-        Build build1 = buildService.find(1l);
+        Build build1 = buildService.find(6106l);
         Build build = getBuildModel(build1);
         List<Attribe> attribes = new ArrayList<>();
         assertNotNull(build);
         assertNotNull(build.getAlias());
-        assertNotNull(build.getMaterAttribeGroup());
-        List<Attribe> maters = build.getMaterAttribeGroup().getAttribes();
+        assertNotNull(build.getGeologyAttribeGroup());
+        List<Attribe> maters = build.getGeologyAttribeGroup().getAttribes();
         add(attribes,maters);
-        List<Attribe> dimensions = build.getDimensionsAttribeGroup().getAttribes();
-        add(attribes,dimensions);
-        List<Attribe> hydraulics = build.getHydraulicsAttribeGroup().getAttribes();
-        add(attribes,hydraulics);
-        List<Attribe> structures = build.getStructureAttribeGroup().getAttribes();
-        add(attribes,structures);
-        save(attribes,build1);
+//        List<Attribe> dimensions = build.getDimensionsAttribeGroup().getAttribes();
+//        add(attribes,dimensions);
+//        List<Attribe> hydraulics = build.getHydraulicsAttribeGroup().getAttribes();
+//        add(attribes,hydraulics);
+//        List<Attribe> structures = build.getStructureAttribeGroup().getAttribes();
+//        add(attribes,structures);
+//        save(attribes,build1);
     }
 
     private Build getBuildModel(Build build1){
@@ -65,12 +67,12 @@ public class BuildServiceTest extends BaseTest {
             List<Build> builds = buildGroups.get(i).getBuilds();
             for(int j=0;j<builds.size();j++){
                 build = builds.get(j);
-                if(build.getName().equals(build1.getName())){
+                if (build.getType() == build1.getType()) {
                     build.setId(build1.getId());
                     break;
                 }
             }
-            if(build != null && build.getName().equals(build1.getName())) break;
+            if(build != null && build.getType()==build1.getType()) break;
         }
         return build;
     }
@@ -95,7 +97,7 @@ public class BuildServiceTest extends BaseTest {
 
     @Test
     public void buildBuild(){
-        Build build1 = buildService.find(1l);
+        Build build1 = buildService.find(6106l);
         List<Attribe> attribes = build1.getAttribeList();
         Build build = getBuildModel(build1);
         String head;
@@ -121,7 +123,7 @@ public class BuildServiceTest extends BaseTest {
             }
         }
         assertNotNull(attribes);
-        assertNotNull(build.getMaterAttribeGroup().getAttribes().get(0).getValue());
+//        assertNotNull(build.getMaterAttribeGroup().getAttribes().get(0).getValue());
     }
 
     private void getAttribeGroup(List<Attribe> attribes,Attribe attribe){
@@ -136,7 +138,7 @@ public class BuildServiceTest extends BaseTest {
     public void saveDucao(){
         Project project = projectService.find(531l);
 
-        List<Build> builds = buildService.findByProjectAndAlias(project,"27");
+        List<Build> builds = buildService.findByProjectAndAlias(project);
         if(builds.size()>0){
             Build build1 = builds.get(0);
         }else{
@@ -153,8 +155,8 @@ public class BuildServiceTest extends BaseTest {
     @Test
     public void saveDucaoAttribe(){
         saveDucao();
-        Project project = projectService.find(531l);
-        List<Build> builds = buildService.findByProjectAndAlias(project,"27");
+        Project project = projectService.find(848l);
+        List<Build> builds = buildService.findByProjectAndAlias(project);
         Build build1 = builds.get(0);
         Build build = getBuildModel(build1);
         //List<AttribeGroup> attribeGroups = new ArrayList<>();
@@ -186,6 +188,13 @@ public class BuildServiceTest extends BaseTest {
                   save(attribeGroup.getAttribes(),build);
               }
     }
+    }
+
+    @Test
+    public void testBuildJson(){
+        Build build = buildService.find(6106l);
+        JSONObject jsonObject = buildService.buildJson(build);
+        Assert.assertNotNull(jsonObject);
     }
 
 }

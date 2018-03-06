@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.controller;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -13,6 +14,7 @@ import static org.junit.Assert.assertTrue;
  * <p>
  * qq:1321404703 https://github.com/leinuo2016
  */
+@Ignore
 public class CompanyControllerTest extends BaseControllerTest {
 
     @Test

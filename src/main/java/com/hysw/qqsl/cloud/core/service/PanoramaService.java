@@ -1,12 +1,12 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.PanoramaDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.Review;
 import com.hysw.qqsl.cloud.pay.entity.PackageItem;
 import com.hysw.qqsl.cloud.pay.entity.PackageModel;
 import com.hysw.qqsl.cloud.pay.entity.ServeItem;
@@ -45,64 +45,13 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         super.setBaseDao(panoramaDao);
     }
 
-//    public void reflectSaveProprety(Map<String,Object> map,Object obj){
-//        Class<?> clazz = null;
-//        try {
-//            clazz = Class.forName(super.entityClass.getName());
-//        } catch (ClassNotFoundException e) {
-//            return;
-//        }
-//        for (Map.Entry<String, Object> entry : map.entrySet()) {
-//            setPropretyValue(entry.getKey(),entry.getValue().toString(),obj,clazz);
-//        }
-//        save((Panorama) obj);
-//    }
-//    private void setPropretyValue(String parm, String value, Object obj, Class<?> clazz){
-//        // 可以直接对 private 的属性赋值
-//        Field field = null;
-//        try {
-//            field = clazz.getDeclaredField(parm);
-//        } catch (NoSuchFieldException e) {
-//            return;
-//        }
-//        Type type = field.getGenericType();
-//        String s;
-//        String s1 = type.toString().substring(type.toString().lastIndexOf(".")+1);
-//        if (s1.contains("$")) {
-//            s = s1.substring(s1.lastIndexOf("$") + 1);
-//        }else{
-//            s = s1;
-//        }
-//        field.setAccessible(true);
-//        try {
-//            if (s.toLowerCase().equals("string")) {
-//                field.set(obj, value);
-//            }
-//            if (s.toLowerCase().equals("long")) {
-//                field.set(obj, Long.valueOf(value));
-//            }
-//            if (s.toLowerCase().equals("boolean")) {
-//                field.set(obj, Boolean.valueOf(value));
-//            }
-//            if (s.toLowerCase().equals("date")) {
-//                field.set(obj, Date.valueOf(value));
-//            }
-//            if (s.toLowerCase().equals("review")) {
-//                field.set(obj, Review.valueOf(value));
-//            }
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
     /**
      * 查询所有审核通过的全景和用户自己建立的全景
      * @return
      */
     public List<Panorama> findAllPass(Long userId){
         List<Filter> filters1 = new ArrayList<>();
-        filters1.add(Filter.eq("status", Review.PASS));
+        filters1.add(Filter.eq("status", CommonEnum.Review.PASS));
         filters1.add(Filter.eq("share", true));
         List<Panorama> panoramas;
         if (userId == null) {
@@ -156,7 +105,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      */
     public List<Panorama> findAllPending() {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("status", Review.PENDING));
+        filters.add(Filter.eq("status", CommonEnum.Review.PENDING));
         filters.add(Filter.eq("share", true));
         List<Panorama> panoramas = panoramaDao.findList(0, null, filters);
         return panoramas;
@@ -184,7 +133,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panorama.setName(name.toString());
         panorama.setCoor(message.getData().toString());
        // panorama.setRegion(region.toString());
-        panorama.setStatus(Review.valueOf(Integer.valueOf(status.toString())));
+        panorama.setStatus(CommonEnum.Review.valueOf(Integer.valueOf(status.toString())));
         panorama.setShare(Boolean.valueOf(isShare.toString()));
         if (picture != null) {
             panorama.setPicture(picture.toString());

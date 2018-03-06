@@ -125,7 +125,7 @@ public class ProjectLogService extends BaseService<ProjectLog, Long> {
      * @param alias
      * @return
      */
-    private String covert(Project.Type type, String alias, String object) {
+    protected String covert(Project.Type type, String alias, String object) {
         List<Unit> units = null;
         if (type == Project.Type.AGRICULTURAL_IRRIGATION) {
             units = unitService.getAgrUnits();

@@ -68,7 +68,7 @@ public class SpringMVCUploader {
 
 					InputStream is = file.getInputStream();
 					InputStream is1 = file.getInputStream();
-					OssService ossService=new OssService();
+					OssService ossService=OssService.getInstance();
 					ossService.uploadImage(savePath, is1, null);
 					is1.close();
 					State storageState = StorageManager.saveFileByInputStream(

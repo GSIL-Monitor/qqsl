@@ -53,7 +53,7 @@ public class OssService extends BaseService<Oss,Long>{
 			.split(","));
 	private List<String> extensiones = Arrays
 			.asList(CommonAttributes.OFFICE_FILE_EXTENSION.split(","));
-
+	private static OssService ossService = null;
 
 	@Autowired
 	public void setBaseDao(OssDao ossDao){
@@ -75,6 +75,17 @@ public class OssService extends BaseService<Oss,Long>{
 			logger.info("sts响应失败");
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * uediter上传图片需要的ossService实体
+	 * @return
+	 */
+	public static OssService getInstance(){
+		if(ossService == null){
+			ossService = new OssService();
+		}
+		return ossService;
 	}
 
 	/**
@@ -270,7 +281,7 @@ public class OssService extends BaseService<Oss,Long>{
 		if (dir != null) {
 			listObjectsRequest.setPrefix(dir + "/");
 		}
-		ObjectListing listing = null;
+		ObjectListing listing;
 		listing = client.listObjects(listObjectsRequest);
 		return listing.getObjectSummaries();
 	}
@@ -293,6 +304,16 @@ public class OssService extends BaseService<Oss,Long>{
 		return listing.getCommonPrefixes();
 	}
 
+	/**
+	 * 判断object是否存在
+	 * @param bucketName
+	 * @param key
+	 * @return
+	 */
+	private boolean isFound(String bucketName,String key){
+		boolean found = client.doesObjectExist(bucketName, key);
+		return found;
+	}
 
 	/**
 	 * 获取文件的属性
@@ -435,6 +456,9 @@ public class OssService extends BaseService<Oss,Long>{
 	public String getObjectUrl(String key,String bucketName) {
 		Calendar now = Calendar.getInstance();
 		now.add(Calendar.MINUTE, 30);
+		if(!isFound(bucketName,key)){
+			return null;
+		}
 		return client.generatePresignedUrl(bucketName, key, now.getTime())
 				.toString();
 	}
@@ -589,4 +613,5 @@ public class OssService extends BaseService<Oss,Long>{
 		OSSObject ossObject = client.getObject(bucketName, key);
 		return ossObject.getObjectContent();
 	}
+
 }

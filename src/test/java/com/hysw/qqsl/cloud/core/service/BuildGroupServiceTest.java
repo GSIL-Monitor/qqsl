@@ -23,14 +23,14 @@ public class BuildGroupServiceTest extends BaseTest {
     public void makeBuildGroupsXml() throws Exception {
         List<BuildGroup> buildGroups = buildGroupService.getBuildGroupsXml();
         assertNotNull(buildGroups);
-        assertEquals(8,buildGroups.size());
+        assertEquals(9,buildGroups.size());
         BuildGroup buildGroup;
         buildGroup = buildGroups.get(0);
         assertEquals("1",buildGroup.getAlias());
         assertEquals(6,buildGroup.getBuilds().size());
         buildGroup = buildGroups.get(1);
         assertEquals("2",buildGroup.getAlias());
-        assertEquals(13,buildGroup.getBuilds().size());
+        assertEquals(14,buildGroup.getBuilds().size());
         buildGroup = buildGroups.get(2);
         assertEquals("3",buildGroup.getAlias());
         assertEquals(9,buildGroup.getBuilds().size());
@@ -62,7 +62,7 @@ public class BuildGroupServiceTest extends BaseTest {
         List<BuildGroup> buildGroups = buildGroupService.getBuildGroups(true);
         assertEquals(6,buildGroups.size());
         buildGroups = buildGroupService.getBuildGroups(false);
-        assertEquals(7,buildGroups.size());
+        assertEquals(8,buildGroups.size());
     }
 
     @Test

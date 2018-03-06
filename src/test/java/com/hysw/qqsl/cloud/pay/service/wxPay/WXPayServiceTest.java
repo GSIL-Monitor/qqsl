@@ -41,15 +41,16 @@ public class WXPayServiceTest extends BaseTest{
         trade.setStatus(Trade.Status.NOPAY);
 //        trade.setUser();
 //        tradeService.save(trade);
+        trade.setType(Trade.Type.PACKAGE);
         System.out.println(trade.getOutTradeNo());
         System.out.println(wxPayService.unifiedOrderPay(trade));
     }
 
-    @Test
-    public void testorderClose(){
-        Trade trade = tradeService.findAll().get(0);
-        wxPayService.orderClose(trade);
-    }
+//    @Test
+//    public void testorderClose(){
+//        Trade trade = tradeService.findAll().get(0);
+//        wxPayService.orderClose(trade);
+//    }
 
     @Test
     public void testorderQuery(){
@@ -75,10 +76,10 @@ public class WXPayServiceTest extends BaseTest{
     }
 
 
-    @Test
-    public void testtuikuanjiemi() throws Exception {
-        String jiamimessage = "OYAkpijaBh4EaJCzS/VAKh/LtALNTUPxQuXRZAmkPYjkdRQvEnsmar36CZYudX8TGItdQXU3mX4ZxN6OoIUjinuoXjCyo2s7DHE7VFRB6G7j3poy5q2YpA5bE9LfzxhnqJpmJxtzPGcntOKAi+RbFuqMlPML+GoZQpQaNtOefxIEPxDGNq0QuxuWkaw10hux6p6vduRJbHl8OBF2tj0M53UqC4nAyQjBAT7F2r4Q2q1VnkXSm52UhRN5EHw5PZNEsbS1/sfU0dncBRi7PBlwi0r32qvFss/78TeDu0PaIN7u8N07RMyrHg2VHaz9ymVf4FgQo+UFjySR9YZLuWfE9A997rz5F3LAd7/UXT4eFFMwllkn7KTLosANp7nSCRhhwvakyF/pHm5cyuGp0Jsdp+lcT/y/bRgaofLEDcjZFWx20afuWiJoMi7X+53i5LLtlt3xoMLQv6k5Xglkc4hoEipNeddWg/X2KWwhQLB1wr1WZ4n5OQkO2o+sZm2tllkL2HRjUn2JXRMPVdp5b4QIi890ZlclDseXTBDrt6vFhZmGfOL9LdDYvpFvbQSWRi+bdSG0PzW1BeDiB8hD2swacjlvz5VKFvreOL+GbrxB0hQIrgx8IBQy+0RLmPneCafrieUV6C7OXmAJ7LGnidot5dtwnM74pPi9NYr1noy+tecOdTaj/1n4I8GJCT6e85SquXCKEYm+ctm1FHpL+naudMt+vaDIPY74q4RHuoTziOwFLFn35QEhEyalbyh+JXlfTUoQfCxzHveSGfD7M1iwTSDcmNFXNZSC30R9110oZ1XhI5UTkdkhob0KnfMPXVHzFMPoJnngNeRqvqft2I1rQL7vEFo1jvV9wQ+oH0Fu1rgyBbHYs13TjbpfOrYkNagkDKnPkEjtzB5hzzV/xZd5EfFZD+2gmmqt6gnT5b4rjO8WdxeupcA1WE2VLSQSlc6h9FtpmgOzDaVhCymJb2yBhQ/5mkRBVokJSFNNAQu8K2C41QO+iJYi/FbLPDYm6Z32Wxy8/sAec2Bp3AepgwWhNoqxzni0/9grmlLFHDhHJm0=";
-        Map<String, String> decryptRefundTrade = tradeService.decryptRefundTrade(jiamimessage);
-        System.out.println(decryptRefundTrade.toString());
-    }
+//    @Test
+//    public void testtuikuanjiemi() throws Exception {
+//        String jiamimessage = "OYAkpijaBh4EaJCzS/VAKh/LtALNTUPxQuXRZAmkPYjkdRQvEnsmar36CZYudX8TGItdQXU3mX4ZxN6OoIUjinuoXjCyo2s7DHE7VFRB6G7j3poy5q2YpA5bE9LfzxhnqJpmJxtzPGcntOKAi+RbFuqMlPML+GoZQpQaNtOefxIEPxDGNq0QuxuWkaw10hux6p6vduRJbHl8OBF2tj0M53UqC4nAyQjBAT7F2r4Q2q1VnkXSm52UhRN5EHw5PZNEsbS1/sfU0dncBRi7PBlwi0r32qvFss/78TeDu0PaIN7u8N07RMyrHg2VHaz9ymVf4FgQo+UFjySR9YZLuWfE9A997rz5F3LAd7/UXT4eFFMwllkn7KTLosANp7nSCRhhwvakyF/pHm5cyuGp0Jsdp+lcT/y/bRgaofLEDcjZFWx20afuWiJoMi7X+53i5LLtlt3xoMLQv6k5Xglkc4hoEipNeddWg/X2KWwhQLB1wr1WZ4n5OQkO2o+sZm2tllkL2HRjUn2JXRMPVdp5b4QIi890ZlclDseXTBDrt6vFhZmGfOL9LdDYvpFvbQSWRi+bdSG0PzW1BeDiB8hD2swacjlvz5VKFvreOL+GbrxB0hQIrgx8IBQy+0RLmPneCafrieUV6C7OXmAJ7LGnidot5dtwnM74pPi9NYr1noy+tecOdTaj/1n4I8GJCT6e85SquXCKEYm+ctm1FHpL+naudMt+vaDIPY74q4RHuoTziOwFLFn35QEhEyalbyh+JXlfTUoQfCxzHveSGfD7M1iwTSDcmNFXNZSC30R9110oZ1XhI5UTkdkhob0KnfMPXVHzFMPoJnngNeRqvqft2I1rQL7vEFo1jvV9wQ+oH0Fu1rgyBbHYs13TjbpfOrYkNagkDKnPkEjtzB5hzzV/xZd5EfFZD+2gmmqt6gnT5b4rjO8WdxeupcA1WE2VLSQSlc6h9FtpmgOzDaVhCymJb2yBhQ/5mkRBVokJSFNNAQu8K2C41QO+iJYi/FbLPDYm6Z32Wxy8/sAec2Bp3AepgwWhNoqxzni0/9grmlLFHDhHJm0=";
+//        Map<String, String> decryptRefundTrade = tradeService.decryptRefundTrade(jiamimessage);
+//        System.out.println(decryptRefundTrade.toString());
+//    }
 }

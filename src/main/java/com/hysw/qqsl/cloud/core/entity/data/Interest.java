@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
-import com.hysw.qqsl.cloud.core.entity.Review;
+import com.hysw.qqsl.cloud.CommonEnum;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -65,7 +65,7 @@ public class Interest extends BaseEntity {
     /**
      * 审核状态
      */
-    private Review status;
+    private CommonEnum.Review status;
     /**
      * 审核意见
      */
@@ -230,11 +230,11 @@ public class Interest extends BaseEntity {
         this.pictures = pictures;
     }
 
-    public Review getStatus() {
+    public CommonEnum.Review getStatus() {
         return status;
     }
 
-    public void setStatus(Review status) {
+    public void setStatus(CommonEnum.Review status) {
         this.status = status;
     }
 

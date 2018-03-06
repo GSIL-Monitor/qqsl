@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.UserMessageDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
@@ -205,6 +204,17 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setContent(message);
 		userMessage.setType(UserMessage.Type.BUY_STATION);
+		userMessage.setUser(user);
+		save(userMessage);
+		pollingService.changeMessageStatus(user,true);
+	}
+
+	public void feedbackMessage(Feedback feedback) {
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
+		userMessage.setContent("尊敬的水利云用户您好，关于您反馈的消息，管理员已经对您提出的问题进行了回复。");
+		userMessage.setType(UserMessage.Type.FEEDBACK);
+		User user = userService.find(feedback.getUserId());
 		userMessage.setUser(user);
 		save(userMessage);
 		pollingService.changeMessageStatus(user,true);

@@ -114,7 +114,7 @@ public class ProjectService extends BaseService<Project, Long> {
      *
      * @return
      */
-    public Message refreshCache() {
+    public Message refreshCache() throws Exception{
         Cache cache1 = cacheManager.getCache("authorization");
         cache1.removeAll();
         Cache cache2 = cacheManager.getCache("elementGroupCache");
@@ -319,11 +319,10 @@ public class ProjectService extends BaseService<Project, Long> {
             return project;
         }
         int index = Integer.parseInt(map.get("type").toString());
-        //更新或保存项目前缀和序号字段
-        userService.setPrefixOrderJson(map.get("prefix").toString(), map.get("order").toString(), user);
         if (index >= 6 || index < 0) {
             throw new QQSLException("项目类型未知");
         }
+        //更新或保存项目前缀和序号字段
         userService.setPrefixOrderJson(map.get("prefix").toString(), map.get("order").toString(), user);
         project = makeProject(user, planningId, code, name, index);
         return project;
@@ -657,10 +656,10 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message removeById(Long id, User user) {
         Project project = find(id);
         if (project == null || project.getId() == null) {
-            return new Message(Message.Type.FAIL);
+            return new Message(Message.Type.EXIST);
         }
         if (!project.getUser().getId().equals(user.getId())) {
-            return new Message(Message.Type.FAIL);
+            return new Message(Message.Type.NO_AUTHORIZE);
         }
         ossService.setBucketLife(project.getTreePath() + "/", "project");
         deleteProjectSpace(user,project.getCurSpaceNum());
@@ -1056,13 +1055,13 @@ public class ProjectService extends BaseService<Project, Long> {
         for (Element element : elements) {
             jsonElement = null;
             if (element.getValue() != null) {
-                if (element.getUnit() != null) {
-                    jsonElement = new JsonElement(element.getName(),
-                            element.getValue() + element.getUnit());
-                } else {
+//                if (element.getUnit() != null) {
+//                    jsonElement = new JsonElement(element.getName(),
+//                            element.getValue() + element.getUnit());
+//                } else {
                     jsonElement = new JsonElement(element.getName(),
                             element.getValue());
-                }
+//                }
             }
             if (element.getElementDataStr() != null) {
                 jsonElement = new JsonElement(element.getName(),
@@ -1164,10 +1163,10 @@ public class ProjectService extends BaseService<Project, Long> {
     /**
      * 上传文件大小计入项目与套餐中
      * @param map
-     * @param user
+     * @param o
      * @return
      */
-    public Message uploadFileSize(Map<String, Object> map, User user) {
+    public Message uploadFileSize(Map<String, Object> map, Object o) {
         Object projectId = map.get("projectId");
         Object fileSize = map.get("fileSize");
         Object fileNames = map.get("fileNames");//用于记录日志
@@ -1176,8 +1175,11 @@ public class ProjectService extends BaseService<Project, Long> {
             return new Message(Message.Type.FAIL);
         }
         Project project = find(Long.valueOf(projectId.toString()));
-        Package aPackage = packageService.findByUser(user);
-        if (project == null || aPackage == null) {
+        if (project == null) {
+            return new Message(Message.Type.FAIL);
+        }
+        Package aPackage = packageService.findByUser(project.getUser());
+        if (aPackage == null) {
             return new Message(Message.Type.FAIL);
         }
         try {
@@ -1192,7 +1194,7 @@ public class ProjectService extends BaseService<Project, Long> {
         storageLogService.saveStorageLog(aPackage, "upload", fileSize);
         Map<String, String> aliases = new LinkedHashMap<>();
         aliases.put(alias.toString(),fileNames.toString());
-        projectLogService.saveLog(project,user,aliases,ProjectLog.Type.FILE_UPLOAD);
+        projectLogService.saveLog(project,o,aliases,ProjectLog.Type.FILE_UPLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
         return new Message(Message.Type.OK, jsonObject);
@@ -1201,10 +1203,10 @@ public class ProjectService extends BaseService<Project, Long> {
     /**
      * 下载文件大小计入套餐中
      * @param map
-     * @param user
+     * @param o
      * @return
      */
-    public Message downloadFileSize(Map<String, Object> map, User user) {
+    public Message downloadFileSize(Map<String, Object> map, Object o) {
         Object projectId = map.get("projectId");
         Object fileSize = map.get("fileSize");
         Object fileName = map.get("fileName");//用于记录日志
@@ -1212,7 +1214,11 @@ public class ProjectService extends BaseService<Project, Long> {
         if (projectId == null || fileSize == null || fileName == null || alias == null) {
             return new Message(Message.Type.FAIL);
         }
-        Package aPackage = packageService.findByUser(user);
+        Project project = find(Long.valueOf(projectId.toString()));
+        if (project == null) {
+            return new Message(Message.Type.FAIL);
+        }
+        Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
             return new Message(Message.Type.FAIL);
         }
@@ -1225,7 +1231,7 @@ public class ProjectService extends BaseService<Project, Long> {
         storageLogService.saveStorageLog(aPackage,"download",fileSize);
         Map<String, String> aliases = new LinkedHashMap<>();
         aliases.put(alias.toString(),fileName.toString());
-        projectLogService.saveLog(find(Long.valueOf(projectId.toString())),user,aliases,ProjectLog.Type.FILE_UPLOAD);
+        projectLogService.saveLog(find(Long.valueOf(projectId.toString())),o,aliases,ProjectLog.Type.FILE_DOWNLOAD);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileSize", fileSize);
         return new Message(Message.Type.OK, jsonObject);

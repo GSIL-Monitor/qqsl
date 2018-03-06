@@ -41,8 +41,8 @@ public abstract class BaseService<T extends BaseEntity, Id extends Serializable>
 	 */
 	@Transactional
 	public void save(T entity) {
-		baseDao.save(entity);
 		entity.setModifyDate(new Date());
+		baseDao.save(entity);
 		String name = getClassName(entity.getClass().getName());
 		Cache cache = cacheManager.getCache(name + "Cache");
 		if (cache != null) {

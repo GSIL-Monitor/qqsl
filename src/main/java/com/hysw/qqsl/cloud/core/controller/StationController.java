@@ -50,7 +50,7 @@ public class StationController {
     private PollingService pollingService;
     /**
      * 获取token
-     * @return
+     * @return message消息体,附带token令牌
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -62,8 +62,8 @@ public class StationController {
 
     /**
      * 河道模型和水位流量关系曲线上传
-     * @param request
-     * @return
+     * @param request 请求消息体,包含测站id,文件名,以及文件内容
+     * @return   message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:上传成功,FAIL:上传失败
      */
     @StationIsExpire("request")
     @RequiresAuthentication
@@ -97,8 +97,9 @@ public class StationController {
 
     /**
      * 河道模型和水位流量关系曲线下载
-     * @param id
-     * @return
+     * @param id 测站id
+     * @param response 响应消息体
+     * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:下载成功,FAIL:下载失败
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -143,7 +144,7 @@ public class StationController {
     }
     /**
      * 获取测站列表包括分享的测站
-     * @return
+     * @return message消息体,OK:获取成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -157,8 +158,8 @@ public class StationController {
 
     /**
      * 测站编辑
-     * @param map
-     * @return
+     * @param map 包含测站id,以及测站类型type,测站名字name,测站描述description,测站地址address,测站坐标coor
+     * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
      */
     @StationIsExpire("station")
     @RequiresAuthentication
@@ -187,8 +188,8 @@ public class StationController {
 
     /**
      * 仪表添加
-     * @param map
-     * @return
+     * @param map 包含测站id,以及仪表参数factory,contact,phone,settingHeight,ciphertext,code
+     * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:添加成功,FAIL:添加失败
      */
     @StationIsExpire
     @RequiresAuthentication
@@ -215,8 +216,8 @@ public class StationController {
 
     /**
      * 添加摄像头
-     * @param map
-     * @return
+     * @param map 包含测站id,以及摄像头参数factory,contact,phone,settingHeight,cameraUrl
+     * @return  message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:添加成功,FAIL:添加失败
      */
     @StationIsExpire
     @RequiresAuthentication
@@ -245,8 +246,8 @@ public class StationController {
     }
     /**
      * 仪表删除
-     * @param id
-     * @return
+     * @param id 仪表id
+     * @return message消息体,EXIST:仪表不存在,OK:删除成功
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -262,8 +263,8 @@ public class StationController {
 
     /**
      * 摄像头删除
-     * @param id
-     * @return
+     * @param id 摄像头id
+     * @return message消息体,EXIST:仪表不存在,OK:删除成功,FAIL:删除失败
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
@@ -282,8 +283,8 @@ public class StationController {
 
     /**
      * 编辑仪表
-     * @param map
-     * @return
+     * @param map 包含测站station,以及仪表参数id,factory,contact,phone,settingHeight
+     * @return message消息体,EXIST:仪表或测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
      */
     @StationIsExpire("sensor")
     @RequiresAuthentication
@@ -316,8 +317,8 @@ public class StationController {
 
     /**
      * 编辑摄像头
-     * @param map
-     * @return
+     * @param map  包含测站station,以及摄像头参数,id,factory,contact,phone,settingHeight,cameraUrl
+     * @return  message消息体,EXIST:仪表或测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
      */
     @StationIsExpire("camera")
     @RequiresAuthentication
@@ -350,8 +351,8 @@ public class StationController {
 
     /**
      * 编辑测站参数
-     * @param map
-     * @return
+     * @param map 包含测站id,以及参数信息,maxValue,minvalue,phone,sendStatus
+     * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
      */
     @StationIsExpire
     @RequiresAuthentication
@@ -374,14 +375,13 @@ public class StationController {
             return new Message(Message.Type.NO_AUTHORIZE);
         }
         message = stationService.editParameter((Map<String,Object>)map.get("parameter"),station);
-      //  message = stationService.editParameter((Map<String,Object>)map.get("parameter"),new Station());
         return message;
     }
 
     /**
      * 取消测站分享
-     * @param map
-     * @return
+     * @param map 包含用户userIds,以及测站stationId
+     * @return message消息体,OK:取消成功,FAIL:取消失败,UNKNOWN:测站不属于自己
      */
     @RequiresAuthentication
     @RequiresRoles({"user:simple"})
@@ -404,8 +404,8 @@ public class StationController {
 
     /**
      * 测站分享
-     * @param map
-     * @return
+     * @param map 包含用户userIds,以及测站stationIds
+     * @return message消息体,OK:分享成功,FAIL:分享失败
      */
     @RequiresAuthentication
     @RequiresRoles({"user:simple"})
@@ -419,15 +419,15 @@ public class StationController {
         User own = authentService.getUserFromSubject();
         String stationIdsStr = map.get("stationIds").toString();
         List<String> userIds = Arrays.asList(userIdsStr.split(","));
-        List<String> sensorIds = Arrays.asList(stationIdsStr.split(","));
-        stationService.shares(sensorIds,userIds,own);
+        List<String> stationIds = Arrays.asList(stationIdsStr.split(","));
+        stationService.shares(stationIds,userIds,own);
         return new Message(Message.Type.OK);
     }
 
     /**
      * 判断当前用户对该测站是否有修改权限
-     * @param station
-     * @return
+     * @param station 测站
+     * @return true允许操作，false不允许操作
      */
     private boolean isOperate(Station station){
         User user = authentService.getUserFromSubject();
@@ -440,8 +440,8 @@ public class StationController {
     /**
      * 监测取得仪表参数：getParamters，GET
      * 监测系统取得所有已改变的参数列表
-     * @param token
-     * @return
+     * @param token 自定义安全令牌token
+     * @return FAIL:获取失败，OK：获取成功，附带测站参数
      */
     @RequestMapping(value = "/getParameters", method = RequestMethod.GET)
     public @ResponseBody Message getParameters(@RequestParam String token){

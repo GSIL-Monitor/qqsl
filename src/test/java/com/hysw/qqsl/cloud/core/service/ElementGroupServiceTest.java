@@ -15,7 +15,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 public class ElementGroupServiceTest extends BaseTest {
 
 	@Autowired
@@ -52,22 +51,22 @@ public class ElementGroupServiceTest extends BaseTest {
 	public void testRefreshElementGroupXML(){
 		List<ElementGroup> agrElementGroups = elementGroupService.getAgrElementGroups();
 		List<ElementGroup> watElementGroups = elementGroupService.getWatElementGroups();
-		assertEquals(agrElementGroups.size(), 74);
-		assertEquals(watElementGroups.size(), 65);
+		assertEquals(agrElementGroups.size(), 67);
+		assertEquals(watElementGroups.size(), 67);
 		List<ElementGroup> conElementGroups = elementGroupService.getConElementGroups();
 		List<ElementGroup> hydElementGroups = elementGroupService.getHydElementGroups();
 		assertEquals(conElementGroups.size(), hydElementGroups.size());
 		List<ElementGroup> driElementGroups = elementGroupService.getDriElementGroups();
 		List<ElementGroup> floElementGroups = elementGroupService.getFloElementGroups();
-		assertEquals(driElementGroups.size(),72);
-		assertEquals(floElementGroups.size(),71);
+		assertEquals(driElementGroups.size(),67);
+		assertEquals(floElementGroups.size(),67);
 		ElementGroup elementGroup = new ElementGroup();
 		elementGroup.setName("test");
 		agrElementGroups.add(elementGroup);
 //		elementGroupService.refreshElementGroupXML();
-		assertEquals(agrElementGroups.size(),75);
+		assertEquals(agrElementGroups.size(),68);
 	    List<ElementGroup> elementGroups = elementGroupService.getAgrElementGroups();
-	    assertEquals(elementGroups.size(),74);
+	    assertEquals(elementGroups.size(),68);
 	}
 	@Test
 	public void testMakeElementGroup1() {
@@ -77,7 +76,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		} catch (XMLFileException e) {
 			e.printStackTrace();
 		}
-		assertEquals(71, elementGroupModels.size());
+		assertEquals(67, elementGroupModels.size());
 	}
 
 	@Test

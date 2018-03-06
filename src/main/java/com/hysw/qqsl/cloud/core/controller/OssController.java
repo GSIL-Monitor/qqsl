@@ -5,13 +5,13 @@ import java.util.*;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
 import com.hysw.qqsl.cloud.core.service.*;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
@@ -30,8 +30,6 @@ public class OssController {
 	@Autowired
 	private OssService ossService;
 	@Autowired
-	private CoordinateService coordinateService;
-	@Autowired
 	private ApplicationTokenService applicationTokenService;
 	@Autowired
 	private AuthentService authentService;
@@ -43,9 +41,8 @@ public class OssController {
 
 	/**
 	 * 根据treePath(阿里云路径)得到文件列表
-	 *
-	 * @param id
-	 * @return
+	 * @param id 项目id
+	 * @return message消息体,OK:获取成功
 	 */
 	@RequiresAuthentication
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
@@ -58,37 +55,30 @@ public class OssController {
 	}
 
 	/**
-	 * 根据treePath(阿里云路径)得到文件url
-	 *
-	 * @param key
-	 * @return
+	 * 根据treePath(阿里云路径)得到文件url,一般获取图片的url
+	 * @param key 文件对应的oss地址
+	 * @return message消息体,FAIL:文件不存在,url获取失败,OK:url获取成功
 	 */
 	@RequiresAuthentication
-	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequiresRoles(value = {"user:simple","account:simple","admin:simple"}, logical = Logical.OR)
 	@RequestMapping(value = "/getFileUrl", method = RequestMethod.GET)
 	public @ResponseBody Message getFileUrl(
 			@RequestParam("key") String key,@RequestParam("bucketName") String bucketName) {
-		try {
-			ossService.getObjectMetadata(key);
-		} catch (Exception e) {
+		String url = ossService.getObjectUrl(key, bucketName);
+		if (!StringUtils.hasText(url)){
 			return new Message(Message.Type.FAIL);
 		}
-		String url = ossService.getObjectUrl(key, bucketName);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("url", url);
 		return new Message(Message.Type.OK,jsonObject);
 	}
 
-
-
-
 	/**
-	 * 获取sts
-	 *
-	 * @return
+	 * 获取sts安全令牌,用于上传或获取oss存储的文件
+	 * @return message消息体,OK:获取成功
 	 */
 	@RequiresAuthentication
-	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequiresRoles(value = {"user:simple","account:simple","admin:simple"}, logical = Logical.OR)
 	@RequestMapping(value = "/sts", method = RequestMethod.GET)
 	public @ResponseBody Message getSts() {
 		String sts = ossService.getStsToken();
@@ -97,9 +87,10 @@ public class OssController {
 
 	/**
 	 * office文件上传记录，子系统需转换为pdf
-	 * @param object
-	 * @return
+	 * @param object 包含文件存储路径treePath,以及项目标识projectId
+	 * @return message消息体,UNKNOWN:未知文件类型,FAIL:参数错误,OK:记录成功
 	 */
+	@SuppressWarnings("unchecked")
 	@RequiresAuthentication
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/create",method = RequestMethod.POST)
@@ -125,8 +116,8 @@ public class OssController {
 
 	/**
 	 * 子系统获取office文件路径
-	 * @param token
-	 * @return
+	 * @param token 与各自系统交互的自定义token安全令牌
+	 * @return message消息体,FAIL:获取失败,OK:获取成功,包含所有要转换的记录
 	 * http://localhost:8080/qqsl/oss/list?token=9F590A681F4248F09CB2DD51E45CF5A9
 	 */
 	@RequestMapping(value = "/list",method = RequestMethod.GET,produces = "application/json")
@@ -144,7 +135,8 @@ public class OssController {
 
 	/**
 	 * 转换成功，从数据库清除记录
-	 * @param data
+	 * @param data 为JSONObject字符串,包含oss文件路径实体id,以及token令牌
+	 * @return message消息体,FAIL:参数不全,OK:记录删除成功
 	 */
 	@RequestMapping(value = "/remove",method = RequestMethod.POST)
 	public @ResponseBody Message deleteOss(@RequestBody String data){
@@ -164,9 +156,8 @@ public class OssController {
 
 	/**
 	 * 根据treePath(阿里云路径)得到多媒体文件(外业测量）
-	 *
-	 * @param id
-	 * @return
+	 * @param id 项目id
+	 * @return message消息体,OK:获取成功,包含文件列表
 	 */
 	@RequiresAuthentication
 	@RequestMapping(value = "/objectMediaFiles", method = RequestMethod.GET)
@@ -180,9 +171,8 @@ public class OssController {
 
 	/**
 	 * 删除单个文件
-	 *
-	 * @param object
-	 * @return
+	 * @param object 包含对应删除文件的key
+	 * @return message消息体,FAIL:参数错误,OK:删除成功
 	 */
 	@SuppressWarnings("unchecked")
 	@RequiresAuthentication
@@ -190,11 +180,11 @@ public class OssController {
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
 	public @ResponseBody Message delete(@RequestBody Object object) {
 		Map<String, String> map = (Map<String, String>) object;
-		Object obj =  map.get("objectFile");
-		if (obj == null || obj.equals("")) {
+		Object obj =  map.get("key");
+		if (obj == null || !StringUtils.hasText(obj.toString())) {
 			return new Message(Message.Type.FAIL);
 		}
-		String key = map.get("objectFile");
+		String key = map.get("key");
 		// 删除project下的文件
 		ossService.deleteObject(key,"qqsl");
 		if (extensiones.contains(key.substring(key.lastIndexOf(".") + 1)
@@ -209,9 +199,8 @@ public class OssController {
 
 	/**
 	 * 批量删除文件
-	 *
-	 * @param object
-	 * @return
+	 * @param object 包含所有要删除文件的key链接的字符串,用逗号间隔的keys
+	 * @return message消息体,FAIL:参数错误,OK:删除成功
 	 */
 	@SuppressWarnings("unchecked")
 	@RequiresAuthentication
@@ -219,11 +208,10 @@ public class OssController {
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
 	public @ResponseBody Message deleteAll(@RequestBody Object object) {
 		Map<String, String> map = (Map<String, String>) object;
-		String obj = map.get("deleteFilesIds");
-		if (obj == null || obj.equals("")) {
+		if (!StringUtils.hasText(map.get("keys"))) {
 			return new Message(Message.Type.FAIL);
 		}
-		String str =  map.get("deleteFilesIds");
+		String str =  map.get("keys");
 		String[] key1 = str.split(",");
 		String key;
 		for (int i = 0; i < key1.length; i++) {

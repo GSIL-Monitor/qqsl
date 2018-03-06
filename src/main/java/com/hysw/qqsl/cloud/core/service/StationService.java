@@ -55,8 +55,6 @@ public class StationService extends BaseService<Station, Long> {
     @Autowired
     private MonitorService monitorService;
     @Autowired
-    private AuthentService authentService;
-    @Autowired
     private UserMessageService userMessageService;
 
     @Autowired
@@ -174,7 +172,7 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("address", station.getAddress());
         jsonObject.put("coor", station.getCoor());
         jsonObject.put("description", station.getDescription());
-        jsonObject.put("exprieDate",station.getExpireDate().getTime());
+        jsonObject.put("exprieDate",station.getExpireDate()==null?null:station.getExpireDate().getTime());
         jsonObject.put("createDate", station.getCreateDate());
         jsonObject.put("instanceId", station.getInstanceId());
         jsonObject.put("picture", station.getPicture());
@@ -530,6 +528,9 @@ public class StationService extends BaseService<Station, Long> {
      * @return
      */
     public Message isHydrologyStation(Station station,String type){
+        if(!station.getType().equals(CommonEnum.StationType.WATER_LEVEL_STATION)){
+            return new Message(Message.Type.OK);
+        }
         List<Sensor> sensors = station.getSensors();
         if(sensors.size()==0){
             return new Message(Message.Type.OK);

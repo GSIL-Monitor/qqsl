@@ -1,8 +1,8 @@
 package com.hysw.qqsl.cloud.core.controller;
 
-import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.Verification;
+import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Admin;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
@@ -18,6 +18,8 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,11 +47,16 @@ public class AdminController {
     private ProjectService projectService;
     @Autowired
     private AuthentService authentService;
+    @Autowired
+    private ArticleService articleService;
+    @Autowired
+    private SessionDAO sessionDAO;
 
     /**
-     * 缓存的刷新，包括info.xml;projectModel.xml;elementGroup.xml
-     *
-     * @return
+     * 缓存的刷新，包括info.xml;projectModel.xml;elementGroup.xml,
+     * 认证缓存,用户缓存,套餐缓存,项目缓存,初始化千寻帐号,为绑定仪表加入
+     * 缓存,一周的日志缓存
+     * @return message响应消息OK:刷新成功,FIAL:刷新失败
      */
     @RequiresAuthentication
     @RequestMapping(value = "/refreshCache", method = RequestMethod.POST)
@@ -57,16 +64,25 @@ public class AdminController {
     public
     @ResponseBody
     Message refreshCache() {
-        Message message = projectService.refreshCache();
+        Message message = null;
+        try {
+            message = projectService.refreshCache();
+        } catch (Exception e) {
+            message = new Message(Message.Type.FAIL);
+            e.printStackTrace();
+        }
         return message;
     }
 
     /**
      * 管理员登录
-     * @return
+     * @param objectMap 包含用户名userName,以及动态密码verification
+     * @param request 请求消息体
+     * @param session 此次请求的session
+     * @return message响应消息OK:登录成功,FIAL:信息不全或shiro认证不通过,EXIT:帐号不存在,INVALID:验证码过期,NO_ALLOW:验证码错误
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST,produces="application/json")
-    public @ResponseBody Object login(@RequestBody Object objectMap, HttpServletRequest request,HttpSession session){
+    public @ResponseBody Message login(@RequestBody Object objectMap, HttpServletRequest request,HttpSession session){
        /* if (SecurityUtils.getSubject().getSession() != null) {
             SecurityUtils.getSubject().logout();
         }*/
@@ -98,13 +114,13 @@ public class AdminController {
       return subjectLogin(admin);
     };
 
+
     /**
-     * 登陆
-     *
-     * @param admin
-     * @return
+     * shiro的登录认证
+     * @param admin 当前管理员对象
+     * @return message响应消息OK:登录成功,FIAL:shiro认证不通过,EXIT:帐号不存在
      */
-    private Object subjectLogin(Admin admin) {
+    private Message subjectLogin(Admin admin) {
         ShiroToken token = new ShiroToken();
         token.setAdmin(admin);
         Subject subject = SecurityUtils.getSubject();
@@ -123,10 +139,12 @@ public class AdminController {
         return new Message(Message.Type.OK,adminJson);
     }
 
+
     /**
      * 管理员登录获取动态密码
-     * @param session
-     * @return
+     * @param userName 登录凭证userName
+     * @param session  此次请求的session
+     * @return message响应消息OK:获取成功,FIAL:参数不全,EXIT:帐号不存在,OTHER:未绑定手机
      */
     @RequestMapping(value = "/getPassword",method = RequestMethod.GET,produces="application/json")
     public @ResponseBody  Message getOTP(@RequestParam String userName, HttpSession session){
@@ -146,7 +164,7 @@ public class AdminController {
 
     /**
      * 获取当前管理员对象
-     * @return
+     * @return message消息体,包含admin的所有基本信息
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
@@ -161,7 +179,7 @@ public class AdminController {
 
     /**
      * 获取所有用户
-     * @return
+     * @return message消息体,包含所有用户的具体基本信息
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
@@ -176,8 +194,7 @@ public class AdminController {
 
     /**
      * 获取在线用户
-     *
-     * @return
+     * @return message消息体,包含所有在线用户的基本信息
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
@@ -185,15 +202,33 @@ public class AdminController {
     public
     @ResponseBody
     Message getLandingNumber() {
-        List<JSONObject> userJsons = adminService.getLandingUsers();
+        Admin admin = authentService.getAdminFromSubject();
+        Collection<Session> sessions = sessionDAO.getActiveSessions();
+        List<User> users = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
+        User user;
+        Account account;
+        for(Session session:sessions){
+            user = authentService.getUserFromSession(session);
+            account = authentService.getAccountFromSession(session);
+            if(user!=null){
+                users.add(user);
+            }
+            if(account!=null){
+                accounts.add(account);
+            }
+        }
+        List<JSONObject> userJsons = userService.makeUserJsons(users);
+        JSONObject adminJson = adminService.makeAdminJson(admin);
+        userJsons.add(adminJson);
         return new Message(Message.Type.OK, userJsons);
     }
 
     /**
-     * 重置密码
+     * 重置密码,管理员重置的密码均为123456
      *
-     * @param objectMap
-     * @return
+     * @param objectMap 包含用户id
+     * @return message消息体,OK:重置成功,EXIST:用户不存在
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
@@ -249,14 +284,14 @@ public class AdminController {
 
     /**
      * 编辑用户是否禁用
-     * @param object
-     * @return
+     * @param objectMap 包含用户id,是否禁用的标志isLocked
+     * @return message消息体,OK:编辑成功,FAIL:参数不全,EXIST:用户不存在
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"})
     @RequestMapping(value = "/isLocked",method = RequestMethod.POST)
-    public @ResponseBody Message Locked(@RequestBody  Map<String,Object> object){
-        Message message = Message.parameterCheck(object);
+    public @ResponseBody Message Locked(@RequestBody  Map<String,Object> objectMap){
+        Message message = Message.parameterCheck(objectMap);
         if(message.getType()== Message.Type.FAIL){
             return message;
         }
@@ -305,5 +340,72 @@ public class AdminController {
 //        List<JSONObject> logJsons = logService.getLogJsonsByProject(id);
 //        return new Message(Message.Type.OK,logJsons);
 //    }
+
+
+    /**
+     * 发布文章或重新编辑已发布的文章
+     * @param map 包含文章类型type,文章内容content,标题title,文章id(id存在表示编辑,不存在表示首次发布)
+     * @return message消息体,OK:操作成功,FAIL:参数不全,EXIST:当前编辑的文章不存在
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/publish", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Message publishAriticle(
+            @RequestBody Map<String, String> map) {
+        if (!StringUtils.hasText(map.get("type")) ||
+                !StringUtils.hasText(map.get("content")) ||
+                !StringUtils.hasText(map.get("title"))) {
+            return new Message(Message.Type.FAIL);
+        }
+        String idStr = "";
+        if (map.get("id") != null && !map.get("id").equals("null")) {
+            idStr = map.get("id").toString();
+        }
+        int index = Integer.valueOf(map.get("type").toString());
+        String content = map.get("content").toString();
+        String title = map.get("title").toString();
+        // content = articleService.replacePath(content);
+        return articleService.save(idStr, title, content, index);
+    }
+
+    /**
+     * 删除文章
+     * @param id 文章标识id
+     * @return message消息体,OK:删除成功
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteArticle/{id}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    Message deletetArticle(@PathVariable("id") Long id) {
+        Message message = Message.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        articleService.removeById(id);
+        return new Message(Message.Type.OK);
+
+    }
+
+    /**
+     * 删除文章
+     * @param id 文章标识id
+     * @return message消息体,OK:删除成功
+     */
+    @RequestMapping(value = "/deleteArticle1/{id}", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message deletetArticle1(@PathVariable("id") Long id) {
+        Message message = Message.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        articleService.removeById(id);
+        return new Message(Message.Type.OK);
+
+    }
 
 }

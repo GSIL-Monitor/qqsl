@@ -19,7 +19,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 public class ElementDBServiceTest extends BaseTest {
 
 	@Autowired
