@@ -116,7 +116,7 @@ public class TradeService extends BaseService<Trade, Long> {
     public Message createPackageTrade(Map<String, Object> objectMap, User user) {
         Object packageType = objectMap.get("packageType");
         if (packageType == null||packageType.toString().equals("TEST")) {
-            return MessageService.message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.FAIL);
         }
         PackageModel packageModel = getPackageModel(packageType.toString());
         if (packageModel == null) {
@@ -124,11 +124,11 @@ public class TradeService extends BaseService<Trade, Long> {
         }
 //        空间大小以及子账户数是否满足套餐限制,套餐是否已过期
         if (packageService.isRequirementPackage(user.getId(), packageModel)) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.PACKAGE_LIMIT);
         }
 //        未通过企业认证的用户不能购买套餐等级大于10的套餐
         if (packageModel.getLevel() > CommonAttributes.PROJECTLIMIT && !(user.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || user.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
-            return MessageService.message(Message.Type.NO_CERTIFY);
+            return MessageService.message(Message.Type.CERTIFY_NO_COMPANY);
         }
         Trade trade = new Trade();
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
@@ -276,14 +276,14 @@ public class TradeService extends BaseService<Trade, Long> {
     public Message renewPackageTrade(String instanceId, User user) {
         Package aPackage = packageService.findByInstanceId(instanceId);
         if (aPackage == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (!aPackage.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
 //        套餐为测试版不可续费
         if (aPackage.getType() == CommonEnum.PackageType.TEST) {
-            return MessageService.message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.PACKAGE_NOALLOW_RENEW);
         }
         PackageModel packageModel = getPackageModel(aPackage.getType().toString());
         if (packageModel == null) {
@@ -318,10 +318,10 @@ public class TradeService extends BaseService<Trade, Long> {
     public Message renewStationTrade(String instanceId, User user) {
         Station station=stationService.findByInstanceId(instanceId);
         if (station == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (!station.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         StationModel stationModel = getStationModel(station.getType().toString());
         if (stationModel == null) {
@@ -357,13 +357,13 @@ public class TradeService extends BaseService<Trade, Long> {
         Object instanceId = objectMap.get("instanceId");
         Object packageType = objectMap.get("packageType");
         Message message = getIndividualTemplates(instanceId, packageType);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         Package aPackage=(Package) (map.get("aPackage"));
         if (!aPackage.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         PackageModel newPackageModel=(PackageModel)(map.get("newPackageModel"));
         PackageModel oldPackageModel=(PackageModel)(map.get("oldPackageModel"));
@@ -470,7 +470,7 @@ public class TradeService extends BaseService<Trade, Long> {
      */
     public Message getPackageDiff(Object instanceId, Object packageType) {
         Message message = getIndividualTemplates(instanceId, packageType);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
@@ -492,7 +492,7 @@ public class TradeService extends BaseService<Trade, Long> {
         }
         Package aPackage = packageService.findByInstanceId(instanceId.toString());
         if (aPackage == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
 //        获取原始套餐模板
         PackageModel oldPackageModel = getPackageModel(aPackage.getType().toString());
@@ -506,7 +506,7 @@ public class TradeService extends BaseService<Trade, Long> {
         }
 //        新套餐等级不能小于原套餐等级
         if (newPackageModel.getLevel() <= oldPackageModel.getLevel()) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.PACKAGE_NOALLOW_UPDATE);
         }
         Map<String, Object> map = new HashMap<>();
         map.put("aPackage", aPackage);

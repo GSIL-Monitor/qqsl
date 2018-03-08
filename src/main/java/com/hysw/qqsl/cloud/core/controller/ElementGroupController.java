@@ -78,7 +78,7 @@ public class ElementGroupController {
         boolean flagUser =cooperateService.isEditElementUser(project,user,unit.getAlias());
         boolean flagAccount =cooperateService.isEditElementAccount(project,account,unit.getAlias());
         if(!flagUser&&!flagAccount){
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         // 保存要素，要素数据，项目简介，更新noteStr
         if(account!=null){
@@ -110,7 +110,7 @@ public class ElementGroupController {
     @ResponseBody
     Message makeElementDataGroup(@RequestBody Object object) {
         Message message = MessageService.parameterCheck(object);
-        if(message.getType()==Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String,Object> objectMap= (Map<String,Object>)message.getData();
@@ -138,13 +138,13 @@ public class ElementGroupController {
     Message deleteElementData( @RequestBody JSONObject jsonObject) {
         Long elementDataGroupId = Long.valueOf(jsonObject.get("id").toString());
         Message message = MessageService.parametersCheck(elementDataGroupId);
-        if(message.getType()== Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Long id = Long.valueOf(elementDataGroupId);
         ElementDataGroup elementDataGroup = elementDataGroupService.find(id);
         if (elementDataGroup == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         elementDataGroupService.remove(id);
         return MessageService.message(Message.Type.OK);

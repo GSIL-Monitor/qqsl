@@ -67,7 +67,7 @@ public class CertifyController {
     @RequestMapping(value = "/personalCertify", method = RequestMethod.POST)
     public @ResponseBody Message personalCertify(@RequestBody Map<String,Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
@@ -85,7 +85,7 @@ public class CertifyController {
     @RequestMapping(value = "/companyCertify", method = RequestMethod.POST)
     public @ResponseBody Message companyCertify(@RequestBody Map<String,Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
@@ -118,10 +118,10 @@ public class CertifyController {
         try {
             certify = certifyService.find(id);
         } catch (Exception e) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (certify == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         return MessageService.message(Message.Type.OK, certifyService.certifyToJson(certify));
     }

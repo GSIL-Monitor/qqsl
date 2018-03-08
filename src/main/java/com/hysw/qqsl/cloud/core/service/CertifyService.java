@@ -61,14 +61,14 @@ public class CertifyService extends BaseService<Certify, Long> {
         try {
             certify = findByUser(user);
         } catch (Exception e) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (certify == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS) {
 //                认证已通过，不可更改
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.CERTIFY_REPEAT);
         }
         certify.setName(name.toString());
         certify.setIdentityId(identityId.toString());
@@ -144,18 +144,18 @@ public class CertifyService extends BaseService<Certify, Long> {
         try {
             certify = findByUser(user);
         } catch (Exception e) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (certify == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (certify.getPersonalStatus() != CommonEnum.CertifyStatus.PASS) {
 //            个人认证未通过不能进行企业认证
-            return MessageService.message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.CERTIFY_NO_PERSONAL);
         }
         if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS||findByCompanyLicence(companyLicence.toString())) {
 //            认证已通过，不可更改
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.CERTIFY_REPEAT);
         }
 //        企业许可证编号
        /* if (findByCompanyLicence(companyLicence.toString())) {

@@ -60,7 +60,7 @@ public class QXWZContorller {
         } catch (Exception e) {
             return MessageService.message(Message.Type.FAIL);
         }
-        if(message.getType()!=Message.Type.OK){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (applicationTokenService.decrypt(token)) {
@@ -106,7 +106,7 @@ public class QXWZContorller {
     @RequestMapping(value = "/admin/create",method = RequestMethod.POST)
     public @ResponseBody Message create(@RequestBody Map<String,Object> object){
         Message message = MessageService.parameterCheck(object);
-        if(message.getType()== Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return diffConnPollService.addDiffConnPoll(object);
@@ -130,7 +130,7 @@ public class QXWZContorller {
     @RequestMapping(value = "/admin/edit",method = RequestMethod.POST)
     public @ResponseBody Message edit(@RequestBody Map<String,Object> object){
         Message message = MessageService.parameterCheck(object);
-        if(message.getType()== Message.Type.FAIL){
+        if(message.getType()!= Message.Type.OK){
             return message;
         }
         return diffConnPollService.editDiffConnPoll(object);
@@ -175,7 +175,7 @@ public class QXWZContorller {
     @RequestMapping(value = "/heartBeat", method = RequestMethod.POST)
     public @ResponseBody Message heartBeat(@RequestBody  Map<String,String> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if(message.getType()==Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         String userName = objectMap.get("userName");
@@ -204,7 +204,7 @@ public class QXWZContorller {
     @RequestMapping(value = "/setTimeout", method = RequestMethod.POST)
     public @ResponseBody Message setTimeout(@RequestBody  Map<String,String> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         String token = objectMap.get("token");

@@ -2,8 +2,8 @@ package com.hysw.qqsl.cloud.core.entity.data;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.core.entity.project.CooperateVisit;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "projectLog")

@@ -438,7 +438,7 @@ public class StationService extends BaseService<Station, Long> {
         }
         if (map.get("coor") != null && StringUtils.hasText(map.get("coor").toString())) {
             Message message = SettingUtils.checkCoordinateIsInvalid(map.get("coor").toString());
-            if (!Message.Type.OK.equals(message.getType())) {
+            if (message.getType() != Message.Type.OK) {
                 return message;
             }
             station.setCoor(message.getData().toString());
@@ -468,7 +468,7 @@ public class StationService extends BaseService<Station, Long> {
         if (verify) {
             Sensor sensor = sensorService.findByCode(code);
             if (sensor != null) {
-                return MessageService.message(Message.Type.EXIST);
+                return MessageService.message(Message.Type.DATA_EXIST);
             }
              //注册成功
             return verify(map, station);
@@ -488,7 +488,7 @@ public class StationService extends BaseService<Station, Long> {
         Sensor sensor = new Sensor();
         sensor.setType(Sensor.Type.CAMERA);
         Message message = isHydrologyStation(station,"camera");
-        if (!message.getType().equals(Message.Type.OK)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         JSONObject infoJson = new JSONObject();
@@ -537,14 +537,14 @@ public class StationService extends BaseService<Station, Long> {
             for(int i = 0;i<sensors.size();i++){
                 if(Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
                     logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                    return MessageService.message(Message.Type.EXIST);
+                    return MessageService.message(Message.Type.DATA_EXIST);
                 }
             }
         }else{
             for(int i = 0;i<sensors.size();i++){
                 if(!Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
                     logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                    return MessageService.message(Message.Type.EXIST);
+                    return MessageService.message(Message.Type.DATA_EXIST);
                 }
             }
         }
@@ -567,7 +567,7 @@ public class StationService extends BaseService<Station, Long> {
         }
         if(map.get("phone")!=null&&StringUtils.hasText(map.get("phone").toString())){
             if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return MessageService.message(Message.Type.OTHER);
+                return MessageService.message(Message.Type.FAIL);
             }
             infoJson.put("phone",map.get("phone").toString());
         }
@@ -580,7 +580,7 @@ public class StationService extends BaseService<Station, Long> {
         }
         //判断测站类型,当前测站为水位站时,只能绑定一个仪表,一个摄像头
         Message message = isHydrologyStation(station,"other");
-        if (!message.getType().equals(Message.Type.OK)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         sensor.setCode(map.get("code").toString());

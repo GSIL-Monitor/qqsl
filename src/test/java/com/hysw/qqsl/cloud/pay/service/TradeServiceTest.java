@@ -140,7 +140,7 @@ public class TradeServiceTest extends BaseTest {
         User user = userService.findByPhoneOrEmial("18661925010");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.NO_CERTIFY);
+        Assert.assertTrue(message.getType()==Message.Type.CERTIFY_NO_COMPANY);
     }
 
     /**
@@ -168,7 +168,7 @@ public class TradeServiceTest extends BaseTest {
         User user = userService.findByPhoneOrEmial("18661925010");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
         Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.NO_ALLOW);
+        Assert.assertTrue(message.getType()==Message.Type.FAIL);
     }
 
     /**

@@ -64,20 +64,20 @@ public class AccountController {
      */
     private Message sendVerify(String phone, HttpSession session, boolean flag){
         Message message = MessageService.parametersCheck(phone);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(!SettingUtils.phoneRegex(phone)){
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account = accountService.findByPhone(phone);
         if (flag) {
             if (account == null) {
-                return MessageService.message(Message.Type.bDATA_NOEXIST);
+                return MessageService.message(Message.Type.DATA_NOEXIST);
             }
         }else{
             if (account != null) {
-                return MessageService.message(Message.Type.bDATA_EXIST);
+                return MessageService.message(Message.Type.DATA_EXIST);
             }
         }
         return noteService.isSend(phone, session);
@@ -133,15 +133,15 @@ public class AccountController {
     Message getLoginVerify(@RequestParam String code,
                            HttpSession session) {
         Message message = MessageService.parametersCheck(code);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account = accountService.findByPhoneOrEmial(code);
         if (account == null) {
-            return MessageService.message(Message.Type.bDATA_NOEXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(SettingUtils.phoneRegex(code)){
             message = noteService.isSend(account.getPhone(), session);
@@ -162,19 +162,19 @@ public class AccountController {
     @ResponseBody
     Message getBindVerify(@RequestParam String email, HttpSession session) {
         Message message = MessageService.parametersCheck(email);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(!SettingUtils.emailRegex(email)){
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account = accountService.findByEmail(email);
         if (account != null) {
             // 该邮箱已被注册
-            return MessageService.message(Message.Type.bDATA_EXIST);
+            return MessageService.message(Message.Type.DATA_EXIST);
         }
         emailService.getVerifyCodeBinding(email,session);
-        return MessageService.message(Message.Type.bOK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -187,15 +187,15 @@ public class AccountController {
     @ResponseBody
     Message getGetbackVerifyEmial(@RequestParam String email, HttpSession session) {
         Message message = MessageService.parametersCheck(email);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(!SettingUtils.emailRegex(email)){
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account = accountService.findByEmail(email);
         if (account == null) {
-            return MessageService.message(Message.Type.bDATA_NOEXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         return emailService.getVerifyCoderesetPassword(email,session);
     }
@@ -212,7 +212,7 @@ public class AccountController {
     Message register(@RequestBody Map<String, String> objectMap,
                      HttpSession session) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
@@ -223,7 +223,7 @@ public class AccountController {
         password = map.get("password").toString();
         code = map.get("verification").toString();
         message = userService.checkCode(code,verification);
-        if (message.getType()!=Message.Type.bOK) {
+        if (message.getType()!=Message.Type.OK) {
             return message;
         }
         try {
@@ -245,19 +245,19 @@ public class AccountController {
     @ResponseBody
     Message getbackPassord(@RequestBody Map<String, Object> map, HttpSession session) {
         Message message = MessageService.parameterCheck(map);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null || map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
-            return MessageService.message(Message.Type.bCODE_NOEXIST);
+            return MessageService.message(Message.Type.CODE_NOEXIST);
         }
         message = userService.checkCode(map.get("verification").toString(), verification);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account = accountService.findByPhone(verification.getPhone());
         String password = map.get("password").toString();
@@ -276,19 +276,19 @@ public class AccountController {
     @ResponseBody
     Message getbackPassordEmail(@RequestBody Map<String, Object> map, HttpSession session) {
         Message message = MessageService.parameterCheck(map);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null||map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
-            return MessageService.message(Message.Type.bCODE_NOEXIST);
+            return MessageService.message(Message.Type.CODE_NOEXIST);
         }
         message = userService.checkCode(map.get("verification").toString(), verification);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account = accountService.findByEmail(verification.getEmail());
         String password = map.get("password").toString();
@@ -307,23 +307,23 @@ public class AccountController {
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public @ResponseBody Message updatePassword(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Account account = authentService.getAccountFromSubject();
         if (map.get("oldPassword") == null || !StringUtils.hasText(map.get("oldPassword").toString())) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String oldPassword = map.get("oldPassword").toString();
         if(!account.getPassword().equals(oldPassword)){
-            return MessageService.message(Message.Type.bPASSWORD_ERROR);
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
         if (map.get("newPassword") == null || !StringUtils.hasText(map.get("newPassword").toString())) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String newPassword = map.get("newPassword").toString();
         message = accountService.updatePassword(newPassword,account.getId());
-        if(message.getType().equals(Message.Type.bOK)){
+        if(message.getType().equals(Message.Type.OK)){
             account = accountService.find(account.getId());
             authentService.updateSession(account);
         }
@@ -341,25 +341,25 @@ public class AccountController {
     public @ResponseBody
     Message updatePhone(@RequestBody Map<String, Object> map, HttpSession session) {
         Message message = MessageService.parameterCheck(map);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return MessageService.message(Message.Type.bCODE_NOEXIST);
+            return MessageService.message(Message.Type.CODE_NOEXIST);
         }
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         message = userService.checkCode(map.get("verification").toString(), verification);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Account account = authentService.getAccountFromSubject();
         account.setPhone(verification.getPhone());
         authentService.updateSession(account);
         accountService.save(account);
-        return MessageService.message(Message.Type.bOK, accountService.makeAccountJson(account));
+        return MessageService.message(Message.Type.OK, accountService.makeAccountJson(account));
     }
 
     /**
@@ -372,25 +372,25 @@ public class AccountController {
     @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
     public @ResponseBody Message updateEmail(@RequestBody Map<String,Object> map,HttpSession session){
         Message message = MessageService.parameterCheck(map);
-        if(message.getType()!=Message.Type.bOK){
+        if(message.getType()!=Message.Type.OK){
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return MessageService.message(Message.Type.bCODE_NOEXIST);
+            return MessageService.message(Message.Type.CODE_NOEXIST);
         }
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         message = userService.checkCode(map.get("verification").toString(), verification);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Account account = authentService.getAccountFromSubject();
         account.setEmail(verification.getEmail());
         authentService.updateSession(account);
         accountService.save(account);
-        return MessageService.message(Message.Type.bOK, accountService.makeAccountJson(account));
+        return MessageService.message(Message.Type.OK, accountService.makeAccountJson(account));
     }
 
 
@@ -406,7 +406,7 @@ public class AccountController {
     Message getAccount() {
         Account account = authentService.getAccountFromSubject();
         JSONObject json = accountService.makeAccountJson(account);
-        return MessageService.message(Message.Type.bOK, json);
+        return MessageService.message(Message.Type.OK, json);
     }
 
     /**
@@ -424,41 +424,41 @@ public class AccountController {
             SecurityUtils.getSubject().logout();
         }
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())
                 ||map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account = accountService.findByPhoneOrEmial(code);
         if (account == null) {
-            return MessageService.message(Message.Type.bDATA_NOEXIST) ;
+            return MessageService.message(Message.Type.DATA_NOEXIST) ;
         }
         if (!account.getPassword().equals(map.get("password").toString())) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
             return subjectLogin(account, "web");
         }
         if(map.get("cookie")==null||!StringUtils.hasText(map.get("cookie").toString())){
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         //登录间隔时间过长需重新登录
         if(account.getLoginDate()==null){
             account.setLoginDate(new Date());
         }
         if(System.currentTimeMillis() - account.getLoginDate().getTime()>15*24*60*60*1000l){
-            return MessageService.message(Message.Type.bCODE_NEED);
+            return MessageService.message(Message.Type.CODE_NEED);
         }
         String cookie = map.get("cookie").toString();
         if(!cookie.equals(DigestUtils.md5Hex(account.getPassword()))){
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }else{
             return subjectLogin(account, "web");
         }
@@ -479,24 +479,24 @@ public class AccountController {
             SecurityUtils.getSubject().logout();
         }
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())
                 ||map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account = accountService.findByPhoneOrEmial(code);
         if (account == null) {
-            return MessageService.message(Message.Type.bDATA_NOEXIST) ;
+            return MessageService.message(Message.Type.DATA_NOEXIST) ;
         }
         if (!account.getPassword().equals(map.get("password").toString())) {
-            return MessageService.message(Message.Type.bPASSWORD_ERROR);
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
        /* if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
             return subjectLogin(user, "web",null);
@@ -515,30 +515,30 @@ public class AccountController {
     Message loginByVerify(
             @RequestBody Map<String, String> map, HttpSession session) {
         Message message = MessageService.parameterCheck(map);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return MessageService.message(Message.Type.bCODE_NOEXIST);
+            return MessageService.message(Message.Type.CODE_NOEXIST);
         }
         String code = verification.getEmail()==null?verification.getPhone():verification.getEmail();
         Account account = accountService.findByPhoneOrEmial(code);
         if (account == null) {
-            return MessageService.message(Message.Type.bDATA_NOEXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (map.get("verification") == null) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String verifyCode = map.get("verification");
         if (map.get("password") == null || !StringUtils.hasText(map.get("password"))) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (!account.getPassword().equals(map.get("password"))) {
-            return MessageService.message(Message.Type.bPASSWORD_ERROR);
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
         message = userService.checkCode(verifyCode,verification);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return subjectLogin(account,"web");
@@ -555,17 +555,17 @@ public class AccountController {
     Message checkPassword(
             @RequestBody Map<String, String> map) {
         Message message = MessageService.parameterCheck(map);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password"))) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account = authentService.getAccountFromSubject();
         if (account.getPassword().equals(map.get("password"))) {
-            return MessageService.message(Message.Type.bOK);
+            return MessageService.message(Message.Type.OK);
         }
-        return MessageService.message(Message.Type.bFAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
 
@@ -577,9 +577,9 @@ public class AccountController {
         try {
             subject.login(token);
         } catch (UnknownAccountException e) {
-            return MessageService.message(Message.Type.bDATA_NOEXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         } catch (IncorrectCredentialsException e) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         account.setLoginDate(new Date());
         accountService.save(account);
@@ -593,7 +593,7 @@ public class AccountController {
         }
         subject.getSession().setAttribute("token", subject.getPrincipals().getPrimaryPrincipal());
         JSONObject accountJson = accountService.makeAccountJson(account);
-        return MessageService.message(Message.Type.bOK, accountJson);
+        return MessageService.message(Message.Type.OK, accountJson);
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -621,7 +621,7 @@ public class AccountController {
     public @ResponseBody Message userList(){
         Account account = authentService.getAccountFromSubject();
         List<User> users = accountService.getUsersByAccountId(account.getId());
-        return MessageService.message(Message.Type.bOK, userService.makeUserJsons(users));
+        return MessageService.message(Message.Type.OK, userService.makeUserJsons(users));
     }
 
     /**
@@ -636,7 +636,7 @@ public class AccountController {
     @ResponseBody
     Message updateAccountMessage(@PathVariable("ids") String ids) {
         Message message = MessageService.parametersCheck(ids);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Account account = authentService.getAccountFromSubject();
@@ -651,7 +651,7 @@ public class AccountController {
                 }
             }
         }
-        return MessageService.message(Message.Type.bOK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -666,7 +666,7 @@ public class AccountController {
     @ResponseBody
     Message deleteAccountMessage(@PathVariable("ids") String ids) {
         Message message = MessageService.parametersCheck(ids);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         AccountMessage accountMessage;
@@ -674,11 +674,11 @@ public class AccountController {
         for (String id : split) {
             accountMessage = accountMessageService.find(Long.valueOf(id));
             if (accountMessage==null){
-                return MessageService.message(Message.Type.bDATA_NOEXIST);
+                return MessageService.message(Message.Type.DATA_NOEXIST);
             }
             accountMessageService.remove(accountMessage);
         }
-        return MessageService.message(Message.Type.bOK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -691,7 +691,7 @@ public class AccountController {
     @RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
     public @ResponseBody Message updateInfo(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Account account = authentService.getAccountFromSubject();
@@ -702,7 +702,7 @@ public class AccountController {
             name = account.getName();
         }
         message = accountService.updateInfo(name,account.getId());
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             account = accountService.find(account.getId());
             authentService.updateSession(account);
         }
@@ -719,7 +719,7 @@ public class AccountController {
     public @ResponseBody Message polling(){
         Account account = authentService.getAccountFromSubject();
         Polling polling=pollingService.findByAccount(account.getId());
-        return MessageService.message(Message.Type.bOK,pollingService.toJson(polling));
+        return MessageService.message(Message.Type.OK,pollingService.toJson(polling));
     }
 
 }

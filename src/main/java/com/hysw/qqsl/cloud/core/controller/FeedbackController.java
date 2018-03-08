@@ -78,7 +78,7 @@ public class FeedbackController {
     public @ResponseBody
     Message doAdminReview(@RequestBody Map<String, Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return feedbackService.doAdminReview(objectMap);
@@ -144,7 +144,7 @@ public class FeedbackController {
     public @ResponseBody
     Message saveUserFeedback(@RequestBody Map<String, Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return feedbackService.saveUserFeedback(objectMap);
@@ -174,7 +174,7 @@ public class FeedbackController {
     public @ResponseBody
     Message saveAccountFeedback(@RequestBody Map<String, Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return feedbackService.saveAccountFeedback(objectMap);
@@ -197,7 +197,7 @@ public class FeedbackController {
         try {
             feedback = feedbackService.find(id);
         } catch (Exception e) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         return MessageService.message(Message.Type.OK,feedbackService.toJson(feedback));
     }

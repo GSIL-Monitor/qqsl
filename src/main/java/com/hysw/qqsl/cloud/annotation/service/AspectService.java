@@ -131,7 +131,7 @@ public class AspectService {
             station = stationService.find(Long.valueOf(id.toString()));
         }
         if (station==null||!station.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (station.getExpireDate().getTime() > System.currentTimeMillis()) {
             try {
@@ -140,7 +140,7 @@ public class AspectService {
                 return MessageService.message(Message.Type.FAIL);
             }
         }
-        return MessageService.message(Message.Type.EXPIRED);
+        return MessageService.message(Message.Type.PACKAGE_EXPIRED);
     }
 
     /**
@@ -194,7 +194,7 @@ public class AspectService {
         }
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (aPackage.getExpireDate().getTime() > System.currentTimeMillis()) {
             try {
@@ -203,7 +203,7 @@ public class AspectService {
                 return MessageService.message(Message.Type.FAIL);
             }
         }
-        return MessageService.message(Message.Type.EXPIRED);
+        return MessageService.message(Message.Type.PACKAGE_EXPIRED);
     }
 
 
@@ -222,7 +222,7 @@ public class AspectService {
                 return MessageService.message(Message.Type.FAIL);
             }
         }
-        return MessageService.message(Message.Type.EXIST);
+        return MessageService.message(Message.Type.TRADE_HAS_NOPAY);
     }
 
 

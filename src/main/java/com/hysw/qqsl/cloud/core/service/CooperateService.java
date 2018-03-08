@@ -189,8 +189,8 @@ public class CooperateService {
         Cooperate cooperate;
         boolean flag;
         Message message = isOwn(own,ids,account);
-        if(!message.getType().equals(Message.Type.OK)){
-            return MessageService.message(Message.Type.FAIL);
+        if(message.getType()!=Message.Type.OK){
+            return message;
         }
         CooperateVisit.Type type1 = CooperateVisit.Type.valueOf(type);
         for (int i = 0; i < ids.size(); i++) {
@@ -223,9 +223,9 @@ public class CooperateService {
         for (int i = 0; i < ids.size(); i++) {
             project = projectService.find((long) (ids.get(i)));
             message = userService.isOwn(own,project,account);
-          if(!message.getType().equals(Message.Type.OK)){
-              return MessageService.message(Message.Type.FAIL);
-          }
+            if (message.getType() != Message.Type.OK) {
+                return MessageService.message(Message.Type.FAIL);
+            }
         }
         return MessageService.message(Message.Type.OK);
     }
@@ -316,7 +316,7 @@ public class CooperateService {
      */
     public Message cooperateMult(Project project, String typeStr, Account account, User own) {
         Message message = userService.isOwn(own,project,account);
-        if(!message.getType().equals(Message.Type.OK)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Cooperate cooperate = makeCooperate(project);
@@ -345,7 +345,7 @@ public class CooperateService {
      */
     public Message unCooperate(Project project, List<String> typeList,User own) {
         if(!project.getUser().getId().equals(own.getId())){
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         Cooperate cooperate = makeCooperate(project);
         List<String> commTypes = Arrays.asList(CommonAttributes.COOPERATES);

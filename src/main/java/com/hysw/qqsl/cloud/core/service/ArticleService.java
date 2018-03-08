@@ -55,7 +55,7 @@ public class ArticleService extends BaseService<Article, Long> {
 			long id = Long.valueOf(idStr);
 			article = findById(id);
 			if(article == null){
-				return MessageService.message(Message.Type.EXIST);
+				return MessageService.message(Message.Type.DATA_NOEXIST);
 			}
 			article.setContent(content);
 			article.setTitle(title);

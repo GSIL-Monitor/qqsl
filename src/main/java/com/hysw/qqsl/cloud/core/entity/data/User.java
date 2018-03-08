@@ -1,10 +1,10 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 

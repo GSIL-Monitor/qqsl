@@ -41,9 +41,10 @@ public class WXPayService {
         Map<String, String> r = null;
         try {
             r = wxPay.unifiedOrder(data);
-            System.out.println(r);
+//            System.out.println(r);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            return MessageService.message(Message.Type.FAIL);
         }
         try {
             if (r.get("result_code").equals("SUCCESS") && r.get("return_code").equals("SUCCESS")) {
@@ -66,9 +67,9 @@ public class WXPayService {
         data.put("out_trade_no", trade.getOutTradeNo());
         try {
             Map<String, String> r = wxPay.closeOrder(data);
-            System.out.println(r);
+//            System.out.println(r);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -83,9 +84,10 @@ public class WXPayService {
         Map<String, String> r = null;
         try {
             r = wxPay.orderQuery(data);
-            System.out.println(r);
+//            System.out.println(r);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            return MessageService.message(Message.Type.FAIL);
         }
         try {
             JSONObject jsonObject=new JSONObject();
@@ -94,7 +96,7 @@ public class WXPayService {
                 return MessageService.message(Message.Type.OK,jsonObject);
             }else{
                 jsonObject.put("tradeState",r.get("err_code"));
-                System.out.println(jsonObject);
+//                System.out.println(jsonObject);
                 return MessageService.message(Message.Type.OK,jsonObject);
             }
         } catch (NullPointerException e) {
@@ -112,9 +114,9 @@ public class WXPayService {
 //        data.put("transaction_id", "4008852001201608221962061594");
         try {
             Map<String, String> r = wxPay.reverse(data);
-            System.out.println(r);
+//            System.out.println(r);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -136,9 +138,10 @@ public class WXPayService {
         Map<String, String> r = null;
         try {
             r = wxPay.refund(data);
-            System.out.println(r);
+//            System.out.println(r);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            return MessageService.message(Message.Type.FAIL);
         }
         try {
             if (r.get("result_code").equals("SUCCESS") && r.get("return_code").equals("SUCCESS")) {
@@ -167,9 +170,9 @@ public class WXPayService {
 //        data.put("op_user_id", config.getMchID());
         try {
             Map<String, String> r = wxPay.refund(data);
-            System.out.println(r);
+//            System.out.println(r);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -182,9 +185,9 @@ public class WXPayService {
         data.put("out_refund_no", trade.getOutTradeNo());
         try {
             Map<String, String> r = wxPay.refundQuery(data);
-            System.out.println(r);
+//            System.out.println(r);
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 

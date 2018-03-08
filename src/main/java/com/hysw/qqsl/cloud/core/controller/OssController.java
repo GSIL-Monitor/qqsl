@@ -98,13 +98,13 @@ public class OssController {
     @RequestMapping(value = "/create",method = RequestMethod.POST)
 	public @ResponseBody Message saveOss(@RequestBody Object object){
 		Message message = MessageService.parameterCheck(object);
-		if(message.getType()== Message.Type.FAIL){
+		if (message.getType() != Message.Type.OK) {
 			return message;
 		}
 		Long prpjectId = Long.valueOf(((HashMap<String,Object>)message.getData()).get("projectId").toString());
 		String treePath = ((HashMap<String,Object>)message.getData()).get("treePath").toString();
 		message = ossService.filePrefixCheck(treePath);
-		if (message.getType() != Message.Type.aOK) {
+		if (message.getType() != Message.Type.OK) {
 			return message;
 		}
 		User user = authentService.getUserFromSubject();
@@ -113,7 +113,7 @@ public class OssController {
 		}
 		Oss oss = new Oss(treePath,user.getId(),prpjectId);
 		ossService.save(oss);
-		return MessageService.message(Message.Type.aOK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class OssController {
 	@RequestMapping(value = "/remove",method = RequestMethod.POST)
 	public @ResponseBody Message deleteOss(@RequestBody String data){
 		Message message = MessageService.parametersCheck(data);
-		if(message.getType()== Message.Type.FAIL){
+		if (message.getType() != Message.Type.OK) {
 			return message;
 		}
 		JSONObject jsonObject = JSONObject.fromObject(data);

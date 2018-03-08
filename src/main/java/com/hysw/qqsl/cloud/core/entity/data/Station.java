@@ -1,9 +1,9 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.station.Camera;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.ArrayList;

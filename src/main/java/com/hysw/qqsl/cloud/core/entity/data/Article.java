@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 
@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "article")
 @SequenceGenerator(name="sequenceGenerator", sequenceName="article_sequence")
-@JsonIgnoreProperties(value={"hibernateLazyInitializer"})  
+@JsonIgnoreProperties(value={"hibernateLazyInitializer"})
 public class Article extends BaseEntity{
 
 	private static final long serialVersionUID = 2047368680026095150L;

@@ -45,7 +45,7 @@ public class TradeController {
     Message createPackage(@RequestBody Map<String, Object> objectMap) {
         User user = authentService.getUserFromSubject();
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return tradeService.createPackageTrade(objectMap, user);
@@ -65,7 +65,7 @@ public class TradeController {
     Message createStation(@RequestBody Map<String, Object> objectMap) {
         User user = authentService.getUserFromSubject();
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return tradeService.createStationTrade(objectMap, user);
@@ -85,7 +85,7 @@ public class TradeController {
     Message createGoods(@RequestBody Map<String, Object> objectMap) {
         User user = authentService.getUserFromSubject();
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return tradeService.createGoodsTrade(objectMap, user);
@@ -106,7 +106,7 @@ public class TradeController {
     Message renewPackage(@RequestBody Map<String, Object> objectMap) {
         User user = authentService.getUserFromSubject();
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Object instanceId = objectMap.get("instanceId");
@@ -130,7 +130,7 @@ public class TradeController {
     public @ResponseBody Message renewStation(@RequestBody Map<String, Object> objectMap) {
         User user = authentService.getUserFromSubject();
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Object instanceId = objectMap.get("instanceId");
@@ -155,7 +155,7 @@ public class TradeController {
     Message updatePackage(@RequestBody Map<String, Object> objectMap) {
         User user = authentService.getUserFromSubject();
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return tradeService.updatePackageTrade(objectMap, user);
@@ -187,11 +187,11 @@ public class TradeController {
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo);
         if (trade == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         return MessageService.message(Message.Type.OK,tradeService.tradeToJson(trade));
     }
@@ -209,7 +209,7 @@ public class TradeController {
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo);
         if (trade == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         return MessageService.message(Message.Type.OK,tradeService.tradeToJson(trade));
     }
@@ -228,14 +228,14 @@ public class TradeController {
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo);
         if (trade == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         if (trade.getStatus() == Trade.Status.NOPAY) {
-            return MessageService.message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.TRADE_NOPAY);
         }
         trade.setDeleteStatus(true);
         tradeService.save(trade);
@@ -263,7 +263,7 @@ public class TradeController {
     @RequestMapping(value = "/close", method = RequestMethod.POST)
     public @ResponseBody Message close(@RequestBody Map<String, Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Object outTradeNo = objectMap.get("outTradeNo");
@@ -272,14 +272,14 @@ public class TradeController {
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo.toString());
         if (trade == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         if (trade.getStatus() != Trade.Status.NOPAY) {
-            return MessageService.message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.TRADE_PAYED);
         }
         trade.setStatus(Trade.Status.CLOSE);
         tradeService.save(trade);

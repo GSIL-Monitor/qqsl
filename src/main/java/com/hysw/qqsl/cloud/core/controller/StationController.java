@@ -77,10 +77,10 @@ public class StationController {
         String fileName = request.getParameter("fileName");
         Station station = stationService.find(id);
         if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!isOperate(station)){
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         if(multipartResolver.isMultipart(request)) {
             //转换成多部分request
@@ -109,10 +109,10 @@ public class StationController {
     public @ResponseBody Message downloadModel(@RequestParam long id,HttpServletResponse response){
         Station station = stationService.find(id);
         if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!isOperate(station)){
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         Workbook workbook = stationService.makeStationModelData(station);
         ByteArrayOutputStream bos = null;
@@ -169,20 +169,20 @@ public class StationController {
     @RequestMapping(value = "/edit",method = RequestMethod.POST)
     public @ResponseBody Message editStation(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
-           return message;
+        if (message.getType() != Message.Type.OK) {
+            return message;
         }
         Map<String,Object> stationMap = (Map<String, Object>) map.get("station");
         if(stationMap.get("id")==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.FAIL);
         }
         Long id = Long.valueOf(stationMap.get("id").toString());
         Station station = stationService.find(id);
         if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!isOperate(station)){
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         message = stationService.edit(stationMap,station);
         return message;
@@ -199,19 +199,19 @@ public class StationController {
     @RequestMapping(value = "/addSensor",method = RequestMethod.POST)
     public @ResponseBody Message addSensor(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(map.get("id")==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.FAIL);
         }
         Long id = Long.valueOf(map.get("id").toString());
         Station station = stationService.find(id);
         if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!isOperate(station)){
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         return stationService.addSensor((Map<String, Object>) map.get("sensor"),station);
     }
@@ -227,21 +227,21 @@ public class StationController {
     @RequestMapping(value = "/addCamera",method = RequestMethod.POST)
     public @ResponseBody Message addCamera(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(map.get("id")==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.FAIL);
         }
         Long id = Long.valueOf(map.get("id").toString());
         Station station = stationService.find(id);
         if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!isOperate(station)){
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        if(message.getType()==Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return stationService.addCamera((Map<String, Object>) map.get("camera"),station);
@@ -257,7 +257,7 @@ public class StationController {
     public @ResponseBody Message deleteSensor(@PathVariable("id") Long id){
        Sensor sensor = sensorService.find(id);
         if(sensor==null||sensor.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         sensorService.remove(sensor);
         return MessageService.message(Message.Type.OK);
@@ -274,7 +274,7 @@ public class StationController {
     public @ResponseBody Message deleteCamera(@PathVariable("id") Long id){
         Sensor sensor = sensorService.find(id);
         if(sensor==null||sensor.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!Sensor.Type.CAMERA.equals(sensor.getType())){
             return MessageService.message(Message.Type.FAIL);
@@ -294,25 +294,25 @@ public class StationController {
     @RequestMapping(value = "/editSensor",method = RequestMethod.POST)
     public @ResponseBody Message editSensor(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String,Object> sensorMap = (Map<String,Object>)map.get("sensor");
         if(sensorMap.get("id")==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.FAIL);
         }
         Long id = Long.valueOf(sensorMap.get("id").toString());
         Sensor sensor = sensorService.find(id);
         if(sensor==null||sensor.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         Long stationId = Long.valueOf(sensorMap.get("station").toString());
         Station station = stationService.find(stationId);
         if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!isOperate(station)){
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         return sensorService.editSensor(sensorMap,sensor);
     }
@@ -328,25 +328,25 @@ public class StationController {
     @RequestMapping(value = "/editCamera",method = RequestMethod.POST)
     public @ResponseBody Message editCamera(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String,Object> cameraMap = (Map<String,Object>)map.get("camera");
         if(cameraMap.get("id")==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.FAIL);
         }
         Long id = Long.valueOf(cameraMap.get("id").toString());
         Sensor sensor = sensorService.find(id);
         if(sensor==null||sensor.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         Long stationId = Long.valueOf(cameraMap.get("station").toString());
         Station station = stationService.find(stationId);
         if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!isOperate(station)){
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         return sensorService.editCamera(cameraMap,sensor);
     }
@@ -362,19 +362,19 @@ public class StationController {
     @RequestMapping(value = "/editParameter",method = RequestMethod.POST)
     public @ResponseBody Message editParameter(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(map.get("id")==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.FAIL);
         }
         Long id = Long.valueOf(map.get("id").toString());
         Station station = stationService.find(id);
         if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!isOperate(station)){
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         message = stationService.editParameter((Map<String,Object>)map.get("parameter"),station);
         return message;
@@ -390,14 +390,17 @@ public class StationController {
     @RequestMapping(value = "/unShare", method = RequestMethod.POST)
     public @ResponseBody Message unShare(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if(!message.getType().equals(Message.Type.OK)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         String userIdsStr = map.get("userIds").toString();
         User own = authentService.getUserFromSubject();
         Station station = stationService.find(Long.valueOf(map.get("stationId").toString()));
-        if(station==null||!station.getUser().getId().equals(own.getId())){
-            return MessageService.message(Message.Type.UNKNOWN);
+        if (station == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if(!station.getUser().getId().equals(own.getId())){
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         List<String> userIds = Arrays.asList(userIdsStr.split(","));
         stationService.unShare(station,userIds);
@@ -414,7 +417,7 @@ public class StationController {
     @RequestMapping(value = "/shares", method = RequestMethod.POST)
     public @ResponseBody Message shares(@RequestBody Map<String,Object> map){
         Message message = MessageService.parameterCheck(map);
-        if(!message.getType().equals(Message.Type.OK)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         String userIdsStr = map.get("userIds").toString();
@@ -448,9 +451,9 @@ public class StationController {
     @RequestMapping(value = "/getParameters", method = RequestMethod.GET)
     public @ResponseBody Message getParameters(@RequestParam String token){
        Message message = MessageService.parametersCheck(token);
-       if(Message.Type.FAIL.equals(message.getType())){
-           return message;
-       }
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
        if(!applicationTokenService.decrypt(token)){
            return MessageService.message(Message.Type.FAIL);
        }

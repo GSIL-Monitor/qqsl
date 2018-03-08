@@ -563,9 +563,9 @@ public class OssService extends BaseService<Oss,Long>{
 		String prefix = treePath.substring(treePath.lastIndexOf(".")+1).toLowerCase();
 		if(extensiones.contains(prefix)==false){
 			//文件类型未知
-			return MessageService.message(Message.Type.bFILE_TYPE_ERROR);
+			return MessageService.message(Message.Type.FILE_TYPE_ERROR);
 		}
-		return MessageService.message(Message.Type.bOK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	public List<Oss> getOssList() {

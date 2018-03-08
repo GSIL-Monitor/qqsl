@@ -81,7 +81,7 @@ public class SensorService extends BaseService<Sensor,Long>{
         }
         if(map.get("phone")!=null&&StringUtils.hasText(map.get("phone").toString())){
             if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return MessageService.message(Message.Type.OTHER);
+                return MessageService.message(Message.Type.FAIL);
             }
             infoJson.put("phone",map.get("phone").toString());
         }
@@ -99,7 +99,7 @@ public class SensorService extends BaseService<Sensor,Long>{
         //当前测站为水位站时,只能绑定一个仪表,一个摄像头
         if (CommonEnum.StationType.WATER_LEVEL_STATION.equals(station.getType())) {
             Message message = isHydrologyStation(sensor,station);
-            if (!message.getType().equals(Message.Type.OK)){
+            if (message.getType() != Message.Type.OK) {
                 return message;
             }
         }
@@ -128,11 +128,11 @@ public class SensorService extends BaseService<Sensor,Long>{
         for(int i = 0;i<sensors.size();i++){
             if(Sensor.Type.CAMERA.equals(sensors.get(i).getType())&&sensors.get(i).getType().equals(sensor.getType())){
                 logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                return MessageService.message(Message.Type.EXIST);
+                return MessageService.message(Message.Type.DATA_EXIST);
             }
             if(!Sensor.Type.CAMERA.equals(sensor.getType())&&sensors.get(i).getType().equals(sensor.getType())){
                 logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                return MessageService.message(Message.Type.EXIST);
+                return MessageService.message(Message.Type.DATA_EXIST);
             }
         }
         return MessageService.message(Message.Type.OK);

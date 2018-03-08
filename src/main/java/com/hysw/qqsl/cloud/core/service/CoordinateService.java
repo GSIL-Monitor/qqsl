@@ -213,11 +213,11 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					if (comment.equals("coor1")) {
 						String[] split = d.split(",");
 						if (split.length != 3) {
-                            return MessageService.message(Message.Type.OTHER);
+                            return MessageService.message(Message.Type.FAIL);
 						}
 						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
 						if (jsonObject1 == null) {
-							return MessageService.message(Message.Type.OTHER);
+							return MessageService.message(Message.Type.FAIL);
 						}
 //						if (!SettingUtils.coordinateParameterCheck(split[0], split[1], split[2])) {
 //							return MessageService.message(Message.Type.OTHER);
@@ -234,11 +234,11 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					}else if (comment.equals("coor2")) {
 						String[] split = d.split(",");
 						if (split.length != 3) {
-                            return MessageService.message(Message.Type.OTHER);
+                            return MessageService.message(Message.Type.FAIL);
 						}
 						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
 						if (jsonObject1 == null) {
-							return MessageService.message(Message.Type.OTHER);
+							return MessageService.message(Message.Type.FAIL);
 						}
 //						if (!SettingUtils.coordinateParameterCheck(split[0], split[1], split[2])) {
 //                            return MessageService.message(Message.Type.OTHER);
@@ -679,13 +679,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			me = readExcels(is, central, s, project,wgs84Type);
 		} catch (Exception e) {
 			logger.info("坐标文件或格式异常");
-			return MessageService.message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.COOR_FORMAT_ERROR);
 		}finally {
 			IOUtils.safeClose(is);
 		}
-		if (me.getType()== Message.Type.OTHER) {
-		    return me;
-        }
+		if (me.getType() != Message.Type.OK) {
+			return me;
+		}
         Map<List<Graph>, List<Build>> map = (Map<List<Graph>, List<Build>>) me.getData();
 		List<Graph> list = null;
 		List<Build> builds = null;
@@ -901,14 +901,14 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		if (mFile.getSize() > CONVERT_MAX_SZIE) {
 			// return "文件过大无法上传";
 			logger.debug("文件过大");
-			return MessageService.message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FILE_TOO_MAX);
 		}
 		InputStream is;
 		try {
 			is = mFile.getInputStream();
 		} catch (IOException e) {
 			logger.info("坐标文件或格式异常");
-			return MessageService.message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.COOR_FORMAT_ERROR);
 		}
 		me = uploadCoordinateToData(is,project,central,fileName,wgs84Type);
 		if (me != null) {
@@ -930,7 +930,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			return MessageService.message(Message.Type.FAIL);
 		}
 		Message message=checkCoordinateFormat(line);
-		if (message.getType() == Message.Type.OTHER) {
+		if (message.getType() != Message.Type.OK) {
 			return message;
 		}
 		Coordinate coordinate = new Coordinate();
@@ -966,7 +966,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		for (Object o : coordinate) {
 			jsonObject = JSONObject.fromObject(o);
 			if (jsonObject.size() != 3) {
-				return MessageService.message(Message.Type.OTHER);
+				return MessageService.message(Message.Type.FAIL);
 			}
 		}
 		return MessageService.message(Message.Type.OK);

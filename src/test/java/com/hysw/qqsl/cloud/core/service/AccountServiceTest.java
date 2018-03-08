@@ -126,7 +126,7 @@ public class AccountServiceTest extends BaseTest{
     public void testInvite(){
         User user = userService.find(1l);
         Message message = accountService.invite("18661925010", user);
-        Assert.assertTrue(message.getType()== Message.Type.EXIST);
+        Assert.assertTrue(message.getType()== Message.Type.DATA_EXIST);
     }
 
     /**
@@ -181,7 +181,7 @@ public class AccountServiceTest extends BaseTest{
             message = accountService.register(name, phone, password);
         } catch (QQSLException e) {
         }
-        Assert.assertTrue(message.getType()== Message.Type.EXIST);
+        Assert.assertTrue(message.getType()== Message.Type.DATA_EXIST);
 
     }
 
@@ -215,7 +215,7 @@ public class AccountServiceTest extends BaseTest{
         Message message = accountService.updatePassword(DigestUtils.md5Hex("111111"), 1l);
         Assert.assertTrue(message.getType()== Message.Type.OK);
         message = accountService.updatePassword(DigestUtils.md5Hex("111111")+"1", 1l);
-        Assert.assertTrue(message.getType()== Message.Type.OTHER);
+        Assert.assertTrue(message.getType()== Message.Type.PASSWORD_ERROR);
     }
 
     /**

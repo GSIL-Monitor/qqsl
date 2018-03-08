@@ -127,7 +127,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             return MessageService.message(Message.Type.FAIL);
         }
         Message message = SettingUtils.checkCoordinateIsInvalid(coor.toString());
-        if (!Message.Type.OK.equals(message.getType())) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         panorama.setName(name.toString());
@@ -185,7 +185,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     public Message isAllowSavePanorma(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         int size = findByuser(user).size();
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
@@ -194,6 +194,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                 return MessageService.message(Message.Type.OK);
             }
         }
-        return MessageService.message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 }

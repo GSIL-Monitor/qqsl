@@ -139,7 +139,7 @@ public class ProjectServiceTest extends BaseTest {
 		assertTrue(message.getType()== Message.Type.OK);
 		//id重复保存失败
 		message = projectService.createProject(project);
-		assertTrue(message.getType()== Message.Type.EXIST);
+		assertTrue(message.getType()== Message.Type.DATA_EXIST);
 		User user1 = userService.findByUserName(CommonTest.USER_NAME);
 		//判断是否更新项目前缀和序号
 		assertTrue(JSONObject.fromObject(user1.getPrefixOrderStr()).get("order").toString().equals("1"));

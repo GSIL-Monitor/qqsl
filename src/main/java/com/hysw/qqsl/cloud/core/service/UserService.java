@@ -171,7 +171,7 @@ public class UserService extends BaseService<User, Long> {
      */
 	public Message registerService(Map<String,Object> map,Verification verification){
      	Message	message = checkCode(map.get("verification").toString(), verification);
-		if (message.getType()!=Message.Type.bOK) {
+		if (message.getType()!=Message.Type.OK) {
 			return message;
 		}
 		try {
@@ -179,7 +179,7 @@ public class UserService extends BaseService<User, Long> {
 					map.get("password").toString());
 		} catch (QQSLException e) {
 			logger.info(e.getMessage());
-			return MessageService.message(Message.Type.bFAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		return message;
 	}
@@ -283,7 +283,7 @@ public class UserService extends BaseService<User, Long> {
 		User user = findByPhone(phone);
 		// 用户已存在
 		if (user != null) {
-			return MessageService.message(Message.Type.bDATA_EXIST);
+			return MessageService.message(Message.Type.DATA_EXIST);
 		} else {
 			user = new User();
 		}
@@ -300,7 +300,7 @@ public class UserService extends BaseService<User, Long> {
 //		构建认证状态
 		Certify certify = new Certify(user);
 		certifyService.save(certify);
-		return MessageService.message(Message.Type.bOK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	/**
@@ -312,17 +312,17 @@ public class UserService extends BaseService<User, Long> {
 	 */
 	public Message checkCode(String code, Verification verification) {
 		if (verification == null) {
-			return MessageService.message(Message.Type.bCODE_NOEXIST);
+			return MessageService.message(Message.Type.CODE_NOEXIST);
 		}
 		if (verification.isInvalied()) {
 			// 验证码过期
-			return MessageService.message(Message.Type.bCODE_INVALID);
+			return MessageService.message(Message.Type.CODE_INVALID);
 		}
 		boolean result = noteService.checkCode(code, verification);
 		if (result) {
-			return MessageService.message(Message.Type.bCODE_ERROR);
+			return MessageService.message(Message.Type.CODE_ERROR);
 		}
-		return MessageService.message(Message.Type.bOK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	/**
@@ -334,11 +334,11 @@ public class UserService extends BaseService<User, Long> {
 	public Message updatePassword(String newPassword, Long id) {
 		User user = findByDao(id);
 		if(newPassword.length()!=32){
-			return MessageService.message(Message.Type.bPASSWORD_ERROR);
+			return MessageService.message(Message.Type.PASSWORD_ERROR);
 		}
 		user.setPassword(newPassword);
 		save(user);
-		return MessageService.message(Message.Type.bOK,makeUserJson(user));
+		return MessageService.message(Message.Type.OK,makeUserJson(user));
 	}
 
 	/**
@@ -568,13 +568,13 @@ public class UserService extends BaseService<User, Long> {
 			}
 		}
 		if(!flag){
-			return MessageService.message(Message.Type.bFAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		user.setAccounts(accounts);
 		save(user);
 		//记录企业解绑子账号的消息
 		accountMessageService.bindMsessage(user,account,false);
-		return MessageService.message(Message.Type.bOK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	/**
@@ -586,22 +586,22 @@ public class UserService extends BaseService<User, Long> {
 	 */
     public Message isOwn(User own, Project project, Account account) {
 		if(account==null){
-			return MessageService.message(Message.Type.bDATA_NOEXIST);
+			return MessageService.message(Message.Type.DATA_NOEXIST);
 		}
 		if(account.getName()==null){
-			return MessageService.message(Message.Type.bFAIL);
+			return MessageService.message(Message.Type.FAIL);
 			//return MessageService.message(Message.Type.OTHER);
 		}
 		if (project==null||!project.getUser().getId().equals(own.getId())) {
-			return MessageService.message(Message.Type.bFAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		List<Account> accounts = getAccountsByUserId(own.getId());
 		for(int i=0;i<accounts.size();i++){
 			if(account.getId().equals(accounts.get(i).getId())){
-				return MessageService.message(Message.Type.bOK);
+				return MessageService.message(Message.Type.OK);
 			}
 		}
-		return MessageService.message(Message.Type.bFAIL);
+		return MessageService.message(Message.Type.FAIL);
     }
 
 	/**

@@ -335,7 +335,7 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message createProject(Project project) {
         List<Project> projects = findByCode(project.getCode(), project.getUser().getId());
         if (projects.size() != 0) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_EXIST);
         }
         infoService
                 .saveInfo(project, 11, infoService.getPlanning(Integer
@@ -654,10 +654,10 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message removeById(Long id, User user) {
         Project project = find(id);
         if (project == null || project.getId() == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (!project.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.NO_AUTHORIZE);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         ossService.setBucketLife(project.getTreePath() + "/", "project");
         deleteProjectSpace(user,project.getCurSpaceNum());
@@ -704,7 +704,7 @@ public class ProjectService extends BaseService<Project, Long> {
             save(project1);
             return MessageService.message(Message.Type.OK);
         } else {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
     }
 
@@ -1174,11 +1174,11 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         Project project = find(Long.valueOf(projectId.toString()));
         if (project == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         try {
             project.setCurSpaceNum(project.getCurSpaceNum() + Long.valueOf(fileSize.toString()));
@@ -1214,11 +1214,11 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         Project project = find(Long.valueOf(projectId.toString()));
         if (project == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         try {
             aPackage.setCurTrafficNum(aPackage.getCurTrafficNum()+Long.valueOf(fileSize.toString()));
@@ -1257,7 +1257,7 @@ public class ProjectService extends BaseService<Project, Long> {
         }
         Package aPackage = packageService.findByUser(user);
         if (project == null || aPackage == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         try {
             project.setCurSpaceNum(project.getCurSpaceNum() - Long.valueOf(fileSize.toString()));
@@ -1282,7 +1282,7 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message isAllowUpload(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return MessageService.message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
@@ -1290,7 +1290,7 @@ public class ProjectService extends BaseService<Project, Long> {
                 return MessageService.message(Message.Type.OK);
             }
         }
-        return MessageService.message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
     /**
@@ -1301,7 +1301,7 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message isAllowDownload(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return MessageService.message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
@@ -1309,7 +1309,7 @@ public class ProjectService extends BaseService<Project, Long> {
                 return MessageService.message(Message.Type.OK);
             }
         }
-        return MessageService.message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
     /**
@@ -1320,7 +1320,7 @@ public class ProjectService extends BaseService<Project, Long> {
     public Message isAllowCreateProject(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return MessageService.message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         long l = findByUser(user).size();
@@ -1329,13 +1329,13 @@ public class ProjectService extends BaseService<Project, Long> {
                 return MessageService.message(Message.Type.OK);
             }
         }
-        return MessageService.message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
     public Message isAllowBim(User user) {
         Package aPackage = packageService.findByUser(user);
         if (aPackage == null) {
-            return MessageService.message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
@@ -1343,7 +1343,7 @@ public class ProjectService extends BaseService<Project, Long> {
                 return MessageService.message(Message.Type.OK);
             }
         }
-        return MessageService.message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
     /**
@@ -1366,10 +1366,10 @@ public class ProjectService extends BaseService<Project, Long> {
             return MessageService.message(Message.Type.FAIL);
         }
         if (project == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (!project.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         project.setIconType(Project.IconType.valueOf(iconType.toString()));
         save(project);

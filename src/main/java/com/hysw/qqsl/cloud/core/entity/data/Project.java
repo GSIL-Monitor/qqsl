@@ -1,15 +1,13 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
-import javax.swing.*;
-
-import com.hysw.qqsl.cloud.CommonAttributes;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 
 /**

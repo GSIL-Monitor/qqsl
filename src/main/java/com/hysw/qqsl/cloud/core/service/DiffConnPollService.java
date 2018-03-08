@@ -62,14 +62,14 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
     public Message isAllowConnectQXWZ(Long id) {
         Project project = projectService.find(id);
         if (project == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (aPackage.getExpireDate().getTime() < System.currentTimeMillis()) {
-            return MessageService.message(Message.Type.EXPIRED);
+            return MessageService.message(Message.Type.PACKAGE_EXPIRED);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
@@ -77,7 +77,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
                 return MessageService.message(Message.Type.OK);
             }
         }
-        return MessageService.message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
 
@@ -123,6 +123,9 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
             diffConnPoll = find(Long.valueOf(id.toString()));
         } catch (Exception e) {
             return MessageService.message(Message.Type.FAIL);
+        }
+        if (diffConnPoll == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         diffConnPoll.setTimeout(l);
         diffConnPollService.save(diffConnPoll);

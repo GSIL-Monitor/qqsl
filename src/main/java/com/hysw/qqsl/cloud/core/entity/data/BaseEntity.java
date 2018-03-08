@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hysw.qqsl.cloud.listener.EntityListener;
 import org.hibernate.search.annotations.*;
 import org.hibernate.search.annotations.Index;
@@ -57,7 +58,7 @@ public abstract class BaseEntity implements Serializable {
 	 * 
 	 * @return 创建日期
 	 */
-	@org.codehaus.jackson.annotate.JsonProperty
+	@JsonProperty
 	@Field(store = Store.YES, index = Index.YES)
 	@DateBridge(resolution = Resolution.SECOND)
 	@Column(nullable = false, updatable = false)

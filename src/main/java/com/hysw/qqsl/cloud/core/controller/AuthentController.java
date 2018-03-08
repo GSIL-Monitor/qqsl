@@ -46,7 +46,7 @@ public class AuthentController {
     public
     @ResponseBody
     Message refuse() {
-        return MessageService.message(Message.Type.NO_AUTHORIZE);
+        return MessageService.message(Message.Type.UNAUTHORIZED);
     }
 
     /**
@@ -124,7 +124,7 @@ public class AuthentController {
     @ResponseBody
     Message updateVersion(@RequestBody Map<String, Object> map) {
         Message message = MessageService.parameterCheck(map);
-        if (!message.getType().equals(Message.Type.OK)) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Long version = Long.valueOf(map.get("version").toString());

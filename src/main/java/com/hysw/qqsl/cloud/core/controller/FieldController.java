@@ -79,20 +79,20 @@ public class FieldController {
             }
             project = projectService.find(Long.valueOf(id));
         } catch (Exception e) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        if(message.getType()!=Message.Type.OK){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (project == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (levelType == Coordinate.BaseLevelType.CGCS2000) {
             wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
         }
         String central = coordinateService.getCoordinateBasedatum(project);
         if (central == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
         }
         if(multipartResolver.isMultipart(request)) {
             //转换成多部分request
@@ -118,7 +118,7 @@ public class FieldController {
     @RequestMapping(value = "/saveField", method = RequestMethod.POST)
     public @ResponseBody Message saveField(@RequestBody  Map<String,Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         message=fieldService.saveField(objectMap);
@@ -137,7 +137,7 @@ public class FieldController {
     public @ResponseBody Message field(@RequestParam long id,@RequestParam String type) {
         Project project = projectService.find(id);
         if (project == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (Build.Source.DESIGN.toString().toLowerCase().equals(type.trim().toLowerCase())) {
             JSONObject desgin = fieldService.field(project, Build.Source.DESIGN);
@@ -222,7 +222,7 @@ public class FieldController {
             return MessageService.message(Message.Type.FAIL);
         }
         if (wb == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.FAIL);
         }
         ByteArrayOutputStream bos = null;
         InputStream is = null;
@@ -264,12 +264,12 @@ public class FieldController {
     @RequestMapping(value = "/build", method = RequestMethod.GET)
     public @ResponseBody Message uploadBuild(@RequestParam long id) {
         Message message = MessageService.parametersCheck(id);
-        if(message.getType()==Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Build build = buildService.find(id);
         if (build == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         JSONObject jsonObject = buildService.buildJson(build);
         return MessageService.message(Message.Type.OK,jsonObject);
@@ -286,7 +286,7 @@ public class FieldController {
     @RequestMapping(value = "/createBuild", method = RequestMethod.POST)
     public @ResponseBody Message newBuild(@RequestBody  Map<String,Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return fieldService.newBuild(objectMap);
@@ -303,7 +303,7 @@ public class FieldController {
     @RequestMapping(value = "/editBuild", method = RequestMethod.POST)
     public @ResponseBody Message editBuild(@RequestBody  Map<String,Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return fieldService.editBuild(objectMap);
@@ -319,12 +319,12 @@ public class FieldController {
     @RequestMapping(value = "/deleteBuild/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message deleteBuild(@PathVariable("id") Long id) {
         Message message = MessageService.parametersCheck(id);
-        if(message.getType()==Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Build build = buildService.find(id);
         if (build == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         buildService.remove(build);
         return MessageService.message(Message.Type.OK);
@@ -342,7 +342,7 @@ public class FieldController {
     @RequestMapping(value = "/editShape", method = RequestMethod.POST)
     public @ResponseBody Message deletePoint(@RequestBody  Map<String,Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Object line = objectMap.get("line");
@@ -352,7 +352,7 @@ public class FieldController {
             return MessageService.message(Message.Type.FAIL);
         }
         message=coordinateService.checkCoordinateFormat(line);
-        if (message.getType() == Message.Type.OTHER) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         JSONObject jsonObject = JSONObject.fromObject(line);
@@ -370,7 +370,7 @@ public class FieldController {
             for (Integer l : list) {
                 Build build = buildService.find(Long.valueOf(l));
                 if (build == null) {
-                    return MessageService.message(Message.Type.EXIST);
+                    return MessageService.message(Message.Type.DATA_NOEXIST);
                 }
                 buildService.remove(build);
             }
@@ -388,12 +388,12 @@ public class FieldController {
     @RequestMapping(value = "/deleteShape/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message deletePLine(@PathVariable("id") Long id) {
         Message message = MessageService.parametersCheck(id);
-        if(message.getType()==Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Coordinate coordinate = coordinateService.find(id);
         if (coordinate == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         coordinateService.remove(coordinate);
         List<Build> builds = buildService.findByCoordinateId(id);
@@ -412,7 +412,7 @@ public class FieldController {
     @RequestMapping(value = "/createShape", method = RequestMethod.POST)
     public @ResponseBody Message creatShape(@RequestBody  Map<String,Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         return coordinateService.saveCoordinateFromPage(objectMap);

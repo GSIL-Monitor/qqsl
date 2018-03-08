@@ -88,13 +88,13 @@ public class AdminController {
             SecurityUtils.getSubject().logout();
         }*/
         Message message = MessageService.parameterCheck(objectMap);
-        if(message.getType()==Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String,Object> map = (Map<String,Object>)message.getData();
         Admin admin = adminService.findByUserName(map.get("userName").toString());
         if (admin == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         // 测试状态
         Setting setting = SettingUtils.getInstance().getSetting();
@@ -105,7 +105,7 @@ public class AdminController {
                 .getAttribute("verification");
         String verifyCode = map.get("password").toString();
         message = userService.checkCode(verifyCode,verification);
-        if (message.getType()!=Message.Type.OK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         // 记录登录的ip
@@ -128,7 +128,7 @@ public class AdminController {
         try {
             subject.login(token);
         } catch (UnknownAccountException e) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         } catch (IncorrectCredentialsException e) {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -153,11 +153,11 @@ public class AdminController {
             return MessageService.message(Message.Type.FAIL);
         }
         Admin admin = adminService.findByUserName(userName);
-        if(admin==null){
-            return MessageService.message(Message.Type.EXIST);
+        if (admin == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!StringUtils.hasText(admin.getPhone())){
-            return MessageService.message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.FAIL);
         }
         Message message = noteService.isSend(admin.getPhone(),session);
         return message;
@@ -239,7 +239,7 @@ public class AdminController {
     Message resetPassword(
             @RequestBody Map<String, Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
@@ -247,7 +247,7 @@ public class AdminController {
         User user = userService.find(Long.valueOf(userId.toString()));
         if (user == null) {
             // "用户不存在";
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         user.setPassword(DigestUtils.md5Hex("123456"));
         userService.save(user);
@@ -293,7 +293,7 @@ public class AdminController {
     @RequestMapping(value = "/isLocked",method = RequestMethod.POST)
     public @ResponseBody Message Locked(@RequestBody  Map<String,Object> objectMap){
         Message message = MessageService.parameterCheck(objectMap);
-        if(message.getType()== Message.Type.FAIL){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String,Object> map = (Map<String, Object>) message.getData();
@@ -301,7 +301,7 @@ public class AdminController {
         String isLocked = map.get("isLocked").toString();
         User user = userService.find(userId);
         if(user == null){
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(isLocked.equals("true")){
             user.setLocked(true);

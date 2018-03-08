@@ -133,10 +133,10 @@ public class PositionService {
         try {
             project = projectService.find(Long.valueOf(id));
         } catch (Exception e) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (project == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         Position position = null;
         for (int i = 0; i < useds.size(); i++) {
@@ -149,7 +149,7 @@ public class PositionService {
         if (position == null) {
             if (unuseds.size() == 0) {
 //                链接池已满
-                return MessageService.message(Message.Type.UNKNOWN);
+                return MessageService.message(Message.Type.QXWZ_FULL);
             }
             Random random = new Random();
             int i = random.nextInt(unuseds.size());
@@ -264,7 +264,7 @@ public class PositionService {
 //        if (setting.getStatus().equals("run")) {
         diffConnPoll = diffConnPollService.findByUserName(userName);
         if (diffConnPoll == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         try {
             diffConnPoll.setTimeout(Long.valueOf(timeout));
@@ -363,14 +363,14 @@ public class PositionService {
      * @return
      */
     public Message isAllowConnectQXWZ(Long projectId){
-        Project project = projectService.find(Long.valueOf(projectId));
+        Project project = projectService.find(projectId);
         int i = findByUserInUseds(project.getUser());
         Package aPackage = packageService.findByUser(project.getUser());
         if (aPackage == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (aPackage.getExpireDate().getTime() < System.currentTimeMillis()) {
-            return MessageService.message(Message.Type.EXPIRED);
+            return MessageService.message(Message.Type.PACKAGE_EXPIRED);
         }
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
@@ -378,7 +378,7 @@ public class PositionService {
                 return MessageService.message(Message.Type.OK);
             }
         }
-        return MessageService.message(Message.Type.NO_ALLOW);
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
     /**

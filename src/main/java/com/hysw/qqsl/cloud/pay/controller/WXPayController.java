@@ -60,14 +60,14 @@ public class WXPayController {
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo);
         if (trade == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (System.currentTimeMillis()-trade.getCreateDate().getTime()>2*60*60*1000) {
-            return MessageService.message(Message.Type.EXPIRED);
+            return MessageService.message(Message.Type.TRADE_EXPIRED);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         return wxPayService.unifiedOrderPay(trade);
     }
@@ -86,11 +86,11 @@ public class WXPayController {
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo);
         if (trade == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
         if (trade.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         trade.setStatus(Trade.Status.REFUND);
         trade.setRefundDate(new Date());
@@ -174,7 +174,7 @@ public class WXPayController {
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo);
         if (trade == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         return wxPayService.orderQuery(trade);
     }
@@ -190,16 +190,16 @@ public class WXPayController {
     public @ResponseBody
     Message refreshOrder(@RequestBody Map<String, Object> objectMap) {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Object outTradeNo = objectMap.get("outTradeNo");
         if (outTradeNo == null) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo.toString());
         if (trade == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         message = wxPayService.orderQuery(trade);
         JSONObject jsonObject = JSONObject.fromObject(message.getData());

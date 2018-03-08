@@ -196,11 +196,11 @@ public class AliPayController {
         alipayRequest.setNotifyUrl(aliPayService.getNotifyUrl());//在公共参数中设置回跳和通知地址
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
         if (System.currentTimeMillis()-trade.getCreateDate().getTime()>2*60*60*1000) {
-                return MessageService.message(Message.Type.EXPIRED);
+            return MessageService.message(Message.Type.TRADE_EXPIRED);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         String type = tradeService.convertType(trade);
         JSONObject jsonObject = new JSONObject();
@@ -277,11 +277,11 @@ public class AliPayController {
         }
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
         if (trade == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
         if (!trade.getUser().getId().equals(user.getId())) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         trade.setStatus(Trade.Status.REFUND);
         trade.setRefundDate(new Date());
@@ -305,7 +305,7 @@ public class AliPayController {
         }
         Trade trade = tradeService.findByOutTradeNo(out_trade_no);
         if (trade == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         return  aliPayService.queryTrade(trade);
     }
@@ -322,16 +322,16 @@ public class AliPayController {
     public @ResponseBody
     Message refreshOrder(@RequestBody Map<String, Object> objectMap) throws AlipayApiException {
         Message message = MessageService.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Object outTradeNo = objectMap.get("outTradeNo");
         if (outTradeNo == null) {
-            return MessageService.message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.FAIL);
         }
         Trade trade = tradeService.findByOutTradeNo(outTradeNo.toString());
         if (trade == null) {
-            return MessageService.message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         message = aliPayService.queryTrade(trade);
         JSONObject jsonObject = JSONObject.fromObject(message.getData());

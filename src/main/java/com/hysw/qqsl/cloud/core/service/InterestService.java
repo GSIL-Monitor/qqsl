@@ -129,10 +129,10 @@ public class InterestService extends BaseService<Interest, Long> {
 //        Object advice=map.get("advice");
 //        Object reviewDate=map.get("reviewDate");
         if (name == null || category == null || coordinate == null || region == null || business == null) {
-            return MessageService.message(Message.Type.bFAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Message message = SettingUtils.checkCoordinateIsInvalid(coordinate.toString());
-        if (message.getType() != Message.Type.bOK) {
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         interest.setCoordinate(message.getData().toString());
@@ -163,7 +163,7 @@ public class InterestService extends BaseService<Interest, Long> {
         save(interest);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", interest.getId());
-        return MessageService.message(Message.Type.bOK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     public List<Interest> findAllBase() {
