@@ -31,13 +31,9 @@ public class AccountService extends BaseService<Account,Long> {
     @Autowired
     private AccountDao accountDao;
     @Autowired
-    private NoteService noteService;
-    @Autowired
     private NoteCache noteCache;
     @Autowired
     private UserService userService;
-    @Autowired
-    private AuthentService authentService;
     @Autowired
     private AccountMessageService accountMessageService;
     @Autowired
@@ -63,7 +59,7 @@ public class AccountService extends BaseService<Account,Long> {
      * @param phone
      * @param user
      */
-    public Message invite(String phone,User user) {
+    public JSONObject invite(String phone,User user) {
         Account account = findByPhone(phone);
         String inviteCode = SettingUtils.createRandomVcode();
         String userName = user.getUserName();
@@ -87,7 +83,7 @@ public class AccountService extends BaseService<Account,Long> {
             users = account.getUsers();
             for(int i=0;i<users.size();i++){
                 if(users.get(i).getId().equals(user.getId())){
-                    return MessageService.message(Message.Type.DATA_EXIST);
+                    return null;
                 }
             }
             users.add(user);
@@ -98,7 +94,7 @@ public class AccountService extends BaseService<Account,Long> {
         pollingService.addAccount(account);
         accountMessageService.bindMsessage(user,account,true);
         noteCache.add(phone,note);
-        return MessageService.message(Message.Type.OK,makeSimpleAccountJson(account));
+        return makeSimpleAccountJson(account);
     }
 
     /**
@@ -109,29 +105,29 @@ public class AccountService extends BaseService<Account,Long> {
      * @return
      * @throws QQSLException
      */
-    public Message register(String name,String phone,String password) throws QQSLException {
-        if(phone.length()!=11|| SettingUtils.phoneRegex(phone)==false){
-            throw new QQSLException(phone+":电话号码异常！");
-        }
-        if(password.length()!=32){
-            throw new QQSLException(password+":密码异常！");
-        }
-        Account account = findByPhone(phone);
-        // 用户已存在
-        if (account!= null) {
-            return MessageService.message(Message.Type.DATA_EXIST);
-        }else{
-            account = new Account();
-        }
-        account.setName(name);
-        account.setPhone(phone);
-        account.setPassword(password);
-        //默认新注册用户角色为account:simple
-        account.setRoles(CommonAttributes.ROLES[4]);
-        save(account);
-        pollingService.addAccount(account);
-        return MessageService.message(Message.Type.OK);
-    }
+//    public Message register(String name,String phone,String password) throws QQSLException {
+//        if(phone.length()!=11|| SettingUtils.phoneRegex(phone)==false){
+//            throw new QQSLException(phone+":电话号码异常！");
+//        }
+//        if(password.length()!=32){
+//            throw new QQSLException(password+":密码异常！");
+//        }
+//        Account account = findByPhone(phone);
+//        // 用户已存在
+//        if (account!= null) {
+//            return MessageService.message(Message.Type.DATA_EXIST);
+//        }else{
+//            account = new Account();
+//        }
+//        account.setName(name);
+//        account.setPhone(phone);
+//        account.setPassword(password);
+//        //默认新注册用户角色为account:simple
+//        account.setRoles(CommonAttributes.ROLES[4]);
+//        save(account);
+//        pollingService.addAccount(account);
+//        return MessageService.message(Message.Type.OK);
+//    }
 
 
    /* *//**
@@ -157,27 +153,27 @@ public class AccountService extends BaseService<Account,Long> {
      * @param id
      * @return
      */
-    public Message updateInfo(String name, Long id) {
-        Account account = accountDao.find(id);
-        account.setName(name);
-        save(account);
-        return MessageService.message(Message.Type.OK,makeAccountJson(account));
-    }
+//    public Message updateInfo(String name, Long id) {
+//        Account account = accountDao.find(id);
+//        account.setName(name);
+//        save(account);
+//        return MessageService.message(Message.Type.OK,makeAccountJson(account));
+//    }
     /**
      * 修改子账号密码
      * @param password
      * @param id
      * @return
      */
-    public Message updatePassword(String password,Long id) {
-        Account account = find(id);
-        if(password.length()!=32){
-            return MessageService.message(Message.Type.PASSWORD_ERROR);
-        }
-        account.setPassword(password);
-        save(account);
-        return MessageService.message(Message.Type.OK,makeAccountJson(account));
-    }
+//    public Message updatePassword(String password,Long id) {
+//        Account account = find(id);
+//        if(password.length()!=32){
+//            return MessageService.message(Message.Type.PASSWORD_ERROR);
+//        }
+//        account.setPassword(password);
+//        save(account);
+//        return MessageService.message(Message.Type.OK,makeAccountJson(account));
+//    }
     /**
      * 更改手机号
      * @param newPhone
@@ -411,7 +407,7 @@ public class AccountService extends BaseService<Account,Long> {
      * @param user
      * @return
      */
-    public Message unbindUser(User user,Account account) {
+    public boolean unbindUser(User user,Account account) {
         List<User> users = getUsersByAccountId(account.getId());
         List<Account> accounts;
         boolean flag = false;
@@ -432,13 +428,13 @@ public class AccountService extends BaseService<Account,Long> {
             }
         }
         if(!flag){
-            return MessageService.message(Message.Type.FAIL);
+            return false;
         }
         account.setUsers(users);
         accountDao.save(account);
         //记录子账号解绑企业的消息
         userMessageService.unbindMessage(account,user);
-        return MessageService.message(Message.Type.OK);
+        return true;
     }
 
 //    public List<JSONObject> makeAccountJsons(List<Account> accounts) {

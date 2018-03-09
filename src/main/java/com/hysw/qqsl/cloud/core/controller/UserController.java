@@ -332,7 +332,7 @@ public class UserController {
         }
         String newPassword = map.get("newPassword").toString();
         message = userService.updatePassword(newPassword,user.getId());
-        if(message.getType()!=Message.Type.OK){
+        if(message.getType()==Message.Type.OK){
             user = userService.find(user.getId());
             authentService.updateSession(user);
         }
@@ -897,7 +897,12 @@ public class UserController {
         if (userService.isAllowCreateAccount(user)) {
             return MessageService.message(Message.Type.PACKAGE_LIMIT);
         }
-        return  accountService.invite(phone,user);
+        JSONObject invite = accountService.invite(phone, user);
+        if (invite == null) {
+            return MessageService.message(Message.Type.DATA_EXIST);
+        }else {
+            return MessageService.message(Message.Type.OK,invite);
+        }
     }
 
     /**

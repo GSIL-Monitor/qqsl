@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.Polling;
@@ -227,12 +228,31 @@ public class AccountController {
             return message;
         }
         try {
-            message = accountService.register(name,verification.getPhone(),password);
+            if(verification.getPhone().length()!=11|| SettingUtils.phoneRegex(verification.getPhone())==false){
+                throw new QQSLException(verification.getPhone()+":电话号码异常！");
+            }
+            if(password.length()!=32){
+                throw new QQSLException(password+":密码异常！");
+            }
         } catch (QQSLException e) {
             e.printStackTrace();
-            return message;
+            return MessageService.message(Message.Type.FAIL);
         }
-        return message;
+        Account account = accountService.findByPhone(verification.getPhone());
+        // 用户已存在
+        if (account!= null) {
+            return MessageService.message(Message.Type.DATA_EXIST);
+        }else{
+            account = new Account();
+        }
+        account.setName(name);
+        account.setPhone(verification.getPhone());
+        account.setPassword(password);
+        //默认新注册用户角色为account:simple
+        account.setRoles(CommonAttributes.ROLES[4]);
+        accountService.save(account);
+        pollingService.addAccount(account);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -322,12 +342,13 @@ public class AccountController {
             return MessageService.message(Message.Type.FAIL);
         }
         String newPassword = map.get("newPassword").toString();
-        message = accountService.updatePassword(newPassword,account.getId());
-        if(message.getType().equals(Message.Type.OK)){
-            account = accountService.find(account.getId());
-            authentService.updateSession(account);
+        if(newPassword.length()!=32){
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
-        return message;
+        account.setPassword(newPassword);
+        accountService.save(account);
+        authentService.updateSession(account);
+        return MessageService.message(Message.Type.OK,accountService.makeAccountJson(account));
     }
 
     /**
@@ -608,7 +629,12 @@ public class AccountController {
     public @ResponseBody Message unbind(@PathVariable("id") Long id){
         User user = userService.find(id);
         Account account = authentService.getAccountFromSubject();
-        return accountService.unbindUser(user,account);
+        boolean flag = accountService.unbindUser(user, account);
+        if (!flag) {
+            return MessageService.message(Message.Type.FAIL);
+        }else{
+            return MessageService.message(Message.Type.OK);
+        }
     }
 
     /**
@@ -701,12 +727,10 @@ public class AccountController {
         }else {
             name = account.getName();
         }
-        message = accountService.updateInfo(name,account.getId());
-        if (message.getType() != Message.Type.OK) {
-            account = accountService.find(account.getId());
-            authentService.updateSession(account);
-        }
-        return message;
+        account.setName(name);
+        accountService.save(account);
+        authentService.updateSession(account);
+        return MessageService.message(Message.Type.OK,accountService.makeAccountJson(account));
     }
 
     /**

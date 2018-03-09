@@ -696,7 +696,25 @@ public class ProjectController {
             return MessageService.message(Message.Type.ACCOUNT_NOINFO);
         }
         User own = authentService.getUserFromSubject();
-        return cooperateService.cooperate(projectIds, type, account, own);
+        Project project;
+        for (int i = 0; i < projectIds.size(); i++) {
+            project = projectService.find((long) (projectIds.get(i)));
+            if (project == null) {
+                return MessageService.message(Message.Type.DATA_NOEXIST);
+            }
+            if (!project.getUser().getId().equals(own.getId())) {
+                return MessageService.message(Message.Type.DATA_REFUSE);
+            }
+        }
+        if (!cooperateService.isOwn(own, account)) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        boolean cooperate = cooperateService.cooperate(projectIds, type, account);
+        if (cooperate) {
+            return MessageService.message(Message.Type.OK);
+        }else{
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**

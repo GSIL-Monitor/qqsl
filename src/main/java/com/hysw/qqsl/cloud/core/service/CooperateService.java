@@ -125,7 +125,7 @@ public class CooperateService {
             return;
         }
         if (cooperate.getProject().getCooperate().equals("[]")) {
-            System.out.print(cooperate.getProject().getCooperate() + " : " + cooperate.getProject().getId());
+//            System.out.print(cooperate.getProject().getCooperate() + " : " + cooperate.getProject().getId());
             cooperate.getProject().setCooperate(null);
             projectService.save(cooperate.getProject());
             return;
@@ -179,19 +179,14 @@ public class CooperateService {
 
     /**
      * 将多个项目的一个权限分享给一个子账号
-     *
-     * @param ids
+     *  @param ids
      * @param type
      * @param account
      */
-    public Message cooperate(List<Integer> ids, String type, Account account,User own) {
+    public boolean cooperate(List<Integer> ids, String type, Account account) {
         Project project;
         Cooperate cooperate;
         boolean flag;
-        Message message = isOwn(own,ids,account);
-        if(message.getType()!=Message.Type.OK){
-            return message;
-        }
         CooperateVisit.Type type1 = CooperateVisit.Type.valueOf(type);
         for (int i = 0; i < ids.size(); i++) {
             project = projectService.find((long) (ids.get(i)));
@@ -200,34 +195,30 @@ public class CooperateService {
             //权限注册成功，记录注册消息
             if (flag) {
                 saveCooperate(cooperate);
-                if (type1.equals(CooperateVisit.Type.VISIT_VIEW.toString())) {
+                if (type1.toString().equals(CooperateVisit.Type.VISIT_VIEW.toString())) {
                     accountMessageService.viewMessage(project, account, true);
                 } else {
                     accountMessageService.cooperate(type1, project, account, true);
                 }
             }
         }
-        return MessageService.message(Message.Type.OK);
+        return true;
     }
 
     /**
      * 判断项目及子账号归属
      * @param own
-     * @param ids
      * @param account
      * @return
      */
-    private Message isOwn(User own, List<Integer> ids, Account account) {
-        Project project;
-        Message message;
-        for (int i = 0; i < ids.size(); i++) {
-            project = projectService.find((long) (ids.get(i)));
-            message = userService.isOwn(own,project,account);
-            if (message.getType() != Message.Type.OK) {
-                return MessageService.message(Message.Type.FAIL);
+    public boolean isOwn(User own, Account account) {
+        List<Account> accounts = userService.getAccountsByUserId(own.getId());
+        for(int j=0;j<accounts.size();j++){
+            if(account.getId().equals(accounts.get(j).getId())){
+                return true;
             }
         }
-        return MessageService.message(Message.Type.OK);
+        return false;
     }
 
     /**

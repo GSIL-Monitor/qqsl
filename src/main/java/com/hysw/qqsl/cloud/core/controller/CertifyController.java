@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -7,6 +8,7 @@ import com.hysw.qqsl.cloud.core.service.AuthentService;
 import com.hysw.qqsl.cloud.core.service.CertifyCache;
 import com.hysw.qqsl.cloud.core.service.CertifyService;
 import com.hysw.qqsl.cloud.core.service.MessageService;
+import net.sf.json.JSONArray;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -42,7 +44,8 @@ public class CertifyController {
     public @ResponseBody
     Message getPersonalCertify() {
         User user = authentService.getUserFromSubject();
-        return certifyService.getPersonalCertify(user);
+        Certify certify = certifyService.findByUser(user);
+        return MessageService.message(Message.Type.OK,certifyService.personalCertifyToJson(certify));
     }
 
     /**
@@ -54,7 +57,8 @@ public class CertifyController {
     @RequestMapping(value = "/getCompanyCertify", method = RequestMethod.GET)
     public @ResponseBody Message getCompanyCertify() {
         User user = authentService.getUserFromSubject();
-        return certifyService.getCompanyCertify(user);
+        Certify certify = certifyService.findByUser(user);
+        return MessageService.message(Message.Type.OK,certifyService.companyCertifyToJson(certify));
     }
 
     /**
@@ -71,7 +75,26 @@ public class CertifyController {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        return certifyService.personalCertify(objectMap,user);
+        Object name = objectMap.get("name");
+        Object identityId = objectMap.get("identityId");
+        if (name == null || identityId == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Certify certify;
+        try {
+            certify = certifyService.findByUser(user);
+        } catch (Exception e) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (certify == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS) {
+//                认证已通过，不可更改
+            return MessageService.message(Message.Type.CERTIFY_REPEAT);
+        }
+        certifyService.personalCertify(user,certify,name.toString(),identityId.toString());
+        return MessageService.message(Message.Type.OK);
     }
 
 
@@ -89,7 +112,37 @@ public class CertifyController {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        return certifyService.companyCertify(objectMap,user);
+        Object legal = objectMap.get("legal");
+        Object companyName = objectMap.get("companyName");
+        Object companyAddress = objectMap.get("companyAddress");
+        Object companyPhone = objectMap.get("companyPhone");
+        Object companyLicence = objectMap.get("companyLicence");
+        if (legal == null || companyName == null || companyAddress == null || companyPhone == null || companyLicence == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Certify certify;
+        try {
+            certify = certifyService.findByUser(user);
+        } catch (Exception e) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (certify == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (certify.getPersonalStatus() != CommonEnum.CertifyStatus.PASS) {
+//            个人认证未通过不能进行企业认证
+            return MessageService.message(Message.Type.CERTIFY_NO_PERSONAL);
+        }
+        if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS||certifyService.findByCompanyLicence(companyLicence.toString())) {
+//            认证已通过，不可更改
+            return MessageService.message(Message.Type.CERTIFY_REPEAT);
+        }
+//        企业许可证编号
+       /* if (findByCompanyLicence(companyLicence.toString())) {
+            return MessageService.message(Message.Type.OTHER);
+        }*/
+        certifyService.companyCertify(user, certify, legal.toString(), companyName.toString(), companyAddress.toString(), companyPhone.toString(), companyLicence.toString());
+        return MessageService.message(Message.Type.OK);
     }
 
 
@@ -101,7 +154,8 @@ public class CertifyController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/lists", method = RequestMethod.GET)
     public @ResponseBody Message getAllCertifyList() {
-        return certifyService.getAllCertifyList();
+        JSONArray jsonArray = certifyService.getAllCertifyList();
+        return MessageService.message(Message.Type.OK, jsonArray);
     }
 
     /**

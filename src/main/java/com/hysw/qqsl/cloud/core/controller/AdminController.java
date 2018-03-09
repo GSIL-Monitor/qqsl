@@ -368,7 +368,12 @@ public class AdminController {
         String content = map.get("content").toString();
         String title = map.get("title").toString();
         // content = articleService.replacePath(content);
-        return articleService.save(idStr, title, content, index);
+        boolean save = articleService.save(idStr, title, content, index);
+        if (!save) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        } else {
+            return MessageService.message(Message.Type.OK);
+        }
     }
 
     /**

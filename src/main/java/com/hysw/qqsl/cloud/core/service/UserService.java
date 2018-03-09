@@ -589,15 +589,18 @@ public class UserService extends BaseService<User, Long> {
 			return MessageService.message(Message.Type.DATA_NOEXIST);
 		}
 		if(account.getName()==null){
-			return MessageService.message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.ACCOUNT_NOINFO);
 			//return MessageService.message(Message.Type.OTHER);
 		}
-		if (project==null||!project.getUser().getId().equals(own.getId())) {
-			return MessageService.message(Message.Type.FAIL);
+		if (project == null) {
+			return MessageService.message(Message.Type.DATA_NOEXIST);
+		}
+		if (!project.getUser().getId().equals(own.getId())) {
+			return MessageService.message(Message.Type.DATA_REFUSE);
 		}
 		List<Account> accounts = getAccountsByUserId(own.getId());
-		for(int i=0;i<accounts.size();i++){
-			if(account.getId().equals(accounts.get(i).getId())){
+		for(int j=0;j<accounts.size();j++){
+			if(account.getId().equals(accounts.get(j).getId())){
 				return MessageService.message(Message.Type.OK);
 			}
 		}

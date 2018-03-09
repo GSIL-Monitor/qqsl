@@ -43,24 +43,24 @@ public class ArticleService extends BaseService<Article, Long> {
 	 * @param
 	 * @return
 	 */
-	public Message save(String idStr, String title, String content, int index) {
+	public boolean save(String idStr, String title, String content, int index) {
 		Article article;
 		if(!StringUtils.hasText(idStr)){
 		    article = new Article();
 			article.setContent(content);
 			article.setTitle(title);
 			save(article,index);
-			return MessageService.message(Message.Type.OK);
+			return true;
 		}else{
 			long id = Long.valueOf(idStr);
 			article = findById(id);
 			if(article == null){
-				return MessageService.message(Message.Type.DATA_NOEXIST);
+				return false;
 			}
 			article.setContent(content);
 			article.setTitle(title);
 			save(article,index);
-			return MessageService.message(Message.Type.OK);
+			return true;
 		}		
 		
 	}
