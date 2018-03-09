@@ -595,7 +595,7 @@ public class UserController {
      * @return 用户对象
      */
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/weChat/autoLogin", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/wechat/autoLogin", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
     Message weChatAutoLogin(
