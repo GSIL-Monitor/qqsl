@@ -5,12 +5,14 @@ import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
 import com.hysw.qqsl.cloud.pay.entity.data.Turnover;
 import com.hysw.qqsl.cloud.util.TradeUtil;
+import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 流水测试
@@ -37,8 +39,8 @@ public class TurnoverServiceTest extends BaseTest {
     public void test(){
         long l = System.currentTimeMillis();
         l = l - 7 * 3600*1000l;
-        Message message = turnoverService.getTurnoverListBetweenDate(new Date(l), new Date());
-        System.out.println(message.toString());
+        List<Turnover> list = turnoverService.getTurnoverListBetweenDate(new Date(l), new Date());
+        Assert.assertTrue(list != null);
     }
 
     @Test

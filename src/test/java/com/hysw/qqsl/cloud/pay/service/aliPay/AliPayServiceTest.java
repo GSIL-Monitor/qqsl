@@ -16,10 +16,10 @@ public class AliPayServiceTest extends BaseTest{
 
     @Autowired
     private AliPayService aliPayService;
-    @Test
-    public void qureyTrade() throws Exception{
-        Trade trade = new Trade();
-        trade.setOutTradeNo("6823789339921212121");
-        Message message = aliPayService.queryTrade(trade);
-    }
+//    @Test
+//    public void qureyTrade() throws Exception{
+//        Trade trade = new Trade();
+//        trade.setOutTradeNo("6823789339921212121");
+//        Message message = aliPayService.queryTrade(trade);
+//    }
 }

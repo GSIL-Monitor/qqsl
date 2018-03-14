@@ -55,6 +55,8 @@ public class AccountController {
     private EmailService emailService;
     @Autowired
     private PollingService pollingService;
+    @Autowired
+    private CommonController commonController;
 
     private Log logger = LogFactory.getLog(this.getClass());
 
@@ -64,7 +66,7 @@ public class AccountController {
      * @return message响应消息,短信是否发送成功
      */
     private Message sendVerify(String phone, HttpSession session, boolean flag){
-        Message message = MessageService.parametersCheck(phone);
+        Message message = CommonController.parametersCheck(phone);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -81,7 +83,10 @@ public class AccountController {
                 return MessageService.message(Message.Type.DATA_EXIST);
             }
         }
-        return noteService.isSend(phone, session);
+        if (noteService.isSend(phone, session)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -133,7 +138,7 @@ public class AccountController {
     @ResponseBody
     Message getLoginVerify(@RequestParam String code,
                            HttpSession session) {
-        Message message = MessageService.parametersCheck(code);
+        Message message = CommonController.parametersCheck(code);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -145,11 +150,13 @@ public class AccountController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(SettingUtils.phoneRegex(code)){
-            message = noteService.isSend(account.getPhone(), session);
+            if (noteService.isSend(account.getPhone(), session)) {
+                return MessageService.message(Message.Type.OK);
+            }
         }else if(SettingUtils.emailRegex(code)){
-            message = emailService.getVerifyCodeLogin(code,session);
+            emailService.getVerifyCodeLogin(code,session);
         }
-        return message;
+        return MessageService.message(Message.Type.FAIL);
     }
 
 
@@ -162,7 +169,7 @@ public class AccountController {
     public
     @ResponseBody
     Message getBindVerify(@RequestParam String email, HttpSession session) {
-        Message message = MessageService.parametersCheck(email);
+        Message message = CommonController.parametersCheck(email);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -187,7 +194,7 @@ public class AccountController {
     public
     @ResponseBody
     Message getGetbackVerifyEmial(@RequestParam String email, HttpSession session) {
-        Message message = MessageService.parametersCheck(email);
+        Message message = CommonController.parametersCheck(email);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -198,7 +205,8 @@ public class AccountController {
         if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return emailService.getVerifyCoderesetPassword(email,session);
+        emailService.getVerifyCoderesetPassword(email,session);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -212,7 +220,7 @@ public class AccountController {
     @ResponseBody
     Message register(@RequestBody Map<String, String> objectMap,
                      HttpSession session) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -223,7 +231,7 @@ public class AccountController {
         name = map.get("name").toString();
         password = map.get("password").toString();
         code = map.get("verification").toString();
-        message = userService.checkCode(code,verification);
+        message = commonController.checkCode(code,verification);
         if (message.getType()!=Message.Type.OK) {
             return message;
         }
@@ -264,7 +272,7 @@ public class AccountController {
     public
     @ResponseBody
     Message getbackPassord(@RequestBody Map<String, Object> map, HttpSession session) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -272,7 +280,7 @@ public class AccountController {
         if (verification == null || map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return MessageService.message(Message.Type.CODE_NOEXIST);
         }
-        message = userService.checkCode(map.get("verification").toString(), verification);
+        message = commonController.checkCode(map.get("verification").toString(), verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -295,7 +303,7 @@ public class AccountController {
     public
     @ResponseBody
     Message getbackPassordEmail(@RequestBody Map<String, Object> map, HttpSession session) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -303,7 +311,7 @@ public class AccountController {
         if (verification == null||map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return MessageService.message(Message.Type.CODE_NOEXIST);
         }
-        message = userService.checkCode(map.get("verification").toString(), verification);
+        message = commonController.checkCode(map.get("verification").toString(), verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -326,7 +334,7 @@ public class AccountController {
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public @ResponseBody Message updatePassword(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -361,7 +369,7 @@ public class AccountController {
     @RequestMapping(value = "/updatePhone", method = RequestMethod.POST)
     public @ResponseBody
     Message updatePhone(@RequestBody Map<String, Object> map, HttpSession session) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -372,7 +380,7 @@ public class AccountController {
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return MessageService.message(Message.Type.FAIL);
         }
-        message = userService.checkCode(map.get("verification").toString(), verification);
+        message = commonController.checkCode(map.get("verification").toString(), verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -392,7 +400,7 @@ public class AccountController {
     @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
     public @ResponseBody Message updateEmail(@RequestBody Map<String,Object> map,HttpSession session){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if(message.getType()!=Message.Type.OK){
             return message;
         }
@@ -403,7 +411,7 @@ public class AccountController {
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
             return MessageService.message(Message.Type.FAIL);
         }
-        message = userService.checkCode(map.get("verification").toString(), verification);
+        message = commonController.checkCode(map.get("verification").toString(), verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -444,7 +452,7 @@ public class AccountController {
         if (SecurityUtils.getSubject().getSession() != null) {
             SecurityUtils.getSubject().logout();
         }
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -499,7 +507,7 @@ public class AccountController {
         if (SecurityUtils.getSubject().getSession() != null) {
             SecurityUtils.getSubject().logout();
         }
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -535,7 +543,7 @@ public class AccountController {
     @ResponseBody
     Message loginByVerify(
             @RequestBody Map<String, String> map, HttpSession session) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -558,7 +566,7 @@ public class AccountController {
         if (!account.getPassword().equals(map.get("password"))) {
             return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
-        message = userService.checkCode(verifyCode,verification);
+        message = commonController.checkCode(verifyCode,verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -575,7 +583,7 @@ public class AccountController {
     @ResponseBody
     Message checkPassword(
             @RequestBody Map<String, String> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -661,7 +669,7 @@ public class AccountController {
     public
     @ResponseBody
     Message updateAccountMessage(@PathVariable("ids") String ids) {
-        Message message = MessageService.parametersCheck(ids);
+        Message message = CommonController.parametersCheck(ids);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -691,7 +699,7 @@ public class AccountController {
     public
     @ResponseBody
     Message deleteAccountMessage(@PathVariable("ids") String ids) {
-        Message message = MessageService.parametersCheck(ids);
+        Message message = CommonController.parametersCheck(ids);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -716,7 +724,7 @@ public class AccountController {
     @RequiresRoles(value = {"account:simple"})
     @RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
     public @ResponseBody Message updateInfo(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }

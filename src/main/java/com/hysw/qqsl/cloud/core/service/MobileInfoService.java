@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.MobileInfoDao;
 import com.hysw.qqsl.cloud.core.entity.data.MobileInfo;
 import net.sf.json.JSONObject;
@@ -28,21 +27,20 @@ public class MobileInfoService extends BaseService<MobileInfo,Long> {
      * @param version
      * @return
      */
-    public Message update(Long version) {
+    public void update(Long version) {
         MobileInfo mobileInfo = mobileInfoDao.find(1L);
         mobileInfo.setVersion(version);
         mobileInfoDao.save(mobileInfo);
-        return MessageService.message(Message.Type.OK);
     }
 
     /**
      * 获取版本号
      * @return
      */
-    public Message findVersion() {
+    public JSONObject findVersion() {
         MobileInfo mobileInfo = mobileInfoDao.find(1L);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("version",mobileInfo.getVersion());
-        return MessageService.message(Message.Type.OK,jsonObject);
+        return jsonObject;
     }
 }

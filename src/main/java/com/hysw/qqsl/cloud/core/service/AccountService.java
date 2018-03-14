@@ -1,11 +1,9 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.AccountDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.Note;
-import com.hysw.qqsl.cloud.core.entity.QQSLException;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -96,126 +94,6 @@ public class AccountService extends BaseService<Account,Long> {
         noteCache.add(phone,note);
         return makeSimpleAccountJson(account);
     }
-
-    /**
-     * 子帐号注册
-     * @param name
-     * @param phone
-     * @param password
-     * @return
-     * @throws QQSLException
-     */
-//    public Message register(String name,String phone,String password) throws QQSLException {
-//        if(phone.length()!=11|| SettingUtils.phoneRegex(phone)==false){
-//            throw new QQSLException(phone+":电话号码异常！");
-//        }
-//        if(password.length()!=32){
-//            throw new QQSLException(password+":密码异常！");
-//        }
-//        Account account = findByPhone(phone);
-//        // 用户已存在
-//        if (account!= null) {
-//            return MessageService.message(Message.Type.DATA_EXIST);
-//        }else{
-//            account = new Account();
-//        }
-//        account.setName(name);
-//        account.setPhone(phone);
-//        account.setPassword(password);
-//        //默认新注册用户角色为account:simple
-//        account.setRoles(CommonAttributes.ROLES[4]);
-//        save(account);
-//        pollingService.addAccount(account);
-//        return MessageService.message(Message.Type.OK);
-//    }
-
-
-   /* *//**
-     * 更新子账号信息
-     * @param map
-     * @param id
-     *//*
-    public Message update(Map<String, Object> map, Long id) {
-        Account account = find(id);
-        String name = map.get("name").toString();
-        String email = map.get("email").toString();
-        String password = map.get("password").toString();
-        account.setName(name);
-        account.setEmail(email);
-        account.setPassword(password);
-        accountDao.save(account);
-        authentService.updateSession(account);
-        return MessageService.message(Message.Type.OK,makeAccountJson(account));
-    }*/
-
-    /**
-     * 修改子账号信息
-     * @param id
-     * @return
-     */
-//    public Message updateInfo(String name, Long id) {
-//        Account account = accountDao.find(id);
-//        account.setName(name);
-//        save(account);
-//        return MessageService.message(Message.Type.OK,makeAccountJson(account));
-//    }
-    /**
-     * 修改子账号密码
-     * @param password
-     * @param id
-     * @return
-     */
-//    public Message updatePassword(String password,Long id) {
-//        Account account = find(id);
-//        if(password.length()!=32){
-//            return MessageService.message(Message.Type.PASSWORD_ERROR);
-//        }
-//        account.setPassword(password);
-//        save(account);
-//        return MessageService.message(Message.Type.OK,makeAccountJson(account));
-//    }
-    /**
-     * 更改手机号
-     * @param newPhone
-     * @param id
-     * @return
-     *//*
-    public Message changePhone(String newPhone, Long id) {
-        Account account = findByPhone(newPhone);
-        if(account!=null){
-            return MessageService.message(Message.Type.EXIST);
-        }
-        account = find(id);
-        account.setPhone(newPhone);
-        accountDao.save(account);
-        authentService.updateSession(account);
-        return MessageService.message(Message.Type.OK,makeAccountJson(account));
-    }
-//    /**
-//     * 更改手机号
-//     * @param newPhone
-//     * @param id
-//     * @return
-//     */
-//    public Message changePhone(String newPhone, Long id) {
-//        Account account = findByPhone(newPhone);
-//        if(account!=null){
-//            return MessageService.message(Message.Type.EXIST);
-//        }
-//        account = find(id);
-//        account.setPhone(newPhone);
-//        accountDao.save(account);
-//        authentService.updateSession(account);
-//        return MessageService.message(Message.Type.OK,makeAccountJson(account));
-//    }
-
-//    public Account findByPhoneOrUserName(String param){
-//        Account account = findByPhone(param);
-//        if(account!=null){
-//            return account;
-//        }
-//        return findByUserName(param);
-//    }
 
     /**
      * 根据手机号查询子账号

@@ -41,7 +41,7 @@ public class TurnoverController {
         try {
             Date beginDate = new Date(begin);
             Date endDate = new Date(end);
-            return turnoverService.getTurnoverListBetweenDate(beginDate, endDate);
+            return MessageService.message(Message.Type.OK, turnoverService.getTurnoverListBetweenDate(beginDate, endDate));
         } catch (Exception e) {
             return MessageService.message(Message.Type.FAIL);
         }

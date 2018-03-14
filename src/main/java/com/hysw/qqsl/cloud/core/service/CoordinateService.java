@@ -1,9 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.CoordinateDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
@@ -19,7 +17,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
@@ -53,8 +50,8 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	private BuildGroupService buildGroupService;
 	@Autowired
 	private FieldService fieldService;
-	// 转换文件大小
-	private final long CONVERT_MAX_SZIE = 36 * 1024 * 1024;
+//	// 转换文件大小
+//	private final long CONVERT_MAX_SZIE = 36 * 1024 * 1024;
 
 	/**
 	 * 读取excel 文件抛出异常
@@ -65,10 +62,10 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @return
 	 * @throws IOException
 	 */
-	public Message readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
+	public Map<List<Graph>, List<Build>> readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		Workbook wb = SettingUtils.readExcel(is,s);
 		if(wb==null){
-			return MessageService.message(Message.Type.FAIL);
+			return null;
 		}
 		return readExcel(central, wb, project,wgs84Type);
 	}
@@ -82,7 +79,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("resource")
-	public Message readExcel(String central, Workbook wb, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
+	public Map<List<Graph>, List<Build>> readExcel(String central, Workbook wb, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		String code = transFromService.checkCode84(central);
 		List<Graph> graphs = new ArrayList<Graph>();
 		List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
@@ -94,24 +91,22 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				continue;
 			}
 //			读取建筑物及其属性数据
-			Message me = readBuild(sheet, code, builds, builds1, project,wgs84Type);
-			if (me != null) {
-                return me;
-            }
+			boolean b = readBuild(sheet, code, builds, builds1, project,wgs84Type);
+			if (b) {
+				continue;
+			}
             try {
 //				读取线面数据
 				readLineOrAera(sheet, code, graphs, wb, numSheet,wgs84Type);
 			} catch (OfficeXmlFileException e) {
 				logger.info("坐标文件03-07相互拷贝异常");
-				continue;
 			}catch(NumberFormatException e){
-//				logger.info("经纬度有多余小数");
-				continue;
+				logger.info("经纬度有多余小数");
 			}
 		}
 		Map<List<Graph>, List<Build>> map = new LinkedHashMap<>();
 		map.put(graphs, builds1);
-        return MessageService.message(Message.Type.OK, map);
+        return map;
     }
 
 	/**
@@ -123,7 +118,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param project
 	 * @param wgs84Type
 	 */
-	private Message readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
+	private boolean readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		Build build = null;
 		Build build2 = null;
 		JSONObject jsonObject1;
@@ -142,7 +137,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			}
 		}
 		if (build == null) {
-			return null;
+			return false;
 		}
 		Build build1 = new Build();
 		List<Attribe> attribes = new ArrayList<>();
@@ -213,15 +208,12 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					if (comment.equals("coor1")) {
 						String[] split = d.split(",");
 						if (split.length != 3) {
-                            return MessageService.message(Message.Type.FAIL);
+							return false;
 						}
 						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
 						if (jsonObject1 == null) {
-							return MessageService.message(Message.Type.FAIL);
+							return false;
 						}
-//						if (!SettingUtils.coordinateParameterCheck(split[0], split[1], split[2])) {
-//							return MessageService.message(Message.Type.OTHER);
-//						}
 						build2 = fieldService.allEqual(builds, String.valueOf(jsonObject1.get("longitude")), String.valueOf(jsonObject1.get("latitude")),split[2]);
 						if (build2!= null) {
 							buildService.remove(build2);
@@ -234,15 +226,12 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					}else if (comment.equals("coor2")) {
 						String[] split = d.split(",");
 						if (split.length != 3) {
-                            return MessageService.message(Message.Type.FAIL);
+							return false;
 						}
 						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
 						if (jsonObject1 == null) {
-							return MessageService.message(Message.Type.FAIL);
+							return false;
 						}
-//						if (!SettingUtils.coordinateParameterCheck(split[0], split[1], split[2])) {
-//                            return MessageService.message(Message.Type.OTHER);
-//						}
 						jsonObject = new JSONObject();
 						jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
 						jsonObject.put("latitude", String.valueOf(jsonObject1.get("latitude")));
@@ -275,7 +264,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				}
 			}
 		}
-        return null;
+        return true;
     }
 
 	/**
@@ -659,54 +648,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		return description;
 	}
 
-
-	/**
-	 * 坐标格式文件处理数据并存入数据库
-	 *
-	 * @param is
-	 * @param central
-	 * @param fileName
-	 * @param wgs84Type
-	 * @return
-	 * @throws IOException
-	 */
-	public Message uploadCoordinateToData(InputStream is,
-										  Project project, String central, String fileName, Coordinate.WGS84Type wgs84Type) {
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		Message me;
-		try {
-			me = readExcels(is, central, s, project,wgs84Type);
-		} catch (Exception e) {
-			logger.info("坐标文件或格式异常");
-			return MessageService.message(Message.Type.COOR_FORMAT_ERROR);
-		}finally {
-			IOUtils.safeClose(is);
-		}
-		if (me.getType() != Message.Type.OK) {
-			return me;
-		}
-        Map<List<Graph>, List<Build>> map = (Map<List<Graph>, List<Build>>) me.getData();
-		List<Graph> list = null;
-		List<Build> builds = null;
-		for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
-			list = entry.getKey();
-			builds = entry.getValue();
-			break;
-		}
-		if (list == null || list.size() == 0) {
-			return MessageService.message(Message.Type.OK);
-		}
-		return saveCoordinate(list, builds, project);
-	}
-
 	/**
 	 * 保存坐标数据
 	 * @param list
 	 * @param builds
-	 *@param project  @return
+	 * @param project  @return
 	 */
-	public Message saveCoordinate(List<Graph> list, List<Build> builds, Project project) {
+	public boolean saveCoordinate(List<Graph> list, List<Build> builds, Project project) {
 		List<Graph> pointList = new ArrayList<>();
 		List<Graph> areaList = new ArrayList<>();
 		Coordinate coordinate = null;
@@ -752,7 +700,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				pointToBuild(entry.getValue(),builds,project,coordinate.getId());
 			}
 		}
-		return MessageService.message(Message.Type.OK);
+		return true;
 	}
 
 	/**
@@ -884,55 +832,14 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		}
 	}
 
-
-	/**
-	 * 上传坐标文件并保存至数据库
-	 * @param mFile
-     * @param project
-* @param central
-* @param wgs84Type
-	 * @return
-     */
-	public Message uploadCoordinate(MultipartFile mFile, Project project, String central, Coordinate.WGS84Type wgs84Type) {
-		Message me;
-		String fileName;
-		fileName = mFile.getOriginalFilename();
-		// 限制上传文件的大小
-		if (mFile.getSize() > CONVERT_MAX_SZIE) {
-			// return "文件过大无法上传";
-			logger.debug("文件过大");
-			return MessageService.message(Message.Type.FILE_TOO_MAX);
-		}
-		InputStream is;
-		try {
-			is = mFile.getInputStream();
-		} catch (IOException e) {
-			logger.info("坐标文件或格式异常");
-			return MessageService.message(Message.Type.COOR_FORMAT_ERROR);
-		}
-		me = uploadCoordinateToData(is,project,central,fileName,wgs84Type);
-		if (me != null) {
-			return me;
-		}
-		return MessageService.message(Message.Type.OK);
-	}
-
 	/**
 	 * 保存设计的线面坐标数据
-	 * @param objectMap
+	 * @param line
+	 * @param projectId
+	 * @param description
 	 * @return
 	 */
-	public Message saveCoordinateFromPage(Map<String, Object> objectMap) {
-		Object line = objectMap.get("line");
-		Object projectId = objectMap.get("projectId");
-		Object description = objectMap.get("description");
-		if (line == null || projectId == null || description == null) {
-			return MessageService.message(Message.Type.FAIL);
-		}
-		Message message=checkCoordinateFormat(line);
-		if (message.getType() != Message.Type.OK) {
-			return message;
-		}
+	public void saveCoordinateFromPage(Object line, Object projectId, Object description) {
 		Coordinate coordinate = new Coordinate();
 		JSONObject jsonObject = JSONObject.fromObject(line);
 		Project project = projectService.find(Long.valueOf(projectId.toString()));
@@ -940,7 +847,6 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		coordinate.setProject(project);
 		coordinate.setDescription(description.toString());
 		save(coordinate);
-		return MessageService.message(Message.Type.OK);
 	}
 
 	public List<Coordinate> findByDate(){
@@ -959,16 +865,16 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * 检查坐标格式
 	 * @param line
 	 */
-	public Message checkCoordinateFormat(Object line) {
+	public boolean checkCoordinateFormat(Object line) {
 		Map<Object, Object> map = (Map<Object, Object>) line;
 		JSONArray coordinate = JSONArray.fromObject(map.get("coordinate"));
 		JSONObject jsonObject;
 		for (Object o : coordinate) {
 			jsonObject = JSONObject.fromObject(o);
 			if (jsonObject.size() != 3) {
-				return MessageService.message(Message.Type.FAIL);
+				return false;
 			}
 		}
-		return MessageService.message(Message.Type.OK);
+		return true;
 	}
 }

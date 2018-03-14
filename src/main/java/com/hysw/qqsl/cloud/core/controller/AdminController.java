@@ -51,6 +51,8 @@ public class AdminController {
     @Autowired
     private ArticleService articleService;
     @Autowired
+    private CommonController commonController;
+    @Autowired
     private SessionDAO sessionDAO;
 
     /**
@@ -65,14 +67,12 @@ public class AdminController {
     public
     @ResponseBody
     Message refreshCache() {
-        Message message = null;
         try {
-            message = projectService.refreshCache();
+            projectService.refreshCache();
         } catch (Exception e) {
-            message = MessageService.message(Message.Type.FAIL);
-            e.printStackTrace();
+            return MessageService.message(Message.Type.FAIL);
         }
-        return message;
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -87,7 +87,7 @@ public class AdminController {
        /* if (SecurityUtils.getSubject().getSession() != null) {
             SecurityUtils.getSubject().logout();
         }*/
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -104,7 +104,7 @@ public class AdminController {
         Verification verification = (Verification) session
                 .getAttribute("verification");
         String verifyCode = map.get("password").toString();
-        message = userService.checkCode(verifyCode,verification);
+        message =commonController.checkCode(verifyCode,verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -159,8 +159,10 @@ public class AdminController {
         if(!StringUtils.hasText(admin.getPhone())){
             return MessageService.message(Message.Type.FAIL);
         }
-        Message message = noteService.isSend(admin.getPhone(),session);
-        return message;
+        if (noteService.isSend(admin.getPhone(), session)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -238,7 +240,7 @@ public class AdminController {
     @ResponseBody
     Message resetPassword(
             @RequestBody Map<String, Object> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -292,7 +294,7 @@ public class AdminController {
     @RequiresRoles(value = {"admin:simple"})
     @RequestMapping(value = "/isLocked",method = RequestMethod.POST)
     public @ResponseBody Message Locked(@RequestBody  Map<String,Object> objectMap){
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -387,7 +389,7 @@ public class AdminController {
     public
     @ResponseBody
     Message deletetArticle(@PathVariable("id") Long id) {
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -405,7 +407,7 @@ public class AdminController {
     public
     @ResponseBody
     Message deletetArticle1(@PathVariable("id") Long id) {
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }

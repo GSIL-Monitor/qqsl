@@ -5,6 +5,7 @@ import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDB;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,8 @@ public class ElementDBServiceTest extends BaseTest {
 		project.setCode(CODE);
 		projectService.setType(project,1);
 		if(projectService.findByCode(CODE,1l).size()==0){
-			Message message = projectService.createProject(project);
-			assertTrue(message.getType()== Message.Type.OK);
+			JSONObject jsonObject = projectService.createProject(project);
+			assertTrue(!jsonObject.isEmpty());
 		}
 		project = projectService.findByCode(CODE,1l).get(0);
 		ElementDB elementDB0 = new ElementDB();

@@ -26,7 +26,7 @@ public class WXPayService {
      * 扫码支付
      * @param trade 订单
      */
-    public Message unifiedOrderPay(Trade trade){
+    public JSONObject unifiedOrderPay(Trade trade){
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("body", tradeService.convertBuyType(trade)+"--"+tradeService.convertType(trade)+"--"+tradeService.convertBaseType(trade));
         data.put("out_trade_no", trade.getOutTradeNo());//商户支付的订单号由商户自定义生成，微信支付要求商户订单号保持唯一性（建议根据当前系统时间加随机序列来生成订单号）。重新发起一笔支付要使用原订单号，避免重复支付；已支付过或已调用关单、撤销（请见后文的API列表）的订单号不能重新发起支付
@@ -44,18 +44,18 @@ public class WXPayService {
 //            System.out.println(r);
         } catch (Exception e) {
 //            e.printStackTrace();
-            return MessageService.message(Message.Type.FAIL);
+            return null;
         }
         try {
             if (r.get("result_code").equals("SUCCESS") && r.get("return_code").equals("SUCCESS")) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("qrCode",r.get("code_url"));
-                return MessageService.message(Message.Type.OK,jsonObject);
+                return jsonObject;
             }
         } catch (NullPointerException e) {
-            return MessageService.message(Message.Type.FAIL);
+            return null;
         }
-        return MessageService.message(Message.Type.FAIL);
+        return null;
     }
 
     /**
@@ -77,7 +77,7 @@ public class WXPayService {
      * 查询订单
      * @param trade
      */
-    public Message orderQuery(Trade trade) {
+    public JSONObject orderQuery(Trade trade) {
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("out_trade_no", trade.getOutTradeNo());
 //        data.put("transaction_id", "4008852001201608221962061594");
@@ -87,20 +87,20 @@ public class WXPayService {
 //            System.out.println(r);
         } catch (Exception e) {
 //            e.printStackTrace();
-            return MessageService.message(Message.Type.FAIL);
+            return null;
         }
         try {
             JSONObject jsonObject=new JSONObject();
             if (r.get("result_code").equals("SUCCESS") && r.get("return_code").equals("SUCCESS")) {
                 jsonObject.put("tradeState",r.get("trade_state"));
-                return MessageService.message(Message.Type.OK,jsonObject);
+                return jsonObject;
             }else{
                 jsonObject.put("tradeState",r.get("err_code"));
 //                System.out.println(jsonObject);
-                return MessageService.message(Message.Type.OK,jsonObject);
+                return jsonObject;
             }
         } catch (NullPointerException e) {
-            return MessageService.message(Message.Type.FAIL);
+            return null;
         }
     }
 
@@ -124,9 +124,9 @@ public class WXPayService {
      * 全额退款
      * @param trade
      */
-    public Message refund(Trade trade) {
+    public boolean refund(Trade trade) {
         if (trade.getType() != Trade.Type.GOODS) {
-            return MessageService.message(Message.Type.FAIL);
+            return false;
         }
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("out_trade_no", trade.getOutTradeNo());
@@ -141,16 +141,16 @@ public class WXPayService {
 //            System.out.println(r);
         } catch (Exception e) {
 //            e.printStackTrace();
-            return MessageService.message(Message.Type.FAIL);
+            return false;
         }
         try {
             if (r.get("result_code").equals("SUCCESS") && r.get("return_code").equals("SUCCESS")) {
-                return MessageService.message(Message.Type.OK);
+                return true;
             }
         } catch (NullPointerException e) {
-            return MessageService.message(Message.Type.FAIL);
+            return false;
         }
-        return MessageService.message(Message.Type.FAIL);
+        return false;
     }
 
     /**

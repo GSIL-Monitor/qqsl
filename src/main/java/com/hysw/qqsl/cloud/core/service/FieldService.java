@@ -2,7 +2,6 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.build.AttribeGroup;
 import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
 import com.hysw.qqsl.cloud.core.entity.build.Graph;
@@ -34,12 +33,10 @@ public class FieldService {
     @Autowired
     private CoordinateService coordinateService;
     @Autowired
-    private AttribeService attribeService;
-    @Autowired
     private TransFromService transFromService;
 
 
-    public Message saveField(Map<String, Object> objectMap) {
+    public boolean saveField(Map<String, Object> objectMap) {
         Build build;
         Attribe attribe;
         CoordinateBase coordinateBase;
@@ -55,7 +52,7 @@ public class FieldService {
         Object deviceMac = objectMap.get("deviceMac");
         List<Object> coordinates = (List<Object>) objectMap.get("coordinates");
         if (projectId == null || userId == null || name == null || deviceMac == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return false;
         }
         Project project = projectService.find(Long.valueOf(projectId.toString()));
         List<Build> builds1 = buildService.findByProjectAndSource(project, Build.Source.FIELD);
@@ -65,16 +62,16 @@ public class FieldService {
             Map<String,Object> coordinate= (Map<String, Object>) coordinates.get(i);
             Object type = coordinate.get("type");
             if (type == null) {
-                return MessageService.message(Message.Type.FAIL);
+                return false;
             }
             Object center = coordinate.get("center");
             Object remark = coordinate.get("description");
             Object delete = coordinate.get("delete");
             if (remark == null) {
-                return MessageService.message(Message.Type.FAIL);
+                return false;
             }
             if (center == null) {
-                return MessageService.message(Message.Type.FAIL);
+                return false;
             }
             Object longitude = ((Map<String,String>)center).get("longitude");
             Object latitude = ((Map<String,String>)center).get("latitude");
@@ -83,10 +80,10 @@ public class FieldService {
             Object description = coordinate.get("description");
             Object alias = coordinate.get("alias");
             if (longitude == null || latitude == null || elevation == null || description == null||alias==null) {
-                return MessageService.message(Message.Type.FAIL);
+                return false;
             }
             if (!SettingUtils.coordinateParameterCheck(longitude, latitude, elevation)) {
-                return MessageService.message(Message.Type.FAIL);
+                return false;
             }
             coordinateBase = new CoordinateBase();
             coordinateBases = new ArrayList<>();
@@ -184,7 +181,7 @@ public class FieldService {
         coordinate2.setCoordinateStr(jsonArray.toString());
         coordinate2.setSource(Build.Source.FIELD);
         coordinateService.save(coordinate2);
-        return MessageService.message(Message.Type.OK);
+        return true;
     }
 
     /**
@@ -1063,17 +1060,12 @@ public class FieldService {
 
     /**
      * 新建建筑物
-     * @param objectMap
-     * @return
+     * @param type
+     * @param centerCoor
+     * @param remark
+     * @param projectId
      */
-    public Message newBuild(Map<String, Object> objectMap) {
-        Object type = objectMap.get("type");
-        Object centerCoor = objectMap.get("centerCoor");
-        Object remark = objectMap.get("remark");
-        Object projectId = objectMap.get("projectId");
-        if (projectId == null || type == null || centerCoor == null || remark == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
+    public boolean newBuild(Object type, Object centerCoor, Object remark, Object projectId) {
         Build build1 = null;
         List<Build> builds = buildGroupService.getBuilds();
         for (Build build : builds) {
@@ -1081,6 +1073,9 @@ public class FieldService {
                 build1 = (Build) SettingUtils.objectCopy(build);
                 break;
             }
+        }
+        if (build1 == null) {
+            return false;
         }
         build1.setSource(Build.Source.DESIGN);
         JSONObject jsonObject = JSONObject.fromObject(centerCoor);
@@ -1101,36 +1096,29 @@ public class FieldService {
 //        }
 //        build1.setAttribeList(attribes1);
         buildService.save(build1);
-        return MessageService.message(Message.Type.OK);
+        return true;
     }
 
 
     /**
      * 编辑建筑物
-     * @param objectMap
+     * @param build
+     * @param id
+     * @param remark
+     * @param type
+     * @param attribes
      * @return
      */
-    public Message editBuild(Map<String, Object> objectMap) {
-        Object id = objectMap.get("id");
-        Object remark = objectMap.get("remark");
-        Object type = objectMap.get("type");
-        if (id == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Build build = buildService.find(Long.valueOf(id.toString()));
-        if (build == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
+    public boolean editBuild(Build build,Object id,Object remark,Object type,Object attribes) {
         if ((build.getAttribeList() == null || build.getAttribeList().size() == 0) && type != null) {
             build.setType(CommonEnum.CommonType.valueOf(type.toString()));
         }
-        Object attribes = objectMap.get("attribes");
         Attribe attribe;
         List<Attribe> attribes1 = new ArrayList<>();
         if (attribes != null) {
             for (Map<String, Object> map : (List<Map<String, Object>>) attribes) {
                 if (map.get("alias") == null || map.get("value") == null) {
-                    return MessageService.message(Message.Type.FAIL);
+                    return false;
                 }
                 attribe = new Attribe();
                 attribe.setAlias(map.get("alias").toString());
@@ -1144,7 +1132,7 @@ public class FieldService {
             build.setRemark(remark.toString());
         }
         buildService.save(build);
-        return MessageService.message(Message.Type.OK);
+        return true;
     }
 
 
@@ -1177,19 +1165,6 @@ public class FieldService {
             jsonArray1.add(jsonObject);
         }
         return jsonArray1;
-    }
-
-    public Message isAllowUploadCoordinateFile(Long id) {
-        Project project = projectService.find(Long.valueOf(id));
-        if (project == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        List<Coordinate> coordinates = coordinateService.findByProject(project);
-        if (coordinates.size()< CommonAttributes.COORDINATELIMIT) {
-            return MessageService.message(Message.Type.OK);
-        }
-//        超过限制数量，返回已达到最大限制数量
-        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.pay.controller;
 
+import com.hysw.qqsl.cloud.core.controller.CommonController;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
@@ -69,7 +70,11 @@ public class WXPayController {
         if (!trade.getUser().getId().equals(user.getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        return wxPayService.unifiedOrderPay(trade);
+        JSONObject jsonObject = wxPayService.unifiedOrderPay(trade);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
     /**
@@ -96,7 +101,10 @@ public class WXPayController {
         trade.setRefundDate(new Date());
         tradeService.save(trade);
         turnoverService.writeTurnover(trade);
-        return wxPayService.refund(trade);
+        if (wxPayService.refund(trade)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -176,7 +184,11 @@ public class WXPayController {
         if (trade == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return wxPayService.orderQuery(trade);
+        JSONObject jsonObject = wxPayService.orderQuery(trade);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
     /**
@@ -189,7 +201,7 @@ public class WXPayController {
     @RequestMapping(value = "/admin/refreshTrade", method = RequestMethod.POST)
     public @ResponseBody
     Message refreshOrder(@RequestBody Map<String, Object> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -201,8 +213,7 @@ public class WXPayController {
         if (trade == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        message = wxPayService.orderQuery(trade);
-        JSONObject jsonObject = JSONObject.fromObject(message.getData());
+        JSONObject jsonObject = wxPayService.orderQuery(trade);
         String tradeState = jsonObject.get("tradeState").toString();
         if (tradeState.equalsIgnoreCase("SUCCESS")) {
             if (trade.getStatus() == Trade.Status.NOPAY) {
@@ -219,7 +230,10 @@ public class WXPayController {
                 }.start();
                 return MessageService.message(Message.Type.OK);
             } else if (trade.getStatus() == Trade.Status.REFUND) {
-                return wxPayService.refund(trade);
+                if (wxPayService.refund(trade)) {
+                    return MessageService.message(Message.Type.OK);
+                }
+                return MessageService.message(Message.Type.FAIL);
             }
         }
         return MessageService.message(Message.Type.FAIL);

@@ -97,15 +97,15 @@ public class OssController {
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/create",method = RequestMethod.POST)
 	public @ResponseBody Message saveOss(@RequestBody Object object){
-		Message message = MessageService.parameterCheck(object);
+		Message message = CommonController.parameterCheck(object);
 		if (message.getType() != Message.Type.OK) {
 			return message;
 		}
 		Long prpjectId = Long.valueOf(((HashMap<String,Object>)message.getData()).get("projectId").toString());
 		String treePath = ((HashMap<String,Object>)message.getData()).get("treePath").toString();
-		message = ossService.filePrefixCheck(treePath);
-		if (message.getType() != Message.Type.OK) {
-			return message;
+		if (!ossService.filePrefixCheck(treePath)) {
+			//文件类型未知
+			return MessageService.message(Message.Type.FILE_TYPE_ERROR);
 		}
 		User user = authentService.getUserFromSubject();
 		if(user==null){
@@ -142,7 +142,7 @@ public class OssController {
 	 */
 	@RequestMapping(value = "/remove",method = RequestMethod.POST)
 	public @ResponseBody Message deleteOss(@RequestBody String data){
-		Message message = MessageService.parametersCheck(data);
+		Message message = CommonController.parametersCheck(data);
 		if (message.getType() != Message.Type.OK) {
 			return message;
 		}

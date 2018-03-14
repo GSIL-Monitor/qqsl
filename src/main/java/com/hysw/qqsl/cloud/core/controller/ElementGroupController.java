@@ -109,7 +109,7 @@ public class ElementGroupController {
     public
     @ResponseBody
     Message makeElementDataGroup(@RequestBody Object object) {
-        Message message = MessageService.parameterCheck(object);
+        Message message = CommonController.parameterCheck(object);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -137,7 +137,7 @@ public class ElementGroupController {
     @ResponseBody
     Message deleteElementData( @RequestBody JSONObject jsonObject) {
         Long elementDataGroupId = Long.valueOf(jsonObject.get("id").toString());
-        Message message = MessageService.parametersCheck(elementDataGroupId);
+        Message message = CommonController.parametersCheck(elementDataGroupId);
         if (message.getType() != Message.Type.OK) {
             return message;
         }

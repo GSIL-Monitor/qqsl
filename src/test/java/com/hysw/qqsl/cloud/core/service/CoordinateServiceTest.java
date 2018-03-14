@@ -87,8 +87,7 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-		Message message = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE);
-		Map<List<Graph>, List<Build>> map = (Map<List<Graph>, List<Build>>) message.getData();
+		Map<List<Graph>, List<Build>> map = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE);
 		List<Graph> list = null;
 		for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
 			list = entry.getKey();
@@ -118,8 +117,8 @@ public class CoordinateServiceTest extends BaseTest {
 			String fileName=testFile.getOriginalFilename();
 			String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 					fileName.length());
-			Message message = coordinateService.readExcels(testFile.getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE);
-			Assert.assertTrue(message.getType()== Message.Type.FAIL);
+			Map<List<Graph>, List<Build>> map = coordinateService.readExcels(testFile.getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE);
+			Assert.assertTrue(map==null);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -128,7 +127,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试过滤数据
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -155,7 +154,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试过滤数据
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -182,7 +181,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试经度向下越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -209,7 +208,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试经度向下越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -236,7 +235,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试经度向上越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -262,7 +261,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试经度向上越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -288,7 +287,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试纬度向下越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -314,7 +313,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试纬度向下越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -340,7 +339,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试纬度向上越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -366,7 +365,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试纬度向上越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -392,7 +391,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试高程越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -418,7 +417,7 @@ public class CoordinateServiceTest extends BaseTest {
 
 	/**
 	 * 测试高程越界
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -462,8 +461,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		List<Graph> list = null;
 		try {
-			Message message = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
-			Map<List<Graph>, List<Build>> map = (Map<List<Graph>, List<Build>>) message.getData();
+			Map<List<Graph>, List<Build>> map = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
 			for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
 				list = entry.getKey();
 				break;
@@ -495,8 +493,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		List<Graph> list = null;
 		try {
-			Message message = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
-			Map<List<Graph>, List<Build>> map = (Map<List<Graph>, List<Build>>) message.getData();
+			Map<List<Graph>, List<Build>> map = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
 			for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
 				list = entry.getKey();
 				break;
@@ -525,8 +522,8 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-		Message message=coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
-		Assert.assertTrue(message.getType()== Message.Type.FAIL);
+		Map<List<Graph>, List<Build>> map=coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+		Assert.assertTrue(map == null);
 	}
 
 	/**
@@ -625,104 +622,6 @@ public class CoordinateServiceTest extends BaseTest {
 	}
 	
 	/**
-	 * 测试写入数据库service null
-	 * @throws IOException
-	 * @throws QQSLException 
-	 */
-	@Test
-	public void testUploadCoordinateToDataNull() throws IOException, QQSLException {
-		User user =userService.findByUserName("qqsl");
-		String newcode="12345673253563564523452";
-		List<Project> projectses=projectService.findByCode(newcode,1l);
-		String treePath;
-		long id;
-		Project project = null;
-		if(projectses.size()==0){
-			project = new Project();
-			project.setCode(newcode);
-			project.setUser(user);
-			project.setName("同仁县");
-			project.setPlanning(2l);
-			projectService.setType(project,2);
-			projectService.createProject(project);
-			List<Project> projects=projectService.findByCode(newcode,1l);
-			treePath=projects.get(0).getTreePath();
-			id=projects.get(0).getId();
-			ElementDB elementDB=new ElementDB();
-			elementDB.setAlias("23A11");
-			elementDB.setProject(projects.get(0));
-			elementDBService.save(elementDB);	
-		}else{
-			treePath=projectses.get(0).getTreePath();
-			id=projectses.get(0).getId();
-		}
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "123.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/123.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile mFile = new CommonsMultipartFile(fileItem);
-		String str1="线坐标,供水干管,"+treePath+"/2,"+id;
-		String fileName = mFile.getOriginalFilename();
-		Message me = coordinateService.uploadCoordinateToData(mFile.getFileItem().getInputStream(),
-				project, "102", fileName, Coordinate.WGS84Type.DEGREE);
-		Assert.assertTrue(me.getType().toString().equals(Message.Type.FAIL.toString()));
-	}
-	
-	/**
-	 * 测试写入数据库service Central
-	 * @throws IOException
-	 * @throws QQSLException 
-	 */
-	@Test
-	public void testUploadCoordinateToDataCentral() throws IOException, QQSLException {
-		User user =userService.findByUserName("qqsl");
-		String newcode="1234567433577";
-		List<Project> projectses=projectService.findByCode(newcode,1l);
-		String treePath;
-		long id;
-		Project project = null;
-		List<ElementDB> elementDBs;
-		if(projectses.size()==0){
-			project = new Project();
-			project.setCode(newcode);
-			project.setUser(user);
-			project.setName("同仁县");
-			project.setPlanning(2l);
-			projectService.setType(project,2);
-			projectService.createProject(project);
-			List<Project> projects=projectService.findByCode(newcode,1l);
-			treePath=projects.get(0).getTreePath();
-			id=projects.get(0).getId();
-			ElementDB elementDB=new ElementDB();
-			elementDB.setAlias("23A11");
-			elementDB.setValue("103.5,35,2002");
-			elementDB.setProject(projects.get(0));
-			elementDBService.save(elementDB);	
-			elementDBs=elementDBService.findByProject(projects.get(0).getId(), "23A11");
-		}else{
-			treePath=projectses.get(0).getTreePath();
-			id=projectses.get(0).getId();
-			elementDBs=elementDBService.findByProject(projectses.get(0).getId(), "23A11");
-		}
-		if(elementDBs==null){}
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "123.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/123.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile mFile = new CommonsMultipartFile(fileItem);
-		String str1="线坐标,供水干管,"+treePath+"/2,"+id;
-		String[] fileInfos =str1.split(",");
-		String fileName = mFile.getOriginalFilename();
-		Message me = coordinateService.uploadCoordinateToData(mFile.getFileItem().getInputStream(),
-				project, "102", fileName, Coordinate.WGS84Type.DEGREE);
-		Assert.assertTrue(me.getType().toString().equals(Message.Type.FAIL.toString()));
-	}
-	
-	/**
 	 * 根据treePath查询坐标表
 	 */
 	@Test
@@ -734,47 +633,6 @@ public class CoordinateServiceTest extends BaseTest {
 		treePaths.add(treePath);
 		List<Coordinate> coordinates=coordinateService.findByTreePath(treePaths);
 		Assert.assertTrue(coordinates.size()==0);
-	}
-
-	/**
-	 * 测试上传坐标文件并保存至数据库
-	 * @throws IOException
-     */
-	@Test
-	public void testUploadCoordinate() throws IOException {
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "8.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/8.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		List<User> user = userService.findAll();
-		Project project = new Project();
-		String treePath = user.get(0).getId() + new Date().toString();
-		treePath = DigestUtils.md5Hex(treePath);
-		project.setUser(user.get(0));
-		project.setTreePath(treePath);
-		projectService.save(project);
-//		projectCache.add(project);
-		ElementDB elementDB = new ElementDB();
-		elementDB.setProject(project);
-		elementDB.setValue("102,36,2002");
-		elementDB.setAlias("24A11");
-		elementDBService.save(elementDB);
-		elementDBService.flush();
-		String fileInfo = "线坐标,供水支管,"+project.getTreePath()+"/2/2A"+","+project.getId();
-		Message message = coordinateService.uploadCoordinate(testFile,project,"102",Coordinate.WGS84Type.DEGREE);
-		Assert.assertTrue(message.getType()== Message.Type.OK);
-		List<String> treePaths = new ArrayList<>();
-		treePaths.add(project.getTreePath() + "/2/2A/" + "8"+".xlsx");
-		elementDBService.remove(elementDB);
-		coordinateService.removeByTreePaths(treePaths);
-//		projectCache.remove(project);
-		projectService.remove(project);
 	}
 
 	@Test
@@ -1173,64 +1031,6 @@ public class CoordinateServiceTest extends BaseTest {
 			cell.setCellValue(d);
 		}
 		cell.setCellStyle(style);
-	}
-
-
-	/**
-	 * 测试线面描述为空
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaa1axlsx() throws IOException {
-		Project project = projectService.find(580l);
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "0001.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/10.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		Message list = coordinateService.uploadCoordinateToData(testFile.getFileItem().getInputStream(),
-				project, "102", fileName, Coordinate.WGS84Type.DEGREE);
-		coordinateService.flush();
-		project = projectService.find(580l);
-		List<Coordinate> coordinates = coordinateService.findByProject(project);
-		Assert.assertTrue(coordinates.size() == 0);
-	}
-
-	/**
-	 * 测试线面描述为非空
-	 * @throws IOException
-	 */
-	@Test
-	public void testUploadCoordinateToData1() throws IOException {
-		Project project = projectService.find(818l);
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "547.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/547.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		coordinateService.uploadCoordinateToData(testFile.getFileItem().getInputStream(),
-				project, "102", fileName, Coordinate.WGS84Type.DEGREE);
-		coordinateService.flush();
-		project = projectService.find(818l);
-		List<Coordinate> coordinates = coordinateService.findByProject(project);
-		Assert.assertTrue(coordinates.size() == 0);
-		coordinateService.flush();
-		for (Coordinate coordinate : coordinates) {
-			coordinateService.remove(coordinate);
-		}
-		coordinateService.flush();
-		List<Coordinate> coordinates1 = coordinateService.findByProject(project);
-		Assert.assertTrue(coordinates1.size() == 0);
 	}
 
 	/**

@@ -5,6 +5,7 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.*;
 import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.core.controller.CommonController;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
@@ -287,7 +288,8 @@ public class AliPayController {
         trade.setRefundDate(new Date());
         tradeService.save(trade);
         turnoverService.writeTurnover(trade);
-        return aliPayService.refund(trade);
+        aliPayService.refund(trade);
+        return MessageService.message(Message.Type.OK);
 }
 
 
@@ -307,7 +309,11 @@ public class AliPayController {
         if (trade == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return  aliPayService.queryTrade(trade);
+        JSONObject jsonObject = aliPayService.queryTrade(trade);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
     /**
@@ -321,7 +327,7 @@ public class AliPayController {
     @RequestMapping(value = "/admin/refreshTrade", method = RequestMethod.POST)
     public @ResponseBody
     Message refreshOrder(@RequestBody Map<String, Object> objectMap) throws AlipayApiException {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -333,8 +339,10 @@ public class AliPayController {
         if (trade == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        message = aliPayService.queryTrade(trade);
-        JSONObject jsonObject = JSONObject.fromObject(message.getData());
+        JSONObject jsonObject = aliPayService.queryTrade(trade);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
         String tradeState = jsonObject.get("tradeState").toString();
         if (tradeState.equalsIgnoreCase("TRADE_SUCCESS")) {
             if (trade.getStatus() == Trade.Status.NOPAY) {
@@ -351,7 +359,8 @@ public class AliPayController {
                 }.start();
                 return MessageService.message(Message.Type.OK);
             } else if (trade.getStatus() == Trade.Status.REFUND) {
-                return aliPayService.refund(trade);
+                aliPayService.refund(trade);
+                return MessageService.message(Message.Type.OK);
             }
         }
         return MessageService.message(Message.Type.FAIL);

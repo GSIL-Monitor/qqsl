@@ -70,7 +70,7 @@ public class CertifyController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/personalCertify", method = RequestMethod.POST)
     public @ResponseBody Message personalCertify(@RequestBody Map<String,Object> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -107,7 +107,7 @@ public class CertifyController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/companyCertify", method = RequestMethod.POST)
     public @ResponseBody Message companyCertify(@RequestBody Map<String,Object> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }

@@ -232,6 +232,8 @@ public final class CommonAttributes {
     public static String MYEMAILACCOUNT = "leinuo@qingqingshuili.cn";
     //    企业邮箱密码
     public static String MYEMAILPASSWORD = "Ljb608403";
+    // 转换文件大小
+    public static final long CONVERT_MAX_SZIE = 36 * 1024 * 1024;
 
 }
 

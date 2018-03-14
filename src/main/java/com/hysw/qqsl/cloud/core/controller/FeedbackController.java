@@ -77,11 +77,17 @@ public class FeedbackController {
     @RequestMapping(value = "/admin/review", method = RequestMethod.POST)
     public @ResponseBody
     Message doAdminReview(@RequestBody Map<String, Object> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return feedbackService.doAdminReview(objectMap);
+        Object feedbackId = objectMap.get("feedbackId");
+        Object review = objectMap.get("review");
+        if (feedbackId == null || review == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        feedbackService.doAdminReview(feedbackId,review);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -143,11 +149,19 @@ public class FeedbackController {
     @RequestMapping(value = "/user/submit", method = RequestMethod.POST)
     public @ResponseBody
     Message saveUserFeedback(@RequestBody Map<String, Object> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return feedbackService.saveUserFeedback(objectMap);
+        Object userId = objectMap.get("userId");
+        Object title = objectMap.get("title");
+        Object content = objectMap.get("content");
+        Object type = objectMap.get("type");
+        if (userId == null || title == null || content == null || type == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        feedbackService.saveUserFeedback(userId,title,content,type);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -173,11 +187,19 @@ public class FeedbackController {
     @RequestMapping(value = "/account/submit", method = RequestMethod.POST)
     public @ResponseBody
     Message saveAccountFeedback(@RequestBody Map<String, Object> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return feedbackService.saveAccountFeedback(objectMap);
+        Object accountId = objectMap.get("accountId");
+        Object title = objectMap.get("title");
+        Object content = objectMap.get("content");
+        Object type = objectMap.get("type");
+        if (accountId == null || title == null || content == null || type == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        feedbackService.saveAccountFeedback(accountId,title,content,type);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**

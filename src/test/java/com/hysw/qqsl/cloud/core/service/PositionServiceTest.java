@@ -4,6 +4,7 @@ import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.DiffConnPoll;
+import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.element.Position;
 import com.hysw.qqsl.cloud.util.RSACoderUtil;
 import net.sf.json.JSONObject;
@@ -23,6 +24,8 @@ public class PositionServiceTest extends BaseTest {
     private PositionService positionService;
     @Autowired
     private DiffConnPollService diffConnPollService;
+    @Autowired
+    private ProjectService projectService;
 
     @Before
     public void before(){
@@ -45,12 +48,12 @@ public class PositionServiceTest extends BaseTest {
 
     @Test
     public void testRandomPosition(){
-        Message message = positionService.randomPosition("aaa", "848");
-        Object data = message.getData();
+        Project project = projectService.find(848l);
+        String data = positionService.randomPosition("aaa", project);
         boolean flag = false;
         String s = null;
         try {
-            s = RSACoderUtil.decryptAES(data.toString(), CommonAttributes.tokenKey, CommonAttributes.tokenIv);
+            s = RSACoderUtil.decryptAES(data, CommonAttributes.tokenKey, CommonAttributes.tokenIv);
         } catch (Exception e) {
             flag = true;
         }
@@ -58,8 +61,8 @@ public class PositionServiceTest extends BaseTest {
         Assert.assertTrue(!flag);
         Assert.assertNotNull(jsonObject);
         Object o = jsonObject.get("userName");
-        message = positionService.changeDate(o.toString());
-        Assert.assertTrue(message.getType()==Message.Type.OK);
+        boolean b = positionService.changeDate(o.toString());
+        Assert.assertTrue(b);
     }
 
     @Test
@@ -74,7 +77,7 @@ public class PositionServiceTest extends BaseTest {
     @Test
     public void testChangeTimeout(){
         DiffConnPoll diffConnPoll = diffConnPollService.find(1l);
-        positionService.changeTimeout(diffConnPoll.getUserName(), "123456");
+        positionService.changeTimeout(diffConnPoll, "123456");
         for (Position position : positionService.getUnuseds()) {
             if (position.getUserName().equals(diffConnPoll.getUserName())) {
                 Assert.assertTrue(position.getTimeout() == 123456);
@@ -82,9 +85,4 @@ public class PositionServiceTest extends BaseTest {
         }
     }
 
-    @Test
-    public void testIsAllowConnectQXWZ(){
-        Message message = positionService.isAllowConnectQXWZ(848l);
-        Assert.assertTrue(message.getType()== Message.Type.OK);
-    }
 }

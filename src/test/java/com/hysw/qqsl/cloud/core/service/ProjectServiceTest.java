@@ -129,17 +129,17 @@ public class ProjectServiceTest extends BaseTest {
 		map.put("order",1);
 		map.put("name","2016人饮");
 		Project project = null;
-		Message message = null;
+		JSONObject jsonObject = null;
 		try{
 			project = projectService.convertMap(map,user,false);
-			message = projectService.createProject(project);
+			jsonObject = projectService.createProject(project);
 		}catch (Exception e){
            e.printStackTrace();
 		}
-		assertTrue(message.getType()== Message.Type.OK);
+		assertTrue(!jsonObject.isEmpty());
 		//id重复保存失败
-		message = projectService.createProject(project);
-		assertTrue(message.getType()== Message.Type.DATA_EXIST);
+		jsonObject = projectService.createProject(project);
+		assertTrue(jsonObject == null);
 		User user1 = userService.findByUserName(CommonTest.USER_NAME);
 		//判断是否更新项目前缀和序号
 		assertTrue(JSONObject.fromObject(user1.getPrefixOrderStr()).get("order").toString().equals("1"));
@@ -157,7 +157,7 @@ public class ProjectServiceTest extends BaseTest {
 		List<Project> projects = projectService.findByCode(newCode,1l);
 		User user = userService.findByUserName(CommonTest.USER_NAME);
 		long planningId = 2;
-		Message me = null;
+		JSONObject jsonObject = null;
 		Project project = new Project();
 		project.setPlanning(planningId);
 		project.setUser(user);
@@ -165,14 +165,9 @@ public class ProjectServiceTest extends BaseTest {
 		project.setName("测试工程");
 		projectService.setType(project, 0);
 		if (projects.size() == 0) {
-			try {
-				me = projectService.createProject(project);
-			} catch (Exception e) {
-				logger.info(e.getMessage());
-				return;
-			}
+			jsonObject = projectService.createProject(project);
 		}
-		Assert.assertTrue(me.getType()==Message.Type.OK);
+		Assert.assertTrue(!jsonObject.isEmpty());
 	}
 
     /**
@@ -192,8 +187,8 @@ public class ProjectServiceTest extends BaseTest {
 		map.put("id",projects.get(0).getId());
 		try {
 		Project project = projectService.convertMap(map,user,true);
-		Message  message = 	projectService.updateProject(project);
-			assertTrue(message.getType() == Message.Type.OK);
+		boolean b = projectService.updateProject(project);
+			assertTrue(!b);
 		}catch (Exception e){
 			return;
 		}
@@ -213,14 +208,14 @@ public class ProjectServiceTest extends BaseTest {
 		map.put("order",2);
 		map.put("name","2016人饮11");
 		Project project;
-		Message message = null;
+		JSONObject jsonObject = null;
 		try{
 			project = projectService.convertMap(map,user,false);
-			message = projectService.createProject(project);
+			jsonObject = projectService.createProject(project);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		assertTrue(message.getType()== Message.Type.OK);
+		assertTrue(!jsonObject.isEmpty());
 	}
 
 	/**
@@ -231,10 +226,12 @@ public class ProjectServiceTest extends BaseTest {
 		//数据准备
 		List<String> codes = dataPrepareOfTestGetProjects();
 		User user = userService.findByUserName("qqslTest");
-		Message message = projectService.getProjects(0,user);
-		assertTrue(message.getType()== Message.Type.OK);
-		assertTrue(message.getData()!=null);
-		List<JSONObject> projectJsons = JSONArray.fromObject(message.getData());
+		Map<JSONArray, String> map = projectService.getProjects(0, user);
+		assertTrue(!map.isEmpty());
+		List<JSONObject> projectJsons = null;
+		for (Map.Entry<JSONArray, String> entry : map.entrySet()) {
+			projectJsons = entry.getKey();
+		}
 		assertTrue(projectJsons.size()==codes.size());
 		assertEquals(projectJsons.get(0).get("code").toString(),codes.get(0));
 		List<JSONArray> infoJsons = JSONArray.fromObject(projectJsons.get(0).get("infoStr"));
@@ -267,7 +264,7 @@ public class ProjectServiceTest extends BaseTest {
 		}
 		assertNotNull(user.getId());
 		Map<String,Object> map;
-		Message message = null;
+		JSONObject jsonObject = null;
 		for(int i=0;i<20;i++){
 			map = new HashMap<>();
 			map.put("type",(int) (Math.random() * 6));
@@ -279,11 +276,11 @@ public class ProjectServiceTest extends BaseTest {
 			Project project;
 			try{
 				project = projectService.convertMap(map,user,false);
-				message = projectService.createProject(project);
+				jsonObject = projectService.createProject(project);
 			}catch (Exception e){
 				e.printStackTrace();
 			}
-			assertEquals(message.getType(),Message.Type.OK);
+			Assert.assertTrue(!jsonObject.isEmpty());
 		}
 		assertTrue(codes.size()==20);
 		return codes;
@@ -319,8 +316,8 @@ public class ProjectServiceTest extends BaseTest {
 			map.put("name","2016西宁灌溉工程");
 			try{
 				Project project = projectService.convertMap(map,user,false);
-				Message message = projectService.createProject(project);
-				assertEquals(message.getType(),Message.Type.OK);
+				JSONObject jsonObject = projectService.createProject(project);
+				Assert.assertTrue(!jsonObject.isEmpty());
 			}catch (Exception e){
 				e.printStackTrace();
 			}
@@ -613,9 +610,8 @@ public class ProjectServiceTest extends BaseTest {
 		dataPrepareOfTestGetProject(0);
 		User user = userService.getSimpleUser(userService.find(1l));
 		Project project = projectService.findByCode("projectJsonTest1",user.getId()).get(0);
-		Message message = projectService.getProjectBySubject(project.getId(),user);
-		assertTrue(message.getType()== Message.Type.OK);
-		JSONObject projectJson = (JSONObject) message.getData();
+		JSONObject projectJson = projectService.getProjectBySubject(project.getId(), user);
+		assertTrue(!projectJson.isEmpty());
 		JSONObject noteJson = (JSONObject) projectJson.get("note");
 		assertNotNull(noteJson);
 	}
@@ -819,52 +815,52 @@ public class ProjectServiceTest extends BaseTest {
 		}
 	}
 
-	@Test
-	public void testUploadFileSize(){
-		Map<String, Object> map = new HashMap<>();
-		map.put("projectId", 848);
-		map.put("fileSize", 134567);
-		map.put("alias","231A" );
-		map.put("fileNames", "aaaaaaaaaaaa");
-		User user = userService.find(1l);
-		Message message = projectService.uploadFileSize(map, user);
-		Assert.assertTrue(message.getType() == Message.Type.OK);
-	}
-
-	@Test
-	public void testDownloadFileSize(){
-		Map<String, Object> map = new HashMap<>();
-		map.put("projectId", 848);
-		map.put("fileSize", 134567);
-		map.put("alias","231A" );
-		map.put("fileName", "aaaaaaaaaaaa");
-		User user = userService.find(1l);
-		Message message = projectService.downloadFileSize(map, user);
-		Assert.assertTrue(message.getType() == Message.Type.OK);
-	}
-
-	@Test
-	public void testDeleteFileSize(){
-		Map<String, Object> map = new HashMap<>();
-		map.put("projectId", 848);
-		map.put("fileSize", 134567);
-		map.put("alias","231A" );
-		map.put("fileName", "aaaaaaaaaaaa");
-		User user = userService.find(1l);
-		Message message = projectService.deleteFileSize(map, user);
-		Assert.assertTrue(message.getType() == Message.Type.OK);
-	}
-
-	@Test
-	public void testDelete(){
-		Map<String, Object> map = new HashMap<>();
-		map.put("projectId", 29);
-		map.put("fileSize", 134567);
-	}
-
-	@Test
-	public void testRefreshCache() throws Exception {
-		Message message = projectService.refreshCache();
-		Assert.assertTrue(message.getType() == Message.Type.OK);
-	}
+//	@Test
+//	public void testUploadFileSize(){
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("projectId", 848);
+//		map.put("fileSize", 134567);
+//		map.put("alias","231A" );
+//		map.put("fileNames", "aaaaaaaaaaaa");
+//		User user = userService.find(1l);
+//		Message message = projectService.uploadFileSize(map, user);
+//		Assert.assertTrue(message.getType() == Message.Type.OK);
+//	}
+//
+//	@Test
+//	public void testDownloadFileSize(){
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("projectId", 848);
+//		map.put("fileSize", 134567);
+//		map.put("alias","231A" );
+//		map.put("fileName", "aaaaaaaaaaaa");
+//		User user = userService.find(1l);
+//		Message message = projectService.downloadFileSize(map, user);
+//		Assert.assertTrue(message.getType() == Message.Type.OK);
+//	}
+//
+//	@Test
+//	public void testDeleteFileSize(){
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("projectId", 848);
+//		map.put("fileSize", 134567);
+//		map.put("alias","231A" );
+//		map.put("fileName", "aaaaaaaaaaaa");
+//		User user = userService.find(1l);
+//		Message message = projectService.deleteFileSize(map, user);
+//		Assert.assertTrue(message.getType() == Message.Type.OK);
+//	}
+//
+//	@Test
+//	public void testDelete(){
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("projectId", 29);
+//		map.put("fileSize", 134567);
+//	}
+//
+//	@Test
+//	public void testRefreshCache() throws Exception {
+//		Message message = projectService.refreshCache();
+//		Assert.assertTrue(message.getType() == Message.Type.OK);
+//	}
 }

@@ -36,7 +36,7 @@ public class CompanyController {
     public
     @ResponseBody
     Message queryArticle(@PathVariable("id") Long id) {
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }

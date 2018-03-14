@@ -37,8 +37,8 @@ public class InterestServiceTest extends BaseTest{
         map.put("pictures","image");
         map.put("status", CommonEnum.Review.PENDING.ordinal());
         map.put("userId",1l);
-        Message message = interestService.saveInterest(map, new Interest());
-        Assert.assertTrue(message.getType()== Message.Type.OK);
+        JSONObject jsonObject1 = interestService.saveInterest(map, new Interest());
+        Assert.assertTrue(!jsonObject1.isEmpty());
         interestService.flush();
         List<Interest> interests = interestService.findAll();
         Assert.assertTrue(interests.size() == 1);

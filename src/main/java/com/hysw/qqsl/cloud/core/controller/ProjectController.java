@@ -9,6 +9,11 @@ import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.ProjectLog;
 import com.hysw.qqsl.cloud.core.service.*;
+import com.hysw.qqsl.cloud.pay.entity.PackageItem;
+import com.hysw.qqsl.cloud.pay.entity.PackageModel;
+import com.hysw.qqsl.cloud.pay.entity.ServeItem;
+import com.hysw.qqsl.cloud.pay.service.PackageService;
+import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -51,7 +56,7 @@ public class ProjectController {
     @Autowired
     private NoteService noteService;
     @Autowired
-    private ElementService elementService;
+    private PackageService packageService;
     @Autowired
     private ContactService contactService;
     @Autowired
@@ -68,6 +73,10 @@ public class ProjectController {
     private ProjectLogService projectLogService;
     @Autowired
     private PollingService pollingService;
+    @Autowired
+    private StorageLogService storageLogService;
+    @Autowired
+    private TradeService tradeService;
 
 
     /**
@@ -83,20 +92,26 @@ public class ProjectController {
     @RequestMapping(value = "/lists", method = RequestMethod.GET)
     public @ResponseBody
     Message getProjects(@RequestParam int start) {
-        Message message;
         User user = authentService.getUserFromSubject();
         if (user != null) {
             user = userService.getSimpleUser(user);
-            message = projectService.getProjects(start, user);
+            Map<JSONArray, String> map = projectService.getProjects(start, user);
+            if (map == null) {
+                return MessageService.message(Message.Type.FAIL);
+            }
             pollingService.changeShareStatus(user, false);
-            return message;
+            for (Map.Entry<JSONArray, String> entry : map.entrySet()) {
+                return MessageService.message(Message.Type.OK, entry.getKey(), entry.getValue());
+            }
         }
         Account account = authentService.getAccountFromSubject();
         if (account != null) {
             account = accountService.getSimpleAccount(account);
-            message = projectService.getAccountProjects(start, account);
+            Map<JSONArray, String> map = projectService.getAccountProjects(start, account);
             pollingService.changeCooperateStatus(account, false);
-            return message;
+            for (Map.Entry<JSONArray, String> entry : map.entrySet()) {
+                return MessageService.message(Message.Type.OK, entry.getKey(), entry.getValue());
+            }
         }
         return MessageService.message(Message.Type.FAIL);
     }
@@ -117,28 +132,29 @@ public class ProjectController {
     @ResponseBody
     Message createProject(
             @RequestBody Map<String, String> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         User user = authentService.getUserFromSubject();
         //是否可以创建项目
-        message = projectService.isAllowCreateProject(user);
+        message = isAllowCreateProject(user);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         try {
             Project project = projectService.convertMap(map, user, false);
-            message = projectService.createProject(project);
+            JSONObject jsonObject = projectService.createProject(project);
+            if (jsonObject == null) {
+                return MessageService.message(Message.Type.DATA_EXIST);
+            }
+            return MessageService.message(Message.Type.OK, jsonObject);
         } catch (QQSLException e) {
-            e.printStackTrace();
-            return MessageService.message(Message.Type.FAIL, e.getMessage());
+            return MessageService.message(Message.Type.FAIL);
         } catch (Exception e1) {
-            e1.printStackTrace();
             return MessageService.message(Message.Type.FAIL);
         }
-        return message;
     }
 
     /**
@@ -168,7 +184,7 @@ public class ProjectController {
     @ResponseBody
     Message getTreeJsons(
             @PathVariable("id") Long id) {
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -197,7 +213,7 @@ public class ProjectController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public @ResponseBody
     Message updateProject(@RequestBody Map<String, String> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -205,12 +221,14 @@ public class ProjectController {
         User user = authentService.getUserFromSubject();
         try {
             Project newProject = projectService.convertMap(map, user, true);
-            message = projectService.updateProject(newProject);
+            if (projectService.updateProject(newProject)) {
+                return MessageService.message(Message.Type.OK);
+            }else{
+                return MessageService.message(Message.Type.DATA_NOEXIST);
+            }
         } catch (QQSLException e) {
-            e.printStackTrace();
             return MessageService.message(Message.Type.FAIL);
         }
-        return message;
     }
 
     /**
@@ -226,12 +244,20 @@ public class ProjectController {
     @ResponseBody
     Message removeProjectByCode(
             @PathVariable("id") Long id) {
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        return projectService.removeById(id, user);
+        Project project = projectService.find(id);
+        if (project == null || project.getId() == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (!project.getUser().getId().equals(user.getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        projectService.removeById(project, user);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -285,7 +311,7 @@ public class ProjectController {
     @ResponseBody
     Message getTemplateJsons(
             @PathVariable("type") String type) {
-        Message message = MessageService.parametersCheck(type);
+        Message message = CommonController.parametersCheck(type);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -314,7 +340,7 @@ public class ProjectController {
     @ResponseBody
     Message getUnit(@RequestParam long id,
                     @RequestParam String alias) {
-        Message message = MessageService.parametersCheck(id, alias);
+        Message message = CommonController.parametersCheck(id, alias);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -353,7 +379,7 @@ public class ProjectController {
     @ResponseBody
     Message getValues(@RequestParam String alias,
                       @RequestParam String projectType) {
-        Message message = MessageService.parametersCheck(alias, projectType);
+        Message message = CommonController.parametersCheck(alias, projectType);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -387,7 +413,7 @@ public class ProjectController {
     public
     @ResponseBody
     Message getProject(@PathVariable("id") Long id) {
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -397,8 +423,7 @@ public class ProjectController {
         if (!isOperate(user, account, project)) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        message = projectService.getProjectBySubject(id, user == null ? account : user);
-        return message;
+        return MessageService.message(Message.Type.OK, projectService.getProjectBySubject(id, user == null ? account : user));
     }
 
     /**
@@ -411,7 +436,7 @@ public class ProjectController {
     public
     @ResponseBody
     Message getProjectIntroduce(@PathVariable("id") Long id) {
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -437,7 +462,7 @@ public class ProjectController {
     @ResponseBody
     Message sendMessage(
             @RequestBody Map<String, String> objectMap) {
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -455,7 +480,11 @@ public class ProjectController {
         } else {
             contacts.add(contact);
         }
-        return noteService.addToNoteCache(contacts, sendMsg);
+        if (noteService.addToNoteCache(contacts, sendMsg)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
 
@@ -493,7 +522,7 @@ public class ProjectController {
     @RequestMapping(value = "/uploadModel", method = RequestMethod.GET)
     public @ResponseBody
     Message uploadModel(@RequestParam long id, @RequestParam String alias) {
-        Message message = MessageService.parametersCheck(id, alias);
+        Message message = CommonController.parametersCheck(id, alias);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -538,14 +567,18 @@ public class ProjectController {
     @RequestMapping(value = "/share", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Message share(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         List<Integer> projectIds = (List<Integer>) map.get("projectIds");
         List<Integer> userIds = (List<Integer>) map.get("userIds");
         User own = authentService.getUserFromSubject();
-        return shareService.shares(projectIds, userIds, own);
+        if (shareService.shares(projectIds, userIds, own)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**
@@ -559,7 +592,7 @@ public class ProjectController {
     @RequestMapping(value = "/unShare", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Message unShare(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -588,7 +621,7 @@ public class ProjectController {
     @RequestMapping(value = "/viewCooperate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Message viewCooperate(@RequestParam long accountId) {
-        Message message = MessageService.parametersCheck(accountId);
+        Message message = CommonController.parametersCheck(accountId);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -597,7 +630,7 @@ public class ProjectController {
         if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return cooperateService.viewCooperate(user, account);
+        return MessageService.message(Message.Type.OK, cooperateService.viewCooperate(user, account));
     }
 
     /**
@@ -611,7 +644,7 @@ public class ProjectController {
     @RequestMapping(value = "/unView", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Message unViews(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -638,7 +671,7 @@ public class ProjectController {
     @RequestMapping(value = "/cooperateMul", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Message cooperateMult(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -660,8 +693,20 @@ public class ProjectController {
         Project project = projectService.find(projectId);
         //判断子账号,项目归属
         User own = authentService.getUserFromSubject();
-        return cooperateService.cooperateMult(project, typeStr, account, own);
-
+        if (project == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (!project.getUser().getId().equals(own.getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        if (!cooperateService.isOwn(own, account)) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if (cooperateService.cooperateMult(project, typeStr, account)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**
@@ -676,7 +721,7 @@ public class ProjectController {
     @RequestMapping(value = "/cooperateSim", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Message cooperateSim(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -728,7 +773,7 @@ public class ProjectController {
     @RequestMapping(value = "/unCooperate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Message unCooperate(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -741,7 +786,14 @@ public class ProjectController {
         String typeStr = map.get("types").toString();
         List<String> types = Arrays.asList(typeStr.split(","));
         User own = authentService.getUserFromSubject();
-        return cooperateService.unCooperate(project, types, own);
+        if(!project.getUser().getId().equals(own.getId())){
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        if (cooperateService.unCooperate(project, types)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**
@@ -789,7 +841,7 @@ public class ProjectController {
     @RequestMapping(value = "/reportUploadFileInfo", method = RequestMethod.POST)
     public @ResponseBody
     Message uploadFileSize(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -797,7 +849,7 @@ public class ProjectController {
         if (o == null) {
             o = authentService.getAccountFromSubject();
         }
-        return projectService.uploadFileSize(map, o);
+        return uploadFileSize(map, o);
     }
 
     /**
@@ -811,7 +863,7 @@ public class ProjectController {
     @RequestMapping(value = "/reportDownloadFileInfo", method = RequestMethod.POST)
     public @ResponseBody
     Message downloadFileSize(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -819,7 +871,7 @@ public class ProjectController {
         if (o == null) {
             o = authentService.getAccountFromSubject();
         }
-        return projectService.downloadFileSize(map, o);
+        return downloadFileSize(map, o);
     }
 
     /**
@@ -833,12 +885,12 @@ public class ProjectController {
     @RequestMapping(value = "/deleteFileSize", method = RequestMethod.POST)
     public @ResponseBody
     Message deleteFileSize(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        return projectService.deleteFileSize(map, user);
+        return deleteFileSize(map, user);
     }
 
     /**
@@ -853,7 +905,7 @@ public class ProjectController {
     @RequestMapping(value = "/isAllowUpload", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Message isAllowUpload(@RequestParam long projectId) {
-        Message message = MessageService.parametersCheck(projectId);
+        Message message = CommonController.parametersCheck(projectId);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -862,7 +914,7 @@ public class ProjectController {
             Project project = projectService.find(projectId);
             user = project.getUser();
         }
-        return projectService.isAllowUpload(user);
+        return isAllowUpload(user);
     }
 
     /**
@@ -876,7 +928,7 @@ public class ProjectController {
     @RequestMapping(value = "/isAllowDownload", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Message isAllowDownload(@RequestParam long projectId) {
-        Message message = MessageService.parametersCheck(projectId);
+        Message message = CommonController.parametersCheck(projectId);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -885,7 +937,7 @@ public class ProjectController {
             Project project = projectService.find(projectId);
             user = project.getUser();
         }
-        return projectService.isAllowDownload(user);
+        return isAllowDownload(user);
     }
 
     /**
@@ -900,7 +952,7 @@ public class ProjectController {
     @RequestMapping(value = "/isAllowBim", method = RequestMethod.GET)
     public @ResponseBody
     Message isAllowBim(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -913,7 +965,7 @@ public class ProjectController {
             Project project = projectService.find(Long.valueOf(projectId.toString()));
             user = project.getUser();
         }
-        return projectService.isAllowBim(user);
+        return isAllowBim(user);
     }
 
     /**
@@ -936,12 +988,12 @@ public class ProjectController {
     @RequestMapping(value = "/iconType/update", method = RequestMethod.POST)
     public @ResponseBody
     Message iconTypeUpdate(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
-        return projectService.iconTypeUpdate(user, map);
+        return iconTypeUpdate(user, map);
     }
 
     /**
@@ -1040,6 +1092,224 @@ public class ProjectController {
         }
         JSONArray jsonArray = projectLogService.projectLogsToJson(projectLogs);
         return MessageService.message(Message.Type.OK, jsonArray);
+    }
+
+    /**
+     * 上传文件大小计入项目与套餐中
+     * @param map
+     * @param o
+     * @return
+     */
+    public Message uploadFileSize(Map<String, Object> map, Object o) {
+        Object projectId = map.get("projectId");
+        Object fileSize = map.get("fileSize");
+        Object fileNames = map.get("fileNames");//用于记录日志
+        Object alias = map.get("alias");
+        if (projectId == null || fileSize == null || fileNames == null || alias == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Project project = projectService.find(Long.valueOf(projectId.toString()));
+        if (project == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(project.getUser());
+        if (aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        try {
+            project.setCurSpaceNum(project.getCurSpaceNum() + Long.valueOf(fileSize.toString()));
+            aPackage.setCurSpaceNum(aPackage.getCurSpaceNum() + Long.valueOf(fileSize.toString()));
+            aPackage.setCurTrafficNum(aPackage.getCurTrafficNum()+Long.valueOf(fileSize.toString()));
+        } catch (Exception e) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        projectService.save(project);
+        packageService.save(aPackage);
+        storageLogService.saveStorageLog(aPackage, "upload", fileSize);
+        Map<String, String> aliases = new LinkedHashMap<>();
+        aliases.put(alias.toString(),fileNames.toString());
+        projectLogService.saveLog(project,o,aliases,ProjectLog.Type.FILE_UPLOAD);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("fileSize", fileSize);
+        return MessageService.message(Message.Type.OK, jsonObject);
+    }
+
+    /**
+     * 下载文件大小计入套餐中
+     * @param map
+     * @param o
+     * @return
+     */
+    public Message downloadFileSize(Map<String, Object> map, Object o) {
+        Object projectId = map.get("projectId");
+        Object fileSize = map.get("fileSize");
+        Object fileName = map.get("fileName");//用于记录日志
+        Object alias = map.get("alias");
+        if (projectId == null || fileSize == null || fileName == null || alias == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Project project = projectService.find(Long.valueOf(projectId.toString()));
+        if (project == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(project.getUser());
+        if (aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        try {
+            aPackage.setCurTrafficNum(aPackage.getCurTrafficNum()+Long.valueOf(fileSize.toString()));
+        } catch (Exception e) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        packageService.save(aPackage);
+        storageLogService.saveStorageLog(aPackage,"download",fileSize);
+        Map<String, String> aliases = new LinkedHashMap<>();
+        aliases.put(alias.toString(),fileName.toString());
+        projectLogService.saveLog(projectService.find(Long.valueOf(projectId.toString())),o,aliases,ProjectLog.Type.FILE_DOWNLOAD);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("fileSize", fileSize);
+        return MessageService.message(Message.Type.OK, jsonObject);
+    }
+
+
+
+    /**
+     * 删除文件大小计入项目和套餐中
+     * @param map
+     * @param user
+     * @return
+     */
+    public Message deleteFileSize(Map<String, Object> map, User user) {
+        Object projectId = map.get("projectId");
+        Object alias = map.get("alias");
+        Object fileSize = map.get("fileSize");
+        Object fileName = map.get("fileName");
+        if (projectId == null || fileSize == null || alias == null || fileName == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Project project = projectService.find(Long.valueOf(projectId.toString()));
+        if (user == null) {
+            user = project.getUser();
+        }
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(user);
+        if (project == null || aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        try {
+            project.setCurSpaceNum(project.getCurSpaceNum() - Long.valueOf(fileSize.toString()));
+            aPackage.setCurSpaceNum(aPackage.getCurSpaceNum() - Long.valueOf(fileSize.toString()));
+        } catch (Exception e) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        projectService.save(project);
+        packageService.save(aPackage);
+        storageLogService.saveStorageLog(aPackage,"delete",fileSize);
+        Map<String, String> aliases = new LinkedHashMap<>();
+        aliases.put(alias.toString(),fileName.toString());
+        projectLogService.saveLog(project,user,aliases,ProjectLog.Type.FILE_DELETE);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 判断计入次文件大小后是否满足限制条件
+     * @param user
+     * @return
+     */
+    public Message isAllowUpload(User user) {
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.SPACE && aPackage.getCurSpaceNum() <= packageItem.getLimitNum() && aPackage.getCurTrafficNum() <= packageItem.getLimitNum() * 10l) {
+                return MessageService.message(Message.Type.OK);
+            }
+        }
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
+    }
+
+    /**
+     * 是否允许下载
+     * @param user
+     * @return
+     */
+    public Message isAllowDownload(User user) {
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.SPACE && aPackage.getCurTrafficNum() <= packageItem.getLimitNum() * 10) {
+                return MessageService.message(Message.Type.OK);
+            }
+        }
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
+    }
+
+    /**
+     * 是否允许创建项目，如果允许，套餐内增加项目创建初始大小
+     * @param user
+     * @return
+     */
+    public Message isAllowCreateProject(User user) {
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        long l = projectService.findByUser(user).size();
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.PROJECT && l < packageItem.getLimitNum()) {
+                return MessageService.message(Message.Type.OK);
+            }
+        }
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
+    }
+
+    public Message isAllowBim(User user) {
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.BIMSERVE) {
+                return MessageService.message(Message.Type.OK);
+            }
+        }
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
+    }
+
+    /**
+     * 项目图标类型定制
+     *
+     * @param user
+     * @param map
+     * @return
+     */
+    public Message iconTypeUpdate(User user, Map<String, Object> map) {
+        Object id = map.get("id");
+        Object iconType = map.get("iconType");
+        if (id == null || iconType == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Project project;
+        try {
+            project = projectService.find(Long.valueOf(id.toString()));
+        } catch (Exception e) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if (project == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (!project.getUser().getId().equals(user.getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        project.setIconType(Project.IconType.valueOf(iconType.toString()));
+        projectService.save(project);
+        return MessageService.message(Message.Type.OK);
     }
 
 }

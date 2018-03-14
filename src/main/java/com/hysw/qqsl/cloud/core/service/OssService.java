@@ -14,7 +14,6 @@ import com.aliyuncs.profile.IClientProfile;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.OssDao;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
@@ -559,13 +558,13 @@ public class OssService extends BaseService<Oss,Long>{
 	 * @param treePath
 	 * @return
 	 */
-	public Message filePrefixCheck(String treePath){
+	public boolean filePrefixCheck(String treePath){
 		String prefix = treePath.substring(treePath.lastIndexOf(".")+1).toLowerCase();
 		if(extensiones.contains(prefix)==false){
 			//文件类型未知
-			return MessageService.message(Message.Type.FILE_TYPE_ERROR);
+			return false;
 		}
-		return MessageService.message(Message.Type.OK);
+		return true;
 	}
 
 	public List<Oss> getOssList() {

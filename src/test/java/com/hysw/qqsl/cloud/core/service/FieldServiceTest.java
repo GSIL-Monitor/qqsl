@@ -59,8 +59,8 @@ public class FieldServiceTest extends BaseTest {
         List<Object> coordinates = new LinkedList<>();
         coordinates.add(coordinate);
         map.put("coordinates",coordinates);
-        Message message = fieldService.saveField(map);
-        Assert.assertTrue(message.getType()== Message.Type.OK);
+        boolean flag = fieldService.saveField(map);
+        Assert.assertTrue(flag);
     }
 
     @Test
@@ -74,14 +74,15 @@ public class FieldServiceTest extends BaseTest {
         String s = "{\"type\":\"QS\", \"centerCoor\":{\"longitude\":\"101.49382902737608\", \"latitude\":\"36.72807717821667\", \"elevation\":\"0\"}, \"projectId\":\"848\", \"remark\":\"qw\"}";
         JSONObject jsonObject = JSONObject.fromObject(s);
         Map<String, Object> map = (Map<String, Object>) jsonObject;
-        Message message = fieldService.newBuild(map);
-        Assert.assertTrue(message.getType() == Message.Type.OK);
+        boolean flag = fieldService.newBuild(map.get("type"), map.get("centerCoor"), map.get("remark"), map.get("projectId"));
+        Assert.assertTrue(flag);
         buildService.flush();
         s = "{\"type\":\"QS\", \"centerCoor\":{\"longitude\":\"101.49382902737608\", \"latitude\":\"36.72807717821667\", \"elevation\":\"0\"}, \"id\":\"6106\", \"projectId\":\"848\", \"remark\":\"qw1\"}";
         jsonObject = JSONObject.fromObject(s);
         map = (Map<String, Object>) jsonObject;
-        message = fieldService.editBuild(map);
-        Assert.assertTrue(message.getType() == Message.Type.OK);
+        Build build = buildService.find(Long.valueOf(map.get("id").toString()));
+        flag = fieldService.editBuild(build,map.get("id"),map.get("remark"),map.get("type"),map.get("attribes"));
+        Assert.assertTrue(flag);
     }
 
 }

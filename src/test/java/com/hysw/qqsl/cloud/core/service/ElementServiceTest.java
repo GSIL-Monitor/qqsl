@@ -7,6 +7,7 @@ import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.element.Unit;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,8 +50,8 @@ public class ElementServiceTest extends BaseTest {
 		if (projectService.findByCode(CODE, 1l).size() == 0) {
 			try{
 				project = projectService.convertMap(map,user,false);
-				Message message = projectService.createProject(project);
-				assertTrue(message.getType() == Message.Type.OK);
+				JSONObject jsonObject = projectService.createProject(project);
+				assertTrue(!jsonObject.isEmpty());
 			}catch (Exception e){
 				e.printStackTrace();
 			}

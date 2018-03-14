@@ -1,16 +1,11 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.data.DiffConnPoll;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.entity.element.Position;
-import com.hysw.qqsl.cloud.pay.entity.PackageItem;
-import com.hysw.qqsl.cloud.pay.entity.PackageModel;
-import com.hysw.qqsl.cloud.pay.entity.ServeItem;
-import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.util.RSACoderUtil;
@@ -30,17 +25,11 @@ import java.util.Random;
  */
 @Service("positionService")
 public class PositionService {
-    @Autowired
-    private ProjectService projectService;
-    @Autowired
-    private PackageService packageService;
-    @Autowired
-    private TradeService tradeService;
 
     private List<Position> unuseds = new ArrayList<>();
     private List<Position> useds = new ArrayList<>();
     private List<Position> timeout = new ArrayList<>();
-    Setting setting = SettingUtils.getInstance().getSetting();
+//    Setting setting = SettingUtils.getInstance().getSetting();
 
     @Autowired
     private DiffConnPollService diffConnPollService;
@@ -128,16 +117,7 @@ public class PositionService {
      * @param mac
      * @return
      */
-    public Message randomPosition(String mac, String id) {
-        Project project = null;
-        try {
-            project = projectService.find(Long.valueOf(id));
-        } catch (Exception e) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (project == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
+    public String randomPosition(String mac, Project project) {
         Position position = null;
         for (int i = 0; i < useds.size(); i++) {
             if (useds.get(i).getMac().equals(mac)) {
@@ -149,7 +129,7 @@ public class PositionService {
         if (position == null) {
             if (unuseds.size() == 0) {
 //                链接池已满
-                return MessageService.message(Message.Type.QXWZ_FULL);
+                return "";
             }
             Random random = new Random();
             int i = random.nextInt(unuseds.size());
@@ -168,7 +148,7 @@ public class PositionService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return MessageService.message(Message.Type.OK, s);
+        return s;
     }
 
 //    /**
@@ -191,7 +171,7 @@ public class PositionService {
      * 根据心跳改变缓存内对象时间
      * @param username
      */
-    public Message changeDate(String username){
+    public boolean changeDate(String username){
         boolean flag = true;
         for (int i = 0; i < useds.size(); i++) {
             if (useds.get(i).getUserName().equals(username)) {
@@ -201,9 +181,9 @@ public class PositionService {
             }
         }
         if (flag) {
-            return MessageService.message(Message.Type.FAIL);
+            return false;
         }
-        return MessageService.message(Message.Type.OK);
+        return true;
     }
 
 
@@ -259,59 +239,15 @@ public class PositionService {
         }
     }
 
-    public Message changeTimeout(String userName, String timeout) {
-        DiffConnPoll diffConnPoll = null;
-//        if (setting.getStatus().equals("run")) {
-        diffConnPoll = diffConnPollService.findByUserName(userName);
-        if (diffConnPoll == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
+    public boolean changeTimeout(DiffConnPoll diffConnPoll, String timeout) {
         try {
             diffConnPoll.setTimeout(Long.valueOf(timeout));
         }catch (Exception e){
-            return MessageService.message(Message.Type.FAIL);
+            return false;
         }
         diffConnPollService.save(diffConnPoll);
-//        }else{
-//            boolean flag = false;
-//            diffConnPoll = new DiffConnPoll();
-//            for (int i = 0; i < this.timeout.size(); i++) {
-//                if (flag) {
-//                    break;
-//                }
-//                if (this.timeout.get(i).getUserName().equals(userName)) {
-//                    diffConnPoll.setUserName(userName);
-//                    diffConnPoll.setTimeout(Long.valueOf(timeout));
-//                    flag = true;
-//                    break;
-//                }
-//            }
-//            for (int i = 0; i < useds.size(); i++) {
-//                if (flag) {
-//                    break;
-//                }
-//                if (useds.get(i).getUserName().equals(userName)) {
-//                    diffConnPoll.setUserName(userName);
-//                    diffConnPoll.setTimeout(Long.valueOf(timeout));
-//                    flag = true;
-//                    break;
-//                }
-//            }
-//            for (int i = 0; i < unuseds.size(); i++) {
-//                if (flag) {
-//                    break;
-//                }
-//                if (unuseds.get(i).getUserName().equals(userName)) {
-//                    diffConnPoll.setUserName(userName);
-//                    diffConnPoll.setTimeout(Long.valueOf(timeout));
-////                    flag = true;
-//                    break;
-//                }
-//            }
-//
-//        }
         editPosition(diffConnPoll);
-        return MessageService.message(Message.Type.OK);
+        return true;
     }
 
     /**
@@ -355,30 +291,6 @@ public class PositionService {
             }
         }
         return i;
-    }
-
-    /**
-     * 是否允许连接千寻位置(含限制数)
-     * @param projectId
-     * @return
-     */
-    public Message isAllowConnectQXWZ(Long projectId){
-        Project project = projectService.find(projectId);
-        int i = findByUserInUseds(project.getUser());
-        Package aPackage = packageService.findByUser(project.getUser());
-        if (aPackage == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (aPackage.getExpireDate().getTime() < System.currentTimeMillis()) {
-            return MessageService.message(Message.Type.PACKAGE_EXPIRED);
-        }
-        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
-        for (PackageItem packageItem : packageModel.getPackageItems()) {
-            if (packageItem.getServeItem().getType() == ServeItem.Type.FINDCM && i < packageItem.getLimitNum()) {
-                return MessageService.message(Message.Type.OK);
-            }
-        }
-        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
     /**

@@ -26,8 +26,6 @@ public class InfoService {
 
 	Log logger = LogFactory.getLog(getClass());
 	@Autowired
-	private ElementGroupService elementGroupService;
-	@Autowired
 	private CacheManager cacheManager;
 	Setting setting = SettingUtils.getInstance().getSetting();
 

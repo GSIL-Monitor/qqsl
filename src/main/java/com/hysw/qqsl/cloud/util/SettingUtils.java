@@ -328,25 +328,25 @@ public class SettingUtils {
 	 *
 	 * @return
 	 */
-	public static Message checkCoordinateIsInvalid(String coordinate) {
+	public static JSONObject checkCoordinateIsInvalid(String coordinate) {
 		String[] coordinates = coordinate.split(",");
 		if (coordinates.length != 3) {
-			return MessageService.message(Message.Type.FAIL);
+			return null;
 		}
 		if (Double.valueOf(coordinates[0]) > 180 || Double.valueOf(coordinates[0]) < 0) {
-			return MessageService.message(Message.Type.FAIL);
+			return null;
 		}
 		if (Double.valueOf(coordinates[1]) > 90 || Double.valueOf(coordinates[1]) < 0) {
-			return MessageService.message(Message.Type.FAIL);
+			return null;
 		}
 		if (Double.valueOf(coordinates[2]) < 0) {
-			return MessageService.message(Message.Type.FAIL);
+			return null;
 		}
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("longitude", coordinates[0]);
 		jsonObject.put("latitude", coordinates[1]);
 		jsonObject.put("elevation", coordinates[2]);
-		return MessageService.message(Message.Type.OK, jsonObject);
+		return jsonObject;
 	}
 
 	/**

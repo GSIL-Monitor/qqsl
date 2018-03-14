@@ -5,6 +5,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Admin;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
+import net.sf.json.JSONObject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +112,8 @@ public class AuthentController {
     public
     @ResponseBody
     Message getVersion() {
-        return mobileInfoService.findVersion();
+        JSONObject version = mobileInfoService.findVersion();
+        return MessageService.message(Message.Type.OK,version);
     }
 
     /**
@@ -123,12 +125,13 @@ public class AuthentController {
     public
     @ResponseBody
     Message updateVersion(@RequestBody Map<String, Object> map) {
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         Long version = Long.valueOf(map.get("version").toString());
-        return mobileInfoService.update(version);
+        mobileInfoService.update(version);
+        return MessageService.message(Message.Type.OK);
     }
 
 

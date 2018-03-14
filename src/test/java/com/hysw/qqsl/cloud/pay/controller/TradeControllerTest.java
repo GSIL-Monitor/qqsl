@@ -9,13 +9,14 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@Ignore
 public class TradeControllerTest extends BaseControllerTest {
     private static final String httpUrl = "http://localhost:8080/qqsl/trade/";
     private static final String httpUrlLogin = "http://localhost:8080/qqsl/user/";

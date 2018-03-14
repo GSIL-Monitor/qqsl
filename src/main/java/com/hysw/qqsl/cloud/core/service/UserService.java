@@ -4,7 +4,6 @@ import java.util.*;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.pay.entity.PackageItem;
 import com.hysw.qqsl.cloud.pay.entity.PackageModel;
@@ -21,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.UserDao;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -33,11 +31,7 @@ public class UserService extends BaseService<User, Long> {
 	@Autowired
 	private UserDao userDao;
 	@Autowired
-	private NoteService noteService;
-	@Autowired
 	private AccountService accountService;
-	@Autowired
-	private AuthentService authentService;
 	@Autowired
 	private AccountMessageService accountMessageService;
 	@Autowired
@@ -163,25 +157,40 @@ public class UserService extends BaseService<User, Long> {
 //		return user;
 //	}
 
-    /**
+	/**
 	 * 用户注册业务封装
-	 * @param map
-	 * @param verification
-	 * @return
-     */
-	public Message registerService(Map<String,Object> map,Verification verification){
-     	Message	message = checkCode(map.get("verification").toString(), verification);
-		if (message.getType()!=Message.Type.OK) {
-			return message;
-		}
+	 *
+	 * @param user
+	 * @param userName
+	 * @param phone
+	 * @param password
+	 */
+	public boolean registerService(User user, String userName, String phone, String password) {
 		try {
-			message = register(map.get("userName").toString(), verification.getPhone(),
-					map.get("password").toString());
+			if (phone.length() != 11 || SettingUtils.phoneRegex(phone) == false) {
+				throw new QQSLException(phone + ":电话号码异常！");
+			}
+			if (password.length() != 32) {
+				throw new QQSLException(password + ":密码异常！");
+			}
 		} catch (QQSLException e) {
 			logger.info(e.getMessage());
-			return MessageService.message(Message.Type.FAIL);
+			return false;
 		}
-		return message;
+		user.setUserName(userName);
+		user.setPhone(phone);
+		user.setPassword(password);
+//				user.setType(User.Type.USER);
+		//默认新注册用户角色为web
+		user.setRoles(CommonAttributes.ROLES[2]);
+		save(user);
+		pollingService.addUser(user);
+//				激活试用版套餐
+		packageService.activateTestPackage(user);
+//		构建认证状态
+		Certify certify = new Certify(user);
+		certifyService.save(certify);
+		return true;
 	}
 
 
@@ -223,7 +232,6 @@ public class UserService extends BaseService<User, Long> {
 					user1.getCompanyStatus() == CommonEnum.CertifyStatus.PASS ||
 					user1.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING)) {
 				it.remove();
-				continue;
 			}
 		}
 		return users;
@@ -265,80 +273,20 @@ public class UserService extends BaseService<User, Long> {
 		return null;
 	}
 
-
-	/**
-	 * 企业用户注册
-	 * @param phone
-	 * @param password
-	 * @return
-	 * @throws QQSLException 
-	 */
-	public Message register(String userName,String phone, String password) throws QQSLException {
-        if(phone.length()!=11||SettingUtils.phoneRegex(phone)==false){
-        	throw new QQSLException(phone+":电话号码异常！");
-		}
-        if(password.length()!=32){
-        	throw new QQSLException(password+":密码异常！");
-        }
-		User user = findByPhone(phone);
-		// 用户已存在
-		if (user != null) {
-			return MessageService.message(Message.Type.DATA_EXIST);
-		} else {
-			user = new User();
-		}
-		user.setUserName(userName);
-		user.setPhone(phone);
-		user.setPassword(password);
-//				user.setType(User.Type.USER);
-		//默认新注册用户角色为web
-		user.setRoles(CommonAttributes.ROLES[2]);
-		save(user);
-		pollingService.addUser(user);
-//				激活试用版套餐
-		packageService.activateTestPackage(user);
-//		构建认证状态
-		Certify certify = new Certify(user);
-		certifyService.save(certify);
-		return MessageService.message(Message.Type.OK);
-	}
-
-	/**
-	 * 验证验证码
-	 *
-	 * @param code
-	 * @param verification
-	 * @return
-	 */
-	public Message checkCode(String code, Verification verification) {
-		if (verification == null) {
-			return MessageService.message(Message.Type.CODE_NOEXIST);
-		}
-		if (verification.isInvalied()) {
-			// 验证码过期
-			return MessageService.message(Message.Type.CODE_INVALID);
-		}
-		boolean result = noteService.checkCode(code, verification);
-		if (result) {
-			return MessageService.message(Message.Type.CODE_ERROR);
-		}
-		return MessageService.message(Message.Type.OK);
-	}
-
 	/**
 	 * 修改用户密码
 	 * @param newPassword
 	 * @param id
 	 * @return
 	 */
-	public Message updatePassword(String newPassword, Long id) {
+	public JSONObject updatePassword(String newPassword, Long id) {
 		User user = findByDao(id);
 		if(newPassword.length()!=32){
-			return MessageService.message(Message.Type.PASSWORD_ERROR);
+			return null;
 		}
 		user.setPassword(newPassword);
 		save(user);
-		return MessageService.message(Message.Type.OK,makeUserJson(user));
+		return makeUserJson(user);
 	}
 
 	/**
@@ -547,7 +495,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @param account
 	 * @return
 	 */
-	public Message unbindAccount(Account account,User user) {
+	public boolean unbindAccount(Account account,User user) {
 		//收回权限
 		cooperateService.cooperateRevoke(user,account);
 		List<Account> accounts = getAccountsByUserId(user.getId());
@@ -568,44 +516,14 @@ public class UserService extends BaseService<User, Long> {
 			}
 		}
 		if(!flag){
-			return MessageService.message(Message.Type.FAIL);
+			return false;
 		}
 		user.setAccounts(accounts);
 		save(user);
 		//记录企业解绑子账号的消息
 		accountMessageService.bindMsessage(user,account,false);
-		return MessageService.message(Message.Type.OK);
+		return true;
 	}
-
-	/**
-	 * 判断项目及子账号归属
-	 * @param own
-	 * @param project
-	 * @param account
-	 * @return
-	 */
-    public Message isOwn(User own, Project project, Account account) {
-		if(account==null){
-			return MessageService.message(Message.Type.DATA_NOEXIST);
-		}
-		if(account.getName()==null){
-			return MessageService.message(Message.Type.ACCOUNT_NOINFO);
-			//return MessageService.message(Message.Type.OTHER);
-		}
-		if (project == null) {
-			return MessageService.message(Message.Type.DATA_NOEXIST);
-		}
-		if (!project.getUser().getId().equals(own.getId())) {
-			return MessageService.message(Message.Type.DATA_REFUSE);
-		}
-		List<Account> accounts = getAccountsByUserId(own.getId());
-		for(int j=0;j<accounts.size();j++){
-			if(account.getId().equals(accounts.get(j).getId())){
-				return MessageService.message(Message.Type.OK);
-			}
-		}
-		return MessageService.message(Message.Type.FAIL);
-    }
 
 	/**
 	 * 添加user组缓存

@@ -1,18 +1,23 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.aliyun.oss.common.utils.IOUtils;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.annotation.util.StationIsExpire;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +43,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/station")
 public class StationController {
-
+    Log logger = LogFactory.getLog(getClass());
     @Autowired
     private StationService stationService;
     @Autowired
@@ -49,6 +54,8 @@ public class StationController {
     private ApplicationTokenService applicationTokenService;
     @Autowired
     private PollingService pollingService;
+    @Autowired
+    private MonitorService monitorService;
     /**
      * 获取token
      * @return message消息体,附带token令牌
@@ -88,13 +95,13 @@ public class StationController {
             Map<String, MultipartFile> map = multiRequest.getFileMap();
             MultipartFile mFile = map.get(fileName);
             try{
-                return stationService.readModelFile(mFile,station);
+                return MessageService.message(Message.Type.OK, stationService.readModelFile(mFile, station));
             }catch (Exception e){
                 e.printStackTrace();
                 return MessageService.message(Message.Type.FAIL);
             }
         }
-            return MessageService.message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -168,7 +175,7 @@ public class StationController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/edit",method = RequestMethod.POST)
     public @ResponseBody Message editStation(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -184,8 +191,10 @@ public class StationController {
         if(!isOperate(station)){
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        message = stationService.edit(stationMap,station);
-        return message;
+        if (stationService.edit(stationMap, station)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -198,7 +207,7 @@ public class StationController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/addSensor",method = RequestMethod.POST)
     public @ResponseBody Message addSensor(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -213,7 +222,55 @@ public class StationController {
         if(!isOperate(station)){
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        return stationService.addSensor((Map<String, Object>) map.get("sensor"),station);
+        return addSensor((Map<String, Object>) map.get("sensor"),station);
+    }
+
+    /**
+     * 仪表添加
+     *
+     * @param map
+     * @return
+     */
+    public Message addSensor(Map<String, Object> map, Station station) {
+        if(map.get("code")==null||!StringUtils.hasText(map.get("code").toString())){
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if(map.get("ciphertext")==null||!StringUtils.hasText(map.get("ciphertext").toString())){
+            return MessageService.message(Message.Type.FAIL);
+        }
+        String code = map.get("code").toString();
+        String ciphertext = map.get("ciphertext").toString();
+        //加密并验证密码是否一致
+        boolean verify = monitorService.verify(code,ciphertext);
+        if (verify) {
+            Sensor sensor = sensorService.findByCode(code);
+            if (sensor != null) {
+                return MessageService.message(Message.Type.DATA_EXIST);
+            }
+            //注册成功
+            JSONObject infoJson = new JSONObject();
+            sensor = new Sensor();
+            if (!stationService.sensorVerify(map, sensor, infoJson)) {
+                return MessageService.message(Message.Type.FAIL);
+            }
+            //判断测站类型,当前测站为水位站时,只能绑定一个仪表,一个摄像头
+            if(!station.getType().equals(CommonEnum.StationType.WATER_LEVEL_STATION)){
+                return MessageService.message(Message.Type.OK);
+            }
+            List<Sensor> sensors = station.getSensors();
+            if(sensors.size()==0){
+                return MessageService.message(Message.Type.OK);
+            }
+            for(int i = 0;i<sensors.size();i++){
+                if(!Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
+                    logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
+                    return MessageService.message(Message.Type.DATA_EXIST);
+                }
+            }
+            return MessageService.message(Message.Type.OK, stationService.saveAndAddCache(code, infoJson, station, sensor));
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**
@@ -226,7 +283,7 @@ public class StationController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/addCamera",method = RequestMethod.POST)
     public @ResponseBody Message addCamera(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -244,8 +301,44 @@ public class StationController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return stationService.addCamera((Map<String, Object>) map.get("camera"),station);
+        return addCamera((Map<String, Object>) map.get("camera"),station);
     }
+
+    /**
+     * 添加摄像头
+     * @param cameraMap
+     * @param station
+     * @return
+     */
+    public Message addCamera(Map<String, Object> cameraMap, Station station) {
+        //判断测站类型,当前测站为水位站时,只能绑定一个仪表,一个摄像头
+        Sensor sensor = new Sensor();
+        sensor.setType(Sensor.Type.CAMERA);
+        if(!station.getType().equals(CommonEnum.StationType.WATER_LEVEL_STATION)){
+            return MessageService.message(Message.Type.OK);
+        }
+        List<Sensor> sensors = station.getSensors();
+        if(sensors.size()==0){
+            return MessageService.message(Message.Type.OK);
+        }
+        for(int i = 0;i<sensors.size();i++){
+            if(Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
+                logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
+                return MessageService.message(Message.Type.DATA_EXIST);
+            }
+        }
+        JSONObject infoJson = new JSONObject();
+        if (!stationService.cameraVerify(cameraMap, infoJson, station, sensor)) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        sensor.setInfo(infoJson.isEmpty()?null:infoJson.toString());
+        sensor.setStation(station);
+        sensorService.save(sensor);
+        JSONObject cameraJson = new JSONObject();
+        cameraJson.put("id",sensor.getId());
+        return MessageService.message(Message.Type.OK,cameraJson);
+    }
+
     /**
      * 仪表删除
      * @param id 仪表id
@@ -293,7 +386,7 @@ public class StationController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editSensor",method = RequestMethod.POST)
     public @ResponseBody Message editSensor(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -314,7 +407,10 @@ public class StationController {
         if(!isOperate(station)){
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        return sensorService.editSensor(sensorMap,sensor);
+        if (sensorService.editSensor(sensorMap, sensor)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -327,7 +423,7 @@ public class StationController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editCamera",method = RequestMethod.POST)
     public @ResponseBody Message editCamera(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -348,7 +444,10 @@ public class StationController {
         if(!isOperate(station)){
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        return sensorService.editCamera(cameraMap,sensor);
+        if (sensorService.editCamera(cameraMap, sensor)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -361,7 +460,7 @@ public class StationController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editParameter",method = RequestMethod.POST)
     public @ResponseBody Message editParameter(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -376,8 +475,53 @@ public class StationController {
         if(!isOperate(station)){
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        message = stationService.editParameter((Map<String,Object>)map.get("parameter"),station);
-        return message;
+        return editParameter((Map<String,Object>)map.get("parameter"),station);
+    }
+
+    /**maxValue/minValue/phone/sendStatus
+     * 编辑测站参数
+     *
+     * @param map
+     * @param station
+     * @return
+     */
+    public Message editParameter(Map<String, Object> map, Station station) {
+        double maxValue,minValue;
+        try{
+            if(map.get("maxValue")!=null){
+                maxValue = Double.valueOf(map.get("maxValue").toString());
+                if(maxValue<0||maxValue>100){
+                    return MessageService.message(Message.Type.FAIL);
+                }
+                if(map.get("minValue")!=null){
+                    minValue = Double.valueOf(map.get("minValue").toString());
+                    if(minValue<0||minValue>100){
+                        return MessageService.message(Message.Type.FAIL);
+                    }
+                    if (minValue>maxValue){
+                        return MessageService.message(Message.Type.FAIL);
+                    }
+                }
+            }
+        }catch (NumberFormatException e){
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if(map.get("phone")!=null){
+            if(!SettingUtils.phoneRegex(map.get("phone").toString())){
+                return MessageService.message(Message.Type.FAIL);
+            }
+        }
+        if(map.get("sendStatus")!=null){
+            boolean falg = "true".equals(map.get("sendStatus").toString())||"false".equals(map.get("sendStatus"));
+            if(!falg){
+                return MessageService.message(Message.Type.FAIL);
+            }
+        }
+        JSONObject jsonObject = SettingUtils.convertMapToJson(map);
+        station.setParameter(jsonObject.isEmpty()?null:jsonObject.toString());
+        station.setTransform(true);
+        stationService.save(station);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -389,7 +533,7 @@ public class StationController {
     @RequiresRoles({"user:simple"})
     @RequestMapping(value = "/unShare", method = RequestMethod.POST)
     public @ResponseBody Message unShare(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -416,7 +560,7 @@ public class StationController {
     @RequiresRoles({"user:simple"})
     @RequestMapping(value = "/shares", method = RequestMethod.POST)
     public @ResponseBody Message shares(@RequestBody Map<String,Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -450,7 +594,7 @@ public class StationController {
      */
     @RequestMapping(value = "/getParameters", method = RequestMethod.GET)
     public @ResponseBody Message getParameters(@RequestParam String token){
-       Message message = MessageService.parametersCheck(token);
+       Message message = CommonController.parametersCheck(token);
         if (message.getType() != Message.Type.OK) {
             return message;
         }

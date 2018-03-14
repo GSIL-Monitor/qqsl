@@ -27,7 +27,7 @@ public class ElementDBService extends BaseService<ElementDB, Long> {
 	private ElementDBDao elementDBDao;
 	@Autowired
 	private NoteService noteService;
-	private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//	private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Autowired
 	public void setBaseDao(ElementDBDao elementDao) {
 		super.setBaseDao(elementDao);

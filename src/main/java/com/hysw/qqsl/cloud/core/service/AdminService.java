@@ -19,12 +19,6 @@ import java.util.*;
 public class AdminService extends BaseService<Admin,Long>{
     @Autowired
     private AdminDao adminDao;
-    @Autowired
-    private SessionDAO sessionDAO;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AuthentService authentService;
 
     @Autowired
     public void setBaseDao(AdminDao adminDao) {
@@ -86,58 +80,4 @@ public class AdminService extends BaseService<Admin,Long>{
         return subjectJson;
     }
 
-    /**
-     * 获取在线用户(管理员包含在内)
-     * @return
-     */
-  /*  public List<JSONObject> getLandingUsers(Admin admin) {
-        Collection<Session> sessions = sessionDAO.getActiveSessions();
-        List<User> users = new ArrayList<>();
-        List<Account> accounts = new ArrayList<>();
-        User user;
-        Account account;
-        for(Session session:sessions){
-           user = authentService.getUserFromSession(session);
-           account = authentService.getAccountFromSession(session);
-            if(user!=null){
-                users.add(user);
-            }
-            if(account!=null){
-                accounts.add(account);
-            }
-        }
-        List<JSONObject> userJsons = userService.makeUserJsons(users);
-        JSONObject adminJson = makeAdminJson(admin);
-        userJsons.add(adminJson);
-        return userJsons;
-    }*/
-
-//    /**
-//     * 用户角色编辑
-//     * @param user
-//     * @param roles
-//     * @return
-//     */
-//    public Message editRoles(User user,Object roles){
-//        //roles为null或空字符串为取消角色
-//        if(roles == null||!StringUtils.hasText(roles.toString())){
-//           user.setRoles("user:simple");
-//        //不为空添加角色
-//        }else{
-//           String roleStr = "user:simple"+","+roles.toString();
-//           List<String> list1 = Arrays.asList(roleStr.split(","));
-//           List<String> list2 = new ArrayList<>();
-//           for(int i = 0;i<list1.size();i++){
-//               if(!list2.contains(list1.get(i))){
-//                   list2.add(list1.get(i));
-//               }
-//           }
-//           roleStr = list2.toString().substring(1,list2.toString().length()-1);
-//           String role = roleStr.replaceAll(" ", "");
-//           user.setRoles(role);
-//        }
-//        userService.save(user);
-//        return MessageService.message(Message.Type.OK);
-//    }
-//
 }

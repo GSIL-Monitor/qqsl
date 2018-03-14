@@ -6,6 +6,11 @@ import com.hysw.qqsl.cloud.core.entity.data.Interest;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
+import com.hysw.qqsl.cloud.pay.entity.PackageItem;
+import com.hysw.qqsl.cloud.pay.entity.PackageModel;
+import com.hysw.qqsl.cloud.pay.entity.ServeItem;
+import com.hysw.qqsl.cloud.pay.service.PackageService;
+import com.hysw.qqsl.cloud.pay.service.TradeService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
@@ -34,6 +39,10 @@ public class InterestController {
     private OssService ossService;
     @Autowired
     private AuthentService authentService;
+    @Autowired
+    private PackageService packageService;
+    @Autowired
+    private TradeService tradeService;
 
     /**
      * 保存基础兴趣点
@@ -64,7 +73,7 @@ public class InterestController {
     @RequestMapping(value = "/admin/saveBaseInterest", method = RequestMethod.POST)
     public @ResponseBody
     Message saveBaseInterest(@RequestBody Map<String, Object> objectMap){
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -78,7 +87,11 @@ public class InterestController {
         } else {
             return MessageService.message(Message.Type.FAIL);
         }
-        return interestService.saveInterest(map,new Interest());
+        JSONObject jsonObject = interestService.saveInterest(map, new Interest());
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        interestService.reflectSaveProprety(map, new Interest());
 //        return MessageService.message(Message.Type.OK);
     }
@@ -116,7 +129,7 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/savePersonalInterest", method = RequestMethod.POST)
     public @ResponseBody Message savePersonalInterest(@RequestBody Map<String, Object> objectMap){
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if(message.getType()!=Message.Type.OK){
             return message;
         }
@@ -135,7 +148,11 @@ public class InterestController {
             return MessageService.message(Message.Type.FAIL);
         }
         map.put("userId", user.getId());
-        return interestService.saveInterest(map,new Interest());
+        JSONObject jsonObject = interestService.saveInterest(map, new Interest());
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        interestService.reflectSaveProprety(map, new Interest());
 //        return MessageService.message(Message.Type.OK);
     }
@@ -156,19 +173,23 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/savePanorama", method = RequestMethod.POST)
     public @ResponseBody Message savePanorama(@RequestBody Map<String, Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
         //是否可以保存全景
-        message=panoramaService.isAllowSavePanorma(user);
+        message=isAllowSavePanorma(user);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         map.put("status", CommonEnum.Review.PENDING.ordinal());
         map.put("userId", user.getId());
-        return panoramaService.savePanorama(map,new Panorama());
+        JSONObject jsonObject = panoramaService.savePanorama(map, new Panorama());
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        panoramaService.reflectSaveProprety(map, new Panorama());
 //        return MessageService.message(Message.Type.OK);
     }
@@ -198,7 +219,7 @@ public class InterestController {
         User user = authentService.getUserFromSubject();
         //是否可以保存全景
         Message message;
-        message=panoramaService.isAllowSavePanorma(user);
+        message=isAllowSavePanorma(user);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -211,12 +232,13 @@ public class InterestController {
             panoramaMap = (Map<String, Object>) objectMap.get("panorama");
             panoramaMap.put("status", CommonEnum.Review.PENDING.ordinal());
             panoramaMap.put("userId", user.getId());
-            message = panoramaService.savePanorama(panoramaMap,new Panorama());
-            if(message.getType()== Message.Type.OK){
-                jsonObject = (JSONObject) message.getData();
-                jsonObject.put("name",panoramaMap.get("name"));
-                jsonObjects.add(jsonObject);
+            jsonObject = panoramaService.savePanorama(panoramaMap, new Panorama());
+            if (jsonObject == null) {
+                return MessageService.message(Message.Type.FAIL);
             }
+            jsonObject.put("name",panoramaMap.get("name"));
+            jsonObjects.add(jsonObject);
+
         }
         return MessageService.message(Message.Type.OK,jsonObjects);
     }
@@ -249,7 +271,7 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/updateBaseInterest", method = RequestMethod.POST)
     public @ResponseBody Message updateBaseInterest(@RequestBody Map<String, Object> objectMap){
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -267,7 +289,11 @@ public class InterestController {
         if(interest==null){
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return interestService.saveInterest(map,interest);
+        JSONObject jsonObject = interestService.saveInterest(map, interest);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        interestService.reflectSaveProprety(map,interest);
 //        return MessageService.message(Message.Type.OK);
     }
@@ -305,7 +331,7 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePersonalInterest", method = RequestMethod.POST)
     public @ResponseBody Message updatePersonalInterest(@RequestBody Map<String, Object> objectMap){
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -328,7 +354,11 @@ public class InterestController {
         if (interest == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return interestService.saveInterest(map,interest);
+        JSONObject jsonObject = interestService.saveInterest(map, interest);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        interestService.reflectSaveProprety(map,interest);
 //        return MessageService.message(Message.Type.OK);
     }
@@ -349,7 +379,7 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePanorama", method = RequestMethod.POST)
     public @ResponseBody Message updatePanorama(@RequestBody Map<String, Object> map){
-        Message message = MessageService.parameterCheck(map);
+        Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -363,7 +393,11 @@ public class InterestController {
         if(panorama==null){
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return panoramaService.savePanorama(map, panorama);
+        JSONObject jsonObject = panoramaService.savePanorama(map, panorama);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        panoramaService.reflectSaveProprety(map,panorama);
 //        return MessageService.message(Message.Type.OK);
     }
@@ -378,7 +412,7 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/deleteBaseInterest/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message deteleBaseInterest(@PathVariable("id") Long id){
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -406,7 +440,7 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/deletePersonalInterest/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message detelePersonalInterest(@PathVariable("id") Long id){
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -441,7 +475,7 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/deletePanorama/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message detelePanorama(@PathVariable("id") Long id){
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -605,7 +639,7 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/interestReviewSuccess", method = RequestMethod.POST)
     public @ResponseBody Message interestReviewSuccess(@RequestBody Map<String, Object> objectMap){
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -627,7 +661,7 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/panoramaReviewSuccess", method = RequestMethod.POST)
     public @ResponseBody Message panoramaReviewSuccess(@RequestBody Map<String, Object> objectMap){
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -650,7 +684,7 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/interestReviewFail", method = RequestMethod.POST)
     public @ResponseBody Message interestReviewFail(@RequestBody Map<String, Object> objectMap){
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -680,7 +714,7 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/panoramaReviewFail", method = RequestMethod.POST)
     public @ResponseBody Message panoramaReviewFail(@RequestBody Map<String, Object> objectMap){
-        Message message = MessageService.parameterCheck(objectMap);
+        Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -707,7 +741,7 @@ public class InterestController {
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/interest/{id}", method = RequestMethod.GET)
     public @ResponseBody Message getInterest(@PathVariable("id") Long id) {
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -730,7 +764,7 @@ public class InterestController {
     public
     @ResponseBody
     Message getProject(@PathVariable("id") Long id) {
-        Message message = MessageService.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -740,5 +774,25 @@ public class InterestController {
         }
         JSONObject panoramaToJson = panoramaService.panoramaToJson(panorama);
         return MessageService.message(Message.Type.OK, panoramaToJson);
+    }
+
+    /**
+     * 是否允许保存全景
+     * @param user
+     * @Return Message
+     */
+    public Message isAllowSavePanorma(User user) {
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        int size = panoramaService.findByuser(user).size();
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.PANO && size < packageItem.getLimitNum()) {
+                return MessageService.message(Message.Type.OK);
+            }
+        }
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 }
