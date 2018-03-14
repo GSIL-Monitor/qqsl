@@ -474,6 +474,22 @@ public class UserService extends BaseService<User, Long> {
 	}
 
 	/**
+	 * 判断项目及子账号归属
+	 * @param own
+	 * @param account
+	 * @return
+	 */
+	public boolean isOwn(User own, Account account) {
+		List<Account> accounts = userService.getAccountsByUserId(own.getId());
+		for(int j=0;j<accounts.size();j++){
+			if(account.getId().equals(accounts.get(j).getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * 获取用户通知信息
 	 * @param userMessage
 	 * @return

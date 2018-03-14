@@ -699,7 +699,7 @@ public class ProjectController {
         if (!project.getUser().getId().equals(own.getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        if (!cooperateService.isOwn(own, account)) {
+        if (!userService.isOwn(own, account)) {
             return MessageService.message(Message.Type.FAIL);
         }
         if (cooperateService.cooperateMult(project, typeStr, account)) {
@@ -751,7 +751,7 @@ public class ProjectController {
                 return MessageService.message(Message.Type.DATA_REFUSE);
             }
         }
-        if (!cooperateService.isOwn(own, account)) {
+        if (!userService.isOwn(own, account)) {
             return MessageService.message(Message.Type.FAIL);
         }
         boolean cooperate = cooperateService.cooperate(projectIds, type, account);

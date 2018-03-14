@@ -205,22 +205,6 @@ public class CooperateService {
     }
 
     /**
-     * 判断项目及子账号归属
-     * @param own
-     * @param account
-     * @return
-     */
-    public boolean isOwn(User own, Account account) {
-        List<Account> accounts = userService.getAccountsByUserId(own.getId());
-        for(int j=0;j<accounts.size();j++){
-            if(account.getId().equals(accounts.get(j).getId())){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * 企业账号查看子账号协同情况
      *
      * @param account
