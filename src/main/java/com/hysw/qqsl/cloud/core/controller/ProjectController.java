@@ -806,17 +806,15 @@ public class ProjectController {
      */
     private boolean isOperate(User user, Account account, Project project) {
         if (user != null) {
-            if (shareService.isShare(project, user) == false) {
+            if (!shareService.isShare(project, user)) {
                 return false;
             }
         }
         //看看是否有查看的权限
         if (account != null) {
-            if (account != null) {
-                //当前用户是否对此项目有查看权限
-                if (!cooperateService.isCooperate(project, account)) {
-                    return false;
-                }
+            //当前用户是否对此项目有查看权限
+            if (!cooperateService.isCooperate(project, account)) {
+                return false;
             }
         }
         return true;
