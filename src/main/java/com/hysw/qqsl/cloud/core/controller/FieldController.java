@@ -149,7 +149,7 @@ public class FieldController {
                     continue;
                 }
                 if (coordinateService.saveCoordinate(list, builds, project)) {
-                    jsonObject.put(entry.getKey(),Message.Type.OK);
+                    jsonObject.put(entry.getKey(),Message.Type.OK.getStatus());
                 } else {
                     jsonObject.put(entry.getKey(),Message.Type.FAIL.getStatus());
                 }
