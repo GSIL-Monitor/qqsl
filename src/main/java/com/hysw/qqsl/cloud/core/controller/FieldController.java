@@ -158,6 +158,7 @@ public class FieldController {
         return MessageService.message(Message.Type.OK,jsonObject);
     }
 
+
     /**
      * 移动端外业保存
      * @param objectMap <ol><li>projectId项目id</li>，<li>userId用户id</li>，<li>name采集人</li>，<li>deviceMac手机mac</li>，<li>coordinates点集合（type点线面类型，center中心点[longitude经度,latitude纬度,elevation高程]，description描述，?delete删除标记，?attribes属性[code组级，alias别名，value值]，alias别名，?position定位点[longitude经度,latitude纬度,elevation高程]）</li></ol>?可以不传
