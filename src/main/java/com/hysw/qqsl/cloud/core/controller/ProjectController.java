@@ -224,7 +224,7 @@ public class ProjectController {
             if (projectService.updateProject(newProject)) {
                 return MessageService.message(Message.Type.OK);
             }else{
-                return MessageService.message(Message.Type.DATA_NOEXIST);
+                return MessageService.message(Message.Type.DATA_EXIST);
             }
         } catch (QQSLException e) {
             return MessageService.message(Message.Type.FAIL);
