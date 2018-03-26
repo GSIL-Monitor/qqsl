@@ -1,5 +1,9 @@
 package com.hysw.qqsl.cloud.util;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -10,10 +14,8 @@ import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * Created by leinuo on 17-3-30.
@@ -141,6 +143,65 @@ public class XmlUtils {
         }
     }
 
+
+
+
+
+
+
+    public void getTour(){
+        VelocityEngine ve = new VelocityEngine();
+        //设置vm模板的装载路径
+        Properties prop = new Properties();
+        //设置编码
+        prop.setProperty(Velocity.ENCODING_DEFAULT, "UTF-8");
+        prop.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
+        prop.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");
+        ve.setProperty("resource.loader", "class");
+        ve.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        ve.init(prop);
+        //得到模板文件
+        Template template = ve.getTemplate("velocityTemp/tour.vm", "UTF-8");
+        VelocityContext context = new VelocityContext();
+
+        context.put("cubeUrl", "panos/webwxgetmsgimg.tiles/pano_%s.jpg");
+        try {
+            //生成xml
+            FileWriter fw = getFileWriter("");
+            template.merge(context,fw);
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static FileWriter getFileWriter(String fileName) throws IOException {
+        String fullPath = MessageFormat.format("{1}{0}{2}",
+                File.separator,
+                "/home/leinuo/pic",
+                fileName);
+        System.out.println("fileName = " + fullPath);
+        File outputFile = new File(fullPath);
+        return new FileWriter(outputFile);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public static void main(String[] agrs) {
         //   XmlUtils xmlUtils = new XmlUtils();
         //  xmlUtils.xmlEdit("buildsGeology.xml");
@@ -185,7 +246,6 @@ public class XmlUtils {
             }
         }
         System.out.println(list.size() + ":" + list);
-
 
         ArrayList<Integer> list1 = new ArrayList<Integer>();
         list1.add(2);

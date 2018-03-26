@@ -1,0 +1,10 @@
+2018-03-22 15:38:01,950 - ResourceManager : unable to find resource '/src/velocity/TaxReportXml.vm' in any resource loader.
+2018-03-22 15:40:19,919 - ResourceManager : unable to find resource 'home/leinuo/project/qqsl/src/main/java/com/hysw/qqsl/cloud/velocity/template.vm' in any resource loader.
+2018-03-22 15:44:24,784 - ResourceManager : unable to find resource '/home/leinuo/project/qqsl/src/main/java/com/hysw/qqsl/cloud/velocity/template.vm' in any resource loader.
+2018-03-22 15:48:18,381 - ResourceManager : unable to find resource 'template.vm' in any resource loader.
+2018-03-22 15:51:57,905 - ResourceManager : unable to find resource '/template.vm' in any resource loader.
+2018-03-22 15:52:08,210 - ResourceManager : unable to find resource 'template.vm' in any resource loader.
+2018-03-22 15:52:35,105 - ResourceManager : unable to find resource 'WEB-INF/template.vm' in any resource loader.
+2018-03-22 15:54:45,029 - ResourceManager : unable to find resource 'WEB-INF/template.vm' in any resource loader.
+2018-03-22 15:55:10,645 - ResourceManager : unable to find resource 'WEB-INF/template.vm' in any resource loader.
+2018-03-22 15:55:29,458 - ResourceManager : unable to find resource 'template.vm' in any resource loader.
