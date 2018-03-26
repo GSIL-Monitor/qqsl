@@ -97,7 +97,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			}
             try {
 //				读取线面数据
-				readLineOrAera(sheet, code, graphs, wb, numSheet,wgs84Type);
+				if (!readLineOrAera(sheet, code, graphs, wb, numSheet, wgs84Type)) {
+					return null;
+				}
 			} catch (OfficeXmlFileException e) {
 				logger.info("坐标文件03-07相互拷贝异常");
 			}catch(NumberFormatException e){
@@ -145,22 +147,12 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
 			Row row = sheet.getRow(rowNum);
 			if (row != null) {
-				String a = null;
 				String b = null;
-				String c = null;
 				String d = null;
 				String comment = null;
-				if (row.getCell(0) != null) {
-					row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
-					a = row.getCell(0).getStringCellValue();
-				}
 				if (row.getCell(1) != null) {
 					row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
 					b = row.getCell(1).getStringCellValue();
-				}
-				if (row.getCell(2) != null) {
-					row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
-					c = row.getCell(2).getStringCellValue();
 				}
 				if (row.getCell(3) != null) {
 					row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
@@ -276,7 +268,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param numSheet
 	 * @param wgs84Type
 	 */
-	private void readLineOrAera(Sheet sheet, String code, List<Graph> graphs, Workbook wb, int numSheet, Coordinate.WGS84Type wgs84Type) throws Exception {
+	private boolean readLineOrAera(Sheet sheet, String code, List<Graph> graphs, Workbook wb, int numSheet, Coordinate.WGS84Type wgs84Type) throws Exception {
 		CoordinateBase coordinateBase;
 		Graph graph;
 		List<CoordinateBase> list;
@@ -327,7 +319,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				}
 				JSONObject jsonObject = coordinateXYZToBLH(longitude, latitude, code,wgs84Type);
 				if (jsonObject == null) {
-					continue;
+					return false;
 				}
 				if (Float.valueOf(elevation) < 0) {
 					continue;
@@ -353,6 +345,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				graphs.add(graph);
 			}
 		}
+		return true;
 	}
 
 	/**

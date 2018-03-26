@@ -110,7 +110,7 @@ public class FieldController {
                 if (mFile.getSize() > CommonAttributes.CONVERT_MAX_SZIE) {
                     // return "文件过大无法上传";
                     logger.debug("文件过大");
-                    jsonObject.put(entry.getKey(),Message.Type.FILE_TOO_MAX);
+                    jsonObject.put(entry.getKey(),Message.Type.FILE_TOO_MAX.getStatus());
                     continue;
                 }
                 InputStream is;
@@ -118,7 +118,7 @@ public class FieldController {
                     is = mFile.getInputStream();
                 } catch (IOException e) {
                     logger.info("坐标文件或格式异常");
-                    jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR);
+                    jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR.getStatus());
                     continue;
                 }
                 String s = fileName.substring(fileName.lastIndexOf(".") + 1,
@@ -128,13 +128,13 @@ public class FieldController {
                     map1 = coordinateService.readExcels(is, central, s, project, wgs84Type);
                 } catch (Exception e) {
                     logger.info("坐标文件或格式异常");
-                    jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR);
+                    jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR.getStatus());
                     continue;
                 }finally {
                     IOUtils.safeClose(is);
                 }
                 if (map1 == null) {
-                    jsonObject.put(entry.getKey(),Message.Type.FAIL);
+                    jsonObject.put(entry.getKey(),Message.Type.COOR_TYPE_ERROR.getStatus());
                     continue;
                 }
                 List<Graph> list = null;
@@ -145,7 +145,7 @@ public class FieldController {
                     break;
                 }
                 if (list == null || list.size() == 0) {
-                    jsonObject.put(entry.getKey(),Message.Type.OK);
+                    jsonObject.put(entry.getKey(),Message.Type.OK.getStatus());
                     continue;
                 }
                 if (coordinateService.saveCoordinate(list, builds, project)) {
