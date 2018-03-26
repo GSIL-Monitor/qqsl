@@ -250,7 +250,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				}
 			}
 		}
-		buildService.save(build1);
+//		buildService.save(build1);
 		builds2.add(build1);
 	}
 
@@ -760,6 +760,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				String latitude1 = jsonObject.get("latitude").toString();
 				String elevation1 = jsonObject.get("elevation").toString();
 				if (longitude.equals(longitude1) && latitude.equals(latitude1) && elevation.equals(elevation1)) {
+					build1 = build;
 					builds2.remove(build);
 					flag = true;
 					break;
@@ -783,6 +784,8 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				build1.setProject(project);
 				build1.setSource(Build.Source.DESIGN);
 				build1.setCoordinateId(String.valueOf(coordinateId));
+				buildService.save(build1);
+			}else {
 				buildService.save(build1);
 			}
 		}
