@@ -83,7 +83,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		String code = transFromService.checkCode84(central);
 		List<Graph> graphs = new ArrayList<Graph>();
 		List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
-		List<Build> builds1 = new ArrayList<>();
+		List<Build> builds2 = new ArrayList<>();
 		// Read the Sheet
 		for (int numSheet = 0; numSheet < wb.getNumberOfSheets(); numSheet++) {
 			Sheet sheet = wb.getSheetAt(numSheet);
@@ -91,7 +91,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				continue;
 			}
 //			读取建筑物及其属性数据
-			boolean b = readBuild(sheet, code, builds, builds1, project,wgs84Type);
+			boolean b = readBuild(sheet, code, builds, builds2, project,wgs84Type);
 			if (b) {
 				continue;
 			}
@@ -107,7 +107,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			}
 		}
 		Map<List<Graph>, List<Build>> map = new LinkedHashMap<>();
-		map.put(graphs, builds1);
+		map.put(graphs, builds2);
         return map;
     }
 
@@ -121,29 +121,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param wgs84Type
 	 */
 	private boolean readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
-		Build build = null;
-		Build build2 = null;
-		JSONObject jsonObject1;
-		JSONObject jsonObject;
-		for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-			if (sheet.getSheetName().trim().equals(CommonAttributes.BASETYPEC[i])) {
-				String s = CommonAttributes.BASETYPEE[i];
-				List<Build> builds1 = buildGroupService.getBuilds();
-				for (int k = 0; k < builds1.size(); k++) {
-					if (builds1.get(k).getType().toString().equals(s)) {
-						build = builds1.get(k);
-						break;
-					}
-				}
-				break;
-			}
-		}
+		Build build;
+		build = pickBuildFromBuilds(sheet);
 		if (build == null) {
 			return false;
 		}
 		Build build1 = new Build();
 		List<Attribe> attribes = new ArrayList<>();
-		Attribe attribe;
 		for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
 			Row row = sheet.getRow(rowNum);
 			if (row != null) {
@@ -161,28 +145,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					if (cellComment != null) {
 						comment = cellComment.getString().getString();
 					}
-
 				}
                 if ((b == null || b.trim().equals("")) && rowNum != sheet.getLastRowNum()) {
                     continue;
                 }
                 if (b.trim().equals("名称")) {
-					if (rowNum != 0) {
-						if (build1 != null && build1.getCenterCoor() != null) {
-							build1.setAttribeList(attribes);
-//							if (build1.getAttribeList()!=null&&build1.getAttribeList().size()!=0) {
-							if (build1.getRemark() == null) {
-								for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-									if (CommonAttributes.BASETYPEE[i].equals(build1.getType().toString())) {
-										build1.setRemark(CommonAttributes.BASETYPEC[i]);
-										break;
-									}
-								}
-							}
-							buildService.save(build1);
-							builds2.add(build1);
-//							}
-						}
+					if (rowNum != 0 && build1 != null && build1.getCenterCoor() != null) {
+						setBuildPropertyAndAddCache(build1,attribes,builds2);
 						build1 = new Build();
 						attribes = new ArrayList<>();
 					}
@@ -193,71 +162,119 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					build1.setSource(Build.Source.DESIGN);
 					continue;
 				}
-//				if (build1 == null) {
-//					continue;
-//				}
-				if (d != null && !d.trim().equals("") && comment != null && !comment.trim().equals("")) {
-					if (comment.equals("coor1")) {
-						String[] split = d.split(",");
-						if (split.length != 3) {
-							return false;
-						}
-						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
-						if (jsonObject1 == null) {
-							return false;
-						}
-						build2 = fieldService.allEqual(builds, String.valueOf(jsonObject1.get("longitude")), String.valueOf(jsonObject1.get("latitude")),split[2]);
-						if (build2!= null) {
-							buildService.remove(build2);
-						}
-						jsonObject = new JSONObject();
-						jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
-						jsonObject.put("latitude", String.valueOf(jsonObject1.get("latitude")));
-						jsonObject.put("elevation", String.valueOf(split[2]));
-						build1.setCenterCoor(jsonObject.toString());
-					}else if (comment.equals("coor2")) {
-						String[] split = d.split(",");
-						if (split.length != 3) {
-							return false;
-						}
-						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
-						if (jsonObject1 == null) {
-							return false;
-						}
-						jsonObject = new JSONObject();
-						jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
-						jsonObject.put("latitude", String.valueOf(jsonObject1.get("latitude")));
-						jsonObject.put("elevation", String.valueOf(split[2]));
-						build1.setPositionCoor(jsonObject.toString());
-					}else if(comment.equals("remark")){
-						build1.setRemark(d);
-					}else{
-						attribe = new Attribe();
-						attribe.setAlias(comment);
-						attribe.setValue(d);
-						attribe.setBuild(build1);
-						attribes.add(attribe);
-					}
+				if (!resolveExcelRow(d, comment, code, wgs84Type, builds, build1, attribes)) {
+					return false;
 				}
 				if (rowNum == sheet.getLastRowNum() && build1 != null && build1.getCenterCoor() != null) {
-					build1.setAttribeList(attribes);
-//					if (build1.getAttribeList()!=null&&build1.getAttribeList().size()!=0) {
-					if (build1.getRemark() == null) {
-						for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-							if (CommonAttributes.BASETYPEE[i].equals(build1.getType().toString())) {
-								build1.setRemark(CommonAttributes.BASETYPEC[i]);
-								break;
-							}
-						}
-					}
-					buildService.save(build1);
-					builds2.add(build1);
-//					}
+					setBuildPropertyAndAddCache(build1,attribes,builds2);
 				}
 			}
 		}
         return true;
     }
+
+	/**
+	 * 解析excel各行信息
+	 * @return
+	 * @param d
+	 * @param comment
+	 * @param code
+	 * @param wgs84Type
+	 * @param builds
+	 * @param build1
+	 * @param attribes
+	 */
+	private boolean resolveExcelRow(String d, String comment, String code, Coordinate.WGS84Type wgs84Type, List<Build> builds, Build build1, List<Attribe> attribes) throws Exception {
+		JSONObject jsonObject,jsonObject1;
+		Attribe attribe;
+		Build build2;
+		if (d != null && !d.trim().equals("") && comment != null && !comment.trim().equals("")) {
+			if (comment.equals("coor1")) {
+				String[] split = d.split(",");
+				if (split.length != 3) {
+					return false;
+				}
+				jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
+				if (jsonObject1 == null) {
+					return false;
+				}
+				build2 = fieldService.allEqual(builds, String.valueOf(jsonObject1.get("longitude")), String.valueOf(jsonObject1.get("latitude")),split[2]);
+				if (build2!= null) {
+					buildService.remove(build2);
+				}
+				jsonObject = new JSONObject();
+				jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
+				jsonObject.put("latitude", String.valueOf(jsonObject1.get("latitude")));
+				jsonObject.put("elevation", String.valueOf(split[2]));
+				build1.setCenterCoor(jsonObject.toString());
+			}else if (comment.equals("coor2")) {
+				String[] split = d.split(",");
+				if (split.length != 3) {
+					return false;
+				}
+				jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
+				if (jsonObject1 == null) {
+					return false;
+				}
+				jsonObject = new JSONObject();
+				jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
+				jsonObject.put("latitude", String.valueOf(jsonObject1.get("latitude")));
+				jsonObject.put("elevation", String.valueOf(split[2]));
+				build1.setPositionCoor(jsonObject.toString());
+			}else if(comment.equals("remark")){
+				build1.setRemark(d);
+			}else{
+				attribe = new Attribe();
+				attribe.setAlias(comment);
+				attribe.setValue(d);
+				attribe.setBuild(build1);
+				attribes.add(attribe);
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 写build属性，并将其加入builds2的缓存中
+	 * @param build1
+	 * @param attribes
+	 * @param builds2
+	 */
+	private void setBuildPropertyAndAddCache(Build build1, List<Attribe> attribes, List<Build> builds2) {
+		build1.setAttribeList(attribes);
+		if (build1.getRemark() == null) {
+			for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
+				if (CommonAttributes.BASETYPEE[i].equals(build1.getType().toString())) {
+					build1.setRemark(CommonAttributes.BASETYPEC[i]);
+					break;
+				}
+			}
+		}
+		buildService.save(build1);
+		builds2.add(build1);
+	}
+
+	/**
+	 * 从builds中根据类型挑拣相应的build
+	 * @param sheet
+	 */
+	private Build pickBuildFromBuilds(Sheet sheet) {
+		Build build = null;
+		for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
+			if (sheet.getSheetName().trim().equals(CommonAttributes.BASETYPEC[i])) {
+				String s = CommonAttributes.BASETYPEE[i];
+				List<Build> builds1 = buildGroupService.getBuilds();
+				for (Build build1 : builds1) {
+					if (build1.getType().toString().equals(s)) {
+						build = build1;
+						break;
+					}
+				}
+				break;
+			}
+		}
+		return build;
+	}
 
 	/**
 	 * 读取线面数据
