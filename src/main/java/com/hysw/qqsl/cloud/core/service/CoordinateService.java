@@ -1,9 +1,11 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.CoordinateDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
 import com.hysw.qqsl.cloud.core.entity.build.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.*;
@@ -17,6 +19,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
@@ -890,4 +893,65 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		}
 		return true;
 	}
+
+    /**
+     * 上传坐标文件
+     * @param entry
+     * @param jsonObject
+     * @param project
+     * @param central
+     * @param wgs84Type
+     */
+    public void uploadCoordinate(Map.Entry<String, MultipartFile> entry, JSONObject jsonObject, Project project, String central, Coordinate.WGS84Type wgs84Type) {
+        MultipartFile mFile = entry.getValue();
+        String fileName = mFile.getOriginalFilename();
+        // 限制上传文件的大小
+        if (mFile.getSize() > CommonAttributes.CONVERT_MAX_SZIE) {
+            // return "文件过大无法上传";
+            logger.debug("文件过大");
+            jsonObject.put(entry.getKey(), 4003);
+            return;
+        }
+        InputStream is;
+        try {
+            is = mFile.getInputStream();
+        } catch (IOException e) {
+            logger.info("坐标文件或格式异常");
+            jsonObject.put(entry.getKey(),4072);
+            return;
+        }
+        String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+                fileName.length());
+        Map<List<Graph>, List<Build>> map1;
+        try {
+            map1 = readExcels(is, central, s, project, wgs84Type);
+        } catch (Exception e) {
+            logger.info("坐标文件或格式异常");
+            jsonObject.put(entry.getKey(),4072);
+            return;
+        }finally {
+            IOUtils.safeClose(is);
+        }
+        if (map1 == null) {
+            logger.info("数据格式与所选格式不一致");
+            jsonObject.put(entry.getKey(),4073);
+            return;
+        }
+        List<Graph> list = null;
+        List<Build> builds = null;
+        for (Map.Entry<List<Graph>, List<Build>> entry1 : map1.entrySet()) {
+            list = entry1.getKey();
+            builds = entry1.getValue();
+            break;
+        }
+//        if (list == null || list.size() == 0) {
+//            jsonObject.put(entry.getKey(),Message.Type.OK.getStatus());
+//            return;
+//        }
+        if (saveCoordinate(list, builds, project)) {
+            jsonObject.put(entry.getKey(),2000);
+        } else {
+            jsonObject.put(entry.getKey(),4001);
+        }
+    }
 }

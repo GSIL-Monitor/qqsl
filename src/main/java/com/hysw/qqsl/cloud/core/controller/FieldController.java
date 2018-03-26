@@ -104,55 +104,7 @@ public class FieldController {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
             Map<String, MultipartFile> map = multiRequest.getFileMap();
             for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-                MultipartFile mFile = entry.getValue();
-                String fileName = mFile.getOriginalFilename();
-                // 限制上传文件的大小
-                if (mFile.getSize() > CommonAttributes.CONVERT_MAX_SZIE) {
-                    // return "文件过大无法上传";
-                    logger.debug("文件过大");
-                    jsonObject.put(entry.getKey(),Message.Type.FILE_TOO_MAX.getStatus());
-                    continue;
-                }
-                InputStream is;
-                try {
-                    is = mFile.getInputStream();
-                } catch (IOException e) {
-                    logger.info("坐标文件或格式异常");
-                    jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR.getStatus());
-                    continue;
-                }
-                String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-                        fileName.length());
-                Map<List<Graph>, List<Build>> map1;
-                try {
-                    map1 = coordinateService.readExcels(is, central, s, project, wgs84Type);
-                } catch (Exception e) {
-                    logger.info("坐标文件或格式异常");
-                    jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR.getStatus());
-                    continue;
-                }finally {
-                    IOUtils.safeClose(is);
-                }
-                if (map1 == null) {
-                    jsonObject.put(entry.getKey(),Message.Type.COOR_TYPE_ERROR.getStatus());
-                    continue;
-                }
-                List<Graph> list = null;
-                List<Build> builds = null;
-                for (Map.Entry<List<Graph>, List<Build>> entry1 : map1.entrySet()) {
-                    list = entry1.getKey();
-                    builds = entry1.getValue();
-                    break;
-                }
-                if (list == null || list.size() == 0) {
-                    jsonObject.put(entry.getKey(),Message.Type.OK.getStatus());
-                    continue;
-                }
-                if (coordinateService.saveCoordinate(list, builds, project)) {
-                    jsonObject.put(entry.getKey(),Message.Type.OK.getStatus());
-                } else {
-                    jsonObject.put(entry.getKey(),Message.Type.FAIL.getStatus());
-                }
+                coordinateService.uploadCoordinate(entry,jsonObject,project,central,wgs84Type);
             }
         }
         return MessageService.message(Message.Type.OK,jsonObject);
