@@ -30,6 +30,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -477,52 +478,60 @@ public class FieldController {
 
     /**
      * 获取所有建筑物类型
-     * @return
+     * @return OK：请求成功
      */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/getModelType", method = RequestMethod.GET)
     public @ResponseBody Message getModelType() {
         return MessageService.message(Message.Type.OK,fieldService.getModelType());
     }
 
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    /**
+     * 根据类型下载对应模板
+     * @param object  List<Type>
+     * @param response 响应
+     * @return OK:下载成功 Fail:下载失败
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/downloadModel", method = RequestMethod.GET)
     public @ResponseBody
     Message downloadModel(@RequestParam Object object, HttpServletResponse response) {
 //        List<String> list= (List<String>) object;
-//        Workbook wb = fieldService.downloadModel(list);
-//        if (wb == null) {
-//            return MessageService.message(Message.Type.FAIL);
-//        }
-//        ByteArrayOutputStream bos = null;
-//        InputStream is = null;
-//        OutputStream output = null;
-//        try {
-//            bos = new ByteArrayOutputStream();
-//            wb.write(bos);
-//            is = new ByteArrayInputStream(bos.toByteArray());
-//            String contentType = "application/vnd.ms-excel";
-//            response.setContentType(contentType);
-//            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + "--" + type.trim() + ".xls" + "\"");
-//            output = response.getOutputStream();
-//            byte b[] = new byte[1024];
-//            while (true) {
-//                int length = is.read(b);
-//                if (length == -1) {
-//                    break;
-//                }
-//                output.write(b, 0, length);
-//            }
-//        } catch (Exception e) {
-//            e.fillInStackTrace();
-//            return MessageService.message(Message.Type.FAIL);
-//        } finally {
-//            IOUtils.safeClose(bos);
-//            IOUtils.safeClose(is);
-//            IOUtils.safeClose(output);
-//        }
+        List<String> list = new LinkedList<>();
+        list.add(object.toString());
+        Workbook wb = fieldService.downloadModel(list);
+        if (wb == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildModel"+ ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
         return MessageService.message(Message.Type.OK);
     }
 }

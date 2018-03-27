@@ -726,27 +726,147 @@ public class FieldService {
     }
 
     public JSONObject getModelType() {
-        JSONObject jsonObject = new JSONObject();
-        List<String> line = new LinkedList<>(),area = new LinkedList<>(),builds = new LinkedList<>();
-        String[] typelinec = CommonAttributes.TYPELINEC;
-        String[] typeareac = CommonAttributes.TYPEAREAC;
-        String[] basetypec = CommonAttributes.BASETYPEC;
-        for (String s : typelinec) {
-            line.add(s);
+        JSONObject jsonObject,jsonObject1 = new JSONObject();
+        jsonObject = new JSONObject();
+        for (int i = 0; i < CommonAttributes.TYPELINEC.length; i++) {
+            jsonObject.put(CommonAttributes.TYPELINEE[i], CommonAttributes.TYPELINEC[i]);
         }
-        jsonObject.put("line",line);
-        for (String s : typeareac) {
-            area.add(s);
+        jsonObject1.put("line",jsonObject);
+        jsonObject = new JSONObject();
+        for (int i = 0; i < CommonAttributes.TYPEAREAC.length; i++) {
+            jsonObject.put(CommonAttributes.TYPEAREAE[i], CommonAttributes.TYPEAREAC[i]);
         }
-        jsonObject.put("area",area);
-        for (String s : basetypec) {
-            if (SettingUtils.stringMatcher(s, line.toString())||SettingUtils.stringMatcher(s, area.toString())) {
+        jsonObject1.put("area",jsonObject);
+        jsonObject = new JSONObject();
+        for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
+            if (SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], CommonAttributes.TYPELINEC.toString())||SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], CommonAttributes.TYPEAREAC.toString())) {
                 continue;
             }
-            builds.add(s);
+            jsonObject.put(CommonAttributes.BASETYPEE[i], CommonAttributes.BASETYPEC[i]);
         }
-        jsonObject.put("builds",builds);
-        return jsonObject;
+        jsonObject1.put("builds",jsonObject);
+        return jsonObject1;
+    }
+
+    /**
+     * 构建模板
+     * @param list
+     * @return
+     */
+    public Workbook downloadModel(List<String> list) {
+        Workbook wb = new HSSFWorkbook();
+        List<Build> builds = buildGroupService.getBuilds();
+        List<Build> builds1 = new LinkedList<>();
+        for (String s : list) {
+            if (SettingUtils.stringMatcher(s, CommonAttributes.TYPELINEC.toString()) || SettingUtils.stringMatcher(s, CommonAttributes.TYPEAREAC.toString())) {
+
+            } else {
+                for (Build build : builds) {
+                    if (build.getType().toString().equals(s)) {
+                        builds1.add((Build) SettingUtils.objectCopy(build));
+                    }
+                }
+            }
+        }
+        Map<CommonEnum.CommonType, List<Build>> map = groupBuild(builds1);
+//        writeLineAreaModel(s);
+        writeBuildModel(wb,map);
+        return wb;
+    }
+
+    /**
+     * 构建线面模板
+     * @param s
+     */
+    private void writeLineAreaModel(String s) {
+
+    }
+
+    /**
+     * 构建建筑物模板
+     * @param map
+     * @param wb
+     */
+    private void writeBuildModel(Workbook wb, Map<CommonEnum.CommonType, List<Build>> map) {
+        Row row = null;
+        Cell cell = null;
+        boolean flag;
+        final String[] num = {"一","二","三","四","五","六","七"};
+        for (Map.Entry<CommonEnum.CommonType, List<Build>> entry : map.entrySet()) {
+            Sheet sheet = null;
+            WriteExecl we = new WriteExecl();
+            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
+                if (CommonAttributes.BASETYPEE[i].equals(entry.getKey().toString())) {
+                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+                    break;
+                }
+            }
+            List<Build>  builds= entry.getValue();
+            flag = true;
+            for (int i = 0; i < builds.size(); i++) {
+                if (builds.get(i).getAttribeList() == null || builds.get(i).getAttribeList().size() == 0) {
+                    continue;
+                }
+                flag = false;
+                CellStyle style1 = wb.createCellStyle();
+                style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+                Font font1 = wb.createFont();
+                font1.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+                font1.setFontName("宋体");//设置字体名称
+                style1.setFont(font1);
+                style1.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
+                style1.setBorderBottom(HSSFCellStyle.BORDER_THIN);//下边框
+                style1.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
+                style1.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+                writeToCell(sheet,row,cell,style1,we,"编号","名称","单位","值",null,true);
+
+                CellStyle style = wb.createCellStyle();
+                style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+                Font font = wb.createFont();
+                font.setFontName("宋体");//设置字体名称
+                style.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
+                style.setBorderBottom(HSSFCellStyle.BORDER_THIN);//下边框
+                style.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
+                style.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+                style.setFont(font);
+                //坐标头
+                writeToCell(sheet,row,cell,style,we,num[0],"坐标",null,null,null,true);
+                writeToCell(sheet,row,cell,style,we,"1","中心点","经度,纬度,高程",null,"coor1",true);
+                writeToCell(sheet,row,cell,style,we,"2","定位点","经度,纬度,高程",null,"coor2",true);
+
+                int n = 1;
+                writeToCell(sheet,row,cell,style,we,num[n++],"描述",null,builds.get(i).getRemark(),"remark",true);
+                int aa = we.getIndex();
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getMaterAttribeGroup(),num[n],false,true);
+                if (aa != we.getIndex()) {
+                    n++;
+                    aa = we.getIndex();
+                }
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getHydraulicsAttribeGroup(),num[n],false,true);
+                if (aa != we.getIndex()) {
+                    n++;
+                    aa = we.getIndex();
+                }
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getDimensionsAttribeGroup(),num[n],false,true);
+                if (aa != we.getIndex()) {
+                    n++;
+                    aa = we.getIndex();
+                }
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getStructureAttribeGroup(),num[n],false,true);
+                if (aa != we.getIndex()) {
+                    n++;
+                    aa = we.getIndex();
+                }
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getGeologyAttribeGroup(),num[n],false,false);
+            }
+            int max = we.getMax();
+            while (we.getIndex() <= max) {
+                sheet.removeRow(sheet.createRow(we.getIndexAdd()));
+            }
+            if (flag) {
+                wb.removeSheetAt(wb.getSheetIndex(sheet.getSheetName()));
+            }
+        }
     }
 
     /**
