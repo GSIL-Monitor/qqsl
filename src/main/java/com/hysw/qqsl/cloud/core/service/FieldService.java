@@ -725,6 +725,30 @@ public class FieldService {
         return list;
     }
 
+    public JSONObject getModelType() {
+        JSONObject jsonObject = new JSONObject();
+        List<String> line = new LinkedList<>(),area = new LinkedList<>(),builds = new LinkedList<>();
+        String[] typelinec = CommonAttributes.TYPELINEC;
+        String[] typeareac = CommonAttributes.TYPEAREAC;
+        String[] basetypec = CommonAttributes.BASETYPEC;
+        for (String s : typelinec) {
+            line.add(s);
+        }
+        jsonObject.put("line",line);
+        for (String s : typeareac) {
+            area.add(s);
+        }
+        jsonObject.put("area",area);
+        for (String s : basetypec) {
+            if (SettingUtils.stringMatcher(s, line.toString())||SettingUtils.stringMatcher(s, area.toString())) {
+                continue;
+            }
+            builds.add(s);
+        }
+        jsonObject.put("builds",builds);
+        return jsonObject;
+    }
+
     /**
      * 写excel文件类
      */
