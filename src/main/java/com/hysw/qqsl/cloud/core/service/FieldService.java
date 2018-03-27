@@ -441,7 +441,7 @@ public class FieldService {
         }
         String code = transFromService.checkCode84(central);
         writeCoordinateToExcel(jsonArray,wb,source,code,wgs84Type);
-        writeBuildToExcel(map,wb,code,wgs84Type);
+        writeBuildToExcel(map,wb,code,wgs84Type,false);
         return wb;
     }
 
@@ -770,7 +770,7 @@ public class FieldService {
         }
         Map<CommonEnum.CommonType, List<Build>> map = groupBuild(builds1);
 //        writeLineAreaModel(s);
-        writeBuildModel(wb,map);
+        writeBuildModel(wb,map,true);
         return wb;
     }
 
@@ -787,7 +787,7 @@ public class FieldService {
      * @param map
      * @param wb
      */
-    private void writeBuildModel(Workbook wb, Map<CommonEnum.CommonType, List<Build>> map) {
+    private void writeBuildModel(Workbook wb, Map<CommonEnum.CommonType, List<Build>> map,boolean flag1) {
         Row row = null;
         Cell cell = null;
         boolean flag;
@@ -804,9 +804,6 @@ public class FieldService {
             List<Build>  builds= entry.getValue();
             flag = true;
             for (int i = 0; i < builds.size(); i++) {
-                if (builds.get(i).getAttribeList() == null || builds.get(i).getAttribeList().size() == 0) {
-                    continue;
-                }
                 flag = false;
                 CellStyle style1 = wb.createCellStyle();
                 style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);
@@ -837,27 +834,26 @@ public class FieldService {
                 int n = 1;
                 writeToCell(sheet,row,cell,style,we,num[n++],"描述",null,builds.get(i).getRemark(),"remark",true);
                 int aa = we.getIndex();
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getMaterAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getMaterAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getHydraulicsAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getHydraulicsAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getDimensionsAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getDimensionsAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getStructureAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getStructureAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getGeologyAttribeGroup(),num[n],false,false);
             }
             int max = we.getMax();
             while (we.getIndex() <= max) {
@@ -907,7 +903,7 @@ public class FieldService {
      * @param code
      * @param wgs84Type
      */
-    void writeBuildToExcel(Map<CommonEnum.CommonType, List<Build>> map, Workbook wb, String code, Coordinate.WGS84Type wgs84Type) {
+    void writeBuildToExcel(Map<CommonEnum.CommonType, List<Build>> map, Workbook wb, String code, Coordinate.WGS84Type wgs84Type,boolean flag1) {
         Row row = null;
         Cell cell = null;
         boolean flag;
@@ -977,28 +973,27 @@ public class FieldService {
                     writeToCell(sheet,row,cell,style,we,num[n++],"描述",null,builds.get(i).getRemark(),"remark",true);
                 }
                 int aa = we.getIndex();
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getMaterAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getMaterAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getHydraulicsAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getHydraulicsAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getDimensionsAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getDimensionsAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getStructureAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getStructureAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getGeologyAttribeGroup(),num[n],false,false);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getGeologyAttribeGroup(),num[n],false,false,flag1);
 
 //                a++;
 //                CellStyle style2 = wb.createCellStyle();
@@ -1082,7 +1077,7 @@ public class FieldService {
      * @param isComment
      * @return
      */
-    boolean writeToExcel(CellStyle style, Sheet sheet, Row row, Cell cell, WriteExecl we, AttribeGroup attribeGroup,String sign,boolean flag,boolean isComment) {
+    boolean writeToExcel(CellStyle style, Sheet sheet, Row row, Cell cell, WriteExecl we, AttribeGroup attribeGroup,String sign,boolean flag,boolean isComment,boolean flag3) {
         if (attribeGroup == null) {
             return false;
         }
@@ -1096,7 +1091,7 @@ public class FieldService {
         int a =0;
         if (attribeGroup.getAttribes() != null) {
             for (int j = 0; j < attribeGroup.getAttribes().size(); j++) {
-                if (attribeGroup.getAttribes().get(j).getValue() != null && !attribeGroup.getAttribes().get(j).getValue().equals("")) {
+                if ((attribeGroup.getAttribes().get(j).getValue() != null && !attribeGroup.getAttribes().get(j).getValue().equals(""))||flag3) {
                     flag = true;
                     if (attribeGroup.getName().equals(attribeGroup.getAttribes().get(j).getName())) {
                         flag = true;
@@ -1162,7 +1157,7 @@ public class FieldService {
 
                     }
                 }
-                flag1=writeToExcel(style, sheet, row, cell, we, attribeGroup.getChilds().get(i),sss,false,isComment);
+                flag1=writeToExcel(style, sheet, row, cell, we, attribeGroup.getChilds().get(i),sss,false,isComment,flag3);
 //                flag = true;
                 if (flag1) {
                     flag2 = true;

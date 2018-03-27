@@ -514,7 +514,7 @@ public class FieldController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildModel"+ ".xlsx" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildModel"+ ".xls" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {
