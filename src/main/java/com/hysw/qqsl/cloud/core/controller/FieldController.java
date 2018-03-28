@@ -30,6 +30,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -495,12 +496,15 @@ public class FieldController {
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadModel", method = RequestMethod.GET)
+    @RequestMapping(value = "/downloadModel", method = RequestMethod.POST)
     public @ResponseBody
-    Message downloadModel(@RequestParam Object object, HttpServletResponse response) {
-//        List<String> list= (List<String>) object;
-        List<String> list = new LinkedList<>();
-        list.add(object.toString());
+    Message downloadModel(@RequestParam String[] object, HttpServletResponse response) {
+//        @RequestMapping(value = "/downloadModel", method = RequestMethod.POST)
+//        public @ResponseBody
+//        Message downloadModel(@RequestBody  Object object, HttpServletResponse response) {
+        List<String> list = Arrays.asList(object);
+//        List<String> list = new LinkedList<>();
+//        list.add(object.toString());
         Workbook wb = fieldService.downloadModel(list);
         if (wb == null) {
             return MessageService.message(Message.Type.FAIL);

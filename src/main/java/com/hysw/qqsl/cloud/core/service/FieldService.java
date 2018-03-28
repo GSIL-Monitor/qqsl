@@ -725,27 +725,21 @@ public class FieldService {
         return list;
     }
 
-    public JSONObject getModelType() {
-        JSONObject jsonObject,jsonObject1 = new JSONObject();
-        jsonObject = new JSONObject();
+    public JSONArray getModelType() {
+        JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < CommonAttributes.TYPELINEC.length; i++) {
-            jsonObject.put(CommonAttributes.TYPELINEE[i], CommonAttributes.TYPELINEC[i]);
+            jsonArray.add("{\"baseType\":\"" + "line" + "\",\"type\":\"" + CommonAttributes.TYPELINEE[i] + "\",\"name\":\"" + CommonAttributes.TYPELINEC[i] + "\"}");
         }
-        jsonObject1.put("line",jsonObject);
-        jsonObject = new JSONObject();
         for (int i = 0; i < CommonAttributes.TYPEAREAC.length; i++) {
-            jsonObject.put(CommonAttributes.TYPEAREAE[i], CommonAttributes.TYPEAREAC[i]);
+            jsonArray.add("{\"baseType\":\"" + "area" + "\",\"type\":\"" + CommonAttributes.TYPEAREAE[i] + "\",\"name\":\"" + CommonAttributes.TYPEAREAC[i] + "\"}");
         }
-        jsonObject1.put("area",jsonObject);
-        jsonObject = new JSONObject();
         for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-            if (SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], CommonAttributes.TYPELINEC.toString())||SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], CommonAttributes.TYPEAREAC.toString())) {
+            if (SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPELINEC))||SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPEAREAC))) {
                 continue;
             }
-            jsonObject.put(CommonAttributes.BASETYPEE[i], CommonAttributes.BASETYPEC[i]);
+            jsonArray.add("{\"baseType\":\"" + "builds" + "\",\"type\":\"" + CommonAttributes.BASETYPEE[i] + "\",\"name\":\"" + CommonAttributes.BASETYPEC[i] + "\"}");
         }
-        jsonObject1.put("builds",jsonObject);
-        return jsonObject1;
+        return jsonArray;
     }
 
     /**
@@ -758,7 +752,7 @@ public class FieldService {
         List<Build> builds = buildGroupService.getBuilds();
         List<Build> builds1 = new LinkedList<>();
         for (String s : list) {
-            if (SettingUtils.stringMatcher(s, CommonAttributes.TYPELINEC.toString()) || SettingUtils.stringMatcher(s, CommonAttributes.TYPEAREAC.toString())) {
+            if (SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPELINEC)) || SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPEAREAC))) {
 
             } else {
                 for (Build build : builds) {
