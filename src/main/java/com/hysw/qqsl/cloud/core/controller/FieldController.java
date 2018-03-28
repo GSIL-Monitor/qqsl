@@ -496,13 +496,14 @@ public class FieldController {
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadModel", method = RequestMethod.GET)
+//    @RequestMapping(value = "/downloadModel", method = RequestMethod.GET)
+//    public @ResponseBody
+//    Message downloadModel(@RequestParam String[] object, HttpServletResponse response) {
+//    List<String> list = Arrays.asList(object);
+    @RequestMapping(value = "/downloadModel", method = RequestMethod.POST)
     public @ResponseBody
-    Message downloadModel(@RequestParam String[] object, HttpServletResponse response) {
-//        @RequestMapping(value = "/downloadModel", method = RequestMethod.POST)
-//        public @ResponseBody
-//        Message downloadModel(@RequestBody  Object object, HttpServletResponse response) {
-        List<String> list = Arrays.asList(object);
+    Message downloadModel(@RequestBody  Object object, HttpServletResponse response) {
+        List<String> list = Arrays.asList((String)object);
 //        List<String> list = new LinkedList<>();
 //        list.add(object.toString());
         Workbook wb = fieldService.downloadModel(list);
