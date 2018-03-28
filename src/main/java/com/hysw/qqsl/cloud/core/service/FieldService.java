@@ -529,7 +529,7 @@ public class FieldService {
             }
         }
         writeDesignCoordinateToExcel(map, wb, code,wgs84Type);
-    }
+}
 
     /**
      * 设计数据写入excel
@@ -612,7 +612,15 @@ public class FieldService {
         cell.setCellStyle(style);
         cell = row.createCell(1);
         if (b != null) {
+//            CellStyle style1 = sheet.getWorkbook().createCellStyle();
+//            if (a!=null&&a.equals("描述")) {
+//                style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+//                Font font = sheet.getWorkbook().createFont();
+//                font.setColor(Font.COLOR_RED);
+//                style1.setFont(font);
+//            }
             cell.setCellValue(b);
+//            cell.setCellStyle(style1);
         }
         cell.setCellStyle(style);
         cell = row.createCell(2);
@@ -751,9 +759,10 @@ public class FieldService {
         Workbook wb = new HSSFWorkbook();
         List<Build> builds = buildGroupService.getBuilds();
         List<Build> builds1 = new LinkedList<>();
+        List<String> lineAera = new LinkedList<>();
         for (String s : list) {
-            if (SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPELINEC)) || SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPEAREAC))) {
-
+            if (SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPELINEE)) || SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPEAREAE))) {
+                lineAera.add(s);
             } else {
                 for (Build build : builds) {
                     if (build.getType().toString().equals(s)) {
@@ -763,17 +772,33 @@ public class FieldService {
             }
         }
         Map<CommonEnum.CommonType, List<Build>> map = groupBuild(builds1);
-//        writeLineAreaModel(s);
+        writeLineAreaModel(wb,lineAera);
         writeBuildModel(wb,map,true);
         return wb;
     }
 
     /**
      * 构建线面模板
-     * @param s
+     * @param wb
+     * @param lineArea
      */
-    private void writeLineAreaModel(String s) {
-
+    private void writeLineAreaModel(Workbook wb, List<String> lineArea) {
+        for (String s : lineArea) {
+            Sheet sheet = null;
+            Row row = null;
+            Cell cell = null;
+            WriteExecl we = new WriteExecl();
+            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
+                if (CommonAttributes.BASETYPEE[i].equals(s)) {
+                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+                    break;
+                }
+            }
+            CellStyle style = wb.createCellStyle();
+            style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            writeToCell(sheet, row, cell, style, we, "描述", null, null, null, null);
+            writeToCell(sheet, row, cell, style, we, "经度", "纬度", "高程", "类型", "描述");
+        }
     }
 
     /**

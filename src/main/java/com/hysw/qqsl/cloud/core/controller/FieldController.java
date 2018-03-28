@@ -496,7 +496,7 @@ public class FieldController {
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadModel", method = RequestMethod.POST)
+    @RequestMapping(value = "/downloadModel", method = RequestMethod.GET)
     public @ResponseBody
     Message downloadModel(@RequestParam String[] object, HttpServletResponse response) {
 //        @RequestMapping(value = "/downloadModel", method = RequestMethod.POST)
