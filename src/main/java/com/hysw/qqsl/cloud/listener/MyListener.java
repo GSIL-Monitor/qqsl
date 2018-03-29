@@ -67,6 +67,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private GetAccessTokenService getAccessTokenService;
 	@Autowired
 	private MessageService messageService;
+	@Autowired
+	private FieldService fieldService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -146,6 +148,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
 				getAccessTokenService.getAccessToken();
 			}
+			fieldService.buildDownloadCoordinateModel();
+			logger.info("构建建筑物模板");
 		}
 	}
 

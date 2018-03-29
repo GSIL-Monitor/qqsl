@@ -7,6 +7,9 @@ import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
 import com.hysw.qqsl.cloud.core.entity.build.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.poi.hssf.usermodel.*;
@@ -34,6 +37,8 @@ public class FieldService {
     private CoordinateService coordinateService;
     @Autowired
     private TransFromService transFromService;
+    @Autowired
+    private CacheManager cacheManager;
 
 
     public boolean saveField(Map<String, Object> objectMap) {
@@ -748,6 +753,25 @@ public class FieldService {
             jsonArray.add("{\"baseType\":\"" + "builds" + "\",\"type\":\"" + CommonAttributes.BASETYPEE[i] + "\",\"name\":\"" + CommonAttributes.BASETYPEC[i] + "\"}");
         }
         return jsonArray;
+    }
+    public void buildDownloadCoordinateModel(){
+        List<String> list = Arrays.asList(CommonAttributes.BASETYPEE);
+        Cache cache = cacheManager.getCache("coordinateDownloadModel");
+        Element element = new Element("downloadModel",downloadModel(list));
+        cache.put(element);
+    }
+
+    public Workbook pickNeedModel(List<String> list) {
+        Cache cache = cacheManager.getCache("coordinateDownloadModel");
+        Element element = cache.get("downloadModel");
+        Workbook wb = (Workbook) element.getValue();
+        Workbook wb1 = new HSSFWorkbook();
+        for (String s : list) {
+            Sheet sheet = wb.getSheet(s.trim());
+            Sheet sheet1 = wb1.createSheet();
+            sheet1 = (Sheet) SettingUtils.objectCopy(sheet);
+        }
+        return wb1;
     }
 
     /**
