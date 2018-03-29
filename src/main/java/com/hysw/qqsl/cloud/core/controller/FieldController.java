@@ -506,7 +506,7 @@ public class FieldController {
 //        List<String> list = Arrays.asList((String)object);
 //        List<String> list = new LinkedList<>();
 //        list.add(object.toString());
-        Workbook wb = fieldService.pickNeedModel(list);
+        Workbook wb = fieldService.downloadModel(list);
         if (wb == null) {
             return MessageService.message(Message.Type.FAIL);
         }

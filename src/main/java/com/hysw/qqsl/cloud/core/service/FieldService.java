@@ -18,6 +18,7 @@ import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -26,7 +27,9 @@ import java.util.*;
  * Created by chenl on 17-4-13.
  */
 @Service("fieldService")
-public class FieldService {
+public class FieldService implements Serializable {
+    private static final long serialVersionUID = -9100968677794664521L;
+
     @Autowired
     private BuildGroupService buildGroupService;
     @Autowired
@@ -37,8 +40,7 @@ public class FieldService {
     private CoordinateService coordinateService;
     @Autowired
     private TransFromService transFromService;
-    @Autowired
-    private CacheManager cacheManager;
+    private Workbook workbook;
 
 
     public boolean saveField(Map<String, Object> objectMap) {
@@ -753,25 +755,6 @@ public class FieldService {
             jsonArray.add("{\"baseType\":\"" + "builds" + "\",\"type\":\"" + CommonAttributes.BASETYPEE[i] + "\",\"name\":\"" + CommonAttributes.BASETYPEC[i] + "\"}");
         }
         return jsonArray;
-    }
-    public void buildDownloadCoordinateModel(){
-        List<String> list = Arrays.asList(CommonAttributes.BASETYPEE);
-        Cache cache = cacheManager.getCache("coordinateDownloadModel");
-        Element element = new Element("downloadModel",downloadModel(list));
-        cache.put(element);
-    }
-
-    public Workbook pickNeedModel(List<String> list) {
-        Cache cache = cacheManager.getCache("coordinateDownloadModel");
-        Element element = cache.get("downloadModel");
-        Workbook wb = (Workbook) element.getValue();
-        Workbook wb1 = new HSSFWorkbook();
-        for (String s : list) {
-            Sheet sheet = wb.getSheet(s.trim());
-            Sheet sheet1 = wb1.createSheet();
-            sheet1 = (Sheet) SettingUtils.objectCopy(sheet);
-        }
-        return wb1;
     }
 
     /**
