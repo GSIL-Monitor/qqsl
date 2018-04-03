@@ -264,6 +264,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	private Build pickBuildFromBuilds(Sheet sheet) {
 		Build build = null;
 		for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
+			if (SettingUtils.stringMatcher(sheet.getSheetName().trim(), Arrays.toString(CommonAttributes.TYPELINEAREAC))) {
+				return null;
+			}
 			if (sheet.getSheetName().trim().equals(CommonAttributes.BASETYPEC[i])) {
 				String s = CommonAttributes.BASETYPEE[i];
 				List<Build> builds1 = buildGroupService.getBuilds();
