@@ -14,7 +14,6 @@ import com.aliyuncs.profile.IClientProfile;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.OssDao;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
@@ -26,8 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -561,13 +558,13 @@ public class OssService extends BaseService<Oss,Long>{
 	 * @param treePath
 	 * @return
 	 */
-	public Message filePrefixCheck(String treePath){
+	public boolean filePrefixCheck(String treePath){
 		String prefix = treePath.substring(treePath.lastIndexOf(".")+1).toLowerCase();
 		if(extensiones.contains(prefix)==false){
 			//文件类型未知
-			return new Message(Message.Type.UNKNOWN);
+			return false;
 		}
-		return new Message(Message.Type.OK);
+		return true;
 	}
 
 	public List<Oss> getOssList() {

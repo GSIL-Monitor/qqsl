@@ -150,9 +150,7 @@ public class RSACoderUtil {
 
     public static void main(String[] args){
         RSACoderUtil rsaCoderUtil = new RSACoderUtil();
-        //sensorMap.put("code", "9930023");
-        // sensorMap.put("ciphertext", "02D7145AFB1");
-        String data = "9930023";
+        String data = "a=2341312";
         String result = rsaCoderUtil.decryptByPrivateKey(data, key);
         System.out.print(result);
     }

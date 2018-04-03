@@ -1,9 +1,11 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Admin;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
+import net.sf.json.JSONObject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,7 @@ public class AuthentController {
     public
     @ResponseBody
     Message refuse() {
-        return new Message(Message.Type.NO_AUTHORIZE);
+        return MessageService.message(Message.Type.UNAUTHORIZED);
     }
 
     /**
@@ -56,7 +58,7 @@ public class AuthentController {
     public
     @ResponseBody
     Message checkSession() {
-        return new Message(Message.Type.NO_SESSION);
+        return MessageService.message(Message.Type.NO_SESSION);
     }
 
 
@@ -96,10 +98,10 @@ public class AuthentController {
     @ResponseBody
     Message logout() {
         if (SecurityUtils.getSubject().getSession() == null) {
-            return new Message(Message.Type.OK);
+            return MessageService.message(Message.Type.OK);
         }
         SecurityUtils.getSubject().logout();
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -110,7 +112,8 @@ public class AuthentController {
     public
     @ResponseBody
     Message getVersion() {
-        return mobileInfoService.findVersion();
+        JSONObject version = mobileInfoService.findVersion();
+        return MessageService.message(Message.Type.OK,version);
     }
 
     /**
@@ -122,12 +125,13 @@ public class AuthentController {
     public
     @ResponseBody
     Message updateVersion(@RequestBody Map<String, Object> map) {
-        Message message = Message.parameterCheck(map);
-        if (!message.getType().equals(Message.Type.OK)) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Long version = Long.valueOf(map.get("version").toString());
-        return mobileInfoService.update(version);
+        mobileInfoService.update(version);
+        return MessageService.message(Message.Type.OK);
     }
 
 

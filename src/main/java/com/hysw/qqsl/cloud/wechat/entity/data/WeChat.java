@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.wechat.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.core.entity.data.BaseEntity;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;

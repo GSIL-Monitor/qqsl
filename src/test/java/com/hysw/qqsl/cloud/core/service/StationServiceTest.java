@@ -14,7 +14,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.xml.transform.TransformerConfigurationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -48,12 +47,6 @@ public class StationServiceTest extends BaseTest {
     private String gandsdzh = "B9FBC2E5D6DDB4EFC8D5CFD8";
     // 玛沁江壤
     private String maqsdzh = "B9FBC2E5D6DDC2EAC7DFCFD8";
-    // 动力渠
-    private String donglq = "32FFD505424D313843671143";
-    // 溢流堰
-    private String yily = "38FFD8053355363623831057 ";
-    // 鱼道
-    private String yud = "32FFDA053354363412642057";
 
     /**
      * 测站xml配置缓存测试
@@ -63,36 +56,6 @@ public class StationServiceTest extends BaseTest {
         stationService.putStationModelInCache();
         List<StationModel> stationModels = stationService.getStationModelFromCache();
         Assert.assertTrue(stationModels.size()==4);
-    }
-
-    /**
-     * 陇南测站
-     * @throws ParseException
-     */
-    @Test
-    public void testLongnStation() throws  ParseException {
-        Station station = null;
-        // 动力渠
-        station = stationService.findByInstanceId(donglq);
-        if (station==null) {
-            build(donglq);
-            station = stationService.findByInstanceId(donglq);
-        }
-        Assert.assertNotNull(station);
-        // 溢流堰
-        station = stationService.findByInstanceId(yily);
-        if (station==null) {
-            build(yily);
-            station = stationService.findByInstanceId(yily);
-        }
-        Assert.assertNotNull(station);
-        //鱼道
-        station = stationService.findByInstanceId(yud);
-        if (station==null) {
-            build(yud);
-            station = stationService.findByInstanceId(yud);
-        }
-        Assert.assertNotNull(station);
     }
 
     /**
@@ -221,30 +184,6 @@ public class StationServiceTest extends BaseTest {
             station.setCoor("{\"longitude\":\"101.74519193239226\",\"latitude\":\"36.62518183074351\",\"elevation\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
-            station.setTransform(true);
-        }
-        //动力渠
-        if (instanceId.equals(donglq)==true) {
-            station.setName("动力渠");
-            station.setDescription("动力渠");
-            station.setAddress("");
-            station.setCoor("{\"longitude\":\"105.60918\",\"latitude\":\"33.145122\",\"elevation\":\"0\"}");
-            station.setTransform(true);
-        }
-        //溢流堰
-        if (instanceId.equals(yily)==true) {
-            station.setName("溢流堰");
-            station.setDescription("溢流堰");
-            station.setAddress("");
-            station.setCoor("{\"longitude\":\"105.608986\",\"latitude\":\"33.145003\",\"elevation\":\"0\"}");
-            station.setTransform(true);
-        }
-        //鱼道
-        if (instanceId.equals(yud)==true) {
-            station.setName("鱼道");
-            station.setDescription("鱼道");
-            station.setAddress("");
-            station.setCoor("{\"longitude\":\"105.609174\",\"latitude\":\"33.145157\",\"elevation\":\"0\"}");
             station.setTransform(true);
         }
         user = userService.find(16l);

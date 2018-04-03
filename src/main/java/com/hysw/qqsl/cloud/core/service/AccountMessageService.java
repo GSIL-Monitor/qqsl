@@ -28,8 +28,6 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     @Autowired
     private UserService userService;
     @Autowired
-    private CooperateService cooperateService;
-    @Autowired
     private PollingService pollingService;
     @Autowired
     private AccountService accountService;

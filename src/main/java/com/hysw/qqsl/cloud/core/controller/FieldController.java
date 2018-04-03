@@ -1,6 +1,9 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.aliyun.oss.common.utils.IOUtils;
+import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.core.entity.build.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.Build;
 import com.hysw.qqsl.cloud.core.entity.data.Coordinate;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
@@ -11,6 +14,8 @@ import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
 import net.sf.json.JSONArray;
 
 import net.sf.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -25,6 +30,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +52,7 @@ public class FieldController {
     @Autowired
     private CoordinateService coordinateService;
 
+    Log logger = LogFactory.getLog(getClass());
 
     /**
      * 坐标文件上传
@@ -56,7 +63,8 @@ public class FieldController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/coordinateFile", method = RequestMethod.POST)
-    public @ResponseBody Message uploadCoordinate(HttpServletRequest request) {
+    public @ResponseBody
+    Message uploadCoordinate(HttpServletRequest request) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         String id = request.getParameter("projectId");
         String baseLevelType = request.getParameter("baseLevelType");
@@ -64,44 +72,43 @@ public class FieldController {
         Message message;
         JSONObject jsonObject = new JSONObject();
         if (id == null || baseLevelType == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Project project;
         Coordinate.WGS84Type wgs84Type = null;
         Coordinate.BaseLevelType levelType;
         try {
-            message=fieldService.isAllowUploadCoordinateFile(Long.valueOf(id));
+            message=isAllowUploadCoordinateFile(Long.valueOf(id));
             levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
             if (!WGS84Type.equals("")) {
                 wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
             }
             project = projectService.find(Long.valueOf(id));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        if(message.getType()!=Message.Type.OK){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (project == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (levelType == Coordinate.BaseLevelType.CGCS2000) {
             wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
         }
         String central = coordinateService.getCoordinateBasedatum(project);
         if (central == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
         }
         if(multipartResolver.isMultipart(request)) {
             //转换成多部分request
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
             Map<String, MultipartFile> map = multiRequest.getFileMap();
             for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-                message = coordinateService.uploadCoordinate(entry.getValue(), project,central,wgs84Type);
-                jsonObject.put(entry.getKey(), message.getType());
+                coordinateService.uploadCoordinate(entry,jsonObject,project,central,wgs84Type);
             }
         }
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
 
@@ -115,12 +122,15 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/saveField", method = RequestMethod.POST)
     public @ResponseBody Message saveField(@RequestBody  Map<String,Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
-        message=fieldService.saveField(objectMap);
-        return message;
+        if (fieldService.saveField(objectMap)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**
@@ -135,16 +145,16 @@ public class FieldController {
     public @ResponseBody Message field(@RequestParam long id,@RequestParam String type) {
         Project project = projectService.find(id);
         if (project == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (Build.Source.DESIGN.toString().toLowerCase().equals(type.trim().toLowerCase())) {
             JSONObject desgin = fieldService.field(project, Build.Source.DESIGN);
-            return new Message(Message.Type.OK, desgin);
+            return MessageService.message(Message.Type.OK, desgin);
         } else if (Build.Source.FIELD.toString().toLowerCase().equals(type.trim().toLowerCase())) {
             JSONObject field = fieldService.field(project, Build.Source.FIELD);
-            return new Message(Message.Type.OK, field);
+            return MessageService.message(Message.Type.OK, field);
         }else {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
     }
 
@@ -153,7 +163,7 @@ public class FieldController {
 //    public @ResponseBody Message init() {
 //        positionService.format();
 //        positionService.init();
-//        return new Message(Message.Type.OK);
+//        return MessageService.message(Message.Type.OK);
 //    }
 
     /**
@@ -163,7 +173,7 @@ public class FieldController {
     @RequestMapping(value = "/getSimpleBuildJsons", method = RequestMethod.GET)
     public @ResponseBody Message getSimpleBuildJsons(){
         JSONArray jsonArray = buildGroupService.getBuildJson(true);
-        return new Message(Message.Type.OK,jsonArray);
+        return MessageService.message(Message.Type.OK,jsonArray);
     }
     /**
      * 获取带有属性的建筑物结构（地质属性除外）
@@ -172,7 +182,7 @@ public class FieldController {
     @RequestMapping(value = "/getBuildJsons", method = RequestMethod.GET)
     public @ResponseBody Message getBuildJsons(){
         JSONArray jsonArray = buildGroupService.getBuildJson(false);
-        return new Message(Message.Type.OK,jsonArray);
+        return MessageService.message(Message.Type.OK,jsonArray);
     }
 
     /**
@@ -183,7 +193,7 @@ public class FieldController {
 //    @RequiresRoles(value = {"web"},logical = Logical.OR)
     public @ResponseBody Message getGeologyJson(){
         JSONObject jsonObject = buildGroupService.getGeologyJson();
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -209,7 +219,7 @@ public class FieldController {
             wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
         }
         if (wgs84Type == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Workbook wb;
         if (Build.Source.DESIGN.toString().toLowerCase().equals(type.trim().toLowerCase())) {
@@ -217,10 +227,10 @@ public class FieldController {
         } else if (Build.Source.FIELD.toString().toLowerCase().equals(type.trim().toLowerCase())) {
             wb = fieldService.writeExcel(project, Build.Source.FIELD,wgs84Type);
         } else {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (wb == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.FAIL);
         }
         ByteArrayOutputStream bos = null;
         InputStream is = null;
@@ -243,13 +253,13 @@ public class FieldController {
             }
         } catch (Exception e) {
             e.fillInStackTrace();
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         } finally {
             IOUtils.safeClose(bos);
             IOUtils.safeClose(is);
             IOUtils.safeClose(output);
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -261,16 +271,16 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/build", method = RequestMethod.GET)
     public @ResponseBody Message uploadBuild(@RequestParam long id) {
-        Message message = Message.parametersCheck(id);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Build build = buildService.find(id);
         if (build == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         JSONObject jsonObject = buildService.buildJson(build);
-        return new Message(Message.Type.OK,jsonObject);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**
@@ -283,11 +293,22 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/createBuild", method = RequestMethod.POST)
     public @ResponseBody Message newBuild(@RequestBody  Map<String,Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return fieldService.newBuild(objectMap);
+        Object type = objectMap.get("type");
+        Object centerCoor = objectMap.get("centerCoor");
+        Object remark = objectMap.get("remark");
+        Object projectId = objectMap.get("projectId");
+        if (projectId == null || type == null || centerCoor == null || remark == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if (fieldService.newBuild(type, centerCoor, remark, projectId)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**
@@ -300,11 +321,26 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editBuild", method = RequestMethod.POST)
     public @ResponseBody Message editBuild(@RequestBody  Map<String,Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return fieldService.editBuild(objectMap);
+        Object id = objectMap.get("id");
+        Object remark = objectMap.get("remark");
+        Object type = objectMap.get("type");
+        Object attribes = objectMap.get("attribes");
+        if (id == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Build build = buildService.find(Long.valueOf(id.toString()));
+        if (build == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (fieldService.editBuild(build,id,remark,type,attribes)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**
@@ -316,16 +352,16 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/deleteBuild/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message deleteBuild(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Build build = buildService.find(id);
         if (build == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         buildService.remove(build);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 
@@ -339,24 +375,24 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editShape", method = RequestMethod.POST)
     public @ResponseBody Message deletePoint(@RequestBody  Map<String,Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Object line = objectMap.get("line");
         Object builds = objectMap.get("build");
         Object description = objectMap.get("description");
         if (line == null && description == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
-        message=coordinateService.checkCoordinateFormat(line);
-        if (message.getType() == Message.Type.OTHER) {
-            return message;
+        boolean b = coordinateService.checkCoordinateFormat(line);
+        if (!b) {
+            return MessageService.message(Message.Type.FAIL);
         }
         JSONObject jsonObject = JSONObject.fromObject(line);
         Object id = jsonObject.get("id");
         if (id == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         jsonObject.remove("id");
         Coordinate coordinate = coordinateService.find(Long.valueOf(id.toString()));
@@ -368,12 +404,12 @@ public class FieldController {
             for (Integer l : list) {
                 Build build = buildService.find(Long.valueOf(l));
                 if (build == null) {
-                    return new Message(Message.Type.EXIST);
+                    return MessageService.message(Message.Type.DATA_NOEXIST);
                 }
                 buildService.remove(build);
             }
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -385,18 +421,18 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/deleteShape/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message deletePLine(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Coordinate coordinate = coordinateService.find(id);
         if (coordinate == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         coordinateService.remove(coordinate);
         List<Build> builds = buildService.findByCoordinateId(id);
         buildService.removes(builds);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -409,12 +445,93 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/createShape", method = RequestMethod.POST)
     public @ResponseBody Message creatShape(@RequestBody  Map<String,Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return coordinateService.saveCoordinateFromPage(objectMap);
+        Object line = objectMap.get("line");
+        Object projectId = objectMap.get("projectId");
+        Object description = objectMap.get("description");
+        if (line == null || projectId == null || description == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        boolean b = coordinateService.checkCoordinateFormat(line);
+        if (!b) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        coordinateService.saveCoordinateFromPage(line,projectId,description);
+        return MessageService.message(Message.Type.OK);
     }
 
+    private Message isAllowUploadCoordinateFile(Long id) {
+        Project project = projectService.find(Long.valueOf(id));
+        if (project == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        List<Coordinate> coordinates = coordinateService.findByProject(project);
+        if (coordinates.size()< CommonAttributes.COORDINATELIMIT) {
+            return MessageService.message(Message.Type.OK);
+        }
+//        超过限制数量，返回已达到最大限制数量
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
+    }
 
+    /**
+     * 获取所有建筑物类型
+     * @return OK：请求成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/getModelType", method = RequestMethod.GET)
+    public @ResponseBody Message getModelType() {
+        return MessageService.message(Message.Type.OK,fieldService.getModelType());
+    }
+
+    /**
+     * 根据类型下载对应模板
+     * @param object  List<Type>
+     * @param response 响应
+     * @return OK:下载成功 Fail:下载失败
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/downloadModel", method = RequestMethod.GET)
+    public @ResponseBody
+    Message downloadModel(@RequestParam Object object, HttpServletResponse response) {
+//        List<String> list= (List<String>) object;
+        List<String> list = new LinkedList<>();
+        list.add(object.toString());
+        Workbook wb = fieldService.downloadModel(list);
+        if (wb == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildModel"+ ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
 }

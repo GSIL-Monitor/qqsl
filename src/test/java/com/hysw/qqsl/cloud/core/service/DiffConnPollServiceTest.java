@@ -2,7 +2,7 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.DiffConnPoll;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
@@ -28,56 +28,36 @@ public class DiffConnPollServiceTest extends BaseTest {
     private UserService userService;
 
     @Test
-    public void testIsAllowConnectQXWZ(){
-        Message message = diffConnPollService.isAllowConnectQXWZ(1l);
-        Assert.assertTrue(message.getType() == Message.Type.FAIL);
-        message = diffConnPollService.isAllowConnectQXWZ(848l);
-        Assert.assertTrue(message.getType() == Message.Type.FAIL);
-        Package aPackage = packageService.findByUser(userService.find(1l));
-        aPackage.setType(CommonEnum.PackageType.SUNRISE);
-        packageService.save(aPackage);
-        packageService.flush();
-        message = diffConnPollService.isAllowConnectQXWZ(848l);
-        Assert.assertTrue(message.getType() == Message.Type.OK);
-    }
-
-    @Test
     public void testAddDiffConnPoll(){
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("userName","aaa");
         map.put("password","bbb");
         map.put("timeout",System.currentTimeMillis()+7*24*3600*1000l);
-        Message message = diffConnPollService.addDiffConnPoll(map);
-        Assert.assertTrue(message.getType() == Message.Type.OK);
+        boolean b = diffConnPollService.addDiffConnPoll(map);
+        Assert.assertTrue(b);
         diffConnPollService.flush();
         List<DiffConnPoll> diffConnPolls = diffConnPollService.findAll();
         Assert.assertTrue(diffConnPolls.size() == 3);
         map = new LinkedHashMap<>();
         map.put("userName","aaa");
         map.put("password","bbb");
-        message = diffConnPollService.addDiffConnPoll(map);
-        Assert.assertTrue(message.getType() == Message.Type.FAIL);
+        b = diffConnPollService.addDiffConnPoll(map);
+        Assert.assertTrue(!b);
     }
 
     @Test
     public void testEditDiffConnPoll(){
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", 1l);
-        map.put("timeout", System.currentTimeMillis() + 7 * 24 * 3600 * 1000l);
-        Message message = diffConnPollService.editDiffConnPoll(map);
-        Assert.assertTrue(message.getType() == Message.Type.OK);
-        map = new LinkedHashMap<>();
-        map.put("id", 1l);
-//        map.put("timeout", System.currentTimeMillis() + 7 * 24 * 3600 * 1000l);
-        message = diffConnPollService.editDiffConnPoll(map);
-        Assert.assertTrue(message.getType() == Message.Type.FAIL);
+        DiffConnPoll diffConnPoll = diffConnPollService.find(1l);
+        long timeout=System.currentTimeMillis() + 7 * 24 * 3600 * 1000l;
+        diffConnPollService.editDiffConnPoll(diffConnPoll, timeout, 1l);
+        diffConnPollService.flush();
+        diffConnPoll = diffConnPollService.find(1l);
+        Assert.assertTrue(diffConnPoll.getTimeout()==timeout);
     }
 
     @Test
     public void testAccountList(){
-        Message message = diffConnPollService.accountList();
-        Assert.assertTrue(message.getType() == Message.Type.OK);
-        JSONArray data = (JSONArray) message.getData();
-        Assert.assertTrue(!data.isEmpty());
+        JSONArray jsonArray = diffConnPollService.accountList();
+        Assert.assertTrue(!jsonArray.isEmpty());
     }
 }

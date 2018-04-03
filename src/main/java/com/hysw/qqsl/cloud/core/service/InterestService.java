@@ -1,7 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.InterestDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
@@ -112,7 +111,7 @@ public class InterestService extends BaseService<Interest, Long> {
         return interests;
     }
 
-    public Message saveInterest(Map<String, Object> map,Interest interest) {
+    public JSONObject saveInterest(Map<String, Object> map, Interest interest) {
         Object name=map.get("name");
         Object type=map.get("type");
         Object category=map.get("category");
@@ -129,13 +128,13 @@ public class InterestService extends BaseService<Interest, Long> {
 //        Object advice=map.get("advice");
 //        Object reviewDate=map.get("reviewDate");
         if (name == null || category == null || coordinate == null || region == null || business == null) {
-            return new Message(Message.Type.FAIL);
+            return null;
         }
-        Message message = SettingUtils.checkCoordinateIsInvalid(coordinate.toString());
-        if (!Message.Type.OK.equals(message.getType())) {
-            return message;
+        JSONObject jsonObject1 = SettingUtils.checkCoordinateIsInvalid(coordinate.toString());
+        if (jsonObject1 == null) {
+            return null;
         }
-        interest.setCoordinate(message.getData().toString());
+        interest.setCoordinate(jsonObject1.toString());
         interest.setName(name.toString());
         interest.setType(Interest.Type.valueOf(Integer.valueOf(type.toString())));
         interest.setCategory(Interest.Category.valueOf(Integer.valueOf(category.toString())));
@@ -163,7 +162,7 @@ public class InterestService extends BaseService<Interest, Long> {
         save(interest);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", interest.getId());
-        return new Message(Message.Type.OK,jsonObject);
+        return jsonObject;
     }
 
     public List<Interest> findAllBase() {

@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Feedback;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -23,24 +23,18 @@ public class FeedbackServiceTest extends BaseTest {
 
     @Test
     public void testSaveAccountFeedback(){
-        Map<String, Object> objectMap = new LinkedHashMap<>();
-        objectMap.put("accountId", 17);
-        objectMap.put("title", "aaaa");
-        objectMap.put("content", "bbb");
-        objectMap.put("type", "SUGGEST");
-        Message message = feedbackService.saveAccountFeedback(objectMap);
-        Assert.assertTrue(message.getType()==Message.Type.OK);
+        feedbackService.saveAccountFeedback(17, "aaaa", "bbb", "SUGGEST");
+        feedbackService.flush();
+        List<Feedback> feedbacks = feedbackService.findByAccountId(17l);
+        Assert.assertTrue(feedbacks.size() == 1);
     }
 
     @Test
     public void testSaveUserFeedback(){
-        Map<String, Object> objectMap = new LinkedHashMap<>();
-        objectMap.put("userId", 1);
-        objectMap.put("title", "aaaa");
-        objectMap.put("content", "bbb");
-        objectMap.put("type", "SUGGEST");
-        Message message = feedbackService.saveUserFeedback(objectMap);
-        Assert.assertTrue(message.getType()==Message.Type.OK);
+        feedbackService.saveUserFeedback(1,"aaaa","bbb","SUGGEST");
+        feedbackService.flush();
+        List<Feedback> feedbacks = feedbackService.findByUserId(1l);
+        Assert.assertTrue(feedbacks.size() != 0);
         List<Feedback> all = feedbackService.findAll();
         Assert.assertTrue(all.size() != 0);
         Feedback feedback = all.get(0);

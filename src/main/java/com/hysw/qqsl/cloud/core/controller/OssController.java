@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.core.controller;
 import java.util.*;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
 import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONObject;
@@ -47,11 +48,12 @@ public class OssController {
 	@RequiresAuthentication
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
 	@RequestMapping(value = "/objectFiles", method = RequestMethod.GET)
-	public @ResponseBody Message getObjectFiles(
+	public @ResponseBody
+    Message getObjectFiles(
 			@RequestParam("id") String id) {
 		List<ObjectFile> objectFiles = ossService
 				.getFiles("project" + "/" + id,"qqsl");
-		return new Message(Message.Type.OK,objectFiles);
+		return MessageService.message(Message.Type.OK,objectFiles);
 	}
 
 	/**
@@ -66,11 +68,11 @@ public class OssController {
 			@RequestParam("key") String key,@RequestParam("bucketName") String bucketName) {
 		String url = ossService.getObjectUrl(key, bucketName);
 		if (!StringUtils.hasText(url)){
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("url", url);
-		return new Message(Message.Type.OK,jsonObject);
+		return MessageService.message(Message.Type.OK,jsonObject);
 	}
 
 	/**
@@ -82,7 +84,7 @@ public class OssController {
 	@RequestMapping(value = "/sts", method = RequestMethod.GET)
 	public @ResponseBody Message getSts() {
 		String sts = ossService.getStsToken();
-		return new Message(Message.Type.OK,sts);
+		return MessageService.message(Message.Type.OK,sts);
 	}
 
 	/**
@@ -95,15 +97,15 @@ public class OssController {
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/create",method = RequestMethod.POST)
 	public @ResponseBody Message saveOss(@RequestBody Object object){
-		Message message = Message.parameterCheck(object);
-		if(message.getType()== Message.Type.FAIL){
+		Message message = CommonController.parameterCheck(object);
+		if (message.getType() != Message.Type.OK) {
 			return message;
 		}
 		Long prpjectId = Long.valueOf(((HashMap<String,Object>)message.getData()).get("projectId").toString());
 		String treePath = ((HashMap<String,Object>)message.getData()).get("treePath").toString();
-		message = ossService.filePrefixCheck(treePath);
-		if(!message.getType().equals(Message.Type.OK)){
-			return message;
+		if (!ossService.filePrefixCheck(treePath)) {
+			//文件类型未知
+			return MessageService.message(Message.Type.FILE_TYPE_ERROR);
 		}
 		User user = authentService.getUserFromSubject();
 		if(user==null){
@@ -111,7 +113,7 @@ public class OssController {
 		}
 		Oss oss = new Oss(treePath,user.getId(),prpjectId);
 		ossService.save(oss);
-		return new Message(Message.Type.OK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	/**
@@ -124,13 +126,13 @@ public class OssController {
 	public @ResponseBody
 	Message getOss(@RequestParam String token){
 		if(!applicationTokenService.decrypt(token)){
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		List<Oss> ossList = ossService.getOssList();
 		if(ossList==null) {
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
-		return new Message(Message.Type.OK, ossService.ossListToJsonArray(ossList));
+		return MessageService.message(Message.Type.OK, ossService.ossListToJsonArray(ossList));
 	}
 
 	/**
@@ -140,8 +142,8 @@ public class OssController {
 	 */
 	@RequestMapping(value = "/remove",method = RequestMethod.POST)
 	public @ResponseBody Message deleteOss(@RequestBody String data){
-		Message message = Message.parametersCheck(data);
-		if(message.getType()== Message.Type.FAIL){
+		Message message = CommonController.parametersCheck(data);
+		if (message.getType() != Message.Type.OK) {
 			return message;
 		}
 		JSONObject jsonObject = JSONObject.fromObject(data);
@@ -149,9 +151,9 @@ public class OssController {
 		String token = jsonObject.getString("token");
 		if(applicationTokenService.decrypt(token)){
 			ossService.deleteOss(id);
-			return new Message(Message.Type.OK);
+			return MessageService.message(Message.Type.OK);
 		}
-		return new Message(Message.Type.FAIL);
+		return MessageService.message(Message.Type.FAIL);
 	}
 
 	/**
@@ -166,7 +168,7 @@ public class OssController {
 			@RequestParam("id") String id) {
 		List<ObjectFile> objectFiles = ossService
 				.getSubdirectoryFiles("project" + "/" + id,"qqsl1");
-		return new Message(Message.Type.OK,objectFiles);
+		return MessageService.message(Message.Type.OK,objectFiles);
 	}
 
 	/**
@@ -182,7 +184,7 @@ public class OssController {
 		Map<String, String> map = (Map<String, String>) object;
 		Object obj =  map.get("key");
 		if (obj == null || !StringUtils.hasText(obj.toString())) {
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		String key = map.get("key");
 		// 删除project下的文件
@@ -194,7 +196,7 @@ public class OssController {
 			// 删除pdf
 			ossService.deleteObject(key,"qqsl");
 		}
-		return new Message(Message.Type.OK);
+		return MessageService.message(Message.Type.OK);
 	}
 
 	/**
@@ -209,7 +211,7 @@ public class OssController {
 	public @ResponseBody Message deleteAll(@RequestBody Object object) {
 		Map<String, String> map = (Map<String, String>) object;
 		if (!StringUtils.hasText(map.get("keys"))) {
-			return new Message(Message.Type.FAIL);
+			return MessageService.message(Message.Type.FAIL);
 		}
 		String str =  map.get("keys");
 		String[] key1 = str.split(",");
@@ -226,6 +228,6 @@ public class OssController {
 				ossService.deleteObject(key,"qqsl");
 			}
 		}
-		return new Message(Message.Type.OK);
+		return MessageService.message(Message.Type.OK);
 	}
 }

@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.pay.service;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.service.BaseService;
 import com.hysw.qqsl.cloud.pay.dao.TurnoverDao;
@@ -69,10 +68,10 @@ public class TurnoverService extends BaseService<Turnover, Long> {
      * @param end
      * @return
      */
-    public Message getTurnoverListBetweenDate(Date begin, Date end) {
+    public List<Turnover> getTurnoverListBetweenDate(Date begin, Date end) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.between("createDate", begin, end));
         List<Turnover> list = turnoverDao.findList(0, null, filters);
-        return new Message(Message.Type.OK, list);
+        return list;
     }
 }

@@ -1,9 +1,9 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import javax.persistence.*;
 
 /**
  * 项目坐标实体类

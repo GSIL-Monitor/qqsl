@@ -121,13 +121,13 @@ public final class CommonAttributes {
             "YUL", "SHUIZ", "BZ", "DZCF", "DIZD", "TSD", "POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
             "PSGQ", "PSZQ", "PSDQ", "GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY", "GONGGXM"};
     public static final String[] TYPELINEAREAC = {"普通点", "供水干管", "供水支管", "供水斗管", "供水干渠", "供水支渠", "供水斗渠", "排水干管", "排水支管", "排水斗管",
-            "排水干渠", "排水支渠", "排水斗渠", "灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域","防洪堤", "排洪渠"};
+            "排水干渠", "排水支渠", "排水斗渠", "灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域", "防洪堤", "排洪渠", "公共线面"};
     public static final String[] TYPELINEAREAE = {"POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
-            "PSGQ", "PSZQ", "PSDQ", "GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY","FHD","PHQ"};
+            "PSGQ", "PSZQ", "PSDQ", "GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY", "FHD", "PHQ", "GONGGXM"};
     public static final String[] TYPELINEC = {"普通点", "供水干管", "供水支管", "供水斗管", "供水干渠", "供水支渠", "供水斗渠", "排水干管", "排水支管", "排水斗管",
-            "排水干渠", "排水支渠", "排水斗渠"};
+            "排水干渠", "排水支渠", "排水斗渠", "公共线面", "防洪堤", "排洪渠"};
     public static final String[] TYPELINEE = {"POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
-            "PSGQ", "PSZQ", "PSDQ"};
+            "PSGQ", "PSZQ", "PSDQ", "GONGGXM", "FHD", "PHQ"};
     public static final String[] TYPEAREAC = {"灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域"};
     public static final String[] TYPEAREAE = {"GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY"};
     /**
@@ -232,6 +232,8 @@ public final class CommonAttributes {
     public static String MYEMAILACCOUNT = "leinuo@qingqingshuili.cn";
     //    企业邮箱密码
     public static String MYEMAILPASSWORD = "Ljb608403";
+    // 转换文件大小
+    public static final long CONVERT_MAX_SZIE = 36 * 1024 * 1024;
 
 }
 

@@ -1,6 +1,5 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.element.ElementGroup;
@@ -31,7 +30,7 @@ public class ElementService {
 	private InfoService infoService;
 	@Autowired
 	private ProjectLogService projectLogService;
-	private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//	private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * 根据单元和项目从数据库构建带值的element,用于要素输出
@@ -312,148 +311,4 @@ public class ElementService {
 		//更新项目基本新信息
 		projectService.save(project);
 	}
-
-//	public void addLogTimeToProject(Project project,String elementAlias,String stage) {
-//		JSONObject object = JSONObject.fromObject(project.getLogStr());
-//		JSONObject jsonObject = new JSONObject();
-//		Object inviteElement = null;
-//		Object inviteFile = null;
-//		Object preparationElement = null;
-//		Object preparationFile = null;
-//		Object buildingElement = null;
-//		Object buildingFile = null;
-//		Object maintenanceElement = null;
-//		Object maintenanceFile = null;
-//		if(object.size()!=0){
-//			inviteElement = object.get("inviteElement");
-//			inviteFile =  object.get("inviteFile");
-//			preparationElement =  object.get("preparationElement");
-//			preparationFile =  object.get("preparationFile");
-//			buildingElement =  object.get("buildingElement");
-//			buildingFile = object.get("buildingFile");
-//			maintenanceElement = object.get("maintenanceElement");
-//			maintenanceFile =  object.get("maintenanceFile");
-//		}
-//		if(stage.equals("element")){
-//			if(elementAlias.substring(0,1).equals("1")){
-//				inviteElement=System.currentTimeMillis();
-//			}
-//			if(elementAlias.substring(0,1).equals("2")){
-//				preparationElement=System.currentTimeMillis();
-//			}
-//			if(elementAlias.substring(0,1).equals("3")){
-//				buildingElement=System.currentTimeMillis();
-//			}
-//			if(elementAlias.substring(0,1).equals("4")){
-//				maintenanceElement=System.currentTimeMillis();
-//			}
-//		}else{
-//			if(elementAlias.substring(0,1).equals("1")){
-//				inviteFile=System.currentTimeMillis();
-//			}
-//			if(elementAlias.substring(0,1).equals("2")){
-//				preparationFile=System.currentTimeMillis();
-//			}
-//			if(elementAlias.substring(0,1).equals("3")){
-//				buildingFile=System.currentTimeMillis();
-//			}
-//			if(elementAlias.substring(0,1).equals("4")){
-//				maintenanceFile=System.currentTimeMillis();
-//			}
-//		}
-//		if(inviteElement!=null){
-//			jsonObject.put("inviteElement",inviteElement);
-//		}
-//		if(inviteFile!=null){
-//			jsonObject.put("inviteFile",inviteFile);
-//		}
-//		if(preparationElement!=null){
-//			jsonObject.put("preparationElement",preparationElement);
-//		}
-//		if(preparationFile!=null){
-//			jsonObject.put("preparationFile",preparationFile);
-//		}
-//		if(buildingElement!=null){
-//			jsonObject.put("buildingElement",buildingElement );
-//		}
-//		if(buildingFile!=null){
-//			jsonObject.put("buildingFile", buildingFile);
-//		}
-//		if(maintenanceElement!=null){
-//			jsonObject.put("maintenanceElement",maintenanceElement );
-//		}
-//		if(maintenanceFile!=null){
-//			jsonObject.put("maintenanceFile",maintenanceFile );
-//		}
-//		if(jsonObject!=null&&!jsonObject.isEmpty()){
-//			project.setLogStr(jsonObject.toString());
-//		}
-//	}
-
-	/**
-	 * 判断用户权限
-	 * @param unit
-	 * @param user
-     * @return
-     */
-	/*public boolean authorityJudge(Unit unit,User user){
-		Project project = unit.getProject();
-		ProjectVisit projectVisit=projectVisitService.makeByUser(project, user);
-		if(unit.getAlias().trim().substring(0,1).equals("1")){
-			if(projectVisit.getInviteElementUser()==null){
-				return false;
-			}
-		}
-		if(unit.getAlias().trim().substring(0,1).equals("2")){
-			if(projectVisit.getPreparationElementUser()==null){
-				return false;
-			}
-		}
-		if(unit.getAlias().trim().substring(0,1).equals("3")){
-			if(projectVisit.getBuildingElementUser()==null){
-				return false;
-			}
-		}
-		if(unit.getAlias().trim().substring(0,1).equals("4")){
-			if(projectVisit.getMaintenanceElementUser()==null){
-				return false;
-			}
-		}
-		return true;
-	}*/
-
-//	/**
-//	 * 保存文件编辑日志
-//	 * @param simpleUser
-//	 * @param map
-//     * @return
-//     */
-//	public Message saveFileLog(User simpleUser, Map<String,Object> map){
-//		Project project = projectService.find(Long.valueOf(map.get("id").toString()));
-//		List<String> aliases = new ArrayList<>();
-//		Object logType = map.get("type");
-//		if (logType == null || map.get("alias") == null) {
-//			return new Message(Message.Type.FAIL);
-//		}
-//		aliases.add(map.get("alias").toString());
-//		ProjectLog.Type type = null;
-//		if (logType.toString().equals("upload")) {
-//			type=ProjectLog.Type.FILE_UPLOAD;
-//		} else if (logType.toString().equals("download")) {
-//			type = ProjectLog.Type.FILE_DOWNLOAD;
-//		}
-//		projectLogService.saveLog(project,simpleUser,aliases,map.get("fileNames").toString(),type);
-//		List<ElementDB> elementDBs = elementDBService.findByProject(project.getId(), map.get("alias").toString());
-//		ElementDB elementDB;
-//		if(elementDBs.size()==0){
-//			elementDB = new ElementDB();
-//			elementDB.setAlias(map.get("alias").toString());
-//			elementDB.setProject(project);
-//		}else{
-//			elementDB = elementDBs.get(0);
-//		}
-//		elementDBService.save(elementDB);
-//		addLogTimeToProject(project,map.get("alias").toString(),"file");
-//		return new Message(Message.Type.OK);
-//	}
 }

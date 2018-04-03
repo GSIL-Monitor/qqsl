@@ -1,7 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -125,7 +124,7 @@ public class CooperateService {
             return;
         }
         if (cooperate.getProject().getCooperate().equals("[]")) {
-            System.out.print(cooperate.getProject().getCooperate() + " : " + cooperate.getProject().getId());
+//            System.out.print(cooperate.getProject().getCooperate() + " : " + cooperate.getProject().getId());
             cooperate.getProject().setCooperate(null);
             projectService.save(cooperate.getProject());
             return;
@@ -179,19 +178,14 @@ public class CooperateService {
 
     /**
      * 将多个项目的一个权限分享给一个子账号
-     *
-     * @param ids
+     *  @param ids
      * @param type
      * @param account
      */
-    public Message cooperate(List<Integer> ids, String type, Account account,User own) {
+    public boolean cooperate(List<Integer> ids, String type, Account account) {
         Project project;
         Cooperate cooperate;
         boolean flag;
-        Message message = isOwn(own,ids,account);
-        if(!message.getType().equals(Message.Type.OK)){
-            return new Message(Message.Type.FAIL);
-        }
         CooperateVisit.Type type1 = CooperateVisit.Type.valueOf(type);
         for (int i = 0; i < ids.size(); i++) {
             project = projectService.find((long) (ids.get(i)));
@@ -200,34 +194,14 @@ public class CooperateService {
             //权限注册成功，记录注册消息
             if (flag) {
                 saveCooperate(cooperate);
-                if (type1.equals(CooperateVisit.Type.VISIT_VIEW.toString())) {
+                if (type1.toString().equals(CooperateVisit.Type.VISIT_VIEW.toString())) {
                     accountMessageService.viewMessage(project, account, true);
                 } else {
                     accountMessageService.cooperate(type1, project, account, true);
                 }
             }
         }
-        return new Message(Message.Type.OK);
-    }
-
-    /**
-     * 判断项目及子账号归属
-     * @param own
-     * @param ids
-     * @param account
-     * @return
-     */
-    private Message isOwn(User own, List<Integer> ids, Account account) {
-        Project project;
-        Message message;
-        for (int i = 0; i < ids.size(); i++) {
-            project = projectService.find((long) (ids.get(i)));
-            message = userService.isOwn(own,project,account);
-          if(!message.getType().equals(Message.Type.OK)){
-              return new Message(Message.Type.FAIL);
-          }
-        }
-        return new Message(Message.Type.OK);
+        return true;
     }
 
     /**
@@ -236,7 +210,7 @@ public class CooperateService {
      * @param account
      * @return
      */
-    public Message viewCooperate(User user, Account account) {
+    public JSONArray viewCooperate(User user, Account account) {
         List<Project> projects = projectService.findByUser(user);
         Cooperate cooperate;
         List<String> types;
@@ -259,7 +233,7 @@ public class CooperateService {
                 resultJson.add(jsonObject);
             }
         }
-        return new Message(Message.Type.OK, resultJson);
+        return resultJson;
     }
 
     /**
@@ -309,16 +283,11 @@ public class CooperateService {
 
     /**
      * 将一个项目的多个权限分享给一个子账号
-     *
-     * @param project
+     *  @param project
      * @param typeStr
      * @param account
      */
-    public Message cooperateMult(Project project, String typeStr, Account account, User own) {
-        Message message = userService.isOwn(own,project,account);
-        if(!message.getType().equals(Message.Type.OK)){
-            return message;
-        }
+    public boolean cooperateMult(Project project, String typeStr, Account account) {
         Cooperate cooperate = makeCooperate(project);
         boolean flag;
         List<String> types = Arrays.asList(typeStr.split(","));
@@ -333,20 +302,16 @@ public class CooperateService {
             }
         }
         saveCooperate(cooperate);
-       return new Message(Message.Type.OK);
+        return true;
     }
 
 
     /**
      * 注销子账号编辑权限
-     *
-     * @param project
+     *  @param project
      * @param typeList
      */
-    public Message unCooperate(Project project, List<String> typeList,User own) {
-        if(!project.getUser().getId().equals(own.getId())){
-            return new Message(Message.Type.FAIL);
-        }
+    public boolean unCooperate(Project project, List<String> typeList) {
         Cooperate cooperate = makeCooperate(project);
         List<String> commTypes = Arrays.asList(CommonAttributes.COOPERATES);
         CooperateVisit.Type type;
@@ -364,7 +329,7 @@ public class CooperateService {
             accountMessageService.cooperate(type, project, account, false);
         }
         saveCooperate(cooperate);
-        return new Message(Message.Type.OK);
+        return true;
     }
 
     /**
@@ -604,7 +569,7 @@ public class CooperateService {
             }
             if (isEdit(cooperate, account)) {
                 types = getEditTypes(cooperate, account);
-                unCooperate(projects.get(i), types,user);
+                unCooperate(projects.get(i), types);
             }
         }
     }

@@ -1,10 +1,16 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Interest;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
+import com.hysw.qqsl.cloud.pay.entity.PackageItem;
+import com.hysw.qqsl.cloud.pay.entity.PackageModel;
+import com.hysw.qqsl.cloud.pay.entity.ServeItem;
+import com.hysw.qqsl.cloud.pay.service.PackageService;
+import com.hysw.qqsl.cloud.pay.service.TradeService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
@@ -33,6 +39,10 @@ public class InterestController {
     private OssService ossService;
     @Autowired
     private AuthentService authentService;
+    @Autowired
+    private PackageService packageService;
+    @Autowired
+    private TradeService tradeService;
 
     /**
      * 保存基础兴趣点
@@ -61,24 +71,29 @@ public class InterestController {
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/saveBaseInterest", method = RequestMethod.POST)
-    public @ResponseBody Message saveBaseInterest(@RequestBody Map<String, Object> objectMap){
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()==Message.Type.FAIL){
+    public @ResponseBody
+    Message saveBaseInterest(@RequestBody Map<String, Object> objectMap){
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String,Object> map = (Map<String, Object>) objectMap.get("interest");
         Object type = map.get("type");
         if (type == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (type.toString().equals(String.valueOf(Interest.Type.BASE.ordinal()))) {
             map.put("status", CommonEnum.Review.PASS.ordinal());
         } else {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
-        return interestService.saveInterest(map,new Interest());
+        JSONObject jsonObject = interestService.saveInterest(map, new Interest());
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        interestService.reflectSaveProprety(map, new Interest());
-//        return new Message(Message.Type.OK);
+//        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -114,28 +129,32 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/savePersonalInterest", method = RequestMethod.POST)
     public @ResponseBody Message savePersonalInterest(@RequestBody Map<String, Object> objectMap){
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(objectMap);
+        if(message.getType()!=Message.Type.OK){
             return message;
         }
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         Map<String,Object> map = (Map<String, Object>) objectMap.get("interest");
         Object type = map.get("type");
         if (type == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (type.toString().equals(String.valueOf(Interest.Type.PERSONAL.ordinal()))) {
             map.put("status", CommonEnum.Review.PENDING.ordinal());
         } else {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         map.put("userId", user.getId());
-        return interestService.saveInterest(map,new Interest());
+        JSONObject jsonObject = interestService.saveInterest(map, new Interest());
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        interestService.reflectSaveProprety(map, new Interest());
-//        return new Message(Message.Type.OK);
+//        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -154,21 +173,25 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/savePanorama", method = RequestMethod.POST)
     public @ResponseBody Message savePanorama(@RequestBody Map<String, Object> map){
-        Message message = Message.parameterCheck(map);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
         //是否可以保存全景
-        message=panoramaService.isAllowSavePanorma(user);
-        if(message.getType()!=Message.Type.OK){
+        message=isAllowSavePanorma(user);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         map.put("status", CommonEnum.Review.PENDING.ordinal());
         map.put("userId", user.getId());
-        return panoramaService.savePanorama(map,new Panorama());
+        JSONObject jsonObject = panoramaService.savePanorama(map, new Panorama());
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        panoramaService.reflectSaveProprety(map, new Panorama());
-//        return new Message(Message.Type.OK);
+//        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -196,8 +219,8 @@ public class InterestController {
         User user = authentService.getUserFromSubject();
         //是否可以保存全景
         Message message;
-        message=panoramaService.isAllowSavePanorma(user);
-        if(message.getType()!=Message.Type.OK){
+        message=isAllowSavePanorma(user);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         List<Map<String,Object>> panoramas = (List<Map<String,Object>>) object;
@@ -209,14 +232,15 @@ public class InterestController {
             panoramaMap = (Map<String, Object>) objectMap.get("panorama");
             panoramaMap.put("status", CommonEnum.Review.PENDING.ordinal());
             panoramaMap.put("userId", user.getId());
-            message = panoramaService.savePanorama(panoramaMap,new Panorama());
-            if(message.getType()== Message.Type.OK){
-                jsonObject = (JSONObject) message.getData();
-                jsonObject.put("name",panoramaMap.get("name"));
-                jsonObjects.add(jsonObject);
+            jsonObject = panoramaService.savePanorama(panoramaMap, new Panorama());
+            if (jsonObject == null) {
+                return MessageService.message(Message.Type.FAIL);
             }
+            jsonObject.put("name",panoramaMap.get("name"));
+            jsonObjects.add(jsonObject);
+
         }
-        return new Message(Message.Type.OK,jsonObjects);
+        return MessageService.message(Message.Type.OK,jsonObjects);
     }
 
     /**
@@ -247,27 +271,31 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/updateBaseInterest", method = RequestMethod.POST)
     public @ResponseBody Message updateBaseInterest(@RequestBody Map<String, Object> objectMap){
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String,Object> map = (Map<String, Object>) objectMap.get("interest");
         Object type = map.get("type");
         if (type == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (type.toString().equals(String.valueOf(Interest.Type.BASE.ordinal()))) {
             map.put("status", CommonEnum.Review.PASS.ordinal());
         } else {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Interest interest = interestService.find(Long.valueOf(map.get("id").toString()));
         if(interest==null){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return interestService.saveInterest(map,interest);
+        JSONObject jsonObject = interestService.saveInterest(map, interest);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        interestService.reflectSaveProprety(map,interest);
-//        return new Message(Message.Type.OK);
+//        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -303,32 +331,36 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePersonalInterest", method = RequestMethod.POST)
     public @ResponseBody Message updatePersonalInterest(@RequestBody Map<String, Object> objectMap){
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         Map<String,Object> map = (Map<String, Object>) objectMap.get("interest");
         Object type = map.get("type");
         if (type == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (type.toString().equals(String.valueOf(Interest.Type.PERSONAL.ordinal()))) {
             map.put("status", CommonEnum.Review.PENDING.ordinal());
         } else {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         map.put("userId", user.getId());
         Interest interest = interestService.find(Long.valueOf(map.get("id").toString()));
-        if(interest==null){
-            return new Message(Message.Type.FAIL);
+        if (interest == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return interestService.saveInterest(map,interest);
+        JSONObject jsonObject = interestService.saveInterest(map, interest);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        interestService.reflectSaveProprety(map,interest);
-//        return new Message(Message.Type.OK);
+//        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -347,23 +379,27 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePanorama", method = RequestMethod.POST)
     public @ResponseBody Message updatePanorama(@RequestBody Map<String, Object> map){
-        Message message = Message.parameterCheck(map);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         map.put("status", CommonEnum.Review.PENDING.ordinal());
         map.put("userId", user.getId());
         Panorama panorama = panoramaService.find(Long.valueOf(map.get("id").toString()));
         if(panorama==null){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return panoramaService.savePanorama(map, panorama);
+        JSONObject jsonObject = panoramaService.savePanorama(map, panorama);
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK, jsonObject);
 //        panoramaService.reflectSaveProprety(map,panorama);
-//        return new Message(Message.Type.OK);
+//        return MessageService.message(Message.Type.OK);
     }
 
 
@@ -376,23 +412,23 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/deleteBaseInterest/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message deteleBaseInterest(@PathVariable("id") Long id){
-        Message message = Message.parametersCheck(id);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Interest interest = interestService.find(id);
         if (interest == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (!interest.getType().toString().equals(Interest.Type.BASE.toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (interest.getReviewDate() != null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         ossService.setBucketLife(interest.getId() + "/","interest");
         interestService.remove(interest);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -404,30 +440,30 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/deletePersonalInterest/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message detelePersonalInterest(@PathVariable("id") Long id){
-        Message message = Message.parametersCheck(id);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         Interest interest = interestService.find(id);
         if (interest == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (!interest.getType().toString().equals(Interest.Type.PERSONAL.toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (interest.getReviewDate() != null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (!interest.getUserId().equals(user.getId())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         ossService.setBucketLife(interest.getId() + "/","interest");
         interestService.remove(interest);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -439,24 +475,24 @@ public class InterestController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/deletePanorama/{id}", method = RequestMethod.DELETE)
     public @ResponseBody Message detelePanorama(@PathVariable("id") Long id){
-        Message message = Message.parametersCheck(id);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         User user = authentService.getUserFromSubject();
         Panorama panorama = panoramaService.find(id);
         if (panorama == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         /*if (panorama.getReviewDate() != null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }*/
         if (!panorama.getUserId().equals(user.getId())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         ossService.setBucketLife(panorama.getId() + "/","panorama");
         panoramaService.remove(panorama);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -469,11 +505,11 @@ public class InterestController {
     public @ResponseBody Message interestList(){
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         List<Interest> interests = interestService.findAllPass(user.getId());
         JSONArray interestsJson = interestService.interestsToJson(interests);
-        return new Message(Message.Type.OK,interestsJson);
+        return MessageService.message(Message.Type.OK,interestsJson);
     }
 
     /**
@@ -486,7 +522,7 @@ public class InterestController {
     public @ResponseBody Message baseInterestList(){
         List<Interest> interests = interestService.findAllBase();
         JSONArray interestsJson = interestService.interestsToJson(interests);
-        return new Message(Message.Type.OK,interestsJson);
+        return MessageService.message(Message.Type.OK,interestsJson);
     }
 
     /**
@@ -499,11 +535,11 @@ public class InterestController {
     public @ResponseBody Message personalInterestList(){
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         List<Interest> interests = interestService.findAllPersonal(user);
         JSONArray interestsJson = interestService.interestsToJson(interests);
-        return new Message(Message.Type.OK,interestsJson);
+        return MessageService.message(Message.Type.OK,interestsJson);
     }
 
     /**
@@ -514,7 +550,7 @@ public class InterestController {
     public @ResponseBody Message interestAllPassList(){
         List<Interest> interests = interestService.findAllPass(null);
         JSONArray interestsJson = interestService.interestsToJson(interests);
-        return new Message(Message.Type.OK, interestsJson);
+        return MessageService.message(Message.Type.OK, interestsJson);
     }
 
     /**
@@ -531,7 +567,7 @@ public class InterestController {
             panoramas = panoramaService.findAllPass(null);
         }
         JSONArray panoramasJson = panoramaService.panoramasToJson(panoramas);
-        return new Message(Message.Type.OK,panoramasJson);
+        return MessageService.message(Message.Type.OK,panoramasJson);
     }
 
 //    /**
@@ -542,7 +578,7 @@ public class InterestController {
     public @ResponseBody Message panoramaPassList(){
         List<Panorama> panoramas = panoramaService.findAllPass(null);
         JSONArray panoramaJson = panoramaService.panoramaToJson(panoramas);
-        return new Message(Message.Type.OK,panoramaJson);
+        return MessageService.message(Message.Type.OK,panoramaJson);
     }
 */
     /**
@@ -555,11 +591,11 @@ public class InterestController {
     public @ResponseBody Message personalPanoramaList(){
         User user = authentService.getUserFromSubject();
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         List<Panorama> panoramas = panoramaService.findByuser(user);
         JSONArray panoramasJson = panoramaService.panoramasToJson(panoramas);
-        return new Message(Message.Type.OK,panoramasJson);
+        return MessageService.message(Message.Type.OK,panoramasJson);
     }
 
 //    审核
@@ -574,7 +610,7 @@ public class InterestController {
     public @ResponseBody Message interestReview(){
         List<Interest> interests = interestService.findAllPending();
         JSONArray interestsJson = interestService.interestsToJson(interests);
-        return new Message(Message.Type.OK,interestsJson);
+        return MessageService.message(Message.Type.OK,interestsJson);
     }
 
     /**
@@ -587,7 +623,7 @@ public class InterestController {
     public @ResponseBody Message panoramaReview(){
         List<Panorama> panoramas = panoramaService.findAllPending();
         JSONArray panoramasJson = panoramaService.panoramasToJson(panoramas);
-        return new Message(Message.Type.OK,panoramasJson);
+        return MessageService.message(Message.Type.OK,panoramasJson);
     }
 
 //    审核通过
@@ -603,15 +639,15 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/interestReviewSuccess", method = RequestMethod.POST)
     public @ResponseBody Message interestReviewSuccess(@RequestBody Map<String, Object> objectMap){
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()== Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Interest interest = interestService.find(Long.valueOf(objectMap.get("id").toString()));
         interest.setStatus(CommonEnum.Review.PASS);
         interest.setReviewDate(new Date());
         interestService.save(interest);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -625,15 +661,15 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/panoramaReviewSuccess", method = RequestMethod.POST)
     public @ResponseBody Message panoramaReviewSuccess(@RequestBody Map<String, Object> objectMap){
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()== Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Panorama panorama = panoramaService.find(Long.valueOf(objectMap.get("id").toString()));
         panorama.setStatus(CommonEnum.Review.PASS);
         panorama.setReviewDate(new Date());
         panoramaService.save(panorama);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -648,22 +684,22 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/interestReviewFail", method = RequestMethod.POST)
     public @ResponseBody Message interestReviewFail(@RequestBody Map<String, Object> objectMap){
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()== Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (objectMap.get("id") == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Interest interest = interestService.find(Long.valueOf(objectMap.get("id").toString()));
         interest.setStatus(CommonEnum.Review.NOTPASS);
         if (objectMap.get("advice") == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         interest.setAdvice(objectMap.get("advice").toString());
         interest.setReviewDate(new Date());
         interestService.save(interest);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -678,22 +714,22 @@ public class InterestController {
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/panoramaReviewFail", method = RequestMethod.POST)
     public @ResponseBody Message panoramaReviewFail(@RequestBody Map<String, Object> objectMap){
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()== Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (objectMap.get("id") == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Panorama panorama = panoramaService.find(Long.valueOf(objectMap.get("id").toString()));
         panorama.setStatus(CommonEnum.Review.NOTPASS);
         if (objectMap.get("advice") == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         panorama.setAdvice(objectMap.get("advice").toString());
         panorama.setReviewDate(new Date());
         panoramaService.save(panorama);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -705,16 +741,16 @@ public class InterestController {
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/interest/{id}", method = RequestMethod.GET)
     public @ResponseBody Message getInterest(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Interest interest = interestService.find(id);
         if (interest == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         JSONObject interestToJson = interestService.interestToJson(interest);
-        return new Message(Message.Type.OK, interestToJson);
+        return MessageService.message(Message.Type.OK, interestToJson);
     }
 
     /**
@@ -728,15 +764,35 @@ public class InterestController {
     public
     @ResponseBody
     Message getProject(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Panorama panorama = panoramaService.find(id);
         if (panorama == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         JSONObject panoramaToJson = panoramaService.panoramaToJson(panorama);
-        return new Message(Message.Type.OK, panoramaToJson);
+        return MessageService.message(Message.Type.OK, panoramaToJson);
+    }
+
+    /**
+     * 是否允许保存全景
+     * @param user
+     * @Return Message
+     */
+    public Message isAllowSavePanorma(User user) {
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        int size = panoramaService.findByuser(user).size();
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.PANO && size < packageItem.getLimitNum()) {
+                return MessageService.message(Message.Type.OK);
+            }
+        }
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 }

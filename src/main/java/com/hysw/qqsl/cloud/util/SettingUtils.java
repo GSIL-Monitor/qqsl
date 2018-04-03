@@ -2,9 +2,9 @@ package com.hysw.qqsl.cloud.util;
 
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.Setting;
-import com.hysw.qqsl.cloud.core.entity.data.Project;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -328,25 +328,25 @@ public class SettingUtils {
 	 *
 	 * @return
 	 */
-	public static Message checkCoordinateIsInvalid(String coordinate) {
+	public static JSONObject checkCoordinateIsInvalid(String coordinate) {
 		String[] coordinates = coordinate.split(",");
 		if (coordinates.length != 3) {
-			return new Message(Message.Type.FAIL);
+			return null;
 		}
 		if (Double.valueOf(coordinates[0]) > 180 || Double.valueOf(coordinates[0]) < 0) {
-			return new Message(Message.Type.FAIL);
+			return null;
 		}
 		if (Double.valueOf(coordinates[1]) > 90 || Double.valueOf(coordinates[1]) < 0) {
-			return new Message(Message.Type.FAIL);
+			return null;
 		}
 		if (Double.valueOf(coordinates[2]) < 0) {
-			return new Message(Message.Type.FAIL);
+			return null;
 		}
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("longitude", coordinates[0]);
 		jsonObject.put("latitude", coordinates[1]);
 		jsonObject.put("elevation", coordinates[2]);
-		return new Message(Message.Type.OK, jsonObject);
+		return jsonObject;
 	}
 
 	/**

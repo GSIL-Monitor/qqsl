@@ -1,17 +1,14 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDB;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.service.ElementDBService;
-import com.hysw.qqsl.cloud.core.service.ProjectService;
-import com.hysw.qqsl.cloud.core.service.UserService;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +38,8 @@ public class ElementDBServiceTest extends BaseTest {
 		project.setCode(CODE);
 		projectService.setType(project,1);
 		if(projectService.findByCode(CODE,1l).size()==0){
-			Message message = projectService.createProject(project);
-			assertTrue(message.getType()== Message.Type.OK);
+			JSONObject jsonObject = projectService.createProject(project);
+			assertTrue(!jsonObject.isEmpty());
 		}
 		project = projectService.findByCode(CODE,1l).get(0);
 		ElementDB elementDB0 = new ElementDB();

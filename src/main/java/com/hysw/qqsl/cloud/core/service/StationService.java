@@ -1,13 +1,11 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.StationDao;
 import com.hysw.qqsl.cloud.core.entity.*;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.data.UserMessage;
 import com.hysw.qqsl.cloud.core.entity.station.Camera;
 import com.hysw.qqsl.cloud.core.entity.station.Share;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -32,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -262,7 +259,7 @@ public class StationService extends BaseService<Station, Long> {
      * @param mFile
      * @return
      */
-    public Message readModelFile(MultipartFile mFile, Station station) throws IOException, QQSLException {
+    public JSONObject readModelFile(MultipartFile mFile, Station station) throws IOException, QQSLException {
         String fileName = mFile.getOriginalFilename();
         String prefix = fileName.substring(fileName.lastIndexOf(".") + 1,
                 fileName.length());
@@ -298,7 +295,7 @@ public class StationService extends BaseService<Station, Long> {
         JSONObject model = new JSONObject();
         model.put("flowModel",station.getFlowModel());
         model.put("riverModel",station.getRiverModel());
-        return new Message(Message.Type.OK,model);
+        return model;
     }
 
     /**
@@ -425,7 +422,7 @@ public class StationService extends BaseService<Station, Long> {
      * @param map
      * @return
      */
-    public Message edit(Map<String, Object> map, Station station) {
+    public boolean edit(Map<String, Object> map, Station station) {
         if (map.get("type") != null && StringUtils.hasText(map.get("type").toString())) {
             station.setType(CommonEnum.StationType.valueOf(map.get("type").toString()));
         }
@@ -439,128 +436,63 @@ public class StationService extends BaseService<Station, Long> {
             station.setAddress(map.get("address").toString());
         }
         if (map.get("coor") != null && StringUtils.hasText(map.get("coor").toString())) {
-            Message message = SettingUtils.checkCoordinateIsInvalid(map.get("coor").toString());
-            if (!Message.Type.OK.equals(message.getType())) {
-                return message;
+            JSONObject jsonObject = SettingUtils.checkCoordinateIsInvalid(map.get("coor").toString());
+            if (jsonObject == null) {
+                return false;
             }
-            station.setCoor(message.getData().toString());
+            station.setCoor(jsonObject.toString());
         }
         stationDao.save(station);
-        return new Message(Message.Type.OK);
+        return true;
     }
 
     /**
-     * 仪表添加
-     *
-     * @param map
-     * @return
-     */
-    public Message addSensor(Map<String, Object> map, Station station) {
-        if(map.get("code")==null||!StringUtils.hasText(map.get("code").toString())){
-            return new Message(Message.Type.FAIL);
-        }
-        if(map.get("ciphertext")==null||!StringUtils.hasText(map.get("ciphertext").toString())){
-            return new Message(Message.Type.FAIL);
-        }
-        String code = map.get("code").toString();
-        String ciphertext = map.get("ciphertext").toString();
-        //return new Message(Message.Type.OK);
-        //加密并验证密码是否一致
-        boolean verify = monitorService.verify(code,ciphertext);
-        if (verify) {
-            Sensor sensor = sensorService.findByCode(code);
-            if (sensor != null) {
-                return new Message(Message.Type.EXIST);
-            }
-             //注册成功
-            return verify(map, station);
-        } else {
-            return new Message(Message.Type.FAIL);
-        }
-    }
-
-    /**
-     * 添加摄像头
-     * @param cameraMap
+     * 保存仪表归属并添加至缓存激活
+     * @param code
+     * @param infoJson
      * @param station
+     * @param sensor
      * @return
      */
-    public Message addCamera(Map<String, Object> cameraMap, Station station) {
-        //判断测站类型,当前测站为水位站时,只能绑定一个仪表,一个摄像头
-        Sensor sensor = new Sensor();
-        sensor.setType(Sensor.Type.CAMERA);
-        Message message = isHydrologyStation(station,"camera");
-        if (!message.getType().equals(Message.Type.OK)){
-            return message;
-        }
-        JSONObject infoJson = new JSONObject();
-        if(cameraMap.get("phone")!=null&&StringUtils.hasText(cameraMap.get("phone").toString())){
-            if(!SettingUtils.phoneRegex(cameraMap.get("phone").toString())){
-                return new Message(Message.Type.FAIL);
-            }
-            infoJson.put("phone",cameraMap.get("phone").toString());
-        }
-        if(cameraMap.get("contact")!=null&&StringUtils.hasText(cameraMap.get("contact").toString())){
-            infoJson.put("contact",cameraMap.get("contact").toString());
-        }
-        if(cameraMap.get("factory")!=null&&StringUtils.hasText(cameraMap.get("factory").toString())){
-            infoJson.put("factory",cameraMap.get("factory").toString());
-        }
-        //视频地址:rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd
-        if(cameraMap.get("cameraUrl")!=null&&StringUtils.hasText(cameraMap.get("cameraUrl").toString())){
-            String cameraUrl = cameraMap.get("cameraUrl").toString();
-            if(!SettingUtils.parameterRegex(cameraUrl)){
-                return new Message(Message.Type.FAIL);
-            }
-            sensor.setCameraUrl(cameraMap.get("cameraUrl").toString());
-        }
+    public JSONObject saveAndAddCache(String code, JSONObject infoJson, Station station, Sensor sensor) {
+        sensor.setCode(code);
+        sensor.setActivate(false);
         sensor.setInfo(infoJson.isEmpty()?null:infoJson.toString());
         sensor.setStation(station);
         sensorService.save(sensor);
-        JSONObject cameraJson = new JSONObject();
-        cameraJson.put("id",sensor.getId());
-        return new Message(Message.Type.OK,cameraJson);
+        monitorService.add(code);
+        return sensorService.makeSensorJson(sensor);
+    }
+
+    public boolean cameraVerify(Map<String, Object> cameraMap, JSONObject infoJson, Station station, Sensor sensor) {
+        if (cameraMap.get("phone") != null && StringUtils.hasText(cameraMap.get("phone").toString())) {
+            if (!SettingUtils.phoneRegex(cameraMap.get("phone").toString())) {
+                return false;
+            }
+            infoJson.put("phone", cameraMap.get("phone").toString());
+        }
+        if (cameraMap.get("contact") != null && StringUtils.hasText(cameraMap.get("contact").toString())) {
+            infoJson.put("contact", cameraMap.get("contact").toString());
+        }
+        if (cameraMap.get("factory") != null && StringUtils.hasText(cameraMap.get("factory").toString())) {
+            infoJson.put("factory", cameraMap.get("factory").toString());
+        }
+        //视频地址:rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd
+        if (cameraMap.get("cameraUrl") != null && StringUtils.hasText(cameraMap.get("cameraUrl").toString())) {
+            String cameraUrl = cameraMap.get("cameraUrl").toString();
+            if (!SettingUtils.parameterRegex(cameraUrl)) {
+                return false;
+            }
+            sensor.setCameraUrl(cameraMap.get("cameraUrl").toString());
+        }
+        return true;
     }
 
     /**
-     * 当前测站为水位站时,只能绑定一个仪表,一个摄像头
-     * @param station
+     * sensor参数效验
      * @return
      */
-    public Message isHydrologyStation(Station station,String type){
-        if(!station.getType().equals(CommonEnum.StationType.WATER_LEVEL_STATION)){
-            return new Message(Message.Type.OK);
-        }
-        List<Sensor> sensors = station.getSensors();
-        if(sensors.size()==0){
-            return new Message(Message.Type.OK);
-        }
-        if(type.equals("camera")){
-            for(int i = 0;i<sensors.size();i++){
-                if(Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
-                    logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                    return new Message(Message.Type.EXIST);
-                }
-            }
-        }else{
-            for(int i = 0;i<sensors.size();i++){
-                if(!Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
-                    logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                    return new Message(Message.Type.EXIST);
-                }
-            }
-        }
-        return new Message(Message.Type.OK);
-    }
-
-    /**
-     * 激活仪器
-     * @return
-     */
-    public Message verify( Map<String,Object> map,Station station) {
-        JSONObject infoJson = new JSONObject();
-        Sensor sensor = new Sensor();
-        String code = map.get("code").toString();
+    public boolean sensorVerify(Map<String, Object> map, Sensor sensor, JSONObject infoJson) {
         if(map.get("factory")!=null&&StringUtils.hasText(map.get("factory").toString())){
             infoJson.put("factory",map.get("factory").toString());
         }
@@ -569,30 +501,18 @@ public class StationService extends BaseService<Station, Long> {
         }
         if(map.get("phone")!=null&&StringUtils.hasText(map.get("phone").toString())){
             if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return new Message(Message.Type.OTHER);
+                return false;
             }
             infoJson.put("phone",map.get("phone").toString());
         }
         if(map.get("settingHeight")!=null&&StringUtils.hasText(map.get("settingHeight").toString())){
-                Double settingHeight = Double.valueOf(map.get("settingHeight").toString());
-                if (settingHeight>100.0||settingHeight<0.0) {
-                    return new Message(Message.Type.FAIL);
-                }
+            Double settingHeight = Double.valueOf(map.get("settingHeight").toString());
+            if (settingHeight>100.0||settingHeight<0.0) {
+                return false;
+            }
             sensor.setSettingHeight(settingHeight);
         }
-        //判断测站类型,当前测站为水位站时,只能绑定一个仪表,一个摄像头
-        Message message = isHydrologyStation(station,"other");
-        if (!message.getType().equals(Message.Type.OK)){
-            return message;
-        }
-        sensor.setCode(map.get("code").toString());
-        sensor.setActivate(false);
-        sensor.setInfo(infoJson.isEmpty()?null:infoJson.toString());
-        sensor.setStation(station);
-        sensorService.save(sensor);
-        monitorService.add(code);
-        JSONObject seneorJson = sensorService.makeSensorJson(sensor);
-        return new Message(Message.Type.OK,seneorJson);
+        return true;
     }
 
     /* 测站续费
@@ -687,53 +607,6 @@ public class StationService extends BaseService<Station, Long> {
         style.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
         return style;
     }
-
-    /**maxValue/minValue/phone/sendStatus
-     * 编辑测站参数
-     *
-     * @param map
-     * @param station
-     * @return
-     */
-    public Message editParameter(Map<String, Object> map, Station station) {
-        double maxValue,minValue;
-        try{
-            if(map.get("maxValue")!=null){
-                maxValue = Double.valueOf(map.get("maxValue").toString());
-                if(maxValue<0||maxValue>100){
-                    return new Message(Message.Type.FAIL);
-                }
-                if(map.get("minValue")!=null){
-                    minValue = Double.valueOf(map.get("minValue").toString());
-                    if(minValue<0||minValue>100){
-                        return new Message(Message.Type.FAIL);
-                    }
-                    if (minValue>maxValue){
-                        return new Message(Message.Type.FAIL);
-                    }
-                }
-            }
-        }catch (NumberFormatException e){
-            return new Message(Message.Type.FAIL);
-        }
-        if(map.get("phone")!=null){
-            if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return new Message(Message.Type.FAIL);
-            }
-        }
-        if(map.get("sendStatus")!=null){
-            boolean falg = "true".equals(map.get("sendStatus").toString())||"false".equals(map.get("sendStatus"));
-            if(!falg){
-                return new Message(Message.Type.FAIL);
-            }
-        }
-        JSONObject jsonObject = SettingUtils.convertMapToJson(map);
-        station.setParameter(jsonObject.isEmpty()?null:jsonObject.toString());
-        station.setTransform(true);
-        stationDao.save(station);
-        return new Message(Message.Type.OK);
-    }
-
 
     /**
      * 测站分享

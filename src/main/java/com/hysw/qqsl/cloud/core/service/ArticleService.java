@@ -1,7 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.ArticleDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.Article;
@@ -43,24 +42,24 @@ public class ArticleService extends BaseService<Article, Long> {
 	 * @param
 	 * @return
 	 */
-	public Message save(String idStr, String title, String content, int index) {
+	public boolean save(String idStr, String title, String content, int index) {
 		Article article;
 		if(!StringUtils.hasText(idStr)){
 		    article = new Article();
 			article.setContent(content);
 			article.setTitle(title);
 			save(article,index);
-			return new Message(Message.Type.OK);
+			return true;
 		}else{
 			long id = Long.valueOf(idStr);
 			article = findById(id);
 			if(article == null){
-				return new Message(Message.Type.EXIST);
+				return false;
 			}
 			article.setContent(content);
 			article.setTitle(title);
 			save(article,index);
-			return new Message(Message.Type.OK);
+			return true;
 		}		
 		
 	}

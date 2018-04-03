@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
@@ -50,6 +51,8 @@ public class AdminController {
     @Autowired
     private ArticleService articleService;
     @Autowired
+    private CommonController commonController;
+    @Autowired
     private SessionDAO sessionDAO;
 
     /**
@@ -64,14 +67,12 @@ public class AdminController {
     public
     @ResponseBody
     Message refreshCache() {
-        Message message = null;
         try {
-            message = projectService.refreshCache();
+            projectService.refreshCache();
         } catch (Exception e) {
-            message = new Message(Message.Type.FAIL);
-            e.printStackTrace();
+            return MessageService.message(Message.Type.FAIL);
         }
-        return message;
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -86,14 +87,14 @@ public class AdminController {
        /* if (SecurityUtils.getSubject().getSession() != null) {
             SecurityUtils.getSubject().logout();
         }*/
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()==Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String,Object> map = (Map<String,Object>)message.getData();
         Admin admin = adminService.findByUserName(map.get("userName").toString());
         if (admin == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         // 测试状态
         Setting setting = SettingUtils.getInstance().getSetting();
@@ -103,8 +104,8 @@ public class AdminController {
         Verification verification = (Verification) session
                 .getAttribute("verification");
         String verifyCode = map.get("password").toString();
-        message = userService.checkCode(verifyCode,verification);
-        if (message.getType()!=Message.Type.OK) {
+        message =commonController.checkCode(verifyCode,verification);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         // 记录登录的ip
@@ -127,16 +128,16 @@ public class AdminController {
         try {
             subject.login(token);
         } catch (UnknownAccountException e) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         } catch (IncorrectCredentialsException e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         logger.info(admin.getUserName() + ",管理员端登陆成功");
         admin.setLoginDate(new Date());
         adminService.save(admin);
         subject.getSession().setAttribute("token", subject.getPrincipals().getPrimaryPrincipal());
         JSONObject adminJson = adminService.makeAdminJson(admin);
-        return new Message(Message.Type.OK,adminJson);
+        return MessageService.message(Message.Type.OK,adminJson);
     }
 
 
@@ -149,17 +150,19 @@ public class AdminController {
     @RequestMapping(value = "/getPassword",method = RequestMethod.GET,produces="application/json")
     public @ResponseBody  Message getOTP(@RequestParam String userName, HttpSession session){
         if(!StringUtils.hasText(userName)){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Admin admin = adminService.findByUserName(userName);
-        if(admin==null){
-            return new Message(Message.Type.EXIST);
+        if (admin == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(!StringUtils.hasText(admin.getPhone())){
-            return new Message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.FAIL);
         }
-        Message message = noteService.isSend(admin.getPhone(),session);
-        return message;
+        if (noteService.isSend(admin.getPhone(), session)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.FAIL);
     }
 
     /**
@@ -174,7 +177,7 @@ public class AdminController {
     Message getAdmin() {
         Admin admin = authentService.getAdminFromSubject();
         JSONObject adminJson = adminService.makeAdminJson(admin);
-        return new Message(Message.Type.OK, adminJson);
+        return MessageService.message(Message.Type.OK, adminJson);
     }
 
     /**
@@ -189,7 +192,7 @@ public class AdminController {
     Message getUsers() {
         List<User> users = userService.findAll();
         List<JSONObject> userJsons = userService.makeUserJsons(users);
-        return new Message(Message.Type.OK, userJsons);
+        return MessageService.message(Message.Type.OK, userJsons);
     }
 
     /**
@@ -221,7 +224,7 @@ public class AdminController {
         List<JSONObject> userJsons = userService.makeUserJsons(users);
         JSONObject adminJson = adminService.makeAdminJson(admin);
         userJsons.add(adminJson);
-        return new Message(Message.Type.OK, userJsons);
+        return MessageService.message(Message.Type.OK, userJsons);
     }
 
     /**
@@ -237,8 +240,8 @@ public class AdminController {
     @ResponseBody
     Message resetPassword(
             @RequestBody Map<String, Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
@@ -246,11 +249,11 @@ public class AdminController {
         User user = userService.find(Long.valueOf(userId.toString()));
         if (user == null) {
             // "用户不存在";
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         user.setPassword(DigestUtils.md5Hex("123456"));
         userService.save(user);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 //    /**
@@ -276,7 +279,7 @@ public class AdminController {
 //                roleList = Arrays.asList(rolesStr.split(","));
 //            }
 //            if(!realRoles.containsAll(roleList)){
-//                return new Message(Message.Type.OTHER);
+//                return MessageService.message(Message.Type.OTHER);
 //            }
 //        }
 //        return adminService.editRoles(user,roles);
@@ -291,8 +294,8 @@ public class AdminController {
     @RequiresRoles(value = {"admin:simple"})
     @RequestMapping(value = "/isLocked",method = RequestMethod.POST)
     public @ResponseBody Message Locked(@RequestBody  Map<String,Object> objectMap){
-        Message message = Message.parameterCheck(objectMap);
-        if(message.getType()== Message.Type.FAIL){
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String,Object> map = (Map<String, Object>) message.getData();
@@ -300,7 +303,7 @@ public class AdminController {
         String isLocked = map.get("isLocked").toString();
         User user = userService.find(userId);
         if(user == null){
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(isLocked.equals("true")){
             user.setLocked(true);
@@ -313,7 +316,7 @@ public class AdminController {
         List<User> users = new ArrayList<>();
         users.add(user);
         List<JSONObject> userJsons = userService.makeUserJsons(users);
-        return new Message(Message.Type.OK,userJsons.get(0));
+        return MessageService.message(Message.Type.OK,userJsons.get(0));
     }
 
     /**
@@ -326,7 +329,7 @@ public class AdminController {
     public @ResponseBody Message getAllProjects(){
         List<JSONObject> projectJsons = projectService.getProjectJsons();
         logger.info("平台项目总数为："+projectJsons.size());
-        return new Message(Message.Type.OK,projectJsons);
+        return MessageService.message(Message.Type.OK,projectJsons);
     }
 
 //    /**
@@ -338,7 +341,7 @@ public class AdminController {
 //    @RequestMapping(value = "/getLogsByProject", method = RequestMethod.GET)
 //    public @ResponseBody Message getLogsByProject(@RequestParam long id){
 //        List<JSONObject> logJsons = logService.getLogJsonsByProject(id);
-//        return new Message(Message.Type.OK,logJsons);
+//        return MessageService.message(Message.Type.OK,logJsons);
 //    }
 
 
@@ -357,7 +360,7 @@ public class AdminController {
         if (!StringUtils.hasText(map.get("type")) ||
                 !StringUtils.hasText(map.get("content")) ||
                 !StringUtils.hasText(map.get("title"))) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String idStr = "";
         if (map.get("id") != null && !map.get("id").equals("null")) {
@@ -367,7 +370,12 @@ public class AdminController {
         String content = map.get("content").toString();
         String title = map.get("title").toString();
         // content = articleService.replacePath(content);
-        return articleService.save(idStr, title, content, index);
+        boolean save = articleService.save(idStr, title, content, index);
+        if (!save) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        } else {
+            return MessageService.message(Message.Type.OK);
+        }
     }
 
     /**
@@ -381,12 +389,12 @@ public class AdminController {
     public
     @ResponseBody
     Message deletetArticle(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         articleService.removeById(id);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
 
     }
 
@@ -399,12 +407,12 @@ public class AdminController {
     public
     @ResponseBody
     Message deletetArticle1(@PathVariable("id") Long id) {
-        Message message = Message.parametersCheck(id);
+        Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         articleService.removeById(id);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
 
     }
 

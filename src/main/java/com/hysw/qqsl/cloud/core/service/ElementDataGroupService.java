@@ -30,13 +30,9 @@ public class ElementDataGroupService extends BaseService<ElementDataGroup, Long>
     @Autowired
     private ElementDBService elementDBService;
     @Autowired
-    private CoordinateService coordinateService;
-    @Autowired
     private ProjectService projectService;
     @Autowired
     private CacheManager cacheManager;
-    @Autowired
-    private FieldService fieldService;
     @Autowired
     public void setBaseDao(ElementDataGroupDao elementDataGroupDao) {
         super.setBaseDao(elementDataGroupDao);

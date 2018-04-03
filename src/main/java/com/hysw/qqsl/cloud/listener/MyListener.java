@@ -65,6 +65,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private PollingService pollingService;
 	@Autowired
 	private GetAccessTokenService getAccessTokenService;
+	@Autowired
+	private MessageService messageService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -78,6 +80,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			logger.info("建筑物线面归属线程启动");
 			new Thread(emailManager).start();
 			logger.info("邮件服务线程启动");
+			messageService.init();
+			logger.info("初始化静态消息");
 			//将所有项目写入缓存
 			elementGroupService.getDriElementGroups();
 			elementGroupService.getConElementGroups();

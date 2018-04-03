@@ -1,11 +1,9 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.AccountDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.Note;
-import com.hysw.qqsl.cloud.core.entity.QQSLException;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -20,7 +18,6 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Create by leinuo on 17-4-26 下午6:30
@@ -32,13 +29,9 @@ public class AccountService extends BaseService<Account,Long> {
     @Autowired
     private AccountDao accountDao;
     @Autowired
-    private NoteService noteService;
-    @Autowired
     private NoteCache noteCache;
     @Autowired
     private UserService userService;
-    @Autowired
-    private AuthentService authentService;
     @Autowired
     private AccountMessageService accountMessageService;
     @Autowired
@@ -64,7 +57,7 @@ public class AccountService extends BaseService<Account,Long> {
      * @param phone
      * @param user
      */
-    public Message invite(String phone,User user) {
+    public JSONObject invite(String phone,User user) {
         Account account = findByPhone(phone);
         String inviteCode = SettingUtils.createRandomVcode();
         String userName = user.getUserName();
@@ -88,7 +81,7 @@ public class AccountService extends BaseService<Account,Long> {
             users = account.getUsers();
             for(int i=0;i<users.size();i++){
                 if(users.get(i).getId().equals(user.getId())){
-                    return new Message(Message.Type.EXIST);
+                    return null;
                 }
             }
             users.add(user);
@@ -99,128 +92,8 @@ public class AccountService extends BaseService<Account,Long> {
         pollingService.addAccount(account);
         accountMessageService.bindMsessage(user,account,true);
         noteCache.add(phone,note);
-        return new Message(Message.Type.OK,makeSimpleAccountJson(account));
+        return makeSimpleAccountJson(account);
     }
-
-    /**
-     * 子帐号注册
-     * @param name
-     * @param phone
-     * @param password
-     * @return
-     * @throws QQSLException
-     */
-    public Message register(String name,String phone,String password) throws QQSLException {
-        if(phone.length()!=11|| SettingUtils.phoneRegex(phone)==false){
-            throw new QQSLException(phone+":电话号码异常！");
-        }
-        if(password.length()!=32){
-            throw new QQSLException(password+":密码异常！");
-        }
-        Account account = findByPhone(phone);
-        // 用户已存在
-        if (account!= null) {
-            return new Message(Message.Type.EXIST);
-        }else{
-            account = new Account();
-        }
-        account.setName(name);
-        account.setPhone(phone);
-        account.setPassword(password);
-        //默认新注册用户角色为account:simple
-        account.setRoles(CommonAttributes.ROLES[4]);
-        save(account);
-        pollingService.addAccount(account);
-        return new Message(Message.Type.OK);
-    }
-
-
-   /* *//**
-     * 更新子账号信息
-     * @param map
-     * @param id
-     *//*
-    public Message update(Map<String, Object> map, Long id) {
-        Account account = find(id);
-        String name = map.get("name").toString();
-        String email = map.get("email").toString();
-        String password = map.get("password").toString();
-        account.setName(name);
-        account.setEmail(email);
-        account.setPassword(password);
-        accountDao.save(account);
-        authentService.updateSession(account);
-        return new Message(Message.Type.OK,makeAccountJson(account));
-    }*/
-
-    /**
-     * 修改子账号信息
-     * @param id
-     * @return
-     */
-    public Message updateInfo(String name, Long id) {
-        Account account = accountDao.find(id);
-        account.setName(name);
-        save(account);
-        return new Message(Message.Type.OK,makeAccountJson(account));
-    }
-    /**
-     * 修改子账号密码
-     * @param password
-     * @param id
-     * @return
-     */
-    public Message updatePassword(String password,Long id) {
-        Account account = find(id);
-        if(password.length()!=32){
-            return new Message(Message.Type.OTHER);
-        }
-        account.setPassword(password);
-        save(account);
-        return new Message(Message.Type.OK,makeAccountJson(account));
-    }
-    /**
-     * 更改手机号
-     * @param newPhone
-     * @param id
-     * @return
-     *//*
-    public Message changePhone(String newPhone, Long id) {
-        Account account = findByPhone(newPhone);
-        if(account!=null){
-            return new Message(Message.Type.EXIST);
-        }
-        account = find(id);
-        account.setPhone(newPhone);
-        accountDao.save(account);
-        authentService.updateSession(account);
-        return new Message(Message.Type.OK,makeAccountJson(account));
-    }
-//    /**
-//     * 更改手机号
-//     * @param newPhone
-//     * @param id
-//     * @return
-//     */
-//    public Message changePhone(String newPhone, Long id) {
-//        Account account = findByPhone(newPhone);
-//        if(account!=null){
-//            return new Message(Message.Type.EXIST);
-//        }
-//        account = find(id);
-//        account.setPhone(newPhone);
-//        accountDao.save(account);
-//        authentService.updateSession(account);
-//        return new Message(Message.Type.OK,makeAccountJson(account));
-//    }
-
-//    public Account findByPhoneOrUserName(String param){
-//        Account account = findByPhone(param);
-//        if(account!=null){
-//            return account;
-//        }
-//        return findByUserName(param);
-//    }
 
     /**
      * 根据手机号查询子账号
@@ -412,7 +285,7 @@ public class AccountService extends BaseService<Account,Long> {
      * @param user
      * @return
      */
-    public Message unbindUser(User user,Account account) {
+    public boolean unbindUser(User user,Account account) {
         List<User> users = getUsersByAccountId(account.getId());
         List<Account> accounts;
         boolean flag = false;
@@ -433,13 +306,13 @@ public class AccountService extends BaseService<Account,Long> {
             }
         }
         if(!flag){
-            return new Message(Message.Type.UNKNOWN);
+            return false;
         }
         account.setUsers(users);
         accountDao.save(account);
         //记录子账号解绑企业的消息
         userMessageService.unbindMessage(account,user);
-        return new Message(Message.Type.OK);
+        return true;
     }
 
 //    public List<JSONObject> makeAccountJsons(List<Account> accounts) {

@@ -2,20 +2,19 @@ package com.hysw.qqsl.cloud.pay.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
-import com.hysw.qqsl.cloud.core.entity.Setting;
+import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.core.entity.StationModel;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import com.hysw.qqsl.cloud.core.service.StationService;
 import com.hysw.qqsl.cloud.core.service.UserService;
+import com.hysw.qqsl.cloud.pay.entity.GoodsModel;
+import com.hysw.qqsl.cloud.pay.entity.PackageModel;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.entity.data.Trade;
-import com.hysw.qqsl.cloud.pay.entity.data.Turnover;
-import com.hysw.qqsl.cloud.pay.service.TradeService;
-import com.hysw.qqsl.cloud.util.SettingUtils;
 import com.hysw.qqsl.cloud.util.TradeUtil;
 import net.sf.json.JSONObject;
-import org.dom4j.DocumentException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,8 +129,9 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("packageType", "YOUTH");
         User user = userService.findByPhoneOrEmial("18661925010");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
-        Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.OK);
+        PackageModel packageModel = tradeService.getPackageModel("YOUTH");
+        JSONObject jsonObject1 = tradeService.createPackageTrade(packageModel, "YOUTH", user);
+        Assert.assertTrue(!jsonObject1.isEmpty());
     }
 
     /**
@@ -144,8 +144,9 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("packageType", "SUN");
         User user = userService.findByPhoneOrEmial("18661925010");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
-        Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.NO_CERTIFY);
+        PackageModel packageModel = tradeService.getPackageModel("SUN");
+        JSONObject jsonObject1 = tradeService.createPackageTrade(packageModel, "SUN", user);
+        Assert.assertTrue(!jsonObject1.isEmpty());
     }
 
     /**
@@ -158,8 +159,9 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("packageType", "SUN");
         User user = userService.findByPhoneOrEmial("18661925010");
         user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
-        Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.OK);
+        PackageModel packageModel = tradeService.getPackageModel("SUN");
+        JSONObject jsonObject1 = tradeService.createPackageTrade(packageModel, "SUN", user);
+        Assert.assertTrue(!jsonObject1.isEmpty());
     }
 
     /**
@@ -172,22 +174,24 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("packageType", "TEST");
         User user = userService.findByPhoneOrEmial("18661925010");
 //        user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
-        Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.NO_ALLOW);
+        PackageModel packageModel = tradeService.getPackageModel("TEST");
+        JSONObject jsonObject1 = tradeService.createPackageTrade(packageModel, "TEST", user);
+        Assert.assertTrue(!jsonObject1.isEmpty());
     }
 
-    /**
-     * 测试购买不存在类型套餐
-     */
-    @Test
-    public void testCreatePackageTrade5() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", "PACKAGE");
-        jsonObject.put("packageType", "TEST1");
-        User user = userService.findByPhoneOrEmial("18661925010");
-        Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.FAIL);
-    }
+//    /**
+////     * 测试购买不存在类型套餐
+////     */
+////    @Test
+////    public void testCreatePackageTrade5() {
+////        JSONObject jsonObject = new JSONObject();
+////        jsonObject.put("type", "PACKAGE");
+////        jsonObject.put("packageType", "TEST1");
+////        User user = userService.findByPhoneOrEmial("18661925010");
+////        PackageModel packageModel = tradeService.getPackageModel("TEST");
+////        JSONObject jsonObject1 = tradeService.createPackageTrade(packageModel, "TEST", user);
+////        Assert.assertTrue(message.getType()==Message.Type.FAIL);
+////    }
 
     /**
      * 测试激活套餐逻辑（由于线程改变数据库不能被回滚，
@@ -207,9 +211,10 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("type", "PACKAGE");
         jsonObject.put("packageType", "SUN");
         user.setCompanyStatus(CommonEnum.CertifyStatus.PASS);
-        Message message = tradeService.createPackageTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.OK);
-        Trade trade = (Trade) message.getData();
+        PackageModel packageModel = tradeService.getPackageModel("SUN");
+        JSONObject jsonObject1 = tradeService.createPackageTrade(packageModel, "SUN", user);
+        Assert.assertTrue(!jsonObject1.isEmpty());
+        Trade trade = (Trade) jsonObject1.get("trade");
         trade.setPayDate(new Date());
         trade.setPayType(Trade.PayType.WX);
         trade.setStatus(Trade.Status.PAY);
@@ -239,21 +244,22 @@ public class TradeServiceTest extends BaseTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("stationType", "HYDROLOGIC_STATION");
         User user = userService.findByPhoneOrEmial("18661925010");
-        Message message = tradeService.createStationTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.OK);
+        StationModel stationModel = tradeService.getStationModel("HYDROLOGIC_STATION");
+        JSONObject jsonObject1 = tradeService.createStationTrade(stationModel, "HYDROLOGIC_STATION", user);
+        Assert.assertTrue(!jsonObject1.isEmpty());
     }
 
-    /**
-     * 测试购买不存在类型测站
-     */
-    @Test
-    public void testCreateStationTrade1() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("stationType", "HYDROLOGIC_STATION1");
-        User user = userService.findByPhoneOrEmial("18661925010");
-        Message message = tradeService.createStationTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.FAIL);
-    }
+//    /**
+//     * 测试购买不存在类型测站
+//     */
+//    @Test
+//    public void testCreateStationTrade1() {
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("stationType", "HYDROLOGIC_STATION1");
+//        User user = userService.findByPhoneOrEmial("18661925010");
+//        Message message = tradeService.createStationTrade(jsonObject, user);
+//        Assert.assertTrue(message.getType()==Message.Type.FAIL);
+//    }
 
     /**
      * 测试数据服务创建订单
@@ -265,66 +271,75 @@ public class TradeServiceTest extends BaseTest {
         jsonObject.put("remark", "test");
         jsonObject.put("goodsNum", "2");
         User user = userService.findByPhoneOrEmial("18661925010");
-        Message message = tradeService.createGoodsTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.OK);
+        GoodsModel goodsModel = tradeService.getGoodsModel("PANORAMA");
+        JSONObject jsonObject1 = tradeService.createGoodsTrade(goodsModel, "2", "PANORAMA", "test", user);
+        Assert.assertTrue(!jsonObject1.isEmpty());
     }
 
-    /**
-     * 测试购买不存在类型数据服务
-     */
-    @Test
-    public void testCreateGoodsTrade2() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("goodsType", "PANORAMA1");
-        jsonObject.put("remark", "test");
-        jsonObject.put("goodsNum", "2");
-        User user = userService.findByPhoneOrEmial("18661925010");
-        Message message = tradeService.createGoodsTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.FAIL);
-    }
+//    /**
+//     * 测试购买不存在类型数据服务
+//     */
+//    @Test
+//    public void testCreateGoodsTrade2() {
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("goodsType", "PANORAMA1");
+//        jsonObject.put("remark", "test");
+//        jsonObject.put("goodsNum", "2");
+//        User user = userService.findByPhoneOrEmial("18661925010");
+//        Message message = tradeService.createGoodsTrade(jsonObject, user);
+//        Assert.assertTrue(message.getType()==Message.Type.FAIL);
+//    }
 
-    /**
-     * 测试购买数量不能解析
-     */
-    @Test
-    public void testCreateGoodsTrade3() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("goodsType", "PANORAMA1");
-        jsonObject.put("remark", "test");
-        jsonObject.put("goodsNum", "");
-        User user = userService.findByPhoneOrEmial("18661925010");
-        Message message = tradeService.createGoodsTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.FAIL);
-        jsonObject = new JSONObject();
-        jsonObject.put("goodsType", "PANORAMA1");
-        jsonObject.put("remark", "test");
-        jsonObject.put("goodsNum", "a");
-        message = tradeService.createGoodsTrade(jsonObject, user);
-        Assert.assertTrue(message.getType()==Message.Type.FAIL);
-    }
+//    /**
+//     * 测试购买数量不能解析
+//     */
+//    @Test
+//    public void testCreateGoodsTrade3() {
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("goodsType", "PANORAMA1");
+//        jsonObject.put("remark", "test");
+//        jsonObject.put("goodsNum", "");
+//        User user = userService.findByPhoneOrEmial("18661925010");
+//        Message message = tradeService.createGoodsTrade(jsonObject, user);
+//        Assert.assertTrue(message.getType()==Message.Type.FAIL);
+//        jsonObject = new JSONObject();
+//        jsonObject.put("goodsType", "PANORAMA1");
+//        jsonObject.put("remark", "test");
+//        jsonObject.put("goodsNum", "a");
+//        message = tradeService.createGoodsTrade(jsonObject, user);
+//        Assert.assertTrue(message.getType()==Message.Type.FAIL);
+//    }
 
     @Test
     public void testRenewPackageTrade(){
         Package aPackage = packageService.findByUser(userService.find(1l));
-        Message message = tradeService.renewPackageTrade(aPackage.getInstanceId(), userService.find(1l));
-        Assert.assertTrue(message.getType() == Message.Type.OK);
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        JSONObject jsonObject = tradeService.renewPackageTrade(aPackage, packageModel, userService.find(1l));
+        Assert.assertTrue(!jsonObject.isEmpty());
     }
 
     @Test
     public void testRenewStationTrade(){
         Station station = stationService.find(1l);
-        Message message = tradeService.renewStationTrade(station.getInstanceId(), userService.find(1l));
-        Assert.assertTrue(message.getType() == Message.Type.OK);
+        StationModel stationModel = tradeService.getStationModel(station.getType().toString());
+        JSONObject jsonObject = tradeService.renewStationTrade(station, stationModel, userService.find(1l));
+        Assert.assertTrue(!jsonObject.isEmpty());
     }
 
     @Test
     public void testUpdatePackageTrade(){
         Package aPackage = packageService.findByUser(userService.find(1l));
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage1 = packageService.findByInstanceId(aPackage.getInstanceId());
+//        获取原始套餐模板
+        PackageModel oldPackageModel = tradeService.getPackageModel(aPackage1.getType().toString());
+//        获取新的套餐模板
+        PackageModel newPackageModel = tradeService.getPackageModel(CommonEnum.PackageType.SUN.toString());
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("instanceId",aPackage.getInstanceId() );
-        map.put("packageType", CommonEnum.PackageType.SUN);
-        Message message = tradeService.updatePackageTrade(map, userService.find(1l));
-        Assert.assertTrue(message.getType() == Message.Type.OK);
+        map.put("aPackage", aPackage1);
+        map.put("oldPackageModel", oldPackageModel);
+        map.put("newPackageModel", newPackageModel);
+        JSONObject jsonObject = tradeService.updatePackageTrade(map, aPackage1, CommonEnum.PackageType.SUN.toString(), userService.find(1l));
+        Assert.assertTrue(!jsonObject.isEmpty());
     }
 
     @Test

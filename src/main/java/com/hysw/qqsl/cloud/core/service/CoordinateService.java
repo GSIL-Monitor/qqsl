@@ -3,9 +3,9 @@ package com.hysw.qqsl.cloud.core.service;
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.dao.CoordinateDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
 import com.hysw.qqsl.cloud.core.entity.build.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.*;
@@ -16,7 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.*;
-import org.aspectj.util.LangUtil;
 import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,8 +53,8 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	private BuildGroupService buildGroupService;
 	@Autowired
 	private FieldService fieldService;
-	// 转换文件大小
-	private final long CONVERT_MAX_SZIE = 36 * 1024 * 1024;
+//	// 转换文件大小
+//	private final long CONVERT_MAX_SZIE = 36 * 1024 * 1024;
 
 	/**
 	 * 读取excel 文件抛出异常
@@ -66,10 +65,10 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @return
 	 * @throws IOException
 	 */
-	public Message readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
+	public Map<List<Graph>, List<Build>> readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		Workbook wb = SettingUtils.readExcel(is,s);
 		if(wb==null){
-			return new Message(Message.Type.FAIL);
+			return null;
 		}
 		return readExcel(central, wb, project,wgs84Type);
 	}
@@ -83,11 +82,11 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("resource")
-	public Message readExcel(String central, Workbook wb, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
+	public Map<List<Graph>, List<Build>> readExcel(String central, Workbook wb, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		String code = transFromService.checkCode84(central);
 		List<Graph> graphs = new ArrayList<Graph>();
 		List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
-		List<Build> builds1 = new ArrayList<>();
+		List<Build> builds2 = new ArrayList<>();
 		// Read the Sheet
 		for (int numSheet = 0; numSheet < wb.getNumberOfSheets(); numSheet++) {
 			Sheet sheet = wb.getSheetAt(numSheet);
@@ -95,24 +94,24 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				continue;
 			}
 //			读取建筑物及其属性数据
-			Message me = readBuild(sheet, code, builds, builds1, project,wgs84Type);
-			if (me != null) {
-                return me;
-            }
+			boolean b = readBuild(sheet, code, builds, builds2, project,wgs84Type);
+			if (b) {
+				continue;
+			}
             try {
 //				读取线面数据
-				readLineOrAera(sheet, code, graphs, wb, numSheet,wgs84Type);
+				if (!readLineOrAera(sheet, code, graphs, wb, numSheet, wgs84Type)) {
+					return null;
+				}
 			} catch (OfficeXmlFileException e) {
 				logger.info("坐标文件03-07相互拷贝异常");
-				continue;
 			}catch(NumberFormatException e){
-//				logger.info("经纬度有多余小数");
-				continue;
+				logger.info("经纬度有多余小数");
 			}
 		}
 		Map<List<Graph>, List<Build>> map = new LinkedHashMap<>();
-		map.put(graphs, builds1);
-        return new Message(Message.Type.OK, map);
+		map.put(graphs, builds2);
+        return map;
     }
 
 	/**
@@ -124,49 +123,23 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param project
 	 * @param wgs84Type
 	 */
-	private Message readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
-		Build build = null;
-		Build build2 = null;
-		JSONObject jsonObject1;
-		JSONObject jsonObject;
-		for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-			if (sheet.getSheetName().trim().equals(CommonAttributes.BASETYPEC[i])) {
-				String s = CommonAttributes.BASETYPEE[i];
-				List<Build> builds1 = buildGroupService.getBuilds();
-				for (int k = 0; k < builds1.size(); k++) {
-					if (builds1.get(k).getType().toString().equals(s)) {
-						build = builds1.get(k);
-						break;
-					}
-				}
-				break;
-			}
-		}
+	private boolean readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
+		Build build;
+		build = pickBuildFromBuilds(sheet);
 		if (build == null) {
-			return null;
+			return false;
 		}
 		Build build1 = new Build();
 		List<Attribe> attribes = new ArrayList<>();
-		Attribe attribe;
 		for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
 			Row row = sheet.getRow(rowNum);
 			if (row != null) {
-				String a = null;
 				String b = null;
-				String c = null;
 				String d = null;
 				String comment = null;
-				if (row.getCell(0) != null) {
-					row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
-					a = row.getCell(0).getStringCellValue();
-				}
 				if (row.getCell(1) != null) {
 					row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
 					b = row.getCell(1).getStringCellValue();
-				}
-				if (row.getCell(2) != null) {
-					row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
-					c = row.getCell(2).getStringCellValue();
 				}
 				if (row.getCell(3) != null) {
 					row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
@@ -175,28 +148,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					if (cellComment != null) {
 						comment = cellComment.getString().getString();
 					}
-
 				}
                 if ((b == null || b.trim().equals("")) && rowNum != sheet.getLastRowNum()) {
                     continue;
                 }
                 if (b.trim().equals("名称")) {
-					if (rowNum != 0) {
-						if (build1 != null && build1.getCenterCoor() != null) {
-							build1.setAttribeList(attribes);
-//							if (build1.getAttribeList()!=null&&build1.getAttribeList().size()!=0) {
-							if (build1.getRemark() == null) {
-								for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-									if (CommonAttributes.BASETYPEE[i].equals(build1.getType().toString())) {
-										build1.setRemark(CommonAttributes.BASETYPEC[i]);
-										break;
-									}
-								}
-							}
-							buildService.save(build1);
-							builds2.add(build1);
-//							}
-						}
+					if (rowNum != 0 && build1 != null && build1.getCenterCoor() != null) {
+						setBuildPropertyAndAddCache(build1,attribes,builds2);
 						build1 = new Build();
 						attribes = new ArrayList<>();
 					}
@@ -207,77 +165,119 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					build1.setSource(Build.Source.DESIGN);
 					continue;
 				}
-//				if (build1 == null) {
-//					continue;
-//				}
-				if (d != null && !d.trim().equals("") && comment != null && !comment.trim().equals("")) {
-					if (comment.equals("coor1")) {
-						String[] split = d.split(",");
-						if (split.length != 3) {
-                            return new Message(Message.Type.OTHER);
-						}
-						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
-						if (jsonObject1 == null) {
-							return new Message(Message.Type.OTHER);
-						}
-//						if (!SettingUtils.coordinateParameterCheck(split[0], split[1], split[2])) {
-//							return new Message(Message.Type.OTHER);
-//						}
-						build2 = fieldService.allEqual(builds, String.valueOf(jsonObject1.get("longitude")), String.valueOf(jsonObject1.get("latitude")),split[2]);
-						if (build2!= null) {
-							buildService.remove(build2);
-						}
-						jsonObject = new JSONObject();
-						jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
-						jsonObject.put("latitude", String.valueOf(jsonObject1.get("latitude")));
-						jsonObject.put("elevation", String.valueOf(split[2]));
-						build1.setCenterCoor(jsonObject.toString());
-					}else if (comment.equals("coor2")) {
-						String[] split = d.split(",");
-						if (split.length != 3) {
-                            return new Message(Message.Type.OTHER);
-						}
-						jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
-						if (jsonObject1 == null) {
-							return new Message(Message.Type.OTHER);
-						}
-//						if (!SettingUtils.coordinateParameterCheck(split[0], split[1], split[2])) {
-//                            return new Message(Message.Type.OTHER);
-//						}
-						jsonObject = new JSONObject();
-						jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
-						jsonObject.put("latitude", String.valueOf(jsonObject1.get("latitude")));
-						jsonObject.put("elevation", String.valueOf(split[2]));
-						build1.setPositionCoor(jsonObject.toString());
-					}else if(comment.equals("remark")){
-						build1.setRemark(d);
-					}else{
-						attribe = new Attribe();
-						attribe.setAlias(comment);
-						attribe.setValue(d);
-						attribe.setBuild(build1);
-						attribes.add(attribe);
-					}
+				if (!resolveExcelRow(d, comment, code, wgs84Type, builds, build1, attribes)) {
+					return false;
 				}
 				if (rowNum == sheet.getLastRowNum() && build1 != null && build1.getCenterCoor() != null) {
-					build1.setAttribeList(attribes);
-//					if (build1.getAttribeList()!=null&&build1.getAttribeList().size()!=0) {
-					if (build1.getRemark() == null) {
-						for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-							if (CommonAttributes.BASETYPEE[i].equals(build1.getType().toString())) {
-								build1.setRemark(CommonAttributes.BASETYPEC[i]);
-								break;
-							}
-						}
-					}
-					buildService.save(build1);
-					builds2.add(build1);
-//					}
+					setBuildPropertyAndAddCache(build1,attribes,builds2);
 				}
 			}
 		}
-        return null;
+        return true;
     }
+
+	/**
+	 * 解析excel各行信息
+	 * @return
+	 * @param d
+	 * @param comment
+	 * @param code
+	 * @param wgs84Type
+	 * @param builds
+	 * @param build1
+	 * @param attribes
+	 */
+	private boolean resolveExcelRow(String d, String comment, String code, Coordinate.WGS84Type wgs84Type, List<Build> builds, Build build1, List<Attribe> attribes) throws Exception {
+		JSONObject jsonObject,jsonObject1;
+		Attribe attribe;
+		Build build2;
+		if (d != null && !d.trim().equals("") && comment != null && !comment.trim().equals("")) {
+			if (comment.equals("coor1")) {
+				String[] split = d.split(",");
+				if (split.length != 3) {
+					return false;
+				}
+				jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
+				if (jsonObject1 == null) {
+					return false;
+				}
+				build2 = fieldService.allEqual(builds, String.valueOf(jsonObject1.get("longitude")), String.valueOf(jsonObject1.get("latitude")),split[2]);
+				if (build2!= null) {
+					buildService.remove(build2);
+				}
+				jsonObject = new JSONObject();
+				jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
+				jsonObject.put("latitude", String.valueOf(jsonObject1.get("latitude")));
+				jsonObject.put("elevation", String.valueOf(split[2]));
+				build1.setCenterCoor(jsonObject.toString());
+			}else if (comment.equals("coor2")) {
+				String[] split = d.split(",");
+				if (split.length != 3) {
+					return false;
+				}
+				jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
+				if (jsonObject1 == null) {
+					return false;
+				}
+				jsonObject = new JSONObject();
+				jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
+				jsonObject.put("latitude", String.valueOf(jsonObject1.get("latitude")));
+				jsonObject.put("elevation", String.valueOf(split[2]));
+				build1.setPositionCoor(jsonObject.toString());
+			}else if(comment.equals("remark")){
+				build1.setRemark(d);
+			}else{
+				attribe = new Attribe();
+				attribe.setAlias(comment);
+				attribe.setValue(d);
+				attribe.setBuild(build1);
+				attribes.add(attribe);
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 写build属性，并将其加入builds2的缓存中
+	 * @param build1
+	 * @param attribes
+	 * @param builds2
+	 */
+	private void setBuildPropertyAndAddCache(Build build1, List<Attribe> attribes, List<Build> builds2) {
+		build1.setAttribeList(attribes);
+		if (build1.getRemark() == null) {
+			for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
+				if (CommonAttributes.BASETYPEE[i].equals(build1.getType().toString())) {
+					build1.setRemark(CommonAttributes.BASETYPEC[i]);
+					break;
+				}
+			}
+		}
+//		buildService.save(build1);
+		builds2.add(build1);
+	}
+
+	/**
+	 * 从builds中根据类型挑拣相应的build
+	 * @param sheet
+	 */
+	private Build pickBuildFromBuilds(Sheet sheet) {
+		Build build = null;
+		for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
+			if (sheet.getSheetName().trim().equals(CommonAttributes.BASETYPEC[i])) {
+				String s = CommonAttributes.BASETYPEE[i];
+				List<Build> builds1 = buildGroupService.getBuilds();
+				for (Build build1 : builds1) {
+					if (build1.getType().toString().equals(s)) {
+						build = build1;
+						break;
+					}
+				}
+				break;
+			}
+		}
+		return build;
+	}
 
 	/**
 	 * 读取线面数据
@@ -288,7 +288,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param numSheet
 	 * @param wgs84Type
 	 */
-	private void readLineOrAera(Sheet sheet, String code, List<Graph> graphs, Workbook wb, int numSheet, Coordinate.WGS84Type wgs84Type) throws Exception {
+	private boolean readLineOrAera(Sheet sheet, String code, List<Graph> graphs, Workbook wb, int numSheet, Coordinate.WGS84Type wgs84Type) throws Exception {
 		CoordinateBase coordinateBase;
 		Graph graph;
 		List<CoordinateBase> list;
@@ -339,7 +339,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				}
 				JSONObject jsonObject = coordinateXYZToBLH(longitude, latitude, code,wgs84Type);
 				if (jsonObject == null) {
-					continue;
+					return false;
 				}
 				if (Float.valueOf(elevation) < 0) {
 					continue;
@@ -365,6 +365,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				graphs.add(graph);
 			}
 		}
+		return true;
 	}
 
 	/**
@@ -660,54 +661,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		return description;
 	}
 
-
-	/**
-	 * 坐标格式文件处理数据并存入数据库
-	 *
-	 * @param is
-	 * @param central
-	 * @param fileName
-	 * @param wgs84Type
-	 * @return
-	 * @throws IOException
-	 */
-	public Message uploadCoordinateToData(InputStream is,
-										  Project project, String central, String fileName, Coordinate.WGS84Type wgs84Type) {
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		Message me;
-		try {
-			me = readExcels(is, central, s, project,wgs84Type);
-		} catch (Exception e) {
-			logger.info("坐标文件或格式异常");
-			return new Message(Message.Type.FAIL);
-		}finally {
-			IOUtils.safeClose(is);
-		}
-		if (me.getType()== Message.Type.OTHER) {
-		    return me;
-        }
-        Map<List<Graph>, List<Build>> map = (Map<List<Graph>, List<Build>>) me.getData();
-		List<Graph> list = null;
-		List<Build> builds = null;
-		for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
-			list = entry.getKey();
-			builds = entry.getValue();
-			break;
-		}
-		if (list == null || list.size() == 0) {
-			return new Message(Message.Type.OK);
-		}
-		return saveCoordinate(list, builds, project);
-	}
-
 	/**
 	 * 保存坐标数据
 	 * @param list
 	 * @param builds
-	 *@param project  @return
+	 * @param project  @return
 	 */
-	public Message saveCoordinate(List<Graph> list, List<Build> builds, Project project) {
+	public boolean saveCoordinate(List<Graph> list, List<Build> builds, Project project) {
 		List<Graph> pointList = new ArrayList<>();
 		List<Graph> areaList = new ArrayList<>();
 		Coordinate coordinate = null;
@@ -753,7 +713,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				pointToBuild(entry.getValue(),builds,project,coordinate.getId());
 			}
 		}
-		return new Message(Message.Type.OK);
+		return true;
 	}
 
 	/**
@@ -803,6 +763,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				String latitude1 = jsonObject.get("latitude").toString();
 				String elevation1 = jsonObject.get("elevation").toString();
 				if (longitude.equals(longitude1) && latitude.equals(latitude1) && elevation.equals(elevation1)) {
+					build1 = build;
 					builds2.remove(build);
 					flag = true;
 					break;
@@ -826,6 +787,8 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				build1.setProject(project);
 				build1.setSource(Build.Source.DESIGN);
 				build1.setCoordinateId(String.valueOf(coordinateId));
+				buildService.save(build1);
+			}else {
 				buildService.save(build1);
 			}
 		}
@@ -885,55 +848,14 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		}
 	}
 
-
-	/**
-	 * 上传坐标文件并保存至数据库
-	 * @param mFile
-     * @param project
-* @param central
-* @param wgs84Type
-	 * @return
-     */
-	public Message uploadCoordinate(MultipartFile mFile, Project project, String central, Coordinate.WGS84Type wgs84Type) {
-		Message me;
-		String fileName;
-		fileName = mFile.getOriginalFilename();
-		// 限制上传文件的大小
-		if (mFile.getSize() > CONVERT_MAX_SZIE) {
-			// return "文件过大无法上传";
-			logger.debug("文件过大");
-			return new Message(Message.Type.FAIL);
-		}
-		InputStream is;
-		try {
-			is = mFile.getInputStream();
-		} catch (IOException e) {
-			logger.info("坐标文件或格式异常");
-			return new Message(Message.Type.FAIL);
-		}
-		me = uploadCoordinateToData(is,project,central,fileName,wgs84Type);
-		if (me != null) {
-			return me;
-		}
-		return new Message(Message.Type.OK);
-	}
-
 	/**
 	 * 保存设计的线面坐标数据
-	 * @param objectMap
+	 * @param line
+	 * @param projectId
+	 * @param description
 	 * @return
 	 */
-	public Message saveCoordinateFromPage(Map<String, Object> objectMap) {
-		Object line = objectMap.get("line");
-		Object projectId = objectMap.get("projectId");
-		Object description = objectMap.get("description");
-		if (line == null || projectId == null || description == null) {
-			return new Message(Message.Type.FAIL);
-		}
-		Message message=checkCoordinateFormat(line);
-		if (message.getType() == Message.Type.OTHER) {
-			return message;
-		}
+	public void saveCoordinateFromPage(Object line, Object projectId, Object description) {
 		Coordinate coordinate = new Coordinate();
 		JSONObject jsonObject = JSONObject.fromObject(line);
 		Project project = projectService.find(Long.valueOf(projectId.toString()));
@@ -941,7 +863,6 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		coordinate.setProject(project);
 		coordinate.setDescription(description.toString());
 		save(coordinate);
-		return new Message(Message.Type.OK);
 	}
 
 	public List<Coordinate> findByDate(){
@@ -960,16 +881,77 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * 检查坐标格式
 	 * @param line
 	 */
-	public Message checkCoordinateFormat(Object line) {
+	public boolean checkCoordinateFormat(Object line) {
 		Map<Object, Object> map = (Map<Object, Object>) line;
 		JSONArray coordinate = JSONArray.fromObject(map.get("coordinate"));
 		JSONObject jsonObject;
 		for (Object o : coordinate) {
 			jsonObject = JSONObject.fromObject(o);
 			if (jsonObject.size() != 3) {
-				return new Message(Message.Type.OTHER);
+				return false;
 			}
 		}
-		return new Message(Message.Type.OK);
+		return true;
 	}
+
+    /**
+     * 上传坐标文件
+     * @param entry
+     * @param jsonObject
+     * @param project
+     * @param central
+     * @param wgs84Type
+     */
+    public void uploadCoordinate(Map.Entry<String, MultipartFile> entry, JSONObject jsonObject, Project project, String central, Coordinate.WGS84Type wgs84Type) {
+        MultipartFile mFile = entry.getValue();
+        String fileName = mFile.getOriginalFilename();
+        // 限制上传文件的大小
+        if (mFile.getSize() > CommonAttributes.CONVERT_MAX_SZIE) {
+            // return "文件过大无法上传";
+            logger.debug("文件过大");
+            jsonObject.put(entry.getKey(), 4003);
+            return;
+        }
+        InputStream is;
+        try {
+            is = mFile.getInputStream();
+        } catch (IOException e) {
+            logger.info("坐标文件或格式异常");
+            jsonObject.put(entry.getKey(),4072);
+            return;
+        }
+        String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+                fileName.length());
+        Map<List<Graph>, List<Build>> map1;
+        try {
+            map1 = readExcels(is, central, s, project, wgs84Type);
+        } catch (Exception e) {
+            logger.info("坐标文件或格式异常");
+            jsonObject.put(entry.getKey(),4072);
+            return;
+        }finally {
+            IOUtils.safeClose(is);
+        }
+        if (map1 == null) {
+            logger.info("数据格式与所选格式不一致");
+            jsonObject.put(entry.getKey(),4073);
+            return;
+        }
+        List<Graph> list = null;
+        List<Build> builds = null;
+        for (Map.Entry<List<Graph>, List<Build>> entry1 : map1.entrySet()) {
+            list = entry1.getKey();
+            builds = entry1.getValue();
+            break;
+        }
+//        if (list == null || list.size() == 0) {
+//            jsonObject.put(entry.getKey(),Message.Type.OK.getStatus());
+//            return;
+//        }
+        if (saveCoordinate(list, builds, project)) {
+            jsonObject.put(entry.getKey(),2000);
+        } else {
+            jsonObject.put(entry.getKey(),4001);
+        }
+    }
 }

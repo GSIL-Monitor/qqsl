@@ -1,11 +1,12 @@
 package com.hysw.qqsl.cloud.core.controller;
 
-import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Feedback;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.AuthentService;
 import com.hysw.qqsl.cloud.core.service.FeedbackService;
+import com.hysw.qqsl.cloud.core.service.MessageService;
 import net.sf.json.JSONArray;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +49,11 @@ public class FeedbackController {
     @RequiresAuthentication
     @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/admin/lists", method = RequestMethod.GET)
-    public @ResponseBody Message getFeedbacks() {
+    public @ResponseBody
+    Message getFeedbacks() {
         List<Feedback> feedbacks = feedbackService.findAll();
         JSONArray jsonArray=feedbackService.toJsons(feedbacks);
-        return new Message(Message.Type.OK,jsonArray);
+        return MessageService.message(Message.Type.OK,jsonArray);
     }
 
     /**
@@ -76,11 +77,17 @@ public class FeedbackController {
     @RequestMapping(value = "/admin/review", method = RequestMethod.POST)
     public @ResponseBody
     Message doAdminReview(@RequestBody Map<String, Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return feedbackService.doAdminReview(objectMap);
+        Object feedbackId = objectMap.get("feedbackId");
+        Object review = objectMap.get("review");
+        if (feedbackId == null || review == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        feedbackService.doAdminReview(feedbackId,review);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -98,7 +105,7 @@ public class FeedbackController {
     public @ResponseBody Message getUserFeedbacks() {
         User user = authentService.getUserFromSubject();
         List<Feedback> feedbacks = feedbackService.findByUserId(user.getId());
-        return new Message(Message.Type.OK,feedbackService.toJsons(feedbacks));
+        return MessageService.message(Message.Type.OK,feedbackService.toJsons(feedbacks));
     }
 
     /**
@@ -116,7 +123,7 @@ public class FeedbackController {
     public @ResponseBody Message getAccountFeedbacks() {
         Account account = authentService.getAccountFromSubject();
         List<Feedback> feedbacks=feedbackService.findByAccountId(account.getId());
-        return new Message(Message.Type.OK,feedbackService.toJsons(feedbacks));
+        return MessageService.message(Message.Type.OK,feedbackService.toJsons(feedbacks));
     }
 
     /**
@@ -142,11 +149,19 @@ public class FeedbackController {
     @RequestMapping(value = "/user/submit", method = RequestMethod.POST)
     public @ResponseBody
     Message saveUserFeedback(@RequestBody Map<String, Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return feedbackService.saveUserFeedback(objectMap);
+        Object userId = objectMap.get("userId");
+        Object title = objectMap.get("title");
+        Object content = objectMap.get("content");
+        Object type = objectMap.get("type");
+        if (userId == null || title == null || content == null || type == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        feedbackService.saveUserFeedback(userId,title,content,type);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -172,11 +187,19 @@ public class FeedbackController {
     @RequestMapping(value = "/account/submit", method = RequestMethod.POST)
     public @ResponseBody
     Message saveAccountFeedback(@RequestBody Map<String, Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
-        return feedbackService.saveAccountFeedback(objectMap);
+        Object accountId = objectMap.get("accountId");
+        Object title = objectMap.get("title");
+        Object content = objectMap.get("content");
+        Object type = objectMap.get("type");
+        if (accountId == null || title == null || content == null || type == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        feedbackService.saveAccountFeedback(accountId,title,content,type);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -196,9 +219,9 @@ public class FeedbackController {
         try {
             feedback = feedbackService.find(id);
         } catch (Exception e) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return new Message(Message.Type.OK,feedbackService.toJson(feedback));
+        return MessageService.message(Message.Type.OK,feedbackService.toJson(feedback));
     }
 
 }

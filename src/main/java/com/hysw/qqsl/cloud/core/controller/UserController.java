@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.Polling;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.*;
@@ -64,6 +65,8 @@ public class UserController {
     private StorageLogService storageLogService;
     @Autowired
     private PollingService pollingService;
+    @Autowired
+    private CommonController commonController;
 
     /**
      * 注册时发送手机验证码
@@ -115,21 +118,23 @@ public class UserController {
     @ResponseBody
     Message getLoginVerify(@RequestParam String code,
                            HttpSession session) {
-        Message message = Message.parametersCheck(code);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parametersCheck(code);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         User user=userService.findByPhoneOrEmial(code);
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(SettingUtils.phoneRegex(code)){
-            message = noteService.isSend(user.getPhone(), session);
+            if (noteService.isSend(user.getPhone(), session)) {
+                return MessageService.message(Message.Type.OK);
+            }
         }else if(SettingUtils.emailRegex(code)){
-            return emailService.getVerifyCodeLogin(code,session);
+            emailService.getVerifyCodeLogin(code,session);
         }
         return message;
     }
@@ -141,24 +146,27 @@ public class UserController {
      * @return OK:发送成功,FIAL:手机号不合法，EXIST：账号不存在/账号已存在
      */
     private Message sendVerify(String phone, HttpSession session,boolean flag){
-        Message message = Message.parametersCheck(phone);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parametersCheck(phone);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(!SettingUtils.phoneRegex(phone)){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         User user = userService.findByPhone(phone);
         if (flag) {
             if (user == null) {
-                return new Message(Message.Type.EXIST);
+                return MessageService.message(Message.Type.DATA_NOEXIST);
             }
         }else{
             if (user != null) {
-                return new Message(Message.Type.EXIST);
+                return MessageService.message(Message.Type.DATA_EXIST);
             }
         }
-        return noteService.isSend(phone, session);
+        if (noteService.isSend(phone, session)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.FAIL);
     }
 
 
@@ -171,20 +179,20 @@ public class UserController {
     public
     @ResponseBody
     Message sendBindVerify(@RequestParam String email, HttpSession session) {
-        Message message = Message.parametersCheck(email);
+        Message message = CommonController.parametersCheck(email);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(!SettingUtils.emailRegex(email)){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         User user = userService.findByEmail(email);
         if (user != null) {
             // 该邮箱已被注册
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_EXIST);
         }
         emailService.getVerifyCodeBinding(email,session);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -196,18 +204,19 @@ public class UserController {
     public
     @ResponseBody
     Message sendGetbackVerifyEmail(@RequestParam String email, HttpSession session) {
-        Message message = Message.parametersCheck(email);
+        Message message = CommonController.parametersCheck(email);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(!SettingUtils.emailRegex(email)){
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         User user = userService.findByEmail(email);
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return emailService.getVerifyCoderesetPassword(email,session);
+        emailService.getVerifyCoderesetPassword(email,session);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -221,14 +230,32 @@ public class UserController {
     @ResponseBody
     Message register(@RequestBody Map<String, String> objectMap,
                      HttpSession session) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         Verification verification = (Verification) session
                 .getAttribute("verification");
-        return userService.registerService(map, verification);
+        message = commonController.checkCode(map.get("verification").toString(), verification);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        String userName = map.get("userName").toString();
+        String phone = verification.getPhone();
+        String password = map.get("password").toString();
+        User user = userService.findByPhone(phone);
+        // 用户已存在
+        if (user != null) {
+            return MessageService.message(Message.Type.DATA_EXIST);
+        } else {
+            user = new User();
+        }
+        if (userService.registerService(user, userName, phone, password)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**
@@ -240,27 +267,27 @@ public class UserController {
     public
     @ResponseBody
     Message getbackPassord(@RequestBody Map<String, Object> map, HttpSession session) {
-        Message message = Message.parameterCheck(map);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.INVALID);
+            return MessageService.message(Message.Type.CODE_NOEXIST);
         }
         User user = userService.findByPhone(verification.getPhone());
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
-        message = userService.checkCode(map.get("verification").toString(), verification);
+        message = commonController.checkCode(map.get("verification").toString(), verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String password = map.get("password").toString();
         user.setPassword(password);
@@ -277,27 +304,27 @@ public class UserController {
     public
     @ResponseBody
     Message getbackPassordEmail(@RequestBody Map<String, Object> map, HttpSession session) {
-        Message message = Message.parameterCheck(map);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.INVALID);
+            return MessageService.message(Message.Type.CODE_NOEXIST);
         }
         User user = userService.findByEmail(verification.getEmail());
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
-        message = userService.checkCode(map.get("verification").toString(), verification);
+        message = commonController.checkCode(map.get("verification").toString(), verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String password = map.get("password").toString();
         user.setPassword(password);
@@ -314,28 +341,29 @@ public class UserController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public @ResponseBody Message updatePassword(@RequestBody Map<String,Object> map){
-        Message message = Message.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
+        Message message = CommonController.parameterCheck(map);
+        if(message.getType()!=Message.Type.OK){
             return message;
         }
         User user = authentService.getUserFromSubject();
         if (map.get("oldPassword") == null || !StringUtils.hasText(map.get("oldPassword").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String oldPassword = map.get("oldPassword").toString();
         if(!user.getPassword().equals(oldPassword)){
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
         if (map.get("newPassword") == null || !StringUtils.hasText(map.get("newPassword").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String newPassword = map.get("newPassword").toString();
-        message = userService.updatePassword(newPassword,user.getId());
-        if(message.getType().equals(Message.Type.OK)){
-            user = userService.find(user.getId());
-            authentService.updateSession(user);
+        JSONObject jsonObject = userService.updatePassword(newPassword, user.getId());
+        if (jsonObject == null) {
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
-        return message;
+        user = userService.find(user.getId());
+        authentService.updateSession(user);
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
     /**
@@ -347,15 +375,15 @@ public class UserController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePhone", method = RequestMethod.POST)
     public @ResponseBody Message updatePhone(@RequestBody Map<String,Object> map,HttpSession session){
-        Message message = Message.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
+        Message message = CommonController.parameterCheck(map);
+        if(message.getType()!=Message.Type.OK){
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
-        message = userService.checkCode(map.get("verification").toString(), verification);
+        message = commonController.checkCode(map.get("verification").toString(), verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -363,7 +391,7 @@ public class UserController {
         user.setPhone(verification.getPhone());
         authentService.updateSession(user);
         userService.save(user);
-        return new Message(Message.Type.OK, userService.makeUserJson(user));
+        return MessageService.message(Message.Type.OK, userService.makeUserJson(user));
     }
 
     /**
@@ -375,15 +403,15 @@ public class UserController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
     public @ResponseBody Message updateEmail(@RequestBody Map<String,Object> map,HttpSession session){
-        Message message = Message.parameterCheck(map);
-        if(message.getType().equals(Message.Type.FAIL)){
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (map.get("verification") == null || !StringUtils.hasText(map.get("verification").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
-        message = userService.checkCode(map.get("verification").toString(), verification);
+        message = commonController.checkCode(map.get("verification").toString(), verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -391,7 +419,7 @@ public class UserController {
         user.setEmail(verification.getEmail());
         authentService.updateSession(user);
         userService.save(user);
-        return new Message(Message.Type.OK, userService.makeUserJson(user));
+        return MessageService.message(Message.Type.OK, userService.makeUserJson(user));
     }
 
     /**
@@ -406,7 +434,7 @@ public class UserController {
     Message getUser() {
         User user = authentService.getUserFromSubject();
         JSONObject json = userService.makeUserJson(user);
-        return new Message(Message.Type.OK, json);
+        return MessageService.message(Message.Type.OK, json);
     }
 
     /**
@@ -422,7 +450,7 @@ public class UserController {
         User user = authentService.getUserFromSubject();
         List<User> users = userService.findUsersNeOwn(user);
         List<JSONObject> userJsons = userService.makeUserJsons(users);
-        return new Message(Message.Type.OK, userJsons);
+        return MessageService.message(Message.Type.OK, userJsons);
     }
 
     /**
@@ -437,7 +465,7 @@ public class UserController {
     Message adminGetUsers() {
         List<User> users = userService.findUsers();
         List<JSONObject> userJsons = userService.makeUserJsons(users);
-        return new Message(Message.Type.OK, userJsons);
+        return MessageService.message(Message.Type.OK, userJsons);
     }
 
     /**
@@ -454,48 +482,48 @@ public class UserController {
         if (SecurityUtils.getSubject().getSession() != null) {
             SecurityUtils.getSubject().logout();
         }
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         User user = userService.findByPhoneOrEmial(code);
         if (user == null) {
-            return new Message(Message.Type.EXIST) ;
+            return MessageService.message(Message.Type.DATA_NOEXIST) ;
         }
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_LOCK);
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (!user.getPassword().equals(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
         if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
             return subjectLogin(user, "web",null);
         }
         if(map.get("cookie")==null||!StringUtils.hasText(map.get("cookie").toString())){
-            return new Message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.FAIL);
         }
         //登录间隔时间过长需重新登录
         if(user.getLoginDate()==null){
             user.setLoginDate(new Date());
         }
         if(System.currentTimeMillis() - user.getLoginDate().getTime()>15*24*60*60*1000l){
-            return new Message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.CODE_NEED);
         }
         String cookie = map.get("cookie").toString();
         if(!cookie.equals(DigestUtils.md5Hex(user.getPassword()))){
-            return new Message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.FAIL);
         }else{
             return subjectLogin(user, "web",null);
         }
@@ -515,31 +543,31 @@ public class UserController {
         if (SecurityUtils.getSubject().getSession() != null) {
             SecurityUtils.getSubject().logout();
         }
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
-          return new Message(Message.Type.FAIL);
+          return MessageService.message(Message.Type.FAIL);
         }
         User user = userService.findByPhoneOrEmial(code);
         if (user == null) {
-            return new Message(Message.Type.EXIST) ;
+            return MessageService.message(Message.Type.DATA_NOEXIST) ;
         }
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_LOCK);
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (!user.getPassword().equals(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
        /* if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
             return subjectLogin(user, "web",null);
@@ -553,37 +581,37 @@ public class UserController {
      * @return 用户对象
      */
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/wechat/login", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/weChat/login", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
     Message wechatLogin(
             @RequestBody Map<String, Object> objectMap) {
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         Object openId = SecurityUtils.getSubject().getSession().getAttribute("openId");
         if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         User user = userService.findByPhoneOrEmial(code);
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_LOCK);
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (!user.getPassword().equals(map.get("password").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
         return subjectLogin(user, "weChat",openId);
     }
@@ -594,7 +622,7 @@ public class UserController {
      * @return 用户对象
      */
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/wechat/autoLogin", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/weChat/autoLogin", method = RequestMethod.POST, produces = "application/json")
     public
     @ResponseBody
     Message weChatAutoLogin(
@@ -602,31 +630,31 @@ public class UserController {
         if (SecurityUtils.getSubject().getSession() != null) {
             SecurityUtils.getSubject().logout();
         }
-        Message message = Message.parameterCheck(objectMap);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Map<String, Object> map = (Map<String, Object>) message.getData();
         if (map.get("code") == null||!StringUtils.hasText(map.get("code").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String code = map.get("code").toString();
         Object openId = getAccessTokenService.getCodeOpenId(code);
         if (openId == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         SecurityUtils.getSubject().getSession().setAttribute("openId",openId);
         WeChat weChat = weChatService.findByOpenId(openId.toString());
         if (weChat == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = userService.find(weChat.getUserId());
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_LOCK);
         }
         return subjectLogin(user, "weChat", null);
     }
@@ -641,34 +669,34 @@ public class UserController {
     @ResponseBody
     Message loginByVerify(
             @RequestBody Map<String, String> map, HttpSession session) {
-        Message message = Message.parameterCheck(map);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         Verification verification = (Verification) session.getAttribute("verification");
         if (verification == null) {
-            return new Message(Message.Type.OTHER);
+            return MessageService.message(Message.Type.CODE_NOEXIST);
         }
         String code = verification.getEmail()==null?verification.getPhone():verification.getEmail();
         User user = userService.findByPhoneOrEmial(code);
         if (user == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (map.get("verification") == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String verifyCode = map.get("verification");
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
-            return new Message(Message.Type.UNKNOWN);
+            return MessageService.message(Message.Type.DATA_LOCK);
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password"))) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         if (!user.getPassword().equals(map.get("password"))) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
         }
-        message = userService.checkCode(verifyCode,verification);
+        message = commonController.checkCode(verifyCode,verification);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -685,18 +713,18 @@ public class UserController {
     @ResponseBody
     Message checkPassword(
             @RequestBody Map<String, String> map) {
-        Message message = Message.parameterCheck(map);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (map.get("password") == null || !StringUtils.hasText(map.get("password"))) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         User user = authentService.getUserFromSubject();
         if (user.getPassword().equals(map.get("password"))) {
-            return new Message(Message.Type.OK);
+            return MessageService.message(Message.Type.OK);
         }
-        return new Message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.FAIL);
     }
 
 
@@ -711,13 +739,13 @@ public class UserController {
     public @ResponseBody Message bindingRelationship() {
         Object openId = SecurityUtils.getSubject().getSession().getAttribute("openId");
         if (openId == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         WeChat weChat = weChatService.findByOpenId(openId.toString());
         if (weChat == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -728,14 +756,14 @@ public class UserController {
     public @ResponseBody Message unbind() {
         Object openId = SecurityUtils.getSubject().getSession().getAttribute("openId");
         if (openId == null) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         WeChat weChat = weChatService.findByOpenId(openId.toString());
         if (weChat == null) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         weChatService.remove(weChat);
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
 
@@ -754,9 +782,9 @@ public class UserController {
         try {
             subject.login(token);
         } catch (UnknownAccountException e) {
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         } catch (IncorrectCredentialsException e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         switch (loginType) {
             case "web":
@@ -785,7 +813,7 @@ public class UserController {
         subject.getSession().setAttribute("token", subject.getPrincipals().getPrimaryPrincipal());
         JSONObject userJson = userService.makeUserJson(user);
         userService.save(user);
-        return new Message(Message.Type.OK, userJson);
+        return MessageService.message(Message.Type.OK, userJson);
     }
 
     /**
@@ -799,7 +827,7 @@ public class UserController {
     public
     @ResponseBody
     Message updateUserMessage(@PathVariable("ids") String ids) {
-        Message message = Message.parametersCheck(ids);
+        Message message = CommonController.parametersCheck(ids);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -815,7 +843,7 @@ public class UserController {
                 }
             }
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**
@@ -829,7 +857,7 @@ public class UserController {
     public
     @ResponseBody
     Message deleteUserMessage(@PathVariable("ids") String ids) {
-        Message message = Message.parametersCheck(ids);
+        Message message = CommonController.parametersCheck(ids);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
@@ -839,11 +867,11 @@ public class UserController {
             try {
                 userMessage = userMessageService.find(Long.valueOf(id));
             } catch (Exception e) {
-                return new Message(Message.Type.EXIST);
+                return MessageService.message(Message.Type.DATA_NOEXIST);
             }
             userMessageService.remove(userMessage);
         }
-        return new Message(Message.Type.OK);
+        return MessageService.message(Message.Type.OK);
 
     }
 
@@ -860,7 +888,7 @@ public class UserController {
         for (Contact contact : contacts) {
             contact.setUser(null);
         }
-        return new Message(Message.Type.OK,contacts);
+        return MessageService.message(Message.Type.OK,contacts);
     }
 
     //////////////////子账号//////////////////////////
@@ -875,28 +903,33 @@ public class UserController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/account/invite",method = RequestMethod.POST)
     public @ResponseBody Message invite(@RequestBody Map<String, Object> map) {
-        Message message = Message.parameterCheck(map);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (map.get("phone") == null || !StringUtils.hasText(map.get("phone").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         String phone = map.get("phone").toString();
-        message = Message.parametersCheck(phone);
+        message = CommonController.parametersCheck(phone);
         if(message.getType().equals(Message.Type.FAIL)){
             return message;
         }
         if(!SettingUtils.phoneRegex(phone)){
-            message = new Message(Message.Type.UNKNOWN);
+            message = MessageService.message(Message.Type.FAIL);
             return message;
         }
         User user = authentService.getUserFromSubject();
         //        是否允许创建子账号
         if (userService.isAllowCreateAccount(user)) {
-            return new Message(Message.Type.NO_ALLOW);
+            return MessageService.message(Message.Type.PACKAGE_LIMIT);
         }
-        return  accountService.invite(phone,user);
+        JSONObject invite = accountService.invite(phone, user);
+        if (invite == null) {
+            return MessageService.message(Message.Type.DATA_EXIST);
+        }else {
+            return MessageService.message(Message.Type.OK,invite);
+        }
     }
 
     /**
@@ -908,24 +941,28 @@ public class UserController {
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
     public @ResponseBody Message unbind(@RequestBody Map<String, Object> map){
-        Message message = Message.parameterCheck(map);
-        if (message.getType() == Message.Type.FAIL) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if (map.get("id") == null || !StringUtils.hasText(map.get("id").toString())) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.FAIL);
         }
         Account account;
         try {
             account = accountService.find(Long.valueOf(map.get("id").toString()));
         } catch (Exception e) {
-            return new Message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if(account==null){
-            return new Message(Message.Type.EXIST);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        return userService.unbindAccount(account,user);
+        if (userService.unbindAccount(account, user)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
     }
 
     /**
@@ -940,12 +977,12 @@ public class UserController {
     @RequestMapping(value = "/storageCountLog", method = RequestMethod.GET,produces= MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Message getStorageCountLog(@RequestParam("begin") long begin, @RequestParam("end") long end) {
         User user = authentService.getUserFromSubject();
-        Message message = Message.parametersCheck(begin,end);
-        if(message.getType().equals(Message.Type.FAIL)){
+        Message message = CommonController.parametersCheck(begin,end);
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         JSONArray jsonArray = storageLogService.getStorageCountLog(user,begin,end);
-        return new Message(Message.Type.OK,jsonArray);
+        return MessageService.message(Message.Type.OK,jsonArray);
     }
 
     /**
@@ -959,7 +996,7 @@ public class UserController {
         user.setId(id);
         //storageLogService.buildStorageLog();
         JSONArray jsonArray = storageLogService.getStorageCountLog(user,System.currentTimeMillis()-300*60*60*1000L,System.currentTimeMillis());
-        return new Message(Message.Type.OK,jsonArray);
+        return MessageService.message(Message.Type.OK,jsonArray);
     }
 
     /**
@@ -972,7 +1009,7 @@ public class UserController {
     public @ResponseBody Message polling(){
         User user = authentService.getUserFromSubject();
         Polling polling=pollingService.findByUser(user.getId());
-        return new Message(Message.Type.OK,pollingService.toJson(polling));
+        return MessageService.message(Message.Type.OK,pollingService.toJson(polling));
     }
 }
 

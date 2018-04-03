@@ -1,9 +1,9 @@
 package com.hysw.qqsl.cloud.pay.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.data.BaseEntity;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.Date;

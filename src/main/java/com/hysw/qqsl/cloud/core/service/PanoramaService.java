@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.PanoramaDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
@@ -111,7 +111,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         return panoramas;
     }
 
-    public Message savePanorama(Map<String, Object> map, Panorama panorama) {
+    public JSONObject savePanorama(Map<String, Object> map, Panorama panorama) {
         Object name = map.get("name");
         Object coor = map.get("coor");
         Object region = map.get("region");
@@ -124,14 +124,14 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         Object shootDate = map.get("shootDate");
         panorama.setShootDate((Date)shootDate);
         if (name == null || coor == null || isShare == null) {
-            return new Message(Message.Type.FAIL);
+            return null;
         }
-        Message message = SettingUtils.checkCoordinateIsInvalid(coor.toString());
-        if (!Message.Type.OK.equals(message.getType())) {
-            return message;
+        JSONObject jsonObject1 = SettingUtils.checkCoordinateIsInvalid(coor.toString());
+        if (jsonObject1 == null) {
+            return null;
         }
         panorama.setName(name.toString());
-        panorama.setCoor(message.getData().toString());
+        panorama.setCoor(jsonObject1.toString());
        // panorama.setRegion(region.toString());
         panorama.setStatus(CommonEnum.Review.valueOf(Integer.valueOf(status.toString())));
         panorama.setShare(Boolean.valueOf(isShare.toString()));
@@ -142,7 +142,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         save(panorama);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", panorama.getId());
-        return new Message(Message.Type.OK,jsonObject);
+        return jsonObject;
     }
 
     public List<Panorama> findByuser(User user) {
@@ -175,25 +175,5 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         jsonObject.put("pictures", objectFiles);
         jsonObject.put("user", userJson(panorama.getUserId()));
         return jsonObject;
-    }
-
-    /**
-     * 是否允许保存全景
-     * @param user
-     * @Return Message
-     */
-    public Message isAllowSavePanorma(User user) {
-        Package aPackage = packageService.findByUser(user);
-        if (aPackage == null) {
-            return new Message(Message.Type.EXIST);
-        }
-        int size = findByuser(user).size();
-        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
-        for (PackageItem packageItem : packageModel.getPackageItems()) {
-            if (packageItem.getServeItem().getType() == ServeItem.Type.PANO && size < packageItem.getLimitNum()) {
-                return new Message(Message.Type.OK);
-            }
-        }
-        return new Message(Message.Type.NO_ALLOW);
     }
 }

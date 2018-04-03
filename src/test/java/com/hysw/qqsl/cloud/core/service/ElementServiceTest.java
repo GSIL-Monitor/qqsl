@@ -2,20 +2,16 @@ package com.hysw.qqsl.cloud.core.service;
 
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.controller.Message;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.element.Unit;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.service.ElementService;
-import com.hysw.qqsl.cloud.core.service.ProjectService;
-import com.hysw.qqsl.cloud.core.service.UnitService;
-import com.hysw.qqsl.cloud.core.service.UserService;
+import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -54,8 +50,8 @@ public class ElementServiceTest extends BaseTest {
 		if (projectService.findByCode(CODE, 1l).size() == 0) {
 			try{
 				project = projectService.convertMap(map,user,false);
-				Message message = projectService.createProject(project);
-				assertTrue(message.getType() == Message.Type.OK);
+				JSONObject jsonObject = projectService.createProject(project);
+				assertTrue(!jsonObject.isEmpty());
 			}catch (Exception e){
 				e.printStackTrace();
 			}

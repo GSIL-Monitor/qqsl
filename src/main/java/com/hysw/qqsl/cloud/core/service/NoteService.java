@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.hysw.qqsl.cloud.core.entity.Note;
-import com.hysw.qqsl.cloud.core.entity.QQSLException;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDB;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.hysw.qqsl.cloud.core.controller.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 
@@ -239,21 +237,6 @@ public class NoteService{
 	}
 
 	/**
-	 * 验证验证码
-	 * @throws QQSLException
-	 * @return false ==   ture !=
-	 */
-	public boolean checkCode(String code, Verification verification){
-		if (verification.getCode().equals(code)) {
-			return false;
-		}
-		return true;
-	}
-
-
-
-	
-	/**
 	 * 短信中添加项目负责及部门负责联系电话
 	 */
 	public String getNotefoot(JSONObject noteJson){
@@ -342,11 +325,11 @@ public class NoteService{
 	 * 发送短信（项目启动，项目完成，项目审查），将短信对象放入缓存池
 	 * @return
 	 */
-	public Message addToNoteCache(List<String> contacts,String sendMsg) {
+	public boolean addToNoteCache(List<String> contacts,String sendMsg) {
            Note note;
            for(String contact:contacts){
         	   if(!SettingUtils.phoneRegex(contact)){
-        		   return new Message(Message.Type.FAIL);
+        		   return false;
         	   }
            }
            for(String contact:contacts){
@@ -356,7 +339,7 @@ public class NoteService{
         	   noteCache.add(contact, note);
            }
            logger.info(contacts.size()+"条短信加入缓存");					   
-           return new Message(Message.Type.OK);
+           return true;
 	}
 
 	/**
@@ -366,10 +349,10 @@ public class NoteService{
 	 * @param session
 	 * @return
 	 */
-	public Message isSend(String phone,
+	public boolean isSend(String phone,
 						  HttpSession session) {
 		if(!StringUtils.hasText(phone)){
-			return new Message(Message.Type.FAIL, null);
+			return false;
 		}
 		Verification verification = new Verification();
 		String code = SettingUtils.createRandomVcode();
@@ -384,9 +367,9 @@ public class NoteService{
 				verification.setCode("123456");
 			}
 			session.setAttribute("verification", verification);
-			return new Message(Message.Type.OK, null);
+			return true;
 		}
-		return new Message(Message.Type.FAIL, null);
+		return false;
 	}
 
 
