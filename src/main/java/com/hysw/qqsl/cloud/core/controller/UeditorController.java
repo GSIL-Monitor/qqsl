@@ -43,7 +43,7 @@ public class UeditorController {
 
 	@RequestMapping("/krpano")
 	public void download(){
-		krpanoService.makeKrpano("krpano/webwxgetmsgimg.jpg");
+		//krpanoService.makeKrpano("krpano/webwxgetmsgimg.jpg");
 	}
 
 }

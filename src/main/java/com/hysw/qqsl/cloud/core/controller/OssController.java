@@ -5,6 +5,7 @@ import java.util.*;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
+import com.hysw.qqsl.cloud.core.entity.data.PanoramaConfig;
 import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 阿里云ossController
@@ -230,4 +234,5 @@ public class OssController {
 		}
 		return MessageService.message(Message.Type.OK);
 	}
+
 }
