@@ -69,7 +69,6 @@
                 <image>
                     <cube url="$prefixPath$scene.instanceId/pano_%s.jpg" />
                 </image>
-
             </scene>
         #end
     #elseif($status == "4021")

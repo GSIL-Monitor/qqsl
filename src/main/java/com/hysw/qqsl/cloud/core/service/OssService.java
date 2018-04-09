@@ -548,8 +548,8 @@ public class OssService extends BaseService<Oss,Long>{
 					Date expiration = new Date(new Date().getTime() + 1000 * 60 * 10 );
 					GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest(bucketName, key, HttpMethod.GET);
 					req.setExpiration(expiration);
-					req.setProces(style);
-					URL signedUrl = client.generatePresignedUrl(req);
+				/*	req.setProces(style);
+					URL signedUrl = client.generatePresignedUrl(req);*/
 					file.setThumbUrl("");
 				}
 				files.add(file);

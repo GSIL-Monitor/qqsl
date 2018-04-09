@@ -4,8 +4,6 @@
 package com.hysw.qqsl.cloud.core.controller;
 
 import com.hysw.qqsl.cloud.core.ueditor.ActionEnter;
-import com.hysw.qqsl.cloud.krpano.service.KrpanoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -22,8 +20,7 @@ import java.io.PrintWriter;
 @Controller
 public class UeditorController {
 
-	@Autowired
-	private KrpanoService krpanoService;
+
 	@RequestMapping("/ueditor/config")
 //	@RequiresPermissions(value={"admin:article:add","admin:article:query","admin:article:delete","admin:article:upload"},logical=Logical.OR)
 	public void config(HttpServletRequest request, HttpServletResponse response, String action) {
@@ -39,11 +36,6 @@ public class UeditorController {
 			e.printStackTrace();
 		}
 
-	}
-
-	@RequestMapping("/krpano")
-	public void download(){
-		//krpanoService.makeKrpano("krpano/webwxgetmsgimg.jpg");
 	}
 
 }

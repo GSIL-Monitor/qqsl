@@ -65,8 +65,8 @@ public class PanoramaConfigService extends BaseService<PanoramaConfig,Long> {
         List<Scene> scenes = panoramaConfig.getScenes();
         context.put("status", scenes==null?"4101":"200");
         context.put("scenes",scenes);
-        context.put("prefixPath","dfsgsdfgs/");
-        context.put("skinPath","oss/skin.xml");
+        context.put("prefixPath","https://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/works/");
+        context.put("skinPath","/skin.xml");
         return getString(template,context);
     }
 
