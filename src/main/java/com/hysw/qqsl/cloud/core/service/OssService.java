@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
 import com.aliyun.oss.common.utils.IOUtils;
@@ -50,6 +51,8 @@ public class OssService extends BaseService<Oss,Long>{
 			.split(","));
 	private List<String> extensiones = Arrays
 			.asList(CommonAttributes.OFFICE_FILE_EXTENSION.split(","));
+	private List<String> picturePrefixs = new ArrayList<String>();
+	//JPG、JPEG、PNG
 	private static OssService ossService = null;
 
 	@Autowired
@@ -538,6 +541,17 @@ public class OssService extends BaseService<Oss,Long>{
 			file = new ObjectFile(ossObjectSummary);
 			file.setDownloadUrl(getObjectUrl(key,bucketName));
 			if (extensiones.contains(key.substring(key.lastIndexOf(".") + 1).toLowerCase()) == false) {
+				if(picturePrefixs.contains(key.substring(key.lastIndexOf(".") + 1).toLowerCase())){
+					// 图片处理样式
+					String style = "image/resize,m_fixed,w_100,h_100/rotate,90";
+					// 过期时间10分钟
+					Date expiration = new Date(new Date().getTime() + 1000 * 60 * 10 );
+					GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest(bucketName, key, HttpMethod.GET);
+					req.setExpiration(expiration);
+					req.setProces(style);
+					URL signedUrl = client.generatePresignedUrl(req);
+					file.setThumbUrl("");
+				}
 				files.add(file);
 				continue;
 			}
