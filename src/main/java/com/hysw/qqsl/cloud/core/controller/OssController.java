@@ -290,5 +290,6 @@ public class OssController {
 			response.getWriter().println(callbackFunName + "( "+results+" )");
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.flushBuffer();
+
 	}
 }
