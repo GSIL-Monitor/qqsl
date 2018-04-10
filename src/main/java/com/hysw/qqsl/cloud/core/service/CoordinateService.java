@@ -400,9 +400,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	}
 
 	private JSONObject degreeMinuteSecond2(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String a = longitude.substring(0,longitude.indexOf("°"));
@@ -428,9 +426,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	}
 
 	private JSONObject degreeMinuteSecond1(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String[] str=longitude.split(":");
@@ -452,9 +448,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	}
 
 	private JSONObject degreeMinute2(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String a = longitude.substring(0,longitude.indexOf("°"));
@@ -478,9 +472,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	}
 
 	private JSONObject degreeMinute1(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String[] str=longitude.split(":");
@@ -511,21 +503,23 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	private JSONObject planeCoordinate(String longitude, String latitude, String code) throws Exception {
 		double lon = 0.0f;
 		double lat = 0.0f;
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String str = longitude;
-		String str1 = str.substring(0, str.indexOf("."));
-		if (str1.length() == 6) {
+		if (str.contains(".")) {
+			str = str.substring(0, str.indexOf("."));
+		}
+		if (str.length() == 6) {
 			lon = Double.valueOf(str);
 		} else {
 			throw new Exception("");
 		}
 		str = latitude;
-		str1 = str.substring(0, str.indexOf("."));
-		if (str1.length() == 7) {
+		if (str.contains(".")) {
+			str = str.substring(0, str.indexOf("."));
+		}
+		if (str.length() == 7) {
 			lat = Double.valueOf(str);
 		} else {
 			throw new Exception("");
@@ -547,9 +541,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @return
 	 */
 	private JSONObject degree(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		if (Float.valueOf(longitude) > 180
