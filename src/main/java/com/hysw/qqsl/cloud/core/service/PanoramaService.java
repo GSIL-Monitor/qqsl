@@ -184,7 +184,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * @param object
      */
 
-    public boolean addPanorama(Object name, JSONObject jsonObject, Object region, Object isShare, Object info, Object images, Panorama panorama, Object object) throws IOException, InterruptedException {
+    public boolean addPanorama(Object name, JSONObject jsonObject, Object region, Object isShare, Object info, Object images, Panorama panorama, Object object) {
         panorama.setStatus(CommonEnum.Review.PENDING);
         panorama.setCoor(jsonObject.toString());
         panorama.setName(name.toString());
@@ -309,7 +309,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * @param panorama
      * @param thumbUrl
      */
-    private String cutPicture(User user, Object images, File randomFile, Panorama panorama, String thumbUrl) throws InterruptedException, IOException {
+    private String cutPicture(User user, Object images, File randomFile, Panorama panorama, String thumbUrl){
         List<JSONObject> images1 = (List<JSONObject>) images;
         String cmd =getOsName();
         boolean flag = true;
@@ -321,22 +321,22 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             scene.setFileName(name1.toString());
             scene.setInstanceId(fileName.toString().substring(0,fileName.toString().lastIndexOf(".")));
             scene.setThumbUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/panorama/" + user.getId() + "/" + scene.getInstanceId() + ".tiles/thumb.jpg");
-//            scene.setPanorama(panorama);
-//            sceneService.save(scene);
+            scene.setPanorama(panorama);
+            sceneService.save(scene);
             if (flag) {
                 thumbUrl = scene.getThumbUrl();
                 flag = false;
             }
         }
         Process p = null;
-//        try {
+        try {
             p = Runtime.getRuntime().exec(cmd);
             readCommandInfo(p);
-//        } catch (IOException e) {
-//            return null;
-//        } catch (InterruptedException e) {
-//            return null;
-//        }
+        } catch (IOException e) {
+            return null;
+        } catch (InterruptedException e) {
+            return null;
+        }
         return thumbUrl;
     }
 
@@ -385,7 +385,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                     String line1 = null;
                     while ((line1 = br1.readLine()) != null) {
                         if (line1 != null){
-                            System.out.println(line1);
                         }
                     }
                 } catch (IOException e) {
@@ -407,7 +406,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                     String line2 = null ;
                     while ((line2 = br2.readLine()) !=  null ) {
                         if (line2 != null){
-                            System.out.println(line2);
                         }
                     }
                 } catch (IOException e) {

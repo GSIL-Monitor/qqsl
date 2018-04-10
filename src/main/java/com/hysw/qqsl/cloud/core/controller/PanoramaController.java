@@ -79,7 +79,7 @@ public class PanoramaController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public @ResponseBody
-    Message add(@RequestBody Map<String,Object> objectMap) throws IOException, InterruptedException {
+    Message add(@RequestBody Map<String,Object> objectMap){
         Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
