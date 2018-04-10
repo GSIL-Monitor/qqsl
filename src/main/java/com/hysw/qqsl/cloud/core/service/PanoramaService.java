@@ -433,7 +433,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         if (osName.toLowerCase().contains("windows")) {
             cmd = "D:\\krpano\\make.bat";
         }  else if (osName.toLowerCase().contains("linux")) {
-            cmd ="/home/qqsl/krpano/make.desktop";
+            cmd ="/home/qqsl/krpano/krpanotools makepano -config=templates/vtour-normal.config";
         }
         return cmd;
     }
