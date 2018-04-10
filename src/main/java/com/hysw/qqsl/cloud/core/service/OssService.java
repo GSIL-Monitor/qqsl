@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
+import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.common.utils.IOUtils;
 import com.aliyun.oss.model.*;
 import com.aliyun.oss.model.LifecycleRule.RuleStatus;
@@ -27,6 +28,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -621,4 +623,34 @@ public class OssService extends BaseService<Oss,Long>{
 		return file.getAbsolutePath();
 	}
 
+	public JSONObject directToken() throws UnsupportedEncodingException {
+		String endpoint = "oss-cn-hangzhou.aliyuncs.com";
+		String accessId = "H6JSh0Yx0cPz2cGa";
+		String accessKey = "0joCPK6L1S0KLxCnOwD2Gm3wulC7vG";
+		String bucket = "qqsl";
+		String dir = "panorama/";
+		String host = "http://" + bucket + "." + endpoint;
+		OSSClient client = new OSSClient(endpoint, accessId, accessKey);
+		long expireTime = 30;
+		long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
+		Date expiration = new Date(expireEndTime);
+		PolicyConditions policyConds = new PolicyConditions();
+		policyConds.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, 0, 1048576000);
+		policyConds.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, dir);
+
+		String postPolicy = client.generatePostPolicy(expiration, policyConds);
+		byte[] binaryData = postPolicy.getBytes("utf-8");
+		String encodedPolicy = BinaryUtil.toBase64String(binaryData);
+		String postSignature = client.calculatePostSignature(postPolicy);
+
+		Map<String, String> respMap = new LinkedHashMap<String, String>();
+		respMap.put("accessid", accessId);
+		respMap.put("policy", encodedPolicy);
+		respMap.put("signature", postSignature);
+		//respMap.put("expire", formatISO8601Date(expiration));
+		respMap.put("prefix", dir);
+		respMap.put("host", host);
+		respMap.put("expire", String.valueOf(expireEndTime / 1000));
+		return JSONObject.fromObject(respMap);
+	}
 }

@@ -274,7 +274,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * @param fileName
      */
     private boolean uploadCutPicture(String fileName) {
-        String str = "D:\\qqsl\\out\\production\\resources\\panorama\\" + fileName + "\\vtour\\panos";
+        String str = path + fileName + "\\vtour\\panos";
         try {
             traverseFolder(str,str.length());
         } catch (FileNotFoundException e) {
