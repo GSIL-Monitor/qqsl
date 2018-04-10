@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
@@ -609,6 +610,15 @@ public class OssService extends BaseService<Oss,Long>{
 	public InputStream downloadFile(String bucketName, String key)throws OSSException{
 		OSSObject ossObject = client.getObject(bucketName, key);
 		return ossObject.getObjectContent();
+	}
+
+	public String downloadFileToLocal(String key, String path){
+// 下载object到文件
+		File file=new File(path);
+		client.getObject(new GetObjectRequest("qqsl", "panorama/"+key), file);
+// 关闭client
+//		ossClient.shutdown();
+		return file.getAbsolutePath();
 	}
 
 }

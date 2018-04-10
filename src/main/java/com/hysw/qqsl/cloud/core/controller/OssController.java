@@ -1,7 +1,12 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import java.io.IOException;
 import java.util.*;
 
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.common.utils.BinaryUtil;
+import com.aliyun.oss.model.MatchMode;
+import com.aliyun.oss.model.PolicyConditions;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
@@ -10,6 +15,7 @@ import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -17,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 阿里云ossController
@@ -229,5 +238,57 @@ public class OssController {
 			}
 		}
 		return MessageService.message(Message.Type.OK);
+	}
+
+//	@RequiresAuthentication
+	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
+//	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	public @ResponseBody void directToken(HttpServletRequest request, HttpServletResponse response) {
+		String endpoint = "oss-cn-hangzhou.aliyuncs.com";
+		String accessId = "H6JSh0Yx0cPz2cGa";
+		String accessKey = "0joCPK6L1S0KLxCnOwD2Gm3wulC7vG";
+		String bucket = "qqsl";
+		String dir = "panorama/";
+		String host = "http://" + bucket + "." + endpoint;
+		OSSClient client = new OSSClient(endpoint, accessId, accessKey);
+		try {
+			long expireTime = 30;
+			long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
+			Date expiration = new Date(expireEndTime);
+			PolicyConditions policyConds = new PolicyConditions();
+			policyConds.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, 0, 1048576000);
+			policyConds.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, dir);
+
+			String postPolicy = client.generatePostPolicy(expiration, policyConds);
+			byte[] binaryData = postPolicy.getBytes("utf-8");
+			String encodedPolicy = BinaryUtil.toBase64String(binaryData);
+			String postSignature = client.calculatePostSignature(postPolicy);
+
+			Map<String, String> respMap = new LinkedHashMap<String, String>();
+			respMap.put("accessid", accessId);
+			respMap.put("policy", encodedPolicy);
+			respMap.put("signature", postSignature);
+			//respMap.put("expire", formatISO8601Date(expiration));
+			respMap.put("prefix", dir);
+			respMap.put("host", host);
+			respMap.put("expire", String.valueOf(expireEndTime / 1000));
+			JSONObject ja1 = JSONObject.fromObject(respMap);
+			System.out.println(ja1.toString());
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.setHeader("Access-Control-Allow-Methods", "GET, POST");
+			response(request, response, ja1.toString());
+		} catch (Exception e) {
+            Assert.fail(e.getMessage());
+		}
+	}
+
+	private void response(HttpServletRequest request, HttpServletResponse response, String results) throws IOException {
+		String callbackFunName = request.getParameter("callback");
+		if (callbackFunName==null || callbackFunName.equalsIgnoreCase(""))
+			response.getWriter().println(results);
+		else
+			response.getWriter().println(callbackFunName + "( "+results+" )");
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.flushBuffer();
 	}
 }

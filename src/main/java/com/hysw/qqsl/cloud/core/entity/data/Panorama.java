@@ -1,12 +1,13 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
 
-import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 全景实体类
@@ -25,6 +26,14 @@ public class Panorama extends  BaseEntity {
 
     /** 名称 */
     private String name;
+    /** 简介 */
+    private String info;
+    /** 唯一编码 */
+    private String instanceId;
+    /** 缩略图 */
+    private String thumbUrl;
+    /** 是否共享 */
+    private Boolean isShare;
     /** 坐标 */
     private String coor;
     /** 行政区 */
@@ -35,14 +44,15 @@ public class Panorama extends  BaseEntity {
     private String advice;
     /** 审核时间 */
     private Date reviewDate;
-    /** 是否共享 */
-    private Boolean isShare;
-    /** 图片 */
-    private String picture;
+    /** 热点信息 */
+    private String hotspot;
+    /** 起始视角 */
+    private String angleOfView;
     /** 用户id */
     private Long userId;
-    /** 拍摄时间 */
-    private Date shootDate;
+    /** 子账户id */
+    private Long accountId;
+    List<Scene> scenes = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -50,6 +60,38 @@ public class Panorama extends  BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
+
+    public String getThumbUrl() {
+        return thumbUrl;
+    }
+
+    public void setThumbUrl(String thumbUrl) {
+        this.thumbUrl = thumbUrl;
+    }
+
+    public Boolean getShare() {
+        return isShare;
+    }
+
+    public void setShare(Boolean share) {
+        isShare = share;
     }
 
     public String getCoor() {
@@ -92,20 +134,20 @@ public class Panorama extends  BaseEntity {
         this.reviewDate = reviewDate;
     }
 
-    public Boolean getShare() {
-        return isShare;
+    public String getHotspot() {
+        return hotspot;
     }
 
-    public void setShare(Boolean share) {
-        isShare = share;
+    public void setHotspot(String hotspot) {
+        this.hotspot = hotspot;
     }
 
-    public String getPicture() {
-        return picture;
+    public String getAngleOfView() {
+        return angleOfView;
     }
 
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public void setAngleOfView(String angleOfView) {
+        this.angleOfView = angleOfView;
     }
 
     public Long getUserId() {
@@ -116,11 +158,21 @@ public class Panorama extends  BaseEntity {
         this.userId = userId;
     }
 
-    public Date getShootDate() {
-        return shootDate;
+    public Long getAccountId() {
+        return accountId;
     }
 
-    public void setShootDate(Date shootDate) {
-        this.shootDate = shootDate;
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    @OneToMany(mappedBy="panorama", fetch=FetchType.LAZY , cascade={CascadeType.PERSIST})
+    @JsonIgnore
+    public List<Scene> getScenes() {
+        return scenes;
+    }
+
+    public void setScenes(List<Scene> scenes) {
+        this.scenes = scenes;
     }
 }

@@ -117,7 +117,9 @@ public class Message implements Serializable{
 		/** 订单未支付，比如删除一个未支付的订单，返回这个错误。*/
 		TRADE_NOPAY(4083),
 		/** 子账号信息不全，比如子账号刚注册，没有完善昵称、真实姓名等信息，这时候对子账号在协同工作分配项目，返回这个错误。*/
-		ACCOUNT_NOINFO(4090);
+		ACCOUNT_NOINFO(4090),
+		/** 切图失败 */
+		PANORAMA_SLICE_ERROE(4103);
 		//必须增加一个构造函数,变量,得到该变量的值
 		private int  status=0;
 		private Type(int status) {
