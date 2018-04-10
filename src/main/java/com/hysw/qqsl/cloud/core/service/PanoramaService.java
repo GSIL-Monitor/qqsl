@@ -202,8 +202,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panorama.setRegion(region.toString());
         panorama.setInfo(info.toString());
         panorama.setInstanceId(DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis())));
-        save(panorama);
-        flush();
         String thumbUrl = null;
         if (images != null) {
             if (path == null || path.length() == 0) {
