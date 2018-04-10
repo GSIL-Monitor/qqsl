@@ -321,8 +321,8 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             scene.setFileName(name1.toString());
             scene.setInstanceId(fileName.toString().substring(0,fileName.toString().lastIndexOf(".")));
             scene.setThumbUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/panorama/" + user.getId() + "/" + scene.getInstanceId() + ".tiles/thumb.jpg");
-            scene.setPanorama(panorama);
-            sceneService.save(scene);
+//            scene.setPanorama(panorama);
+//            sceneService.save(scene);
             if (flag) {
                 thumbUrl = scene.getThumbUrl();
                 flag = false;
