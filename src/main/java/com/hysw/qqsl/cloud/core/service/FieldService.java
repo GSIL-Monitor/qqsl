@@ -7,6 +7,9 @@ import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
 import com.hysw.qqsl.cloud.core.entity.build.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.poi.hssf.usermodel.*;
@@ -15,6 +18,7 @@ import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -23,7 +27,9 @@ import java.util.*;
  * Created by chenl on 17-4-13.
  */
 @Service("fieldService")
-public class FieldService {
+public class FieldService implements Serializable {
+    private static final long serialVersionUID = -9100968677794664521L;
+
     @Autowired
     private BuildGroupService buildGroupService;
     @Autowired
@@ -34,6 +40,7 @@ public class FieldService {
     private CoordinateService coordinateService;
     @Autowired
     private TransFromService transFromService;
+    private Workbook workbook;
 
 
     public boolean saveField(Map<String, Object> objectMap) {
@@ -441,7 +448,7 @@ public class FieldService {
         }
         String code = transFromService.checkCode84(central);
         writeCoordinateToExcel(jsonArray,wb,source,code,wgs84Type);
-        writeBuildToExcel(map,wb,code,wgs84Type);
+        writeBuildToExcel(map,wb,code,wgs84Type,false);
         return wb;
     }
 
@@ -529,7 +536,7 @@ public class FieldService {
             }
         }
         writeDesignCoordinateToExcel(map, wb, code,wgs84Type);
-    }
+}
 
     /**
      * 设计数据写入excel
@@ -612,7 +619,15 @@ public class FieldService {
         cell.setCellStyle(style);
         cell = row.createCell(1);
         if (b != null) {
+//            CellStyle style1 = sheet.getWorkbook().createCellStyle();
+//            if (a!=null&&a.equals("描述")) {
+//                style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+//                Font font = sheet.getWorkbook().createFont();
+//                font.setColor(Font.COLOR_RED);
+//                style1.setFont(font);
+//            }
             cell.setCellValue(b);
+//            cell.setCellStyle(style1);
         }
         cell.setCellStyle(style);
         cell = row.createCell(2);
@@ -725,28 +740,155 @@ public class FieldService {
         return list;
     }
 
-    public JSONObject getModelType() {
-        JSONObject jsonObject = new JSONObject();
-        List<String> line = new LinkedList<>(),area = new LinkedList<>(),builds = new LinkedList<>();
-        String[] typelinec = CommonAttributes.TYPELINEC;
-        String[] typeareac = CommonAttributes.TYPEAREAC;
-        String[] basetypec = CommonAttributes.BASETYPEC;
-        for (String s : typelinec) {
-            line.add(s);
+    public JSONArray getModelType() {
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < CommonAttributes.TYPELINEC.length; i++) {
+            jsonArray.add("{\"baseType\":\"" + "line" + "\",\"type\":\"" + CommonAttributes.TYPELINEE[i] + "\",\"name\":\"" + CommonAttributes.TYPELINEC[i] + "\"}");
         }
-        jsonObject.put("line",line);
-        for (String s : typeareac) {
-            area.add(s);
+        for (int i = 0; i < CommonAttributes.TYPEAREAC.length; i++) {
+            jsonArray.add("{\"baseType\":\"" + "area" + "\",\"type\":\"" + CommonAttributes.TYPEAREAE[i] + "\",\"name\":\"" + CommonAttributes.TYPEAREAC[i] + "\"}");
         }
-        jsonObject.put("area",area);
-        for (String s : basetypec) {
-            if (SettingUtils.stringMatcher(s, line.toString())||SettingUtils.stringMatcher(s, area.toString())) {
+        for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
+            if (SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPELINEC))||SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPEAREAC))) {
                 continue;
             }
-            builds.add(s);
+            jsonArray.add("{\"baseType\":\"" + "builds" + "\",\"type\":\"" + CommonAttributes.BASETYPEE[i] + "\",\"name\":\"" + CommonAttributes.BASETYPEC[i] + "\"}");
         }
-        jsonObject.put("builds",builds);
-        return jsonObject;
+        return jsonArray;
+    }
+
+    /**
+     * 构建模板
+     * @param list
+     * @return
+     */
+    public Workbook downloadModel(List<String> list) {
+        Workbook wb = new HSSFWorkbook();
+        List<Build> builds = buildGroupService.getBuilds();
+        List<Build> builds1 = new LinkedList<>();
+        List<String> lineAera = new LinkedList<>();
+        for (String s : list) {
+            if (SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPELINEE)) || SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPEAREAE))) {
+                lineAera.add(s);
+            } else {
+                for (Build build : builds) {
+                    if (build.getType().toString().equals(s)) {
+                        builds1.add((Build) SettingUtils.objectCopy(build));
+                    }
+                }
+            }
+        }
+        Map<CommonEnum.CommonType, List<Build>> map = groupBuild(builds1);
+        writeLineAreaModel(wb,lineAera);
+        writeBuildModel(wb,map,true);
+        return wb;
+    }
+
+    /**
+     * 构建线面模板
+     * @param wb
+     * @param lineArea
+     */
+    private void writeLineAreaModel(Workbook wb, List<String> lineArea) {
+        for (String s : lineArea) {
+            Sheet sheet = null;
+            Row row = null;
+            Cell cell = null;
+            WriteExecl we = new WriteExecl();
+            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
+                if (CommonAttributes.BASETYPEE[i].equals(s)) {
+                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+                    break;
+                }
+            }
+            CellStyle style = wb.createCellStyle();
+            style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            writeToCell(sheet, row, cell, style, we, "描述", null, null, null, null);
+            writeToCell(sheet, row, cell, style, we, "经度", "纬度", "高程", "类型", "描述");
+        }
+    }
+
+    /**
+     * 构建建筑物模板
+     * @param map
+     * @param wb
+     */
+    private void writeBuildModel(Workbook wb, Map<CommonEnum.CommonType, List<Build>> map,boolean flag1) {
+        Row row = null;
+        Cell cell = null;
+        boolean flag;
+        final String[] num = {"一","二","三","四","五","六","七"};
+        for (Map.Entry<CommonEnum.CommonType, List<Build>> entry : map.entrySet()) {
+            Sheet sheet = null;
+            WriteExecl we = new WriteExecl();
+            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
+                if (CommonAttributes.BASETYPEE[i].equals(entry.getKey().toString())) {
+                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+                    break;
+                }
+            }
+            List<Build>  builds= entry.getValue();
+            flag = true;
+            for (int i = 0; i < builds.size(); i++) {
+                flag = false;
+                CellStyle style1 = wb.createCellStyle();
+                style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+                Font font1 = wb.createFont();
+                font1.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+                font1.setFontName("宋体");//设置字体名称
+                style1.setFont(font1);
+                style1.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
+                style1.setBorderBottom(HSSFCellStyle.BORDER_THIN);//下边框
+                style1.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
+                style1.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+                writeToCell(sheet,row,cell,style1,we,"编号","名称","单位","值",null,true);
+
+                CellStyle style = wb.createCellStyle();
+                style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+                Font font = wb.createFont();
+                font.setFontName("宋体");//设置字体名称
+                style.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
+                style.setBorderBottom(HSSFCellStyle.BORDER_THIN);//下边框
+                style.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
+                style.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+                style.setFont(font);
+                //坐标头
+                writeToCell(sheet,row,cell,style,we,num[0],"坐标",null,null,null,true);
+                writeToCell(sheet,row,cell,style,we,"1","中心点","经度,纬度,高程",null,"coor1",true);
+                writeToCell(sheet,row,cell,style,we,"2","定位点","经度,纬度,高程",null,"coor2",true);
+
+                int n = 1;
+                writeToCell(sheet,row,cell,style,we,num[n++],"描述",null,builds.get(i).getRemark(),"remark",true);
+                int aa = we.getIndex();
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getMaterAttribeGroup(),num[n],false,true,flag1);
+                if (aa != we.getIndex()) {
+                    n++;
+                    aa = we.getIndex();
+                }
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getHydraulicsAttribeGroup(),num[n],false,true,flag1);
+                if (aa != we.getIndex()) {
+                    n++;
+                    aa = we.getIndex();
+                }
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getDimensionsAttribeGroup(),num[n],false,true,flag1);
+                if (aa != we.getIndex()) {
+                    n++;
+                    aa = we.getIndex();
+                }
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getStructureAttribeGroup(),num[n],false,true,flag1);
+                if (aa != we.getIndex()) {
+                    n++;
+                    aa = we.getIndex();
+                }
+            }
+            int max = we.getMax();
+            while (we.getIndex() <= max) {
+                sheet.removeRow(sheet.createRow(we.getIndexAdd()));
+            }
+            if (flag) {
+                wb.removeSheetAt(wb.getSheetIndex(sheet.getSheetName()));
+            }
+        }
     }
 
     /**
@@ -787,7 +929,7 @@ public class FieldService {
      * @param code
      * @param wgs84Type
      */
-    void writeBuildToExcel(Map<CommonEnum.CommonType, List<Build>> map, Workbook wb, String code, Coordinate.WGS84Type wgs84Type) {
+    void writeBuildToExcel(Map<CommonEnum.CommonType, List<Build>> map, Workbook wb, String code, Coordinate.WGS84Type wgs84Type,boolean flag1) {
         Row row = null;
         Cell cell = null;
         boolean flag;
@@ -857,28 +999,27 @@ public class FieldService {
                     writeToCell(sheet,row,cell,style,we,num[n++],"描述",null,builds.get(i).getRemark(),"remark",true);
                 }
                 int aa = we.getIndex();
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getMaterAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getMaterAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getHydraulicsAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getHydraulicsAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getDimensionsAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getDimensionsAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getStructureAttribeGroup(),num[n],false,true);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getStructureAttribeGroup(),num[n],false,true,flag1);
                 if (aa != we.getIndex()) {
                     n++;
                     aa = we.getIndex();
                 }
-
-                writeToExcel(style, sheet, row, cell, we, builds.get(i).getGeologyAttribeGroup(),num[n],false,false);
+                writeToExcel(style, sheet, row, cell, we, builds.get(i).getGeologyAttribeGroup(),num[n],false,false,flag1);
 
 //                a++;
 //                CellStyle style2 = wb.createCellStyle();
@@ -962,7 +1103,7 @@ public class FieldService {
      * @param isComment
      * @return
      */
-    boolean writeToExcel(CellStyle style, Sheet sheet, Row row, Cell cell, WriteExecl we, AttribeGroup attribeGroup,String sign,boolean flag,boolean isComment) {
+    boolean writeToExcel(CellStyle style, Sheet sheet, Row row, Cell cell, WriteExecl we, AttribeGroup attribeGroup,String sign,boolean flag,boolean isComment,boolean flag3) {
         if (attribeGroup == null) {
             return false;
         }
@@ -976,7 +1117,7 @@ public class FieldService {
         int a =0;
         if (attribeGroup.getAttribes() != null) {
             for (int j = 0; j < attribeGroup.getAttribes().size(); j++) {
-                if (attribeGroup.getAttribes().get(j).getValue() != null && !attribeGroup.getAttribes().get(j).getValue().equals("")) {
+                if ((attribeGroup.getAttribes().get(j).getValue() != null && !attribeGroup.getAttribes().get(j).getValue().equals(""))||flag3) {
                     flag = true;
                     if (attribeGroup.getName().equals(attribeGroup.getAttribes().get(j).getName())) {
                         flag = true;
@@ -1042,7 +1183,7 @@ public class FieldService {
 
                     }
                 }
-                flag1=writeToExcel(style, sheet, row, cell, we, attribeGroup.getChilds().get(i),sss,false,isComment);
+                flag1=writeToExcel(style, sheet, row, cell, we, attribeGroup.getChilds().get(i),sss,false,isComment,flag3);
 //                flag = true;
                 if (flag1) {
                     flag2 = true;

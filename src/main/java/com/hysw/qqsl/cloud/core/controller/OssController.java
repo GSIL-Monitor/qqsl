@@ -1,16 +1,22 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.common.utils.BinaryUtil;
+import com.aliyun.oss.model.MatchMode;
+import com.aliyun.oss.model.PolicyConditions;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
-import com.hysw.qqsl.cloud.core.entity.data.PanoramaConfig;
 import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -235,4 +241,14 @@ public class OssController {
 		return MessageService.message(Message.Type.OK);
 	}
 
+	@RequiresAuthentication
+	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
+	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	public @ResponseBody Message directToken(){
+		try {
+			return MessageService.message(Message.Type.OK, ossService.directToken());
+		} catch (UnsupportedEncodingException e) {
+			return MessageService.message(Message.Type.FAIL);
+		}
+	}
 }

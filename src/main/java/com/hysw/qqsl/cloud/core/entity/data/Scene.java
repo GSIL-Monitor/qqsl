@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -37,7 +38,11 @@ public class Scene extends BaseEntity{
      */
     private String instanceId;
 
-    private PanoramaConfig panoramaConfig;
+    /**
+     * 全景
+     */
+    private Panorama panorama;
+
 
     public String getFileName() {
         return fileName;
@@ -46,6 +51,7 @@ public class Scene extends BaseEntity{
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
 
     public String getOriginUrl() {
         return originUrl;
@@ -71,12 +77,12 @@ public class Scene extends BaseEntity{
         this.instanceId = instanceId;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    public PanoramaConfig getPanoramaConfig() {
-        return panoramaConfig;
+    @ManyToOne(fetch=FetchType.EAGER)
+    public Panorama getPanorama() {
+        return panorama;
     }
 
-    public void setPanoramaConfig(PanoramaConfig panoramaConfig) {
-        this.panoramaConfig = panoramaConfig;
+    public void setPanorama(Panorama panorama) {
+        this.panorama = panorama;
     }
 }
