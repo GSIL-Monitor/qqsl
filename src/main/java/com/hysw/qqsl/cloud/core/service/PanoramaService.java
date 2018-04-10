@@ -184,7 +184,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * @param object
      */
 
-    public boolean addPanorama(Object name, JSONObject jsonObject, Object region, Object isShare, Object info, Object images, Panorama panorama, Object object)  {
+    public boolean addPanorama(Object name, JSONObject jsonObject, Object region, Object isShare, Object info, Object images, Panorama panorama, Object object) throws IOException, InterruptedException {
         panorama.setStatus(CommonEnum.Review.PENDING);
         panorama.setCoor(jsonObject.toString());
         panorama.setName(name.toString());
@@ -309,7 +309,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * @param panorama
      * @param thumbUrl
      */
-    private String cutPicture(User user, Object images, File randomFile, Panorama panorama, String thumbUrl){
+    private String cutPicture(User user, Object images, File randomFile, Panorama panorama, String thumbUrl) throws InterruptedException, IOException {
         List<JSONObject> images1 = (List<JSONObject>) images;
         String cmd =getOsName();
         boolean flag = true;
@@ -329,14 +329,14 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             }
         }
         Process p = null;
-        try {
+//        try {
             p = Runtime.getRuntime().exec(cmd);
             readCommandInfo(p);
-        } catch (IOException e) {
-            return null;
-        } catch (InterruptedException e) {
-            return null;
-        }
+//        } catch (IOException e) {
+//            return null;
+//        } catch (InterruptedException e) {
+//            return null;
+//        }
         return thumbUrl;
     }
 

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -78,7 +79,7 @@ public class PanoramaController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public @ResponseBody
-    Message add(@RequestBody Map<String,Object> objectMap) {
+    Message add(@RequestBody Map<String,Object> objectMap) throws IOException, InterruptedException {
         Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
