@@ -241,9 +241,9 @@ public class OssController {
 		return MessageService.message(Message.Type.OK);
 	}
 
-//	@RequiresAuthentication
+	@RequiresAuthentication
 	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
-//	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
 	public @ResponseBody Message directToken(){
 		try {
 			return MessageService.message(Message.Type.OK, ossService.directToken());

@@ -643,7 +643,7 @@ public class OssService extends BaseService<Oss,Long>{
 		String encodedPolicy = BinaryUtil.toBase64String(binaryData);
 		String postSignature = client.calculatePostSignature(postPolicy);
 
-		Map<String, String> respMap = new LinkedHashMap<String, String>();
+		Map<String, String> respMap = new LinkedHashMap<>();
 		respMap.put("accessid", accessId);
 		respMap.put("policy", encodedPolicy);
 		respMap.put("signature", postSignature);

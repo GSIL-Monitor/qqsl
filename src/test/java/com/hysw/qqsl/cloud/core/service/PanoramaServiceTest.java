@@ -10,9 +10,15 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.Map;
+import java.util.Properties;
 
 
 /**
@@ -87,6 +93,19 @@ public class PanoramaServiceTest extends BaseTest {
         if (!file.exists()) {
             file.mkdirs();
         }
+    }
+
+    @Test
+    public void test(){
+        Properties props=System.getProperties(); //获得系统属性集
+        String osName = props.getProperty("os.name"); //操作系统名称
+        if (osName.toLowerCase().contains("windows")) {
+            System.out.println("windows");
+        }  else if (osName.toLowerCase().contains("linux")) {
+            System.out.println("linux");
+        }
+        String path = this.getClass().getClassLoader().getResource("/").getPath();
+        System.out.println();
     }
 
 }

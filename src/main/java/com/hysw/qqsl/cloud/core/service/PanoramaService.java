@@ -17,10 +17,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by chenl on 17-1-9.
@@ -274,7 +271,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * @param fileName
      */
     private boolean uploadCutPicture(String fileName) {
-        String str = path + fileName + "\\vtour\\panos";
+        String str = path+System.getProperty("file.separator") + fileName + System.getProperty("file.separator")+"vtour"+System.getProperty("file.separator")+"panos";
         try {
             traverseFolder(str,str.length());
         } catch (FileNotFoundException e) {
@@ -292,7 +289,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        path = path.substring(0, path.lastIndexOf("\\"))+"\\panorama";
+        path = path.substring(0, path.lastIndexOf(System.getProperty("file.separator"))) + System.getProperty("file.separator")+"panorama";
         File file = new File(path);
         if (!file.exists()) {
             file.mkdirs();
@@ -309,12 +306,12 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      */
     private String cutPicture(User user, Object images, File randomFile, Panorama panorama, String thumbUrl){
         List<JSONObject> images1 = (List<JSONObject>) images;
-        String cmd = "C:\\Users\\Administrator\\Desktop\\krpano-1.19-pr10-win\\make.bat";
+        String cmd =getOsName();
         boolean flag = true;
         for (JSONObject jsonObject : images1) {
             Object fileName = jsonObject.get("fileName");
             Object name1 = jsonObject.get("name");
-            cmd += " " + ossService.downloadFileToLocal(user.getId() + "/" + fileName, randomFile.getAbsolutePath()+"\\"+fileName.toString());
+            cmd += " " + ossService.downloadFileToLocal(user.getId() + "/" + fileName, randomFile.getAbsolutePath()+System.getProperty("file.separator")+fileName.toString());
             Scene scene = new Scene();
             scene.setFileName(name1.toString());
             scene.setInstanceId(fileName.toString().substring(0,fileName.toString().lastIndexOf(".")));
@@ -363,7 +360,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
 
     protected File createRandomDir(){
         UUID uuid = UUID.randomUUID();
-        File file = new File(path+"\\"+DigestUtils.md5Hex(uuid.toString()));
+        File file = new File(path+System.getProperty("file.separator")+DigestUtils.md5Hex(uuid.toString()));
         file.mkdir();
         return file;
     }
@@ -420,4 +417,15 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         p.destroy();
     }
 
+    public String getOsName(){
+        String cmd = "";
+        Properties props=System.getProperties(); //获得系统属性集
+        String osName = props.getProperty("os.name"); //操作系统名称
+        if (osName.toLowerCase().contains("windows")) {
+            cmd = "D:\\krpano\\make.bat";
+        }  else if (osName.toLowerCase().contains("linux")) {
+            cmd ="home/qqsl/krpano/make.bat";
+        }
+        return cmd;
+    }
 }
