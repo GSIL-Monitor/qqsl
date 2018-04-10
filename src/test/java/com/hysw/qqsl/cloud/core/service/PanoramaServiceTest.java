@@ -31,7 +31,7 @@ public class PanoramaServiceTest extends BaseTest {
     @Autowired
     private OssService ossService;
     @Test
-    public void testCreatePanorama(){
+    public void testCreatePanorama() throws IOException, InterruptedException {
         String str = "{\"name\":\"全景名称1111111111\",\"info\":\"全景描述2222222222222222\",\"coor\":\"103.77645101765913,36.05377593481913,0\",\"isShare\":\"true\",\"region\":\"中国甘肃省兰州市七里河区兰工坪南街190号 邮政编码: 730050\",\"images\":[{\"name\":\"001-西宁\", \"fileName\":\"1522811870947bik.jpg\"},{\"name\":\"333-西安\",\"fileName\":\"152281187095756l.jpg\"}]}";
         Map<String, Object> map =JSONObject.fromObject(str);
         User user = new User();
