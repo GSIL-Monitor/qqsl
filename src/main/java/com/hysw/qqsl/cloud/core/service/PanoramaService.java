@@ -222,10 +222,11 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             uploadCutPicture(randomFile.getName());
             thumbUrl = sceneService.saveScene(user, panorama, images1);
             delAllFile(path);
+            panorama.setThumbUrl(thumbUrl);
+            save(panorama);
+            return "OK";
         }
-        panorama.setThumbUrl(thumbUrl);
-        save(panorama);
-        return "OK";
+        return "PANORAMA_NO_SCENE";
     }
 
     /**
