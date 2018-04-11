@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud;
 
+import com.alipay.api.domain.Picture;
 import com.hysw.qqsl.cloud.pay.service.aliPay.AliPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -76,6 +77,8 @@ public final class CommonAttributes {
     public static final int OPENOFFICE_PORT = 8100;
     public static final String OFFICE_FILE_EXTENSION = "doc,docx,xls,xlsx,ppt,pptx";
     public static final String GET_FILE = "1,11,12,13,14,15,23,24,25,3,31,4";
+    /**常用图片后缀 */
+    public static final String PICTURE_FILE_EXTENSION = "jpg,jpeg,png,gif";
     /**
      * 短信服务
      */

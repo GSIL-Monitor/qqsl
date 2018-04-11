@@ -264,4 +264,12 @@ public class OssController {
 			return MessageService.message(Message.Type.FAIL);
 		}
 	}
+
+	@RequestMapping(value = "/getPng", method = RequestMethod.GET)
+	public @ResponseBody Message directToken11(){
+		//ossService.getThumbUrl();
+		return new Message(Message.Type.OK,null);
+	}
+
+
 }
