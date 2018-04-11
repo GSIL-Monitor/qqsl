@@ -27,11 +27,11 @@ public class SceneServiceTest extends BaseTest {
     @Test
     public void testSave(){
         Panorama panorama = read();
-        if(panorama.getScenes()==null){
+        if(panorama.getScenes()==null||panorama.getScenes().size()==0){
             Scene scene = new Scene();
             scene.setFileName("666(1)");
             scene.setThumbUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/works/75c116470f1a1e3b/thumb.jpg");
-            scene.setInstanceId("75c116470f1a1e3b");
+             scene.setInstanceId("75c116470f1a1e3b");
             scene.setOriginUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/sourceimg/1522044969009cco.jpg");
             scene.setPanorama(panorama);
             sceneService.save(scene);

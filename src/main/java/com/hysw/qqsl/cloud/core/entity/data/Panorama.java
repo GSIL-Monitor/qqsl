@@ -62,6 +62,8 @@ public class Panorama extends  BaseEntity {
         this.name = name;
     }
 
+    @Basic(fetch = FetchType.EAGER)
+    @Column(length = 2048)
     public String getInfo() {
         return info;
     }
@@ -117,7 +119,8 @@ public class Panorama extends  BaseEntity {
     public void setStatus(CommonEnum.Review status) {
         this.status = status;
     }
-
+    @Basic(fetch = FetchType.EAGER)
+    @Column(length = 2048)
     public String getAdvice() {
         return advice;
     }
@@ -133,7 +136,8 @@ public class Panorama extends  BaseEntity {
     public void setReviewDate(Date reviewDate) {
         this.reviewDate = reviewDate;
     }
-
+    @Basic(fetch = FetchType.EAGER)
+    @Column(columnDefinition = "text")
     public String getHotspot() {
         return hotspot;
     }
@@ -142,6 +146,8 @@ public class Panorama extends  BaseEntity {
         this.hotspot = hotspot;
     }
 
+    @Basic(fetch = FetchType.EAGER)
+    @Column(columnDefinition = "text")
     public String getAngleOfView() {
         return angleOfView;
     }
@@ -175,4 +181,6 @@ public class Panorama extends  BaseEntity {
     public void setScenes(List<Scene> scenes) {
         this.scenes = scenes;
     }
+
+
 }

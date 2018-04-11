@@ -43,7 +43,7 @@ public class PanoramaController {
         writer(httpResponse,tourStr);
     }
 
-    @RequestMapping(value = "/skin.xml", method = RequestMethod.GET,produces="application/xml; charset=UTF-8")
+    @RequestMapping(value = "/tour.xml/skin.xml", method = RequestMethod.GET,produces="application/xml; charset=UTF-8")
     public
     @ResponseBody
     void getskin(HttpServletResponse httpResponse) {
