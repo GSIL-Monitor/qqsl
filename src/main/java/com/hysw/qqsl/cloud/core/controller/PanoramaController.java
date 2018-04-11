@@ -12,11 +12,14 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -49,6 +52,32 @@ public class PanoramaController {
     void getskin(HttpServletResponse httpResponse) {
         String skinStr = panoramaService.getSkin();
         writer(httpResponse,skinStr);
+    }
+    @RequestMapping(value = "/tour.xml/vtourskin.png", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    void getsPng(HttpServletResponse httpResponse) {
+        httpResponse.setContentType("image/*");
+        FileInputStream fis = null;
+        OutputStream os = null;
+        try {
+            fis = new FileInputStream("/home/leinuo/pic/vtourskin.png");
+            os = httpResponse.getOutputStream();
+            int count = 0;
+            byte[] buffer = new byte[1024 * 8];
+            while ((count = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, count);
+                os.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            fis.close();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     private void writer(HttpServletResponse httpResponse,String xmlStr){
         try {

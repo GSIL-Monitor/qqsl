@@ -490,6 +490,30 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         return getString(template,context);
     }
 
+    public String getPng(){
+        FileInputStream fis = null;
+        OutputStream os = null;
+        try {
+            fis = new FileInputStream("/home/pic/vtourskin.png");
+            return fis.toString();
+           /* os = response.getOutputStream();
+            int count = 0;
+            byte[] buffer = new byte[1024 * 8];
+            while ((count = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, count);
+                os.flush();
+            }*/
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    };
+
     public String getString(Template template ,VelocityContext context){
         try {
             //生成xml
