@@ -27,7 +27,7 @@ public class Account extends BaseEntity {
     private static final long serialVersionUID = 5684132177393981035L;
 
     /** 所属user */
-    private List<User> users = new ArrayList<>();
+    private User user;
     /** 真实姓名 */
     private String name;
     /** 登陆名 */
@@ -57,14 +57,13 @@ public class Account extends BaseEntity {
     /** 子账号的登录方式 */
     private String loginType;
 
-    @ManyToMany
-    @JoinTable(name = "user_account",joinColumns = {@JoinColumn(name = "account_id")},inverseJoinColumns = {@JoinColumn(name = "user_id")})
-    public List<User> getUsers() {
-        return users;
+    @ManyToOne(fetch = FetchType.EAGER)
+    public User getUser() {
+        return user;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @NotEmpty
