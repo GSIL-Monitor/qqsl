@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -78,7 +79,7 @@ public class PanoramaController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public @ResponseBody
-    Message add(@RequestBody Map<String,Object> objectMap) {
+    Message add(@RequestBody Map<String,Object> objectMap){
         Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
@@ -113,7 +114,7 @@ public class PanoramaController {
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/add1", method = RequestMethod.GET)
-    public @ResponseBody Message add1() {
+    public @ResponseBody Message add1() throws IOException, InterruptedException {
         String str = "{\"name\":\"全景名称1111111111\",\"info\":\"全景描述2222222222222222\",\"coor\":\"103.77645101765913,36.05377593481913,0\",\"isShare\":\"true\",\"region\":\"中国甘肃省兰州市七里河区兰工坪南街190号 邮政编码: 730050\",\"images\":[{\"name\":\"001-西宁\", \"fileName\":\"1522811870947bik.jpg\"},{\"name\":\"333-西安\",\"fileName\":\"152281187095756l.jpg\"}]}";
         Map<String, Object> map =JSONObject.fromObject(str);
         User user = new User();

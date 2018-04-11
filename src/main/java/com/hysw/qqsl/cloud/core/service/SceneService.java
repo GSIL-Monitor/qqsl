@@ -15,7 +15,6 @@ public class SceneService  extends BaseService<Scene, Long> {
 
     @Autowired
     private SceneDao sceneDao;
-
     @Autowired
     public void setBaseDao(SceneDao sceneDao) {
         super.setBaseDao(sceneDao);

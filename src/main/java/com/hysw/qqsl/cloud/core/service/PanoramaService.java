@@ -184,7 +184,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * @param object
      */
 
-    public boolean addPanorama(Object name, JSONObject jsonObject, Object region, Object isShare, Object info, Object images, Panorama panorama, Object object)  {
+    public boolean addPanorama(Object name, JSONObject jsonObject, Object region, Object isShare, Object info, Object images, Panorama panorama, Object object) {
         panorama.setStatus(CommonEnum.Review.PENDING);
         panorama.setCoor(jsonObject.toString());
         panorama.setName(name.toString());
@@ -320,8 +320,8 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             scene.setFileName(name1.toString());
             scene.setInstanceId(fileName.toString().substring(0,fileName.toString().lastIndexOf(".")));
             scene.setThumbUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/panorama/" + user.getId() + "/" + scene.getInstanceId() + ".tiles/thumb.jpg");
-//            scene.setPanorama(panorama);
-//            sceneService.save(scene);
+            scene.setPanorama(panorama);
+            sceneService.save(scene);
             if (flag) {
                 thumbUrl = scene.getThumbUrl();
                 flag = false;
@@ -384,7 +384,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                     String line1 = null;
                     while ((line1 = br1.readLine()) != null) {
                         if (line1 != null){
-                            System.out.println(line1);
                         }
                     }
                 } catch (IOException e) {
@@ -406,7 +405,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                     String line2 = null ;
                     while ((line2 = br2.readLine()) !=  null ) {
                         if (line2 != null){
-                            System.out.println(line2);
                         }
                     }
                 } catch (IOException e) {
@@ -432,7 +430,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         if (osName.toLowerCase().contains("windows")) {
             cmd = "D:\\krpano\\make.bat";
         }  else if (osName.toLowerCase().contains("linux")) {
-            cmd ="/home/qqsl/krpano/make.desktop";
+            cmd ="/home/qqsl/krpano/krpanotools makepano -config=templates/vtour-normal.config";
         }
         return cmd;
     }
