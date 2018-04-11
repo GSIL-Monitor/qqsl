@@ -114,18 +114,11 @@ public class PanoramaController {
         if (jsonObject1 == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        User user = authentService.getUserFromSubject();
-        boolean flag;
-        if (user == null) {
-            Account account = authentService.getAccountFromSubject();
-            flag = panoramaService.addPanorama(name,jsonObject1,region,isShare,info,images, new Panorama(), account);
-        } else {
-            flag = panoramaService.addPanorama(name,jsonObject1,region,isShare,info,images, new Panorama(), user);
+        Object object = authentService.getUserFromSubject();
+        if (object == null) {
+            object = authentService.getAccountFromSubject();
         }
-        if (!flag) {
-            return MessageService.message(Message.Type.PANORAMA_SLICE_ERROE);
-        }
-        return MessageService.message(Message.Type.OK);
+        return MessageService.message(Message.Type.valueOf(panoramaService.addPanorama(name,jsonObject1,region,isShare,info,images, new Panorama(), object)));
     }
 
     /**

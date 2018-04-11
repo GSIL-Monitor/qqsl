@@ -186,7 +186,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * @param object
      */
 
-    public boolean addPanorama(Object name, JSONObject jsonObject, Object region, Object isShare, Object info, Object images, Panorama panorama, Object object) {
+    public String addPanorama(Object name, JSONObject jsonObject, Object region, Object isShare, Object info, Object images, Panorama panorama, Object object) {
         panorama.setStatus(CommonEnum.Review.PENDING);
         panorama.setCoor(jsonObject.toString());
         panorama.setName(name.toString());
@@ -210,16 +210,40 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                 getTargetFilePath();
             }
             File randomFile = createRandomDir();
-            thumbUrl= cutPicture(user, images, randomFile, panorama,thumbUrl);
-            if (thumbUrl == null) {
-                return false;//图片切割失败
+            List<JSONObject> images1 = (List<JSONObject>) images;
+            List<String> paths = downloadPicture(user, images1, randomFile);
+            if (paths == null || paths.size() == 0) {
+                return "PANORAMA_IMAGE_NOT_EXIST";//下载失败
+            }
+            boolean flag= cutPicture(paths);
+            if (!flag) {
+                return "PANORAMA_SLICE_ERROE";//图片切割失败
             }
             uploadCutPicture(randomFile.getName());
+            thumbUrl = sceneService.saveScene(user, panorama, images1);
             delAllFile(path);
         }
         panorama.setThumbUrl(thumbUrl);
         save(panorama);
-        return true;
+        return "OK";
+    }
+
+    /**
+     * 下载图片
+     *  @param images
+     * @param randomFile
+     */
+    private List<String> downloadPicture(User user, List<JSONObject> images, File randomFile) {
+        List<String> paths= new ArrayList<>();
+        for (JSONObject jsonObject : images) {
+            Object fileName = jsonObject.get("fileName");
+            try {
+                paths.add(ossService.downloadFileToLocal(user.getId() + "/" + fileName, randomFile.getAbsolutePath() + System.getProperty("file.separator") + fileName.toString()));
+            } catch (OSSException e) {
+                continue;
+            }
+        }
+        return paths;
     }
 
     /**
@@ -244,7 +268,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             } else {
                 temp = new File(path + File.separator + tempList[i]);
             }
-            if (temp.isFile()&&!temp.getName().equals("123.txt")) {
+            if (temp.isFile()) {
                 temp.delete();
             }
             if (temp.isDirectory()) {
@@ -304,49 +328,23 @@ public class PanoramaService extends BaseService<Panorama, Long> {
 
     /**
      * 切割图片
-     * @param user
-     * @param images
-     * @param randomFile
-     * @param panorama
-     * @param thumbUrl
+     * @param paths
      */
-    private String cutPicture(User user, Object images, File randomFile, Panorama panorama, String thumbUrl){
-        List<JSONObject> images1 = (List<JSONObject>) images;
+    private boolean cutPicture(List<String> paths){
         String cmd =getOsName();
-        int cmdLength = cmd.length();
-        boolean flag = true;
-        for (JSONObject jsonObject : images1) {
-            Object fileName = jsonObject.get("fileName");
-            Object name1 = jsonObject.get("name");
-            try {
-                cmd += " " + ossService.downloadFileToLocal(user.getId() + "/" + fileName, randomFile.getAbsolutePath() + System.getProperty("file.separator") + fileName.toString());
-            } catch (OSSException e) {
-                continue;
-            }
-            Scene scene = new Scene();
-            scene.setFileName(name1.toString());
-            scene.setInstanceId(fileName.toString().substring(0,fileName.toString().lastIndexOf(".")));
-            scene.setThumbUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/panorama/" + user.getId() + "/" + scene.getInstanceId() + ".tiles/thumb.jpg");
-            scene.setPanorama(panorama);
-            sceneService.save(scene);
-            if (flag) {
-                thumbUrl = scene.getThumbUrl();
-                flag = false;
-            }
+        for (String s : paths) {
+            cmd += " " + s;
         }
         Process p = null;
-        if (cmd.length() == cmdLength) {
-            return null;
-        }
         try {
             p = Runtime.getRuntime().exec(cmd);
             readCommandInfo(p);
         } catch (IOException e) {
-            return null;
+            return false;
         } catch (InterruptedException e) {
-            return null;
+            return false;
         }
-        return thumbUrl;
+        return true;
     }
 
     /**
