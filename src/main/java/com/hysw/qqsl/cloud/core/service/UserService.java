@@ -520,10 +520,9 @@ public class UserService extends BaseService<User, Long> {
 				accounts.remove(account1);
 			}
 		}
+		accountService.remove(account);
 		user.setAccounts(accounts);
 		save(user);
-		//记录企业解绑子账号的消息
-		accountMessageService.bindMsessage(user,account,false);
 		return true;
 	}
 

@@ -210,60 +210,6 @@ public class AccountController {
     }
 
     /**
-     * 子账号注册
-     * @param objectMap 包含用户名name,密码password
-     * @return message响应消息OK:注册成功,FIAL:信息不完整,INVALID:验证码过期,NO_ALLOW:验证码错误,EXIST:帐号已存在
-     */
-    @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    Message register(@RequestBody Map<String, String> objectMap,
-                     HttpSession session) {
-        Message message = CommonController.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Map<String, Object> map = (Map<String, Object>) message.getData();
-        Verification verification = (Verification) session
-                .getAttribute("verification");
-        String name,password,code;
-        name = map.get("name").toString();
-        password = map.get("password").toString();
-        code = map.get("verification").toString();
-        message = commonController.checkCode(code,verification);
-        if (message.getType()!=Message.Type.OK) {
-            return message;
-        }
-        try {
-            if(verification.getPhone().length()!=11|| SettingUtils.phoneRegex(verification.getPhone())==false){
-                throw new QQSLException(verification.getPhone()+":电话号码异常！");
-            }
-            if(password.length()!=32){
-                throw new QQSLException(password+":密码异常！");
-            }
-        } catch (QQSLException e) {
-            e.printStackTrace();
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Account account = accountService.findByPhone(verification.getPhone());
-        // 用户已存在
-        if (account!= null) {
-            return MessageService.message(Message.Type.DATA_EXIST);
-        }else{
-            account = new Account();
-        }
-        account.setName(name);
-        account.setPhone(verification.getPhone());
-        account.setPassword(password);
-        //默认新注册用户角色为account:simple
-        account.setRoles(CommonAttributes.ROLES[4]);
-        accountService.save(account);
-        pollingService.addAccount(account);
-        return MessageService.message(Message.Type.OK);
-    }
-
-    /**
      * 手机找回密码:忘记密码时找回密码
      * @param map 新密码password
      * @return message响应消息OK:注册成功,FIAL:信息不全或session过期,INVALID:验证码过期,NO_ALLOW:验证码错误

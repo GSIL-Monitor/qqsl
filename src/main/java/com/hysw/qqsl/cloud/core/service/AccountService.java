@@ -69,17 +69,17 @@ public class AccountService extends BaseService<Account,Long> {
         }
         String noteMessage = account==null? "恭喜你已经被邀请成为"+userName+"企业的子账号，初始密码为"+inviteCode+"。请打开www.qingqingshuili.com网页登录并完善个人信息。": "恭喜你已经被邀请成为"+userName+"企业的子账号。";
         Note note = new Note(phone,noteMessage);
-        if(account == null){
+        if (account == null) {
             account = new Account();
             account.setPhone(phone);
             account.setPassword(DigestUtils.md5Hex(inviteCode));
             account.setRoles(CommonAttributes.ROLES[4]);
+        } else {
+            return null;
         }
         //记录子账号邀请消息
         account.setUser(user);
         save(account);
-        pollingService.addAccount(account);
-        accountMessageService.bindMsessage(user,account,true);
         noteCache.add(phone,note);
         return makeSimpleAccountJson(account);
     }
