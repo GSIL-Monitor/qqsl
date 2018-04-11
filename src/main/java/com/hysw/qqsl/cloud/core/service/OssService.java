@@ -622,10 +622,10 @@ public class OssService extends BaseService<Oss,Long>{
 		return ossObject.getObjectContent();
 	}
 
-	public String downloadFileToLocal(String key, String path){
+	public String downloadFileToLocal(String key, String path) throws OSSException {
 // 下载object到文件
-		File file=new File(path);
-		client.getObject(new GetObjectRequest("qqsl", "panorama/"+key), file);
+		File file = new File(path);
+		client.getObject(new GetObjectRequest("qqsl", "panorama/" + key), file);
 // 关闭client
 //		ossClient.shutdown();
 		return file.getAbsolutePath();
