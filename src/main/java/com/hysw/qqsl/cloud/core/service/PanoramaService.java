@@ -467,7 +467,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         context.put("status", scenes==null?"4101":"200");
         context.put("scenes",scenes);
         context.put("prefixPath","https://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/works/");
-        context.put("skinPath","/skin.xml");
+        context.put("skinPath","skin.xml");
         return getString(template,context);
     }
 
@@ -510,6 +510,9 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     public JSONObject get(String instsnceId){
         Panorama panorama = findByInstanceId(instsnceId);
         JSONObject panoramaJson = new JSONObject();
+        if(panorama == null){
+            return panoramaJson;
+        }
         panoramaJson.put("hotSpot",JSONObject.fromObject(panorama.getHotspot()));
         panoramaJson.put("advice",panorama.getAdvice());
         panoramaJson.put("id",panorama.getId());
