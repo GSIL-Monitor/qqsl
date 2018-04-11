@@ -638,6 +638,12 @@ public class OssService extends BaseService<Oss,Long>{
 		return file.getAbsolutePath();
 	}
 
+	/**
+	 * 生成直传token
+	 * @param user
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	public JSONObject directToken(User user) throws UnsupportedEncodingException {
 		String endpoint = "oss-cn-hangzhou.aliyuncs.com";
 		String dir = "panorama/"+user.getId()+"/";

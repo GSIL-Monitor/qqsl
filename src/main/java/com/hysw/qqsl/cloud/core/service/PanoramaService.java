@@ -82,6 +82,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                         .getSubdirectoryFiles("panorama" + "/" +panoramas.get(i).getId(),"qqslimage");
             jsonObject.put("pictures", objectFiles);
             jsonObject.put("user", userJson(panoramas.get(i).getUserId()));
+            jsonObject.put("instanceId", panoramas.get(i).getInstanceId());
             jsonArray.add(jsonObject);
         }
         return jsonArray;

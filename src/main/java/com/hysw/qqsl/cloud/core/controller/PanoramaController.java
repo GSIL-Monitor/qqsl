@@ -7,6 +7,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,12 +70,27 @@ public class PanoramaController {
         return new Message(Message.Type.OK,jsonObject);
     }
 
-
-
     /**
      * 添加全景
      * @param objectMap
+     * <ul>
+     *     <li>name 名称</li>
+     *     <li>coor 坐标，格式（经度,纬度,高程）</li>
+     *     <li>region 行政区</li>
+     *     <li>info 简介</li>
+     *     <li>images
+     *     <ul>
+     *         <li>name 文件名</li>
+     *         <li>fileName 文件唯一标示名</li>
+     *     </ul>
+     *     </li>
+     * </ul>
      * @return
+     * <ul>
+     *     <li>OK 保存成功</li>
+     *     <li>FAIL 操作失败</li>
+     *     <li>PANORAMA_SLICE_ERROE 切图失败</li>
+     * </ul>
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)

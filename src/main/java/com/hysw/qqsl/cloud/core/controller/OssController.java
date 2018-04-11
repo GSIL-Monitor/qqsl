@@ -242,6 +242,14 @@ public class OssController {
 		return MessageService.message(Message.Type.OK);
 	}
 
+	/**
+	 * 直传token
+	 * @return
+	 * <ul>
+	 *     <li>OK 获取成功</li>
+	 *     <li>FAIL 失败</li>
+	 * </ul>
+	 */
 	@RequiresAuthentication
 	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
