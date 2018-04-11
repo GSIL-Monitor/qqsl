@@ -752,7 +752,7 @@ public class FieldService implements Serializable {
             if (SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPELINEC))||SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPEAREAC))) {
                 continue;
             }
-            jsonArray.add("{\"baseType\":\"" + "builds" + "\",\"type\":\"" + CommonAttributes.BASETYPEE[i] + "\",\"name\":\"" + CommonAttributes.BASETYPEC[i] + "\"}");
+            jsonArray.add("{\"baseType\":\"" + "build" + "\",\"type\":\"" + CommonAttributes.BASETYPEE[i] + "\",\"name\":\"" + CommonAttributes.BASETYPEC[i] + "\"}");
         }
         return jsonArray;
     }
