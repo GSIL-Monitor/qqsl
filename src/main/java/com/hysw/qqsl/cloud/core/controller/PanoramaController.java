@@ -111,6 +111,12 @@ public class PanoramaController {
         return MessageService.message(Message.Type.OK);
     }
 
+    /**
+     * 需删除（仅供测试）
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/add1", method = RequestMethod.GET)

@@ -19,6 +19,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.OssDao;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
+import com.hysw.qqsl.cloud.core.entity.data.User;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -637,14 +638,11 @@ public class OssService extends BaseService<Oss,Long>{
 		return file.getAbsolutePath();
 	}
 
-	public JSONObject directToken() throws UnsupportedEncodingException {
+	public JSONObject directToken(User user) throws UnsupportedEncodingException {
 		String endpoint = "oss-cn-hangzhou.aliyuncs.com";
-		String accessId = "H6JSh0Yx0cPz2cGa";
-		String accessKey = "0joCPK6L1S0KLxCnOwD2Gm3wulC7vG";
-		String bucket = "qqsl";
-		String dir = "panorama/";
-		String host = "http://" + bucket + "." + endpoint;
-		OSSClient client = new OSSClient(endpoint, accessId, accessKey);
+		String dir = "panorama/"+user.getId()+"/";
+		String host = "http://" + qqslBucketName + "." + endpoint;
+		OSSClient client = new OSSClient(endpoint, CommonAttributes.ACCESSKEY_ID, CommonAttributes.SECRET_ACCESSKEY);
 		long expireTime = 30;
 		long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
 		Date expiration = new Date(expireEndTime);
@@ -658,7 +656,7 @@ public class OssService extends BaseService<Oss,Long>{
 		String postSignature = client.calculatePostSignature(postPolicy);
 
 		Map<String, String> respMap = new LinkedHashMap<>();
-		respMap.put("accessid", accessId);
+		respMap.put("accessid", CommonAttributes.ACCESSKEY_ID);
 		respMap.put("policy", encodedPolicy);
 		respMap.put("signature", postSignature);
 		//respMap.put("expire", formatISO8601Date(expiration));

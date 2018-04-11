@@ -63,9 +63,9 @@ public class FieldController {
     @PackageIsExpire(value = "request")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/coordinateFile", method = RequestMethod.POST)
+    @RequestMapping(value = "/uplaodCoordinate", method = RequestMethod.POST)
     public @ResponseBody
-    Message uploadCoordinate(HttpServletRequest request) {
+    Message uplaodCoordinate(HttpServletRequest request) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         String id = request.getParameter("projectId");
         String baseLevelType = request.getParameter("baseLevelType");
@@ -199,22 +199,31 @@ public class FieldController {
 
     /**
      * 将外业内业坐标数据及建筑物写入excel
-     * @param projectId 项目id
-     * @param type 来源 DESIGN设计，FIELD外业
-     * @param baseLevelType 坐标转换基准面类型
-     * @param WGS84Type WGS84坐标格式
+     * @param objectMap <ul>
+     *                  <li>projectId 项目id</li>
+     *                  <li>type 来源 DESIGN设计，FIELD外业</li>
+     *                  <li>baseLevelType 坐标转换基准面类型</li>
+     *                  <li>WGS84Type WGS84坐标格式</li>
+     * </ul>
      * @return excel格式数据
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/writeExcel", method = RequestMethod.GET)
+    @RequestMapping(value = "/downloadCoordinate", method = RequestMethod.POST)
     public @ResponseBody
-    Message writeExcel(@RequestParam long projectId, @RequestParam String type, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
-        Project project = projectService.find(projectId);
-        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+    Message downloadCoordinate(@RequestBody  Map<String,Object> objectMap, HttpServletResponse response) {
+        Object projectId = objectMap.get("projectId");
+        Object baseLevelType = objectMap.get("baseLevelType");
+        Object WGS84Type = objectMap.get("WGS84Type");
+        Object type = objectMap.get("type");
+        if (projectId == null || baseLevelType == null || WGS84Type == null || type == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Project project = projectService.find(Long.valueOf(projectId.toString()));
+        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType.toString());
         Coordinate.WGS84Type wgs84Type = null;
         if (!WGS84Type.equals("")) {
-            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type.toString());
         }
         if (levelType == Coordinate.BaseLevelType.CGCS2000) {
             wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
@@ -223,9 +232,9 @@ public class FieldController {
             return MessageService.message(Message.Type.FAIL);
         }
         Workbook wb;
-        if (Build.Source.DESIGN.toString().toLowerCase().equals(type.trim().toLowerCase())) {
+        if (Build.Source.DESIGN.toString().toLowerCase().equals(type.toString().trim().toLowerCase())) {
             wb = fieldService.writeExcel(project, Build.Source.DESIGN,wgs84Type);
-        } else if (Build.Source.FIELD.toString().toLowerCase().equals(type.trim().toLowerCase())) {
+        } else if (Build.Source.FIELD.toString().toLowerCase().equals(type.toString().trim().toLowerCase())) {
             wb = fieldService.writeExcel(project, Build.Source.FIELD,wgs84Type);
         } else {
             return MessageService.message(Message.Type.FAIL);
@@ -242,7 +251,7 @@ public class FieldController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + "--" + type.trim() + ".xls" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + "--" + type.toString().trim() + ".xls" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {
@@ -481,10 +490,10 @@ public class FieldController {
      * 获取所有建筑物类型
      * @return OK：请求成功
      */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/getModelType", method = RequestMethod.GET)
-    public @ResponseBody Message getModelType() {
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/templateInfo", method = RequestMethod.GET)
+    public @ResponseBody Message templateInfo() {
         return MessageService.message(Message.Type.OK,fieldService.getModelType());
     }
 
@@ -494,18 +503,12 @@ public class FieldController {
      * @param response 响应
      * @return OK:下载成功 Fail:下载失败
      */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/downloadModel", method = RequestMethod.GET)
-//    public @ResponseBody
-//    Message downloadModel(@RequestParam String[] object, HttpServletResponse response) {
-//    List<String> list = Arrays.asList(object);
-    @RequestMapping(value = "/downloadModel", method = RequestMethod.POST)
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/downloadTemplete", method = RequestMethod.POST)
     public @ResponseBody
-    Message downloadModel(@RequestBody  Object object, HttpServletResponse response) {
+    Message downloadTemplete(@RequestBody  Object object, HttpServletResponse response) {
         List<String> list = Arrays.asList((String)object);
-//        List<String> list = new LinkedList<>();
-//        list.add(object.toString());
         Workbook wb = fieldService.downloadModel(list);
         if (wb == null) {
             return MessageService.message(Message.Type.FAIL);
