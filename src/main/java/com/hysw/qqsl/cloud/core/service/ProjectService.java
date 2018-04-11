@@ -620,7 +620,7 @@ public class ProjectService extends BaseService<Project, Long> {
      */
     public List<Project> findByUser(User user) {
         List<Filter> filters = new ArrayList<Filter>();
-        filters.add(Filter.eq("user", user.getId()));
+        filters.add(Filter.eq("user", user));
         List<Project> projects = projectDao.findList(0, null, filters);
         return projects;
     }
@@ -924,19 +924,6 @@ public class ProjectService extends BaseService<Project, Long> {
         return jsonUnits;
     }
 
-    /**
-     * 查询企业用户某一类型的项目
-     * @param user
-     * @param type
-     * @return
-     */
-    private List<Project> findByUserAndType(User user, Project.Type type) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("user", user.getId()));
-        filters.add(Filter.eq("type", type.ordinal()));
-        List<Project> projects = projectDao.findList(0, null, filters);
-        return projects;
-    }
 
     /**
      * 查询企业用户分配给子账号的某一类型的项目
@@ -948,11 +935,11 @@ public class ProjectService extends BaseService<Project, Long> {
         List<Project> projects;
         List<Project> accProjects = new ArrayList<>();
         Project project;
-        List<User> users = accountService.getUsersByAccountId(account.getId());
-        if (users == null || users.size() == 0) {
+        User user = accountService.getUserByAccountId(account.getId());
+        if (user == null) {
             return accProjects;
         }
-        projects = findByUsersAndType(users, type);
+        projects = findByUserAndType(user, type);
         if (projects == null || projects.size() == 0) {
             return accProjects;
         }
@@ -966,18 +953,14 @@ public class ProjectService extends BaseService<Project, Long> {
     }
 
     /**
-     * 查询一些企业用户的某一类型的项目
-     * @param users
+     * 查询企业用户的某一类型的项目
+     * @param user
      * @param type
      * @return
      */
-    private List<Project> findByUsersAndType(List<User> users, Project.Type type) {
-        List<Long> userIds = new ArrayList<>();
-        for (int i = 0; i < users.size(); i++) {
-            userIds.add(users.get(i).getId());
-        }
+    private List<Project> findByUserAndType(User user, Project.Type type) {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.in("user", users));
+        filters.add(Filter.eq("user", user));
         filters.add(Filter.eq("type", type.ordinal()));
         List<Project> projects = projectDao.findList(0, null, filters);
         return projects;
@@ -992,11 +975,11 @@ public class ProjectService extends BaseService<Project, Long> {
         List<Project> projects;
         List<Project> accProjects = new ArrayList<>();
         Project project;
-        List<User> users = accountService.getUsersByAccountId(account.getId());
-        if (users == null || users.size() == 0) {
+        User user = accountService.getUserByAccountId(account.getId());
+        if (user == null) {
             return accProjects;
         }
-        projects = findByUsers(users);
+        projects = findByUser(user);
         if (projects == null || projects.size() == 0) {
             return accProjects;
         }
@@ -1007,22 +990,6 @@ public class ProjectService extends BaseService<Project, Long> {
             }
         }
         return accProjects;
-    }
-
-    /**
-     * 查询一些企业用户的项目
-     * @param users
-     * @return
-     */
-    private List<Project> findByUsers(List<User> users) {
-        List<Long> userIds = new ArrayList<>();
-        for (int i = 0; i < users.size(); i++) {
-            userIds.add(users.get(i).getId());
-        }
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.in("user", users));
-        List<Project> projects = projectDao.findList(0, null, filters);
-        return projects;
     }
 
     /**

@@ -69,25 +69,14 @@ public class AccountService extends BaseService<Account,Long> {
         }
         String noteMessage = account==null? "恭喜你已经被邀请成为"+userName+"企业的子账号，初始密码为"+inviteCode+"。请打开www.qingqingshuili.com网页登录并完善个人信息。": "恭喜你已经被邀请成为"+userName+"企业的子账号。";
         Note note = new Note(phone,noteMessage);
-        List<User> users;
         if(account == null){
             account = new Account();
             account.setPhone(phone);
             account.setPassword(DigestUtils.md5Hex(inviteCode));
             account.setRoles(CommonAttributes.ROLES[4]);
-            users = new ArrayList<>();
-            users.add(user);
-        }else{
-            users = account.getUsers();
-            for(int i=0;i<users.size();i++){
-                if(users.get(i).getId().equals(user.getId())){
-                    return null;
-                }
-            }
-            users.add(user);
         }
         //记录子账号邀请消息
-        account.setUsers(users);
+        account.setUser(user);
         save(account);
         pollingService.addAccount(account);
         accountMessageService.bindMsessage(user,account,true);
@@ -105,7 +94,7 @@ public class AccountService extends BaseService<Account,Long> {
         filters.add(Filter.eq("phone",phone));
         List<Account> accounts = accountDao.findList(0,null,filters);
         if(accounts.size()==1){
-            accounts.get(0).getUsers();
+            accounts.get(0).getUser();
             return accounts.get(0);
         }else{
             return null;
@@ -122,7 +111,7 @@ public class AccountService extends BaseService<Account,Long> {
         filters.add(Filter.eq("email",email));
         List<Account> accounts = accountDao.findList(0,null,filters);
         if(accounts.size()==1){
-            accounts.get(0).getUsers();
+            accounts.get(0).getUser();
             return accounts.get(0);
         }else{
             return null;
@@ -154,7 +143,7 @@ public class AccountService extends BaseService<Account,Long> {
         filters.add(Filter.eq("userName",userName));
         List<Account> accounts = accountDao.findList(0,null,filters);
         if(accounts.size()==1){
-            accounts.get(0).getUsers();
+            accounts.get(0).getUser();
             return accounts.get(0);
         }else{
             return null;
@@ -176,8 +165,8 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("userName",account.getUserName());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
-        List<User> users = getUsersByAccountId(account.getId());
-        List<JSONObject> userJsons = makeUserJsons(users);
+        User user = getUserByAccountId(account.getId());
+        JSONObject userJson = makeUserJson(user);
         List<AccountMessage> accountMessages = accountMessageService.getMessage(account);
         JSONArray messageJsons = new JSONArray();
         JSONObject messageJson;
@@ -192,7 +181,7 @@ public class AccountService extends BaseService<Account,Long> {
             messageJsons.add(messageJson);
         }
         jsonObject.put("accountMessages",messageJsons);
-        jsonObject.put("users",userJsons);
+        jsonObject.put("user",userJson);
         return jsonObject;
     }
 
@@ -219,24 +208,17 @@ public class AccountService extends BaseService<Account,Long> {
 
     /**
      * 获取所属users的json数据
-     * @param users
+     * @param user
      * @return
      */
-    public List<JSONObject> makeUserJsons(List<User> users) {
-        List<JSONObject> userJsons = new ArrayList<JSONObject>();
-        JSONObject userJson;
-        User user ;
-        for(int i=0;i<users.size();i++){
-            userJson = new JSONObject();
-            user = users.get(i);
-            userJson.put("id", user.getId());
-            userJson.put("name", user.getName());
-            userJson.put("userName", user.getUserName());
-            userJson.put("email", user.getEmail());
-            userJson.put("phone", user.getPhone());
-            userJsons.add(userJson);
-        }
-        return userJsons;
+    public JSONObject makeUserJson(User user) {
+        JSONObject userJson = new JSONObject();
+        userJson.put("id", user.getId());
+        userJson.put("name", user.getName());
+        userJson.put("userName", user.getUserName());
+        userJson.put("email", user.getEmail());
+        userJson.put("phone", user.getPhone());
+        return userJson;
     }
 
     /**
@@ -244,10 +226,10 @@ public class AccountService extends BaseService<Account,Long> {
      * @param id
      * @return
      */
-    public List<User> getUsersByAccountId(Long id) {
+    public User getUserByAccountId(Long id) {
         Account account = accountDao.find(id);
-        List<User> users = account.getUsers();
-        return  users;
+        User user = account.getUser();
+        return  user;
     }
 
 
@@ -286,30 +268,14 @@ public class AccountService extends BaseService<Account,Long> {
      * @return
      */
     public boolean unbindUser(User user,Account account) {
-        List<User> users = getUsersByAccountId(account.getId());
-        List<Account> accounts;
-        boolean flag = false;
-        for(int i=0;i<users.size();i++){
-            if(users.get(i).getId().equals(user.getId())){
-                accounts = users.get(i).getAccounts();
-                for(int k=0;k<accounts.size();k++){
-                    if(accounts.get(k).getId().equals(account.getId())){
-                        accounts.remove(k);
-                        flag = true;
-                        break;
-                    }
-                }
-                users.get(i).setAccounts(accounts);
-                userService.save(users.get(i));
-                users.remove(i);
-                break;
+        List<Account> accounts = user.getAccounts();
+        for (Account account1 : accounts) {
+            if (account1.getId().equals(account.getId())) {
+                accounts.remove(account1);
             }
         }
-        if(!flag){
-            return false;
-        }
-        account.setUsers(users);
-        accountDao.save(account);
+        user.setAccounts(accounts);
+        userService.save(user);
         //记录子账号解绑企业的消息
         userMessageService.unbindMessage(account,user);
         return true;

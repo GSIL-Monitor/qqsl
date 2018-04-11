@@ -653,8 +653,8 @@ public class AccountController {
     @RequestMapping(value = "/getInviteCompany", method = RequestMethod.GET)
     public @ResponseBody Message userList(){
         Account account = authentService.getAccountFromSubject();
-        List<User> users = accountService.getUsersByAccountId(account.getId());
-        return MessageService.message(Message.Type.OK, userService.makeUserJsons(users));
+        User user = accountService.getUserByAccountId(account.getId());
+        return MessageService.message(Message.Type.OK, userService.makeUserJson(user));
     }
 
     /**

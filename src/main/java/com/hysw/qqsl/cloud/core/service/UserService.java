@@ -514,25 +514,11 @@ public class UserService extends BaseService<User, Long> {
 	public boolean unbindAccount(Account account,User user) {
 		//收回权限
 		cooperateService.cooperateRevoke(user,account);
-		List<Account> accounts = getAccountsByUserId(user.getId());
-		List<User> users;
-		boolean flag = false;
-		for(int i=0;i<accounts.size();i++){
-			if(accounts.get(i).getId().equals(account.getId())){
-				users = accounts.get(i).getUsers();
-				for(int k=0;k<users.size();k++){
-					if(users.get(k).getId().equals(user.getId())){
-						users.remove(k);
-						flag = true;
-						break;
-					}
-				}
-				accounts.remove(i);
-				break;
+		List<Account> accounts = user.getAccounts();
+		for (Account account1 : accounts) {
+			if (account.getId().equals(account1.getId())) {
+				accounts.remove(account1);
 			}
-		}
-		if(!flag){
-			return false;
 		}
 		user.setAccounts(accounts);
 		save(user);
