@@ -3,7 +3,7 @@
     #if($status == "200")
         <include url="$skinPath"/>
         <!-- customize skin settings: maps, gyro, webvr, thumbnails, tooltips, layout, design, ... -->
-        <skin_settings maps="true"
+        #*<skin_settings maps="true"
                        maps_type="google"
                        maps_bing_api_key=""
                        maps_google_api_key=""
@@ -52,7 +52,7 @@
                        design_thumbborder_bgroundedge="0"
                        design_text_css="color:#FFFFFF; font-family:Arial;"
                        design_text_shadow="1"
-        />
+        />*#
         <!-- startup action - load the first scene -->
         <action name="startup" autorun="onstart">
             if(startscene === null OR !scene[get(startscene)], copy(startscene,scene[0].name); );

@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.aliyun.oss.OSSException;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.PanoramaDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
@@ -312,11 +313,16 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     private String cutPicture(User user, Object images, File randomFile, Panorama panorama, String thumbUrl){
         List<JSONObject> images1 = (List<JSONObject>) images;
         String cmd =getOsName();
+        int cmdLength = cmd.length();
         boolean flag = true;
         for (JSONObject jsonObject : images1) {
             Object fileName = jsonObject.get("fileName");
             Object name1 = jsonObject.get("name");
-            cmd += " " + ossService.downloadFileToLocal(user.getId() + "/" + fileName, randomFile.getAbsolutePath()+System.getProperty("file.separator")+fileName.toString());
+            try {
+                cmd += " " + ossService.downloadFileToLocal(user.getId() + "/" + fileName, randomFile.getAbsolutePath() + System.getProperty("file.separator") + fileName.toString());
+            } catch (OSSException e) {
+                continue;
+            }
             Scene scene = new Scene();
             scene.setFileName(name1.toString());
             scene.setInstanceId(fileName.toString().substring(0,fileName.toString().lastIndexOf(".")));
@@ -329,6 +335,9 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             }
         }
         Process p = null;
+        if (cmd.length() == cmdLength) {
+            return null;
+        }
         try {
             p = Runtime.getRuntime().exec(cmd);
             readCommandInfo(p);
@@ -490,6 +499,30 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         VelocityContext context = new VelocityContext();
         return getString(template,context);
     }
+
+    public String getPng(){
+        FileInputStream fis = null;
+        OutputStream os = null;
+        try {
+            fis = new FileInputStream("/home/pic/vtourskin.png");
+            return fis.toString();
+           /* os = response.getOutputStream();
+            int count = 0;
+            byte[] buffer = new byte[1024 * 8];
+            while ((count = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, count);
+                os.flush();
+            }*/
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    };
 
     public String getString(Template template ,VelocityContext context){
         try {

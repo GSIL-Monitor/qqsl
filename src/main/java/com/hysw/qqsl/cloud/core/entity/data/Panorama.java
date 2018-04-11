@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.core.entity.data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -72,6 +73,7 @@ public class Panorama extends  BaseEntity {
         this.info = info;
     }
 
+    @NotEmpty
     public String getInstanceId() {
         return instanceId;
     }

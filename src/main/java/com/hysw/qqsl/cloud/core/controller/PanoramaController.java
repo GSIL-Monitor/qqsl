@@ -13,12 +13,14 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -51,6 +53,32 @@ public class PanoramaController {
     void getskin(HttpServletResponse httpResponse) {
         String skinStr = panoramaService.getSkin();
         writer(httpResponse,skinStr);
+    }
+    @RequestMapping(value = "/tour.xml/vtourskin.png", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    void getsPng(HttpServletResponse httpResponse) {
+        httpResponse.setContentType("image/*");
+        FileInputStream fis = null;
+        OutputStream os = null;
+        try {
+            fis = new FileInputStream("/home/leinuo/pic/vtourskin.png");
+            os = httpResponse.getOutputStream();
+            int count = 0;
+            byte[] buffer = new byte[1024 * 8];
+            while ((count = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, count);
+                os.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            fis.close();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     private void writer(HttpServletResponse httpResponse,String xmlStr){
         try {
@@ -138,7 +166,7 @@ public class PanoramaController {
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/add1", method = RequestMethod.GET)
     public @ResponseBody Message add1() throws IOException, InterruptedException {
-        String str = "{\"name\":\"全景名称1111111111\",\"info\":\"全景描述2222222222222222\",\"coor\":\"103.77645101765913,36.05377593481913,0\",\"isShare\":\"true\",\"region\":\"中国甘肃省兰州市七里河区兰工坪南街190号 邮政编码: 730050\",\"images\":[{\"name\":\"001-西宁\", \"fileName\":\"1522811870947bik.jpg\"},{\"name\":\"333-西安\",\"fileName\":\"152281187095756l.jpg\"}]}";
+        String str = "{\"name\":\"全景名称1111111111\",\"info\":\"全景描述2222222222222222\",\"coor\":\"103.77645101765913,36.05377593481913,0\",\"isShare\":\"true\",\"region\":\"中国甘肃省兰州市七里河区兰工坪南街190号 邮政编码: 730050\",\"images\":[{\"name\":\"001-西宁\", \"fileName\":\"11522811870947bik.jpg\"},{\"name\":\"333-西安\",\"fileName\":\"152281187095756l.jpg\"}]}";
         Map<String, Object> map =JSONObject.fromObject(str);
         User user = new User();
         user.setId(26l);

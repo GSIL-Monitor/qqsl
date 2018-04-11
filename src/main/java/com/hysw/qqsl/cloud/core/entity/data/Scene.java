@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.entity.data;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 
@@ -18,29 +19,16 @@ public class Scene extends BaseEntity{
 
     private static final long serialVersionUID = 4455107521461776780L;
 
-    /**
-     * 文件名（场景名称）
-     */
+    /**文件名（场景名称）*/
     private String fileName;
 
-    /**
-     * 阿里云地址
-     */
-    private String originUrl;
-
-    /**
-     * 缩略图
-     */
+    /** 缩略图 */
     private String thumbUrl;
 
-    /**
-     * 唯一编码
-     */
+    /** 唯一编码 */
     private String instanceId;
 
-    /**
-     * 全景
-     */
+    /** 全景 */
     private Panorama panorama;
 
 
@@ -52,15 +40,6 @@ public class Scene extends BaseEntity{
         this.fileName = fileName;
     }
 
-
-    public String getOriginUrl() {
-        return originUrl;
-    }
-
-    public void setOriginUrl(String originUrl) {
-        this.originUrl = originUrl;
-    }
-
     public String getThumbUrl() {
         return thumbUrl;
     }
@@ -69,6 +48,7 @@ public class Scene extends BaseEntity{
         this.thumbUrl = thumbUrl;
     }
 
+    @NotEmpty
     public String getInstanceId() {
         return instanceId;
     }
