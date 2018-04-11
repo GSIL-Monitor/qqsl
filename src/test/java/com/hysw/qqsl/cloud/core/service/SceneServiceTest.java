@@ -31,15 +31,15 @@ public class SceneServiceTest extends BaseTest {
             Scene scene = new Scene();
             scene.setFileName("666(1)");
             scene.setThumbUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/works/75c116470f1a1e3b/thumb.jpg");
-             scene.setInstanceId("75c116470f1a1e3b");
-            scene.setOriginUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/sourceimg/1522044969009cco.jpg");
+            scene.setInstanceId("75c116470f1a1e3b");
+           // scene.setOriginUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/sourceimg/1522044969009cco.jpg");
             scene.setPanorama(panorama);
             sceneService.save(scene);
             scene = new Scene();
             scene.setFileName("湟中维新渠化效果(1)");
             scene.setThumbUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/works/590a999cd358fb6e/thumb.jpg");
             scene.setInstanceId("590a999cd358fb6e");
-            scene.setOriginUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/sourceimg/1522044969010jmg.jpg");
+            //scene.setOriginUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/sourceimg/1522044969010jmg.jpg");
             scene.setPanorama(panorama);
             sceneService.save(scene);
         }

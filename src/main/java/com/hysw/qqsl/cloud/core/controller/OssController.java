@@ -10,6 +10,7 @@ import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
 import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONObject;
@@ -241,12 +242,24 @@ public class OssController {
 		return MessageService.message(Message.Type.OK);
 	}
 
+	/**
+	 * 直传token
+	 * @return
+	 * <ul>
+	 *     <li>OK 获取成功</li>
+	 *     <li>FAIL 失败</li>
+	 * </ul>
+	 */
 	@RequiresAuthentication
 	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
 	public @ResponseBody Message directToken(){
+		User user = authentService.getUserFromSubject();
+		if (user == null) {
+			Account account = authentService.getAccountFromSubject();
+		}
 		try {
-			return MessageService.message(Message.Type.OK, ossService.directToken());
+			return MessageService.message(Message.Type.OK, ossService.directToken(user));
 		} catch (UnsupportedEncodingException e) {
 			return MessageService.message(Message.Type.FAIL);
 		}
