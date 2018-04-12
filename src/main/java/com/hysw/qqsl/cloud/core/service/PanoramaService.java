@@ -37,8 +37,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     private UserService userService;
     @Autowired
     private SceneService sceneService;
-    @Autowired
-    private AccountService accountService;
     private String path;
 
     @Autowired
@@ -588,20 +586,20 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     public JSONArray panoramasToJsonNoScene(List<Panorama> panoramas){
         JSONObject jsonObject;
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < panoramas.size(); i++) {
+        for (Panorama panorama : panoramas) {
             jsonObject = new JSONObject();
-            jsonObject.put("instanceId", panoramas.get(i).getInstanceId());
-            jsonObject.put("name", panoramas.get(i).getName());
-            jsonObject.put("advice", panoramas.get(i).getAdvice());
-            jsonObject.put("coor", panoramas.get(i).getCoor());
-            jsonObject.put("region", panoramas.get(i).getRegion());
-            jsonObject.put("reviewDate", panoramas.get(i).getReviewDate().getTime());
-            jsonObject.put("status", panoramas.get(i).getStatus());
-            jsonObject.put("share", panoramas.get(i).getShare());
-            jsonObject.put("info", panoramas.get(i).getInfo());
-            jsonObject.put("thumbUrl", panoramas.get(i).getThumbUrl());
-            jsonObject.put("createDate", panoramas.get(i).getCreateDate().getTime());
-            jsonObject.put("modifyDate", panoramas.get(i).getModifyDate().getTime());
+            jsonObject.put("instanceId", panorama.getInstanceId());
+            jsonObject.put("name", panorama.getName());
+            jsonObject.put("advice", panorama.getAdvice());
+            jsonObject.put("coor", panorama.getCoor());
+            jsonObject.put("region", panorama.getRegion());
+            jsonObject.put("reviewDate", panorama.getReviewDate().getTime());
+            jsonObject.put("status", panorama.getStatus());
+            jsonObject.put("share", panorama.getShare());
+            jsonObject.put("info", panorama.getInfo());
+            jsonObject.put("thumbUrl", panorama.getThumbUrl());
+            jsonObject.put("createDate", panorama.getCreateDate().getTime());
+            jsonObject.put("modifyDate", panorama.getModifyDate().getTime());
             jsonArray.add(jsonObject);
         }
         return jsonArray;
@@ -622,23 +620,10 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     public JSONArray panoramasToJsonHaveScene(List<Panorama> panoramas){
         JSONObject jsonObject;
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < panoramas.size(); i++) {
+        for (Panorama panorama : panoramas) {
             jsonObject = new JSONObject();
-            jsonObject.put("modifyDate", panoramas.get(i).getModifyDate().getTime());
-            jsonObject.put("createDate", panoramas.get(i).getCreateDate().getTime());
-//            accountService.makeAccountJson()
-            jsonObject.put("accountId", panoramas.get(i).getAccountId());
-            jsonObject.put("thumbUrl", panoramas.get(i).getThumbUrl());
-            jsonObject.put("info", panoramas.get(i).getInfo());
-            jsonObject.put("hotspot", panoramas.get(i).getHotspot());
-            jsonObject.put("angleOfView", panoramas.get(i).getAngleOfView());
-            jsonObject.put("share", panoramas.get(i).getShare());
-            jsonObject.put("userId", panoramas.get(i).getUserId());
-            jsonObject.put("region", panoramas.get(i).getRegion());
-            jsonObject.put("coor", panoramas.get(i).getCoor());
-            jsonObject.put("scenes", panoramas.get(i).getScenes());
-            jsonObject.put("name", panoramas.get(i).getName());
-            jsonObject.put("instanceId", panoramas.get(i).getInstanceId());
+            jsonObject.put("name", panorama.getName());
+            jsonObject.put("instanceId", panorama.getInstanceId());
             jsonArray.add(jsonObject);
         }
         return jsonArray;

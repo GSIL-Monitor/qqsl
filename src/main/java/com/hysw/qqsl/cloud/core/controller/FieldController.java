@@ -63,7 +63,7 @@ public class FieldController {
     @PackageIsExpire(value = "request")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/uplaodCoordinate", method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadCoordinate", method = RequestMethod.POST)
     public @ResponseBody
     Message uplaodCoordinate(HttpServletRequest request) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
