@@ -31,6 +31,7 @@ import org.springframework.util.StringUtils;
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -55,8 +56,7 @@ public class OssService extends BaseService<Oss,Long>{
 			.split(","));
 	private List<String> extensiones = Arrays
 			.asList(CommonAttributes.OFFICE_FILE_EXTENSION.split(","));
-	private List<String> picturePrefixs = new ArrayList<String>();
-	//JPG、JPEG、PNG
+	private List<String> picturePrefixs = Arrays.asList(CommonAttributes.PICTURE_FILE_EXTENSION.split(","));
 	private static OssService ossService = null;
 
 	@Autowired
@@ -546,15 +546,8 @@ public class OssService extends BaseService<Oss,Long>{
 			file.setDownloadUrl(getObjectUrl(key,bucketName));
 			if (extensiones.contains(key.substring(key.lastIndexOf(".") + 1).toLowerCase()) == false) {
 				if(picturePrefixs.contains(key.substring(key.lastIndexOf(".") + 1).toLowerCase())){
-					// 图片处理样式
-					String style = "image/resize,m_fixed,w_100,h_100/rotate,90";
-					// 过期时间10分钟
-					Date expiration = new Date(new Date().getTime() + 1000 * 60 * 10 );
-					GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest(bucketName, key, HttpMethod.GET);
-					req.setExpiration(expiration);
-				/*	req.setProces(style);
-					URL signedUrl = client.generatePresignedUrl(req);*/
-					file.setThumbUrl("");
+					String thumbUrl = getThumbUrl(bucketName,key);
+					file.setThumbUrl(thumbUrl);
 				}
 				files.add(file);
 				continue;
@@ -670,5 +663,29 @@ public class OssService extends BaseService<Oss,Long>{
 		respMap.put("host", host);
 		respMap.put("expire", String.valueOf(expireEndTime / 1000));
 		return JSONObject.fromObject(respMap);
+	}
+
+	/**
+	 * 获取缩略图
+	 * @param bucketName
+	 * @param key
+	 * @return
+	 */
+	private String getThumbUrl(String bucketName,String key){
+		// 图片处理样式
+		String style = "image/resize,m_fixed,w_150,h_100";
+		// 过期时间10分钟
+		Date expiration = new Date(new Date().getTime() + 1000 * 60 * 10 );
+		GeneratePresignedUrlRequest request = new
+				GeneratePresignedUrlRequest(bucketName,key, HttpMethod.GET);
+		request.setExpiration(expiration);
+		request.setProcess(style);
+		try {
+			request.setProcess(style);
+			URL signedUrl = client.generatePresignedUrl(request);
+			return signedUrl.toString();
+		}catch (Exception e){
+			return "";
+		}
 	}
 }

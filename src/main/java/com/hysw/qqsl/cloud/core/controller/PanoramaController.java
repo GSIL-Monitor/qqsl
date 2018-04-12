@@ -35,6 +35,8 @@ public class PanoramaController {
     @Autowired
     private UserService userService;
     @Autowired
+    private OssService ossService;
+    @Autowired
     private AuthentService authentService;
 
     @RequestMapping(value = "/tour.xml/{instanceId}", method = RequestMethod.GET,produces="application/xml; charset=UTF-8")
