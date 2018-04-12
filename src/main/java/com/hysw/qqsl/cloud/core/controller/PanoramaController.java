@@ -91,8 +91,8 @@ public class PanoramaController {
      *     <li>PANORAMA_SLICE_ERROE 切图失败</li>
      * </ul>
      */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public @ResponseBody
     Message add(@RequestBody Map<String,Object> objectMap){
