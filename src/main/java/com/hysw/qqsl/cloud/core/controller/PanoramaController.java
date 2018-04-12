@@ -91,9 +91,9 @@ public class PanoramaController {
      *     <li>PANORAMA_SLICE_ERROE 切图失败</li>
      * </ul>
      */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/add", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public @ResponseBody
     Message add(@RequestBody Map<String,Object> objectMap){
         Message message = CommonController.parameterCheck(objectMap);
@@ -120,23 +120,50 @@ public class PanoramaController {
         return MessageService.message(Message.Type.valueOf(panoramaService.addPanorama(name,jsonObject1,region,isShare,info,images, new Panorama(), object)));
     }
 
+
     /**
-     * 需删除（仅供测试）
+     * 获取个人全景列表（无场景，无兴趣点）
      * @return
-     * @throws IOException
-     * @throws InterruptedException
      */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/add1", method = RequestMethod.GET)
-    public @ResponseBody
-    Message add1() throws IOException, InterruptedException {
-        String str = "{\"name\":\"全景名称1111111111\",\"info\":\"全景描述2222222222222222\",\"coor\":\"103.77645101765913,36.05377593481913,0\",\"isShare\":\"true\",\"region\":\"中国甘肃省兰州市七里河区兰工坪南街190号 邮政编码: 730050\",\"images\":[{\"name\":\"001-西宁\", \"fileName\":\"1522811870947bik.jpg\"},{\"name\":\"333-西安\",\"fileName\":\"152281187095756l.jpg\"}]}";
-        Map<String, Object> map =JSONObject.fromObject(str);
-        User user = new User();
-        user.setId(26l);
-        JSONObject jsonObject1 = SettingUtils.checkCoordinateIsInvalid(map.get("coor").toString());
-        panoramaService.addPanorama(map.get("name"),jsonObject1,map.get("region"),map.get("isShare"),map.get("info"),map.get("images"), new Panorama(), user);
-        return MessageService.message(Message.Type.OK);
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/getPersonalList", method = RequestMethod.GET)
+    public @ResponseBody Message getPersonalList(){
+        User user = authentService.getUserFromSubject();
+        List<Panorama> panoramas = null;
+        if (user == null) {
+            Account account = authentService.getAccountFromSubject();
+            panoramas = panoramaService.findByAccount(account);
+        }else{
+            panoramas = panoramaService.findByUser(user);
+        }
+        if (panoramas == null || panoramas.size() == 0) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonNoScene(panoramas));
+    }
+
+    /**
+     * 获取所有审核通过的全景和用户自己建立的全景
+     * @return
+     */
+    @RequestMapping(value = "/getList", method = RequestMethod.GET)
+    public @ResponseBody Message getList(){
+        Object object = authentService.getUserFromSubject();
+        List<Panorama> panoramas;
+        if (object == null) {
+            object = authentService.getAccountFromSubject();
+            if (object == null) {
+                panoramas = panoramaService.findAllPass(object);
+            } else {
+                panoramas = panoramaService.findAllPass(null);
+            }
+        }else{
+            panoramas = panoramaService.findAllPass(object);
+        }
+        if (panoramas == null || panoramas.size() == 0) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonHaveScene(panoramas));
     }
 }

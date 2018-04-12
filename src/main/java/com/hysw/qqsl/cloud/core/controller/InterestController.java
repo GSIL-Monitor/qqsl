@@ -593,7 +593,7 @@ public class InterestController {
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        List<Panorama> panoramas = panoramaService.findByuser(user);
+        List<Panorama> panoramas = panoramaService.findByUser(user);
         JSONArray panoramasJson = panoramaService.panoramasToJson(panoramas);
         return MessageService.message(Message.Type.OK,panoramasJson);
     }
@@ -786,7 +786,7 @@ public class InterestController {
         if (aPackage == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        int size = panoramaService.findByuser(user).size();
+        int size = panoramaService.findByUser(user).size();
         PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
         for (PackageItem packageItem : packageModel.getPackageItems()) {
             if (packageItem.getServeItem().getType() == ServeItem.Type.PANO && size < packageItem.getLimitNum()) {
