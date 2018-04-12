@@ -93,9 +93,9 @@ public class PanoramaController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/newPanorama", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/add", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody
-    Message newPanorama(@RequestBody Map<String,Object> objectMap){
+    Message add(@RequestBody Map<String,Object> objectMap){
         Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
