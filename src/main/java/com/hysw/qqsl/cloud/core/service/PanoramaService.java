@@ -176,6 +176,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
 
 /**************************************************************************************************************************/
     /**
+     * 添加全景
      * @param name
      * @param jsonObject
      * @param region
