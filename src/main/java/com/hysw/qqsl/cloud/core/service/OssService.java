@@ -655,7 +655,7 @@ public class OssService extends BaseService<Oss,Long>{
 		String postSignature = client.calculatePostSignature(postPolicy);
 
 		Map<String, String> respMap = new LinkedHashMap<>();
-		respMap.put("accessid", CommonAttributes.ACCESSKEY_ID);
+		respMap.put("OSSAccessKeyId", CommonAttributes.ACCESSKEY_ID);
 		respMap.put("policy", encodedPolicy);
 		respMap.put("signature", postSignature);
 		//respMap.put("expire", formatISO8601Date(expiration));
