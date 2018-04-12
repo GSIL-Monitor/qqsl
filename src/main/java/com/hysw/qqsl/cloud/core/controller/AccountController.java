@@ -476,7 +476,7 @@ public class AccountController {
             return subjectLogin(account, "web");
         }
         if(map.get("cookie")==null||!StringUtils.hasText(map.get("cookie").toString())){
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.CODE_NEED);
         }
         //登录间隔时间过长需重新登录
         if(account.getLoginDate()==null){
@@ -487,7 +487,7 @@ public class AccountController {
         }
         String cookie = map.get("cookie").toString();
         if(!cookie.equals(DigestUtils.md5Hex(account.getPassword()))){
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.CODE_NEED);
         }else{
             return subjectLogin(account, "web");
         }
@@ -624,7 +624,6 @@ public class AccountController {
         JSONObject accountJson = accountService.makeAccountJson(account);
         return MessageService.message(Message.Type.OK, accountJson);
     }
-/////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * 子账号解绑企业

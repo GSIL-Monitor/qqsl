@@ -1,7 +1,9 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
+import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.common.utils.IOUtils;
 import com.aliyun.oss.model.*;
 import com.aliyun.oss.model.LifecycleRule.RuleStatus;
@@ -17,6 +19,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.OssDao;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
+import com.hysw.qqsl.cloud.core.entity.data.User;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -25,7 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -50,6 +56,7 @@ public class OssService extends BaseService<Oss,Long>{
 			.split(","));
 	private List<String> extensiones = Arrays
 			.asList(CommonAttributes.OFFICE_FILE_EXTENSION.split(","));
+	private List<String> picturePrefixs = Arrays.asList(CommonAttributes.PICTURE_FILE_EXTENSION.split(","));
 	private static OssService ossService = null;
 
 	@Autowired
@@ -538,6 +545,10 @@ public class OssService extends BaseService<Oss,Long>{
 			file = new ObjectFile(ossObjectSummary);
 			file.setDownloadUrl(getObjectUrl(key,bucketName));
 			if (extensiones.contains(key.substring(key.lastIndexOf(".") + 1).toLowerCase()) == false) {
+				if(picturePrefixs.contains(key.substring(key.lastIndexOf(".") + 1).toLowerCase())){
+					String thumbUrl = getThumbUrl(bucketName,key);
+					file.setThumbUrl(thumbUrl);
+				}
 				files.add(file);
 				continue;
 			}
@@ -611,4 +622,70 @@ public class OssService extends BaseService<Oss,Long>{
 		return ossObject.getObjectContent();
 	}
 
+	public String downloadFileToLocal(String key, String path) throws OSSException {
+// 下载object到文件
+		File file = new File(path);
+		client.getObject(new GetObjectRequest("qqsl", "panorama/" + key), file);
+// 关闭client
+//		ossClient.shutdown();
+		return file.getAbsolutePath();
+	}
+
+	/**
+	 * 生成直传token
+	 * @param user
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	public JSONObject directToken(User user) throws UnsupportedEncodingException {
+		String endpoint = "oss-cn-hangzhou.aliyuncs.com";
+		String dir = "panorama/"+user.getId()+"/";
+		String host = "http://" + qqslBucketName + "." + endpoint;
+		OSSClient client = new OSSClient(endpoint, CommonAttributes.ACCESSKEY_ID, CommonAttributes.SECRET_ACCESSKEY);
+		long expireTime = 30;
+		long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
+		Date expiration = new Date(expireEndTime);
+		PolicyConditions policyConds = new PolicyConditions();
+		policyConds.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, 0, 1048576000);
+		policyConds.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, dir);
+
+		String postPolicy = client.generatePostPolicy(expiration, policyConds);
+		byte[] binaryData = postPolicy.getBytes("utf-8");
+		String encodedPolicy = BinaryUtil.toBase64String(binaryData);
+		String postSignature = client.calculatePostSignature(postPolicy);
+
+		Map<String, String> respMap = new LinkedHashMap<>();
+		respMap.put("OSSAccessKeyId", CommonAttributes.ACCESSKEY_ID);
+		respMap.put("policy", encodedPolicy);
+		respMap.put("signature", postSignature);
+		//respMap.put("expire", formatISO8601Date(expiration));
+		respMap.put("prefix", dir);
+		respMap.put("host", host);
+		respMap.put("expire", String.valueOf(expireEndTime / 1000));
+		return JSONObject.fromObject(respMap);
+	}
+
+	/**
+	 * 获取缩略图
+	 * @param bucketName
+	 * @param key
+	 * @return
+	 */
+	private String getThumbUrl(String bucketName,String key){
+		// 图片处理样式
+		String style = "image/resize,m_fixed,w_150,h_100";
+		// 过期时间10分钟
+		Date expiration = new Date(new Date().getTime() + 1000 * 60 * 10 );
+		GeneratePresignedUrlRequest request = new
+				GeneratePresignedUrlRequest(bucketName,key, HttpMethod.GET);
+		request.setExpiration(expiration);
+		request.setProcess(style);
+		try {
+			request.setProcess(style);
+			URL signedUrl = client.generatePresignedUrl(request);
+			return signedUrl.toString();
+		}catch (Exception e){
+			return "";
+		}
+	}
 }

@@ -31,6 +31,7 @@ public class ObjectFile implements Serializable{
 	private String downloadUrl;
 	/** 预览地址 */
 	private String previewUrl;
+	private String thumbUrl;
 	/** 描述*/
 	private String description;
 	/** 线面类型*/
@@ -100,6 +101,14 @@ public class ObjectFile implements Serializable{
 
 	public void setPreviewUrl(String previewUrl) {
 		this.previewUrl = previewUrl;
+	}
+
+	public String getThumbUrl() {
+		return thumbUrl;
+	}
+
+	public void setThumbUrl(String thumbUrl) {
+		this.thumbUrl = thumbUrl;
 	}
 
 	public String getDescription() {

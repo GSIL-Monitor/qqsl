@@ -512,7 +512,7 @@ public class UserController {
             return subjectLogin(user, "web",null);
         }
         if(map.get("cookie")==null||!StringUtils.hasText(map.get("cookie").toString())){
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.CODE_NEED);
         }
         //登录间隔时间过长需重新登录
         if(user.getLoginDate()==null){
@@ -523,7 +523,7 @@ public class UserController {
         }
         String cookie = map.get("cookie").toString();
         if(!cookie.equals(DigestUtils.md5Hex(user.getPassword()))){
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.CODE_NEED);
         }else{
             return subjectLogin(user, "web",null);
         }
