@@ -113,13 +113,13 @@ public final class CommonAttributes {
      */
     public static final String[] BASETYPEC = {"泉室", "截水廊道", "大口井", "土井", "机井", "涝池", "闸", "倒虹吸", "跌水",
             "消力池", "护坦", "海漫", "渡槽", "涵洞", "隧洞", "农口", "斗门", "公路桥", "车便桥", "各级渠道", "检查井", "分水井", "供水井", "减压井", "减压池",
-            "排气井", "放水井", "蓄水池", "各级管道", "防洪堤", "排洪渠", "挡墙", "谷坊", "淤地坝", "溢洪道", "滴灌", "喷头", "给水栓", "施肥设施",
+            "排气井", "放水井", "蓄水池", "各级管道", "防洪堤", "排洪渠", "挡墙", "谷坊", "淤地坝", "滴灌", "喷头", "给水栓", "施肥设施",
             "过滤系统", "林地", "耕地", "草地", "居民区", "工矿区", "电力", "次级交通", "河床", "水面", "水位", "水文",
             "雨量", "水质", "泵站", "电站厂房", "地质点", "其他", "普通点", "供水干管", "供水支管", "供水斗管", "供水干渠", "供水支渠", "供水斗渠", "排水干管", "排水支管", "排水斗管",
             "排水干渠", "排水支渠", "排水斗渠", "灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域", "公共线面"};
     public static final String[] BASETYPEE = {"QS", "JSLD", "DKJ", "TJ", "JJ", "LC", "FSZ", "DHX", "DS",
             "XIAOLC", "HUT", "HAIM", "DC", "HD", "SD", "NK", "DM", "GLQ", "CBQ", "GJQD", "JCJ", "FSJ", "GSJ", "JYJ", "JYC",
-            "PAIQJ", "FANGSJ", "XSC", "GJGD", "FHD", "PHQ", "DANGQ", "GF", "YDB", "YHD", "DG", "PT", "JSS", "SFSS",
+            "PAIQJ", "FANGSJ", "XSC", "GJGD", "FHD", "PHQ", "DANGQ", "GF", "YDB", "DG", "PT", "JSS", "SFSS",
             "GLXT", "LD", "GD", "CD", "JMQ", "GKQ", "DL", "CJJT", "HEC", "SHUIM", "SHUIW", "SHUIWEN",
             "YUL", "SHUIZ", "BZ", "DZCF", "DIZD", "TSD", "POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
             "PSGQ", "PSZQ", "PSDQ", "GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY", "GONGGXM"};

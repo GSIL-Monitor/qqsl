@@ -201,10 +201,6 @@ public class CommonEnum {
          * 谷坊
          */
         GF,
-        /**
-         * 溢洪道
-         */
-        YHD,
         /** 节水建筑物 */
         /**
          * 滴灌
