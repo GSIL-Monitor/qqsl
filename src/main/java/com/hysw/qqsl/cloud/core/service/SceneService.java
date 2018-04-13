@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Create by leinuo on 18-3-27 下午5:17
@@ -31,12 +32,12 @@ public class SceneService  extends BaseService<Scene, Long> {
      * @param panorama
      * @param images
      */
-    public String saveScene(User user, Panorama panorama, List<JSONObject> images) {
+    public String saveScene(User user, Panorama panorama, List<Map<String,String>> images) {
         Object name;
         Object fileName;
         boolean flag = true;
         String thumbUrl = null;
-        for (JSONObject image : images) {
+        for (Map<String,String> image : images) {
             name = image.get("name");
             fileName = image.get("fileName");
             Scene scene = new Scene();

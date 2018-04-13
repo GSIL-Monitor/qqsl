@@ -48,16 +48,20 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * 查询所有审核通过的全景和用户自己建立的全景
      * @return
      */
-    public List<Panorama> findAllPass(Long userId){
+    public List<Panorama> findAllPass(Object object){
         List<Filter> filters1 = new ArrayList<>();
         filters1.add(Filter.eq("status", CommonEnum.Review.PASS));
         filters1.add(Filter.eq("share", true));
         List<Panorama> panoramas;
-        if (userId == null) {
+        if (object == null) {
             panoramas = panoramaDao.findList(0, null, filters1);
         }else{
             List<Filter> filters2 = new ArrayList<>();
-            filters2.add(Filter.eq("userId", userId));
+            if (object instanceof User) {
+                filters2.add(Filter.eq("userId", ((User) object).getId()));
+            } else if (object instanceof Account) {
+                filters2.add(Filter.eq("accountId", ((Account) object).getId()));
+            }
             panoramas = panoramaDao.findList(0, null, filters1,filters2);
         }
         return panoramas;
@@ -80,7 +84,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("reviewDate", panoramas.get(i).getReviewDate());
             jsonObject.put("isShare", panoramas.get(i).getShare());
             List<ObjectFile> objectFiles= ossService
-                        .getSubdirectoryFiles("panorama" + "/" +panoramas.get(i).getId(),"qqslimage");
+                    .getSubdirectoryFiles("panorama" + "/" +panoramas.get(i).getId(),"qqslimage");
             jsonObject.put("pictures", objectFiles);
             jsonObject.put("user", userJson(panoramas.get(i).getUserId()));
             jsonObject.put("instanceId", panoramas.get(i).getInstanceId());
@@ -141,7 +145,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         return jsonObject;
     }
 
-    public List<Panorama> findByuser(User user) {
+    public List<Panorama> findByUser(User user) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("userId", user.getId()));
         List<Panorama> panoramas = panoramaDao.findList(0, null, filters);
@@ -211,7 +215,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                 getTargetFilePath();
             }
             File randomFile = createRandomDir();
-            List<JSONObject> images1 = (List<JSONObject>) images;
+            List<Map<String,String>> images1 = (List<Map<String,String>>) images;
             List<String> paths = downloadPicture(user, images1, randomFile);
             if (paths == null || paths.size() == 0) {
                 return "PANORAMA_IMAGE_NOT_EXIST";//下载失败
@@ -235,10 +239,10 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      *  @param images
      * @param randomFile
      */
-    private List<String> downloadPicture(User user, List<JSONObject> images, File randomFile) {
+    private List<String> downloadPicture(User user, List<Map<String,String>> images, File randomFile) {
         List<String> paths= new ArrayList<>();
-        for (JSONObject jsonObject : images) {
-            Object fileName = jsonObject.get("fileName");
+        for (Map<String, String> image : images) {
+            Object fileName = image.get("fileName");
             try {
                 paths.add(ossService.downloadFileToLocal(user.getId() + "/" + fileName, randomFile.getAbsolutePath() + System.getProperty("file.separator") + fileName.toString()));
             } catch (OSSException e) {
@@ -572,5 +576,56 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             return panoramas.get(0);
         }
         return null;
+    }
+
+    /**
+     * 获取panoramas的json
+     * @param panoramas
+     * @return
+     */
+    public JSONArray panoramasToJsonNoScene(List<Panorama> panoramas){
+        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        for (Panorama panorama : panoramas) {
+            jsonObject = new JSONObject();
+            jsonObject.put("instanceId", panorama.getInstanceId());
+            jsonObject.put("name", panorama.getName());
+            jsonObject.put("advice", panorama.getAdvice());
+            jsonObject.put("coor", panorama.getCoor());
+            jsonObject.put("region", panorama.getRegion());
+            jsonObject.put("reviewDate", panorama.getReviewDate().getTime());
+            jsonObject.put("status", panorama.getStatus());
+            jsonObject.put("share", panorama.getShare());
+            jsonObject.put("info", panorama.getInfo());
+            jsonObject.put("thumbUrl", panorama.getThumbUrl());
+            jsonObject.put("createDate", panorama.getCreateDate().getTime());
+            jsonObject.put("modifyDate", panorama.getModifyDate().getTime());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    public List<Panorama> findByAccount(Account account) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("accountId", account.getId()));
+        List<Panorama> panoramas = panoramaDao.findList(0, null, filters);
+        return panoramas;
+    }
+
+    /**
+     * 获取panoramas的json
+     * @param panoramas
+     * @return
+     */
+    public JSONArray panoramasToJsonHaveScene(List<Panorama> panoramas){
+        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        for (Panorama panorama : panoramas) {
+            jsonObject = new JSONObject();
+            jsonObject.put("name", panorama.getName());
+            jsonObject.put("instanceId", panorama.getInstanceId());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
     }
 }
