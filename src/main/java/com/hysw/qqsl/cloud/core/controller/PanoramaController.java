@@ -18,7 +18,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +53,34 @@ public class PanoramaController {
         String skinStr = panoramaService.getSkin();
         writer(httpResponse,skinStr);
     }
+
+    @RequestMapping(value = "/tour.xml/vtourskin.png", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    void getsPng(HttpServletResponse httpResponse) {
+        httpResponse.setContentType("image/*");
+        FileInputStream fis = null;
+        OutputStream os = null;
+        try {
+            fis = new FileInputStream("/home/leinuo/pic/vtourskin.png");
+            os = httpResponse.getOutputStream();
+            int count = 0;
+            byte[] buffer = new byte[1024 * 8];
+            while ((count = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, count);
+                os.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            fis.close();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void writer(HttpServletResponse httpResponse,String xmlStr){
         try {
             httpResponse.setContentType("text/xml;charset=" + CommonAttributes.CHARSET);
@@ -61,7 +91,8 @@ public class PanoramaController {
 
         }
     }
-    @RequestMapping(value = "/panorama/{instanceId}", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/panorama/{instanceId}", method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
     Message getPanoramaConfig(@PathVariable("instanceId") String instanceId) {
