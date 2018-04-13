@@ -7,13 +7,11 @@ import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -156,10 +154,10 @@ public class PanoramaController {
      * 获取个人全景列表（无场景，无兴趣点）
      * @return
      */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/getPersonalList", method = RequestMethod.GET)
-    public @ResponseBody Message getPersonalList(){
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/lists", method = RequestMethod.GET)
+    public @ResponseBody Message lists(){
         User user = authentService.getUserFromSubject();
         List<Panorama> panoramas = null;
         if (user == null) {
@@ -168,9 +166,6 @@ public class PanoramaController {
         }else{
             panoramas = panoramaService.findByUser(user);
         }
-        if (panoramas == null || panoramas.size() == 0) {
-            return MessageService.message(Message.Type.FAIL);
-        }
         return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonNoScene(panoramas));
     }
 
@@ -178,8 +173,8 @@ public class PanoramaController {
      * 获取所有审核通过的全景和用户自己建立的全景
      * @return
      */
-    @RequestMapping(value = "/getList", method = RequestMethod.GET)
-    public @ResponseBody Message getList(){
+    @RequestMapping(value = "/all/lists", method = RequestMethod.GET)
+    public @ResponseBody Message allLists(){
         Object object = authentService.getUserFromSubject();
         List<Panorama> panoramas;
         if (object == null) {
@@ -192,9 +187,17 @@ public class PanoramaController {
         }else{
             panoramas = panoramaService.findAllPass(object);
         }
+        return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonHaveScene(panoramas));
+    }
+
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/lists", method = RequestMethod.GET)
+    public @ResponseBody Message adminLists(){
+        List<Panorama> panoramas = panoramaService.findAllPending();
         if (panoramas == null || panoramas.size() == 0) {
             return MessageService.message(Message.Type.FAIL);
         }
-        return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonHaveScene(panoramas));
+        return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonAdmin(panoramas));
     }
 }

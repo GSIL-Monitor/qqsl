@@ -633,4 +633,28 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         }
         return jsonArray;
     }
+
+    /**
+     * 获取panoramas的json
+     * @param panoramas
+     * @return
+     */
+    public JSONArray panoramasToJsonAdmin(List<Panorama> panoramas){
+        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        for (Panorama panorama : panoramas) {
+            jsonObject = new JSONObject();
+            jsonObject.put("instanceId", panorama.getInstanceId());
+            jsonObject.put("name", panorama.getName());
+            jsonObject.put("coor", panorama.getCoor());
+            jsonObject.put("region", panorama.getRegion());
+            jsonObject.put("status", panorama.getStatus());
+            jsonObject.put("info", panorama.getInfo());
+            jsonObject.put("thumbUrl", panorama.getThumbUrl());
+            jsonObject.put("createDate", panorama.getCreateDate().getTime());
+            jsonObject.put("modifyDate", panorama.getModifyDate().getTime());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
 }

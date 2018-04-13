@@ -199,31 +199,22 @@ public class FieldController {
 
     /**
      * 将外业内业坐标数据及建筑物写入excel
-     * @param objectMap <ul>
-     *                  <li>projectId 项目id</li>
-     *                  <li>type 来源 DESIGN设计，FIELD外业</li>
-     *                  <li>baseLevelType 坐标转换基准面类型</li>
-     *                  <li>WGS84Type WGS84坐标格式</li>
-     * </ul>
+     * @param projectId 项目id
+     * @param type 来源 DESIGN设计，FIELD外业
+     * @param baseLevelType 坐标转换基准面类型
+     * @param WGS84Type WGS84坐标格式
      * @return excel格式数据
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadCoordinate", method = RequestMethod.POST)
+    @RequestMapping(value = "/downloadCoordinate", method = RequestMethod.GET)
     public @ResponseBody
-    Message downloadCoordinate(@RequestBody  Map<String,Object> objectMap, HttpServletResponse response) {
-        Object projectId = objectMap.get("projectId");
-        Object baseLevelType = objectMap.get("baseLevelType");
-        Object WGS84Type = objectMap.get("WGS84Type");
-        Object type = objectMap.get("type");
-        if (projectId == null || baseLevelType == null || WGS84Type == null || type == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Project project = projectService.find(Long.valueOf(projectId.toString()));
-        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType.toString());
+    Message downloadCoordinate(@RequestParam long projectId, @RequestParam String type, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
+        Project project = projectService.find(projectId);
+        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
         Coordinate.WGS84Type wgs84Type = null;
         if (!WGS84Type.equals("")) {
-            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type.toString());
+            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
         }
         if (levelType == Coordinate.BaseLevelType.CGCS2000) {
             wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
@@ -232,9 +223,9 @@ public class FieldController {
             return MessageService.message(Message.Type.FAIL);
         }
         Workbook wb;
-        if (Build.Source.DESIGN.toString().toLowerCase().equals(type.toString().trim().toLowerCase())) {
+        if (Build.Source.DESIGN.toString().toLowerCase().equals(type.trim().toLowerCase())) {
             wb = fieldService.writeExcel(project, Build.Source.DESIGN,wgs84Type);
-        } else if (Build.Source.FIELD.toString().toLowerCase().equals(type.toString().trim().toLowerCase())) {
+        } else if (Build.Source.FIELD.toString().toLowerCase().equals(type.trim().toLowerCase())) {
             wb = fieldService.writeExcel(project, Build.Source.FIELD,wgs84Type);
         } else {
             return MessageService.message(Message.Type.FAIL);
@@ -251,7 +242,7 @@ public class FieldController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + "--" + type.toString().trim() + ".xls" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + "--" + type.trim() + ".xls" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {
