@@ -444,7 +444,8 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         if (osName.toLowerCase().contains("windows")) {
             cmd = "D:\\krpano\\make.bat";
         }  else if (osName.toLowerCase().contains("linux")) {
-            cmd ="/home/qqsl/krpano/krpanotools makepano -config=templates/vtour-normal.config";
+          //  cmd ="/home/qqsl/krpano/krpanotools makepano -config=templates/vtour-normal.config";
+            cmd ="/home/leinuo/soft/krpano-1.19-pr14/krpanotools makepano -config=templates/vtour-normal.config";
         }
         return cmd;
     }
@@ -470,15 +471,20 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         Template template = ve.getTemplate("velocityTemp/tour.vm", "UTF-8");
         VelocityContext context = new VelocityContext();
         //传入参数
-        Panorama panoramaConfig = findByInstanceId(instanceId);
-        if(panoramaConfig==null){
+        Panorama panorama = findByInstanceId(instanceId);
+        if(panorama==null){
             context.put("status", "4021");
             return getString(template,context);
         }
-        List<Scene> scenes = panoramaConfig.getScenes();
+        List<Scene> scenes = panorama.getScenes();
         context.put("status", scenes==null?"4101":"200");
         context.put("scenes",scenes);
-        context.put("prefixPath","https://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/works/");
+        if(scenes==null){
+            context.put("prefixPath","");
+        }else {
+            String path = scenes.get(0).getThumbUrl();
+            context.put("prefixPath",path.substring(0,path.lastIndexOf("/")));
+        }
         context.put("skinPath","skin.xml");
         return getString(template,context);
     }
@@ -549,21 +555,20 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         if(panorama == null){
             return panoramaJson;
         }
-        panoramaJson.put("hotSpot",JSONObject.fromObject(panorama.getHotspot()));
+        panoramaJson.put("hotSpot",panorama.getHotspot()==null?"":JSONObject.fromObject(panorama.getHotspot()));
         panoramaJson.put("advice",panorama.getAdvice());
         panoramaJson.put("id",panorama.getId());
         //  panoramaJson.put("cdnHost",panoramaConfig.getCdnHost());
         panoramaJson.put("createDate",panorama.getCreateDate());
-        panoramaJson.put("angleOfView",JSONObject.fromObject(panorama.getAngleOfView()));
-        panoramaJson.put("coor",JSONObject.fromObject(panorama.getCoor()));
+        panoramaJson.put("angleOfView",panorama.getAngleOfView()==null?"":JSONObject.fromObject(panorama.getAngleOfView()));
+        panoramaJson.put("coor",panorama.getCoor()==null?"":JSONObject.fromObject(panorama.getCoor()));
         panoramaJson.put("instanceId",panorama.getInstanceId());
         panoramaJson.put("info",panorama.getInfo());
         panoramaJson.put("thumbUrl",panorama.getThumbUrl());
         panoramaJson.put("status",panorama.getStatus());
         panoramaJson.put("name",panorama.getName());
         panoramaJson.put("reviewDate",panorama.getReviewDate());
-        panoramaJson.put("name",panorama.getRegion());
-        panoramaJson.put("region",panorama.getName());
+        panoramaJson.put("region",panorama.getRegion());
         // panoramaJson.put("scenes",panoramaConfig.getScenes());
         return panoramaJson;
     }
