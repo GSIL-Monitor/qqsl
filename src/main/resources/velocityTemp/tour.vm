@@ -64,10 +64,10 @@
 
                 <view hlookat="0" vlookat="0" fovtype="MFOV" fov="90" fovmin="5" fovmax="120" vlookatmin="-90" vlookatmax="90" limitview="lookat"/>
 
-                <preview url="$prefixPath/preview.jpg" />
+                <preview url="$prefixPath/$scene.instanceId$afterPath/preview.jpg" />
 
                 <image>
-                    <cube url="$prefixPath/pano_%s.jpg" />
+                    <cube url="$prefixPath/$scene.instanceId$afterPath/pano_%s.jpg" />
                 </image>
             </scene>
         #end

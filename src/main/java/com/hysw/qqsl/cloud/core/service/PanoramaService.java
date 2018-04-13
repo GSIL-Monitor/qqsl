@@ -481,9 +481,12 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         context.put("scenes",scenes);
         if(scenes==null){
             context.put("prefixPath","");
+            context.put("afterPath",".tiles");
         }else {
-            String path = scenes.get(0).getThumbUrl();
-            context.put("prefixPath",path.substring(0,path.lastIndexOf("/")));
+            String path = scenes.get(0).getThumbUrl().substring(0,scenes.get(0).getThumbUrl().lastIndexOf("/"));
+            String prefixPath = path.substring(0,path.lastIndexOf("/"));
+            context.put("prefixPath",prefixPath);
+            context.put("afterPath",".tiles");
         }
         context.put("skinPath","skin.xml");
         return getString(template,context);
@@ -509,30 +512,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         VelocityContext context = new VelocityContext();
         return getString(template,context);
     }
-
-    public String getPng(){
-        FileInputStream fis = null;
-        OutputStream os = null;
-        try {
-            fis = new FileInputStream("/home/pic/vtourskin.png");
-            return fis.toString();
-           /* os = response.getOutputStream();
-            int count = 0;
-            byte[] buffer = new byte[1024 * 8];
-            while ((count = fis.read(buffer)) != -1) {
-                os.write(buffer, 0, count);
-                os.flush();
-            }*/
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            fis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
-    };
 
     public String getString(Template template ,VelocityContext context){
         try {
@@ -569,7 +548,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panoramaJson.put("name",panorama.getName());
         panoramaJson.put("reviewDate",panorama.getReviewDate());
         panoramaJson.put("region",panorama.getRegion());
-        // panoramaJson.put("scenes",panoramaConfig.getScenes());
+        panoramaJson.put("scenes",sceneService.getScenes(panorama.getScenes()));
         return panoramaJson;
     }
 

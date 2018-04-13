@@ -4,6 +4,7 @@ import com.hysw.qqsl.cloud.core.dao.SceneDao;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.Scene;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,5 +53,27 @@ public class SceneService  extends BaseService<Scene, Long> {
             }
         }
         return thumbUrl;
+    }
+
+    public JSONArray getScenes(List<Scene> scenes) {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject;
+        Scene scene;
+        if(scenes.size()==0){
+            return jsonArray;
+        }
+        for(int i=0;i<scenes.size();i++){
+            scene = scenes.get(i);
+            jsonObject = new JSONObject();
+            jsonObject.put("thumbUrl",scene.getThumbUrl());
+            jsonObject.put("createDate",scene.getCreateDate());
+            jsonObject.put("modifyDate",scene.getModifyDate());
+            jsonObject.put("id",scene.getId());
+            jsonObject.put("instanceId",scene.getInstanceId());
+            jsonObject.put("fileName",scene.getFileName());
+            jsonObject.put("panorama",scene.getPanorama().getId());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
     }
 }
