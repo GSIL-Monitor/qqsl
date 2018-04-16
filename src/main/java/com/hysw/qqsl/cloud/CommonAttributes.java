@@ -180,16 +180,6 @@ public final class CommonAttributes {
 //    public static final String APPID = "wx0d8493d76fa4b58d";
 //    public static final String APPSECRET = "0a638eccdd73d77f317c900afd01ea55";
 
-    public static final String TRADEBASETYPEC[] = {"试用版", "青春版", "朝阳版", "旭日版","水文站","雨量站","水位站","水质站","全景效果图","航测3D建模"};
-    public static final String TRADEBASETYPEE[] = {"TEST", "YOUTH", "SUN", "SUNRISE","HYDROLOGIC_STATION","RAINFALL_STATION","WATER_LEVEL_STATION",
-            "WATER_QUALITY_STATION","PANORAMA","AIRSURVEY"};
-
-    public static final String TRADETYPEC[] = {"套餐服务", "测站服务", "数据服务"};
-    public static final String TRADETYPEE[] = {"PACKAGE", "STATION", "GOODS"};
-
-    public static final String TRADEBUYTYPEC[] = {"购买", "续费", "升级"};
-    public static final String TRADEBUYTYPEE[] = {"BUY", "RENEW", "UPGRADE"};
-
     /**
      * 身份证图片信息转文字信息Code
      */
