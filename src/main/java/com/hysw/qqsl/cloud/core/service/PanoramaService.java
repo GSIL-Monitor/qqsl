@@ -37,6 +37,8 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     private UserService userService;
     @Autowired
     private SceneService sceneService;
+    @Autowired
+    private AccountService accountService;
     private String path;
 
     @Autowired
@@ -199,13 +201,12 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         User user = null;
         if (object instanceof User) {
             user = (User) object;
-            panorama.setUserId(user.getId());
         }else if(object instanceof Account){
 //            子账户与主账户改成一对多后，查询user
-//            user = accountService.find(((Account) object).getId()).getUser();
-            panorama.setUserId(user.getId());
+            user = accountService.find(((Account) object).getId()).getUser();
             panorama.setAccountId(((Account) object).getId());
         }
+        panorama.setUserId(user.getId());
         panorama.setRegion(region.toString());
         panorama.setInfo(info.toString());
         panorama.setInstanceId(DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis())));

@@ -180,9 +180,9 @@ public class PanoramaController {
         if (object == null) {
             object = authentService.getAccountFromSubject();
             if (object == null) {
-                panoramas = panoramaService.findAllPass(object);
-            } else {
                 panoramas = panoramaService.findAllPass(null);
+            } else {
+                panoramas = panoramaService.findAllPass(object);
             }
         }else{
             panoramas = panoramaService.findAllPass(object);
