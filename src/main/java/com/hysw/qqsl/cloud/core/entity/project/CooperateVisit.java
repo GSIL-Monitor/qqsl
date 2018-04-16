@@ -20,15 +20,25 @@ public class CooperateVisit {
     private Date modifyTime;
 
     public enum Type{
-        VISIT_INVITE_ELEMENT,
-        VISIT_INVITE_FILE,
-        VISIT_PREPARATION_ELEMENT,
-        VISIT_PREPARATION_FILE,
-        VISIT_BUILDING_ELEMENT,
-        VISIT_BUILDING_FILE,
-        VISIT_MAINTENANCE_ELEMENT,
-        VISIT_MAINTENANCE_FILE,
-        VISIT_VIEW
+        VISIT_INVITE_ELEMENT("招投标要素"),
+        VISIT_INVITE_FILE("招投标文件"),
+        VISIT_PREPARATION_ELEMENT("项目前期要素"),
+        VISIT_PREPARATION_FILE("项目前期文件"),
+        VISIT_BUILDING_ELEMENT("建设期要素"),
+        VISIT_BUILDING_FILE("建设期文件"),
+        VISIT_MAINTENANCE_ELEMENT("运营期要素"),
+        VISIT_MAINTENANCE_FILE("运营期文件"),
+        VISIT_VIEW("查看");
+        //必须增加一个构造函数,变量,得到该变量的值
+        private String  typeC;
+
+        Type(String typeC) {
+            this.typeC = typeC;
+        }
+
+        public String getTypeC() {
+            return typeC;
+        }
     }
 
     private CooperateVisit() {}

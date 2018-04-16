@@ -131,9 +131,9 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
      * @return
      */
     private String covert(CooperateVisit.Type type) {
-        for (int i = 0; i < CommonAttributes.STAGEE.length; i++) {
-            if(CommonAttributes.STAGEE[i].equals(type.toString())){
-                return CommonAttributes.STAGEC[i];
+        for (CooperateVisit.Type type1 : CooperateVisit.Type.values()) {
+            if(type1.name().equals(type.toString())){
+                return type1.getTypeC();
             }
         }
         return null;

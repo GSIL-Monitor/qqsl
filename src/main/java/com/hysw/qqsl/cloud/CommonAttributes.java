@@ -146,8 +146,6 @@ public final class CommonAttributes {
             + "CONTACTS_OWN_NAME,name,NOTE:CONTACTS_OWN_NAME,phone,NOTE:CONTACTS_OWN_NAME,email,NOTE:introduce:"
             + "CONTACTS_OWN_NAME:CONTACTS_OWN_NAME,name,NOTE:CONTACTS_OWN_NAME,phone,NOTE:CONTACTS_OWN_NAME,email,NOTE:"
             + "CO NTACTS_OWN_NAME:CONTACTS_OWN_NAME:CONTACTS_OWN_NAME,name:CONTACTS_OWN_NAME,phone:CONTACTS_OWN_NAME,email:CONTACTS_OWN_MASTER,master";
-    public static final String[] STAGEE = {"VISIT_INVITE_ELEMENT", "VISIT_INVITE_FILE", "VISIT_PREPARATION_ELEMENT", "VISIT_PREPARATION_FILE", "VISIT_BUILDING_ELEMENT", "VISIT_BUILDING_FILE", "VISIT_MAINTENANCE_ELEMENT", "VISIT_MAINTENANCE_FILE", "VISIT_VIEW"};
-    public static final String[] STAGEC = {"招投标要素", "招投标文件", "项目前期要素", "项目前期文件", "建设期要素", "建设期文件", "运营期要素", "运营期文件", "查看"};
     public static final String publicKeyApplication = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrlidjOAuMWRuCJtlcaFhIjHyvV/JKQCUh+9Mc0qNuzFsc+GqDWJEgg2F8iXXRR35eI9lcmX6b6K9Et/GctUSnT1Djrc8xSmwNKQy4sRaylNJYxDgfhkKwjt/jCjDPQ7QpBKLXJIX6MzC2qZzxHnMt4wdY3v0vV122JSs+MM8MrwIDAQAB";
     public static final String privateKeyApplication = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKuWJ2M4C4xZG4Im" +
             "2VxoWEiMfK9X8kpAJSH70xzSo27MWxz4aoNYkSCDYXyJddFHfl4j2VyZfpvor0S3\n" +
