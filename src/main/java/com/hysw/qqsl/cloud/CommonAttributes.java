@@ -103,36 +103,7 @@ public final class CommonAttributes {
      * 树形结构顶级节点
      */
     public static final String TOP_TREE_ID = "999999";
-    /**
-     * 项目信息name
-     */
-    public static final String[] TYPEC = {"点坐标", "线坐标", "面坐标", "外业"};
-    public static final String[] TYPEE = {"POINT", "LINE", "AREA", "FIELD"};
-    /**
-     * 同时添加C和E 对应
-     */
-    public static final String[] BASETYPEC = {"泉室", "截水廊道", "大口井", "土井", "机井", "涝池", "闸", "倒虹吸", "跌水",
-            "消力池", "护坦", "海漫", "渡槽", "涵洞", "隧洞", "农口", "斗门", "公路桥", "车便桥", "各级渠道", "检查井", "分水井", "供水井", "减压井", "减压池",
-            "排气井", "放水井", "蓄水池", "各级管道", "防洪堤", "排洪渠", "挡墙", "谷坊", "淤地坝", "滴灌", "喷头", "给水栓", "施肥设施",
-            "过滤系统", "林地", "耕地", "草地", "居民区", "工矿区", "电力", "次级交通", "河床", "水面", "水位", "水文",
-            "雨量", "水质", "泵站", "电站厂房", "地质点", "其他", "普通点", "供水干管", "供水支管", "供水斗管", "供水干渠", "供水支渠", "供水斗渠", "排水干管", "排水支管", "排水斗管",
-            "排水干渠", "排水支渠", "排水斗渠", "灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域", "公共线面"};
-    public static final String[] BASETYPEE = {"QS", "JSLD", "DKJ", "TJ", "JJ", "LC", "FSZ", "DHX", "DS",
-            "XIAOLC", "HUT", "HAIM", "DC", "HD", "SD", "NK", "DM", "GLQ", "CBQ", "GJQD", "JCJ", "FSJ", "GSJ", "JYJ", "JYC",
-            "PAIQJ", "FANGSJ", "XSC", "GJGD", "FHD", "PHQ", "DANGQ", "GF", "YDB", "DG", "PT", "JSS", "SFSS",
-            "GLXT", "LD", "GD", "CD", "JMQ", "GKQ", "DL", "CJJT", "HEC", "SHUIM", "SHUIW", "SHUIWEN",
-            "YUL", "SHUIZ", "BZ", "DZCF", "DIZD", "TSD", "POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
-            "PSGQ", "PSZQ", "PSDQ", "GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY", "GONGGXM"};
-    public static final String[] TYPELINEAREAC = {"普通点", "供水干管", "供水支管", "供水斗管", "供水干渠", "供水支渠", "供水斗渠", "排水干管", "排水支管", "排水斗管",
-            "排水干渠", "排水支渠", "排水斗渠", "灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域", "防洪堤", "排洪渠", "公共线面"};
-    public static final String[] TYPELINEAREAE = {"POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
-            "PSGQ", "PSZQ", "PSDQ", "GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY", "FHD", "PHQ", "GONGGXM"};
-    public static final String[] TYPELINEC = {"普通点", "供水干管", "供水支管", "供水斗管", "供水干渠", "供水支渠", "供水斗渠", "排水干管", "排水支管", "排水斗管",
-            "排水干渠", "排水支渠", "排水斗渠", "公共线面", "防洪堤", "排洪渠"};
-    public static final String[] TYPELINEE = {"POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
-            "PSGQ", "PSZQ", "PSDQ", "GONGGXM", "FHD", "PHQ"};
-    public static final String[] TYPEAREAC = {"灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域"};
-    public static final String[] TYPEAREAE = {"GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY"};
+
     /**
      * unitService 用于测试的验证数据
      */
@@ -177,9 +148,6 @@ public final class CommonAttributes {
             + "CO NTACTS_OWN_NAME:CONTACTS_OWN_NAME:CONTACTS_OWN_NAME,name:CONTACTS_OWN_NAME,phone:CONTACTS_OWN_NAME,email:CONTACTS_OWN_MASTER,master";
     public static final String[] STAGEE = {"VISIT_INVITE_ELEMENT", "VISIT_INVITE_FILE", "VISIT_PREPARATION_ELEMENT", "VISIT_PREPARATION_FILE", "VISIT_BUILDING_ELEMENT", "VISIT_BUILDING_FILE", "VISIT_MAINTENANCE_ELEMENT", "VISIT_MAINTENANCE_FILE", "VISIT_VIEW"};
     public static final String[] STAGEC = {"招投标要素", "招投标文件", "项目前期要素", "项目前期文件", "建设期要素", "建设期文件", "运营期要素", "运营期文件", "查看"};
-    //要素数据组类型
-    public static final String[] ComplexTypeE = {"FORESTRY", "FARMLAND", "GRASSLAND", "RESIDENTIAL", "MINERAL", "POWER", "SECOND_TRAFFIC", "CHAMBER", "GALLERY", "DUG_WELL", "DOINAKA", "ELECTRIC", "FULA", "SLUICE", "GATE", "INVERTSIPHON", "DROP", "FLUME", "CULVERT", "TUNNEL", "FARMING", "OFFLET", "ROAD_BRIDGE", "MARK_BRIDGE", "CHANNEL", "MANHOLE", "DISTRIBUTOR", "SUPPLE", "RELIEF", "RELEASE", "POOL", "PIPE", "DISCHANGE_CHANNEL", "FLOOD_BANK", "DAM", "PUMP", "POWER_HOUSE", "CHECK_DAM", "SILT_ARRESTER", "SPILLWAY", "DRIP", "SPRINKLER", "WATER_COCK", "FERTILIZATION_SYSTEMS", "FILTERING"};
-    public static final String[] ComplexTypeC = {"林地", "耕地", "草地", "居民区", "工矿区", "电力", "次级交通", "泉室", "截水廊道", "大口井", "土井", "机井", "涝池", "引水闸", "分水闸", "倒虹吸", "跌水", "渡槽", "涵洞", "隧洞", "农口", "斗门", "公路桥", "车便桥", "各级渠道", "检查井", "分水井", "供水井", "减压井", "减压池", "蓄水池", "各级管道", "排洪渠", "防洪堤", "水坝", "泵站", "电站厂房", "谷坊", "淤地坝", "溢洪道", "滴灌", "喷头", "给水栓", "施肥设施", "过滤系统"};
     public static final String publicKeyApplication = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrlidjOAuMWRuCJtlcaFhIjHyvV/JKQCUh+9Mc0qNuzFsc+GqDWJEgg2F8iXXRR35eI9lcmX6b6K9Et/GctUSnT1Djrc8xSmwNKQy4sRaylNJYxDgfhkKwjt/jCjDPQ7QpBKLXJIX6MzC2qZzxHnMt4wdY3v0vV122JSs+MM8MrwIDAQAB";
     public static final String privateKeyApplication = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKuWJ2M4C4xZG4Im" +
             "2VxoWEiMfK9X8kpAJSH70xzSo27MWxz4aoNYkSCDYXyJddFHfl4j2VyZfpvor0S3\n" +

@@ -59,14 +59,22 @@ public class CoordinateServiceTest extends BaseTest {
 		for (int i = 0; i < list.size(); i = i + 2) {
 			map.put(list.get(i), list.get(i + 1));
 		}
-		for (int j = 0; j < CommonAttributes.BASETYPEC.length; j++) {
-			String value = map.get(CommonAttributes.BASETYPEC[j]);
-			if (!value.equals(CommonAttributes.BASETYPEE[j])) {
-				logger.info(CommonAttributes.BASETYPEC[j] + ":"
-						+ CommonAttributes.BASETYPEE[j]);
+		for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+			String value = map.get(commonType.getTypeC());
+			if (!value.equals(commonType.name())) {
+				logger.info(commonType.getTypeC() + ":"
+						+ commonType.name());
 				flag = false;
 			}
 		}
+//		for (int j = 0; j < CommonAttributes.BASETYPEC.length; j++) {
+//			String value = map.get(CommonAttributes.BASETYPEC[j]);
+//			if (!value.equals(CommonAttributes.BASETYPEE[j])) {
+//				logger.info(CommonAttributes.BASETYPEC[j] + ":"
+//						+ CommonAttributes.BASETYPEE[j]);
+//				flag = false;
+//			}
+//		}
 		Assert.assertTrue(flag);
 	}
 
@@ -635,20 +643,6 @@ public class CoordinateServiceTest extends BaseTest {
 		Assert.assertTrue(coordinates.size()==0);
 	}
 
-	@Test
-	public void testBaseType(){
-		System.out.println(CommonAttributes.BASETYPEC.length);
-		System.out.println(CommonAttributes.BASETYPEE.length);
-		for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-			if (!CommonEnum.CommonType.valueOf(i).toString().equals(CommonAttributes.BASETYPEE[i])) {
-				System.out.println(CommonEnum.CommonType.valueOf(i)+"==>>"+CommonAttributes.BASETYPEE[i]);
-			}
-			if ((CommonAttributes.BASETYPEE.length - 1) == i) {
-				System.out.println(CommonEnum.CommonType.valueOf(i)+"==>>"+CommonAttributes.BASETYPEE[i]);
-			}
-
-		}
-	}
 
 	@Test
 	public void testReadExcel() throws IOException {
@@ -673,9 +667,9 @@ public class CoordinateServiceTest extends BaseTest {
 				continue;
 			}
 			Build build = null;
-			for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-				if (sheet.getSheetName().trim().equals(CommonAttributes.BASETYPEC[i])) {
-					String s = CommonAttributes.BASETYPEE[i];
+			for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+				if (sheet.getSheetName().trim().equals(commonType.getTypeC())) {
+					String s = commonType.name();
 					List<BuildGroup> completeBuildGroups = buildGroupService.getCompleteBuildGroups();
 					boolean flag=false;
 					for (int j = 0; j < completeBuildGroups.size(); j++) {
@@ -812,9 +806,9 @@ public class CoordinateServiceTest extends BaseTest {
 		for (Map.Entry<CommonEnum.CommonType, List<Build>> entry : map.entrySet()) {
 			Sheet sheet = null;
 			WriteExecl we = new WriteExecl();
-			for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-				if (CommonAttributes.BASETYPEE[i].equals(entry.getKey().toString())) {
-					sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+			for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+				if (commonType.name().equals(entry.getKey().toString())) {
+					sheet = wb.createSheet(commonType.getTypeC());
 					break;
 				}
 			}
