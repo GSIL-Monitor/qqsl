@@ -441,11 +441,15 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         String cmd = "";
         Properties props=System.getProperties(); //获得系统属性集
         String osName = props.getProperty("os.name"); //操作系统名称
+        String osUserName = props.getProperty("user.name");
         if (osName.toLowerCase().contains("windows")) {
             cmd = "D:\\krpano\\make.bat";
         }  else if (osName.toLowerCase().contains("linux")) {
-          //  cmd ="/home/qqsl/krpano/krpanotools makepano -config=templates/vtour-normal.config";
-            cmd ="/home/leinuo/soft/krpano-1.19-pr14/krpanotools makepano -config=templates/vtour-normal.config";
+            if(osUserName.equals("leinuo")){
+                cmd ="/home/leinuo/soft/krpano-1.19-pr14/krpanotools makepano -config=templates/vtour-normal.config";
+            }else {
+                cmd = "/home/qqsl/krpano/krpanotools makepano -config=templates/vtour-normal.config";
+            }
         }
         return cmd;
     }
