@@ -80,6 +80,7 @@ public class AccountService extends BaseService<Account,Long> {
         //记录子账号邀请消息
         account.setUser(user);
         save(account);
+        pollingService.addAccount(account);
         noteCache.add(phone,note);
         return makeSimpleAccountJson(account);
     }
@@ -162,7 +163,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("email",account.getEmail());
         jsonObject.put("name",account.getName());
         jsonObject.put("phone",account.getPhone());
-        jsonObject.put("userName",account.getUserName());
+//        jsonObject.put("userName",account.getUserName());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
         User user = getUserByAccountId(account.getId());
@@ -198,7 +199,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("email",account.getEmail());
         jsonObject.put("name",account.getName());
         jsonObject.put("phone",account.getPhone());
-        jsonObject.put("userName",account.getUserName());
+//        jsonObject.put("userName",account.getUserName());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
         return jsonObject;

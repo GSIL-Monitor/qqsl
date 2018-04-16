@@ -30,8 +30,6 @@ public class Account extends BaseEntity {
     private User user;
     /** 真实姓名 */
     private String name;
-    /** 登陆名 */
-    private String userName;
     /** 密码 */
     private String password;
     /** 联系电话 */
@@ -40,6 +38,8 @@ public class Account extends BaseEntity {
     private String email;
     /** 所属部门 */
     private String department;
+    /** 备注 */
+    private String remark;
     /** 是否锁定 */
     private Boolean isLocked;
     /** 锁定日期 */
@@ -112,16 +112,6 @@ public class Account extends BaseEntity {
         this.department = department;
     }
 
-    @NotEmpty
-    @Length(max=255)
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public Boolean getLocked() {
         return isLocked;
     }
@@ -185,5 +175,13 @@ public class Account extends BaseEntity {
 
     public void setLoginType(String loginType) {
         this.loginType = loginType;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }
