@@ -7,17 +7,18 @@ import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +33,6 @@ import java.util.Map;
 public class PanoramaController {
     @Autowired
     private PanoramaService panoramaService;
-    @Autowired
-    private UserService userService;
     @Autowired
     private AuthentService authentService;
 
@@ -52,6 +51,34 @@ public class PanoramaController {
         String skinStr = panoramaService.getSkin();
         writer(httpResponse,skinStr);
     }
+
+    @RequestMapping(value = "/tour.xml/vtourskin.png", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    void getsPng(HttpServletResponse httpResponse) {
+        httpResponse.setContentType("image/*");
+        FileInputStream fis = null;
+        OutputStream os = null;
+        try {
+            fis = new FileInputStream(new ClassPathResource("/vtourskin.png").getFile());
+            os = httpResponse.getOutputStream();
+            int count = 0;
+            byte[] buffer = new byte[1024 * 8];
+            while ((count = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, count);
+                os.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            fis.close();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void writer(HttpServletResponse httpResponse,String xmlStr){
         try {
             httpResponse.setContentType("text/xml;charset=" + CommonAttributes.CHARSET);
@@ -62,7 +89,8 @@ public class PanoramaController {
 
         }
     }
-    @RequestMapping(value = "/{instanceId}", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/panorama/{instanceId}", method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
     Message getPanoramaConfig(@PathVariable("instanceId") String instanceId) {
@@ -114,36 +142,62 @@ public class PanoramaController {
         if (jsonObject1 == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        User user = authentService.getUserFromSubject();
-        boolean flag;
-        if (user == null) {
-            Account account = authentService.getAccountFromSubject();
-            flag = panoramaService.addPanorama(name,jsonObject1,region,isShare,info,images, new Panorama(), account);
-        } else {
-            flag = panoramaService.addPanorama(name,jsonObject1,region,isShare,info,images, new Panorama(), user);
+        Object object = authentService.getUserFromSubject();
+        if (object == null) {
+            object = authentService.getAccountFromSubject();
         }
-        if (!flag) {
-            return MessageService.message(Message.Type.PANORAMA_SLICE_ERROE);
-        }
-        return MessageService.message(Message.Type.OK);
+        return MessageService.message(Message.Type.valueOf(panoramaService.addPanorama(name,jsonObject1,region,isShare,info,images, new Panorama(), object)));
     }
 
+
     /**
-     * 需删除（仅供测试）
+     * 获取个人全景列表（无场景，无兴趣点）
      * @return
-     * @throws IOException
-     * @throws InterruptedException
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/add1", method = RequestMethod.GET)
-    public @ResponseBody Message add1() throws IOException, InterruptedException {
-        String str = "{\"name\":\"全景名称1111111111\",\"info\":\"全景描述2222222222222222\",\"coor\":\"103.77645101765913,36.05377593481913,0\",\"isShare\":\"true\",\"region\":\"中国甘肃省兰州市七里河区兰工坪南街190号 邮政编码: 730050\",\"images\":[{\"name\":\"001-西宁\", \"fileName\":\"1522811870947bik.jpg\"},{\"name\":\"333-西安\",\"fileName\":\"152281187095756l.jpg\"}]}";
-        Map<String, Object> map =JSONObject.fromObject(str);
-        User user = new User();
-        user.setId(26l);
-        JSONObject jsonObject1 = SettingUtils.checkCoordinateIsInvalid(map.get("coor").toString());
-        panoramaService.addPanorama(map.get("name"),jsonObject1,map.get("region"),map.get("isShare"),map.get("info"),map.get("images"), new Panorama(), user);
-        return MessageService.message(Message.Type.OK);
+    @RequestMapping(value = "/lists", method = RequestMethod.GET)
+    public @ResponseBody Message lists(){
+        User user = authentService.getUserFromSubject();
+        List<Panorama> panoramas = null;
+        if (user == null) {
+            Account account = authentService.getAccountFromSubject();
+            panoramas = panoramaService.findByAccount(account);
+        }else{
+            panoramas = panoramaService.findByUser(user);
+        }
+        return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonNoScene(panoramas));
+    }
+
+    /**
+     * 获取所有审核通过的全景和用户自己建立的全景
+     * @return
+     */
+    @RequestMapping(value = "/all/lists", method = RequestMethod.GET)
+    public @ResponseBody Message allLists(){
+        Object object = authentService.getUserFromSubject();
+        List<Panorama> panoramas;
+        if (object == null) {
+            object = authentService.getAccountFromSubject();
+            if (object == null) {
+                panoramas = panoramaService.findAllPass(object);
+            } else {
+                panoramas = panoramaService.findAllPass(null);
+            }
+        }else{
+            panoramas = panoramaService.findAllPass(object);
+        }
+        return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonHaveScene(panoramas));
+    }
+
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/admin/lists", method = RequestMethod.GET)
+    public @ResponseBody Message adminLists(){
+        List<Panorama> panoramas = panoramaService.findAllPending();
+        if (panoramas == null || panoramas.size() == 0) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonAdmin(panoramas));
     }
 }

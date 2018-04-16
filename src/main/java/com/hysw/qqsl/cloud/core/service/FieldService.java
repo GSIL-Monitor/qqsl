@@ -496,9 +496,9 @@ public class FieldService implements Serializable {
         for (Object o : jsonArray2) {
             JSONObject jsonObject = JSONObject.fromObject(o);
             if (jsonObject.get("baseType") != null) {
-                for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                    if (CommonAttributes.BASETYPEE[i].equals(jsonObject.get("baseType").toString().trim())) {
-                        baseType = CommonAttributes.BASETYPEC[i];
+                for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                    if (commonType.name().equals(jsonObject.get("baseType").toString().trim())) {
+                        baseType = commonType.getTypeC();
                     }
                 }
             }
@@ -553,9 +553,9 @@ public class FieldService implements Serializable {
             JSONObject jsonObject1;
             Object longitude,latitude,elevation,baseType,description;
             WriteExecl we = new WriteExecl();
-            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                if (CommonAttributes.BASETYPEE[i].equals(entry.getKey().toString())) {
-                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (commonType.name().equals(entry.getKey().toString())) {
+                    sheet = wb.createSheet(commonType.getTypeC());
                     break;
                 }
             }
@@ -584,9 +584,9 @@ public class FieldService implements Serializable {
                         description1 = description.toString();
                     }
                     if (baseType != null) {
-                        for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                            if (baseType.toString().equals(CommonAttributes.BASETYPEE[i])) {
-                                baseType1=CommonAttributes.BASETYPEC[i];
+                        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                            if (baseType.toString().equals(commonType.name())) {
+                                baseType1=commonType.getTypeC();
                             }
                         }
                     }
@@ -742,17 +742,8 @@ public class FieldService implements Serializable {
 
     public JSONArray getModelType() {
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < CommonAttributes.TYPELINEC.length; i++) {
-            jsonArray.add("{\"baseType\":\"" + "line" + "\",\"type\":\"" + CommonAttributes.TYPELINEE[i] + "\",\"name\":\"" + CommonAttributes.TYPELINEC[i] + "\"}");
-        }
-        for (int i = 0; i < CommonAttributes.TYPEAREAC.length; i++) {
-            jsonArray.add("{\"baseType\":\"" + "area" + "\",\"type\":\"" + CommonAttributes.TYPEAREAE[i] + "\",\"name\":\"" + CommonAttributes.TYPEAREAC[i] + "\"}");
-        }
-        for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-            if (SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPELINEC))||SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPEAREAC))) {
-                continue;
-            }
-            jsonArray.add("{\"baseType\":\"" + "build" + "\",\"type\":\"" + CommonAttributes.BASETYPEE[i] + "\",\"name\":\"" + CommonAttributes.BASETYPEC[i] + "\"}");
+        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            jsonArray.add("{\"baseType\":\"" + commonType.getType() + "\",\"type\":\"" + commonType.name() + "\",\"name\":\"" + commonType.getTypeC() + "\"}");
         }
         return jsonArray;
     }
@@ -768,12 +759,16 @@ public class FieldService implements Serializable {
         List<Build> builds1 = new LinkedList<>();
         List<String> lineAera = new LinkedList<>();
         for (String s : list) {
-            if (SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPELINEE)) || SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPEAREAE))) {
-                lineAera.add(s);
-            } else {
-                for (Build build : builds) {
-                    if (build.getType().toString().equals(s)) {
-                        builds1.add((Build) SettingUtils.objectCopy(build));
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (commonType.name().equals(s)) {
+                    if (commonType.getType().equals("line")||commonType.getType().equals("area")) {
+                        lineAera.add(s);
+                    } else {
+                        for (Build build : builds) {
+                            if (build.getType().toString().equals(s)) {
+                                builds1.add((Build) SettingUtils.objectCopy(build));
+                            }
+                        }
                     }
                 }
             }
@@ -795,9 +790,9 @@ public class FieldService implements Serializable {
             Row row = null;
             Cell cell = null;
             WriteExecl we = new WriteExecl();
-            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                if (CommonAttributes.BASETYPEE[i].equals(s)) {
-                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (commonType.name().equals(s)) {
+                    sheet = wb.createSheet(commonType.getTypeC());
                     break;
                 }
             }
@@ -821,9 +816,9 @@ public class FieldService implements Serializable {
         for (Map.Entry<CommonEnum.CommonType, List<Build>> entry : map.entrySet()) {
             Sheet sheet = null;
             WriteExecl we = new WriteExecl();
-            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                if (CommonAttributes.BASETYPEE[i].equals(entry.getKey().toString())) {
-                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (commonType.name().equals(entry.getKey().toString())) {
+                    sheet = wb.createSheet(commonType.getTypeC());
                     break;
                 }
             }
@@ -937,9 +932,9 @@ public class FieldService implements Serializable {
         for (Map.Entry<CommonEnum.CommonType, List<Build>> entry : map.entrySet()) {
             Sheet sheet = null;
             WriteExecl we = new WriteExecl();
-            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                if (CommonAttributes.BASETYPEE[i].equals(entry.getKey().toString())) {
-                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (commonType.name().equals(entry.getKey().toString())) {
+                    sheet = wb.createSheet(commonType.getTypeC());
                     break;
                 }
             }

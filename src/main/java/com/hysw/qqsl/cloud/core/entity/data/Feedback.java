@@ -98,6 +98,8 @@ public class Feedback extends BaseEntity {
         this.accountId = accountId;
     }
 
+    @Basic(fetch = FetchType.EAGER)
+    @Column(columnDefinition = "text")
     public String getReview() {
         return review;
     }
