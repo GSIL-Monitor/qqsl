@@ -490,16 +490,16 @@ public class FieldController {
 
     /**
      * 根据类型下载对应模板
-     * @param object  List<Type>
+     * @param types  [a,b,c]
      * @param response 响应
      * @return OK:下载成功 Fail:下载失败
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadTemplete", method = RequestMethod.POST)
+    @RequestMapping(value = "/downloadTemplete", method = RequestMethod.GET)
     public @ResponseBody
-    Message downloadTemplete(@RequestBody  Object object, HttpServletResponse response) {
-        List<String> list = Arrays.asList((String)object);
+    Message downloadTemplete(@RequestParam String[] types, HttpServletResponse response) {
+        List<String> list = Arrays.asList(types);
         Workbook wb = fieldService.downloadModel(list);
         if (wb == null) {
             return MessageService.message(Message.Type.FAIL);
