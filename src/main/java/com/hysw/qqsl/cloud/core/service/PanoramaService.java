@@ -225,7 +225,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             if (!flag) {
                 return "PANORAMA_SLICE_ERROE";//图片切割失败
             }
-            uploadCutPicture(randomFile.getName());
+            uploadCutPicture(randomFile.getName(),user);
             thumbUrl = sceneService.saveScene(user, panorama, images1);
             delAllFile(path);
             panorama.setThumbUrl(thumbUrl);
@@ -307,10 +307,10 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * 上传切割图片
      * @param fileName
      */
-    private boolean uploadCutPicture(String fileName) {
+    private boolean uploadCutPicture(String fileName,User user) {
         String str = path+System.getProperty("file.separator") + fileName + System.getProperty("file.separator")+"vtour"+System.getProperty("file.separator")+"panos";
         try {
-            traverseFolder(str,str.length());
+            traverseFolder(str,str.length(),user);
         } catch (FileNotFoundException e) {
             return false;
         }
@@ -360,19 +360,19 @@ public class PanoramaService extends BaseService<Panorama, Long> {
      * @param l
      * @throws FileNotFoundException
      */
-    public void traverseFolder(String path,int l) throws FileNotFoundException {
+    public void traverseFolder(String path,int l,User user) throws FileNotFoundException {
         File file = new File(path);
         File[] files;
         if (file.isFile()) {
             String str=file.getAbsolutePath();
             String str1 = str.substring(l+1, str.length());
-            str1 = "panorama/26/" + str1;
+            str1 = "panorama/"+user.getId()+"/" + str1;
             str1 = str1.replace("\\", "/");
             ossService.uploadImage(str1, new FileInputStream(file), null);
         }else if (file.isDirectory()) {
             files = file.listFiles();
             for (File file1 : files) {
-                traverseFolder(file1.getAbsolutePath(),l);
+                traverseFolder(file1.getAbsolutePath(),l,user);
             }
         }
     }
