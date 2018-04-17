@@ -494,8 +494,8 @@ public class FieldController {
      * @param response 响应
      * @return OK:下载成功 Fail:下载失败
      */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/downloadTemplate", method = RequestMethod.GET)
     public @ResponseBody
     Message downloadTemplete(@RequestParam String[] types, HttpServletResponse response) {
