@@ -692,6 +692,11 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				map.put(areaList, pointList);
 			}
 		}
+		if (list.size()==0) {
+			for (Build build : builds) {
+				buildService.save(build);
+			}
+		}
 		for (Map.Entry<List<Graph>, List<Graph>> entry : map.entrySet()) {
 			jsonCoordinates=new JSONObject();
 			String description = listToString(entry.getKey(), jsonCoordinates);

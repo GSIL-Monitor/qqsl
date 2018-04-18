@@ -59,7 +59,9 @@ public class PanoramaServiceTest extends BaseTest {
     public void bianliwenjiajia() throws FileNotFoundException {
         String fileName = "adc7f83b537755272ce0837318f08135";
         String str = "D:\\qqsl\\out\\production\\resources\\panorama\\" + fileName + "\\vtour\\panos";
-        panoramaService.traverseFolder(str,str.length());
+        User user = new User();
+        user.setId(17l);
+        panoramaService.traverseFolder(str,str.length(),user);
 
     }
 
