@@ -246,9 +246,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	private void setBuildPropertyAndAddCache(Build build1, List<Attribe> attribes, List<Build> builds2) {
 		build1.setAttribeList(attribes);
 		if (build1.getRemark() == null) {
-			for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-				if (CommonAttributes.BASETYPEE[i].equals(build1.getType().toString())) {
-					build1.setRemark(CommonAttributes.BASETYPEC[i]);
+			for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+				if (commonType.name().equals(build1.getType().toString())) {
+					build1.setRemark(commonType.getTypeC());
 					break;
 				}
 			}
@@ -263,15 +263,14 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 */
 	private Build pickBuildFromBuilds(Sheet sheet) {
 		Build build = null;
-		for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-			if (SettingUtils.stringMatcher(sheet.getSheetName().trim(), Arrays.toString(CommonAttributes.TYPELINEAREAC))) {
-				return null;
-			}
-			if (sheet.getSheetName().trim().equals(CommonAttributes.BASETYPEC[i])) {
-				String s = CommonAttributes.BASETYPEE[i];
+		for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+			if (sheet.getSheetName().trim().equals(commonType.getTypeC())) {
+				if (!commonType.getType().equals("build")) {
+					return null;
+				}
 				List<Build> builds1 = buildGroupService.getBuilds();
 				for (Build build1 : builds1) {
-					if (build1.getType().toString().equals(s)) {
+					if (build1.getType().toString().equals(commonType.name())) {
 						build = build1;
 						break;
 					}
@@ -353,14 +352,13 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				list.add(coordinateBase);
 				graph.setCoordinates(list);
 				if (type != null&&!type.trim().equals("")) {
-					for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-						graph.setBaseType(CommonEnum.CommonType.TSD);
-						if (CommonAttributes.BASETYPEC[i]
-								.equals(type.trim())) {
-							graph.setBaseType(CommonEnum.CommonType.valueOf(CommonAttributes.BASETYPEE[i]));
-							break;
-						}
-					}
+					for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                        graph.setBaseType(CommonEnum.CommonType.TSD);
+                        if (commonType.getTypeC().equals(type.trim())) {
+                            graph.setBaseType(commonType);
+                            break;
+                        }
+                    }
 				}
 				if (describtion != null) {
 					graph.setDescription(describtion);
@@ -620,22 +618,31 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			jsonObject.put("elevation",list.get(i).getCoordinates().get(0).getElevation());
 			if(list.get(i).getCoordinates().get(0).getLongitude().equals("0")){
 				type = Coordinate.Type.LINE;
-				for (int i1 = 0; i1 < CommonAttributes.TYPELINEC.length; i1++) {
-					if (CommonAttributes.TYPELINEC[i1].trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
+				for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+					if (!commonType.getType().equals("line")) {
+						continue;
+					}
+					if (commonType.getTypeC().trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
 						type = Coordinate.Type.LINE;
 						break;
 					}
 				}
-				for (int i1 = 0; i1 < CommonAttributes.TYPEAREAC.length; i1++) {
-					if (CommonAttributes.TYPEAREAC[i1].trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
+				for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+					if (!commonType.getType().equals("area")) {
+						continue;
+					}
+					if (commonType.getTypeC().trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
 						type = Coordinate.Type.AREA;
 						break;
 					}
 				}
 				baseType = CommonEnum.CommonType.GONGGXM;
-				for (int i1 = 0; i1 < CommonAttributes.TYPELINEAREAC.length; i1++) {
-					if (CommonAttributes.TYPELINEAREAC[i1].trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
-						baseType = CommonEnum.CommonType.valueOf(CommonAttributes.TYPELINEAREAE[i1]);
+				for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+					if (commonType.getType().equals("build")) {
+						continue;
+					}
+					if (commonType.getTypeC().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
+						baseType = commonType;
 						break;
 					}
 				}
@@ -683,6 +690,11 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			areaList.add(list.get(i));
 			if (i == list.size() - 1) {
 				map.put(areaList, pointList);
+			}
+		}
+		if (list.size()==0) {
+			for (Build build : builds) {
+				buildService.save(build);
 			}
 		}
 		for (Map.Entry<List<Graph>, List<Graph>> entry : map.entrySet()) {

@@ -27,11 +27,9 @@ public class Account extends BaseEntity {
     private static final long serialVersionUID = 5684132177393981035L;
 
     /** 所属user */
-    private List<User> users = new ArrayList<>();
+    private User user;
     /** 真实姓名 */
     private String name;
-    /** 登陆名 */
-    private String userName;
     /** 密码 */
     private String password;
     /** 联系电话 */
@@ -40,6 +38,8 @@ public class Account extends BaseEntity {
     private String email;
     /** 所属部门 */
     private String department;
+    /** 备注 */
+    private String remark;
     /** 是否锁定 */
     private Boolean isLocked;
     /** 锁定日期 */
@@ -57,14 +57,13 @@ public class Account extends BaseEntity {
     /** 子账号的登录方式 */
     private String loginType;
 
-    @ManyToMany
-    @JoinTable(name = "user_account",joinColumns = {@JoinColumn(name = "account_id")},inverseJoinColumns = {@JoinColumn(name = "user_id")})
-    public List<User> getUsers() {
-        return users;
+    @ManyToOne(fetch = FetchType.EAGER)
+    public User getUser() {
+        return user;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @NotEmpty
@@ -111,16 +110,6 @@ public class Account extends BaseEntity {
 
     public void setDepartment(String department) {
         this.department = department;
-    }
-
-    @NotEmpty
-    @Length(max=255)
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public Boolean getLocked() {
@@ -186,5 +175,13 @@ public class Account extends BaseEntity {
 
     public void setLoginType(String loginType) {
         this.loginType = loginType;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

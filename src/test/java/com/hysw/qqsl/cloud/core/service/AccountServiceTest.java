@@ -114,8 +114,8 @@ public class AccountServiceTest extends BaseTest{
         User user = userService.findByUserName("qqsl");
         accountService.invite(phone,user);
         Account account = accountService.findByPhone(phone);
-        assertNotNull(account.getUsers());
-        assertTrue(account.getUsers().get(0).getUserName().equals("qqsl"));
+        assertNotNull(account.getUser());
+        assertTrue(account.getUser().getUserName().equals("qqsl"));
         assertNotNull(account);
     }
 

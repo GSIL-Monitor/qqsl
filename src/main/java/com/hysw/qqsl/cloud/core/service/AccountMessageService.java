@@ -37,24 +37,6 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     }
 
     /**
-     * 记录企业解绑子账号的消息
-     * @param user
-     */
-    public void bindMsessage(User user, Account account,boolean isBind) {
-        AccountMessage accountMessage = new AccountMessage();
-        accountMessage.setAccount(account);
-        JSONObject contentJson = new JSONObject();
-        contentJson.put("nickName",userService.nickName(user.getId()));
-        String bindCode = isBind?"0":"1";
-        contentJson.put("bindCode",bindCode);
-        accountMessage.setContent(contentJson.toString());
-        accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
-        accountMessage.setType(AccountMessage.Type.INVITE_ACCOUNT);
-        accountMessageDao.save(accountMessage);
-        pollingService.changeMessageStatus(account,true);
-    }
-
-    /**
      * 子账号登录查询账号消息
      * @param account
      * @return
@@ -118,7 +100,6 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setAccount(account);
         accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
         accountMessage.setContent(contentJson.toString());
-        accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
         pollingService.changeMessageStatus(account,true);
@@ -131,9 +112,9 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
      * @return
      */
     private String covert(CooperateVisit.Type type) {
-        for (int i = 0; i < CommonAttributes.STAGEE.length; i++) {
-            if(CommonAttributes.STAGEE[i].equals(type.toString())){
-                return CommonAttributes.STAGEC[i];
+        for (CooperateVisit.Type type1 : CooperateVisit.Type.values()) {
+            if(type1.name().equals(type.toString())){
+                return type1.getTypeC();
             }
         }
         return null;

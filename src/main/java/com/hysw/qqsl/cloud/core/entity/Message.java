@@ -126,16 +126,8 @@ public class Message implements Serializable{
 		PANORAMA_SLICE_ERROE(4103);
 		//必须增加一个构造函数,变量,得到该变量的值
 		private int  status=0;
-		private Type(int status) {
+		Type(int status) {
 			this.status=status;
-		}
-		public static int getStatus(int index) {
-			for (Type c : Type.values()) {
-				if (c.ordinal() == index) {
-					return c.status;
-				}
-			}
-			return 0;
 		}
 
 		public int getStatus() {

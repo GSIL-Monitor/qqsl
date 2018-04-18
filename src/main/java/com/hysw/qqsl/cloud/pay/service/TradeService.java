@@ -311,15 +311,15 @@ public class TradeService extends BaseService<Trade, Long> {
         trade.setOutTradeNo(TradeUtil.buildOutTradeNo());
         JSONObject jsonObject2 = new JSONObject();
         jsonObject2.put("type", Trade.BuyType.UPGRADE);
-        for (int i = 0; i < CommonAttributes.TRADEBASETYPEE.length; i++) {
-            if (CommonAttributes.TRADEBASETYPEE[i].equals(oldPackageModel.getType().toString())) {
-                jsonObject2.put("oldType", CommonAttributes.TRADEBASETYPEC[i]);
+        for (Trade.BaseType baseType : Trade.BaseType.values()) {
+            if (baseType.name().equals(oldPackageModel.getType().toString())) {
+                jsonObject2.put("oldType", baseType.getTypeC());
                 break;
             }
         }
-        for (int i = 0; i < CommonAttributes.TRADEBASETYPEE.length; i++) {
-            if (CommonAttributes.TRADEBASETYPEE[i].equals(newPackageModel.getType().toString())) {
-                jsonObject2.put("newType", CommonAttributes.TRADEBASETYPEC[i]);
+        for (Trade.BaseType baseType : Trade.BaseType.values()) {
+            if (baseType.name().equals(newPackageModel.getType().toString())) {
+                jsonObject2.put("newType", baseType.getTypeC());
                 break;
             }
         }
@@ -442,9 +442,9 @@ public class TradeService extends BaseService<Trade, Long> {
      */
     public String convertBaseType(Trade trade){
         String type="";
-        for (int i = 0; i < CommonAttributes.TRADEBASETYPEE.length; i++) {
-            if (CommonAttributes.TRADEBASETYPEE[i].equals(trade.getBaseType().toString())) {
-                type = CommonAttributes.TRADEBASETYPEC[i];
+        for (Trade.BaseType baseType : Trade.BaseType.values()) {
+            if (baseType.name().equals(trade.getBaseType().toString())) {
+                type = baseType.getTypeC();
                 break;
             }
         }
@@ -458,9 +458,9 @@ public class TradeService extends BaseService<Trade, Long> {
      */
     public String convertType(Trade trade){
         String type="";
-        for (int i = 0; i < CommonAttributes.TRADETYPEE.length; i++) {
-            if (CommonAttributes.TRADETYPEE[i].equals(trade.getType().toString())) {
-                type = CommonAttributes.TRADETYPEC[i];
+        for (Trade.Type type1 : Trade.Type.values()) {
+            if (type1.name().equals(trade.getType().toString())) {
+                type = type1.getTypeC();
                 break;
             }
         }
@@ -474,9 +474,9 @@ public class TradeService extends BaseService<Trade, Long> {
      */
     public String convertBuyType(Trade trade){
         String type="";
-        for (int i = 0; i < CommonAttributes.TRADEBUYTYPEE.length; i++) {
-            if (CommonAttributes.TRADEBUYTYPEE[i].equals(trade.getBuyType().toString())) {
-                type = CommonAttributes.TRADEBUYTYPEC[i];
+        for (Trade.BuyType buyType : Trade.BuyType.values()) {
+            if (buyType.name().equals(trade.getBuyType().toString())) {
+                type = buyType.getTypeC();
                 break;
             }
         }
