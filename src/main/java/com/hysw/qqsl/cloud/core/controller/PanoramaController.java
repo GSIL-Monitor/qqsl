@@ -36,6 +36,11 @@ public class PanoramaController {
     @Autowired
     private AuthentService authentService;
 
+    /**
+     * 获取全景显示xml
+     * @param httpResponse 请求响应体
+     * @param instanceId 全景唯一标识
+     */
     @RequestMapping(value = "/tour.xml/{instanceId}", method = RequestMethod.GET,produces="application/xml; charset=UTF-8")
     public
     @ResponseBody
@@ -44,6 +49,10 @@ public class PanoramaController {
         writer(httpResponse,tourStr);
     }
 
+    /**
+     * 获取全景显示xml
+     * @param httpResponse 请求响应体
+     */
     @RequestMapping(value = "/tour.xml/skin.xml", method = RequestMethod.GET,produces="application/xml; charset=UTF-8")
     public
     @ResponseBody
@@ -52,6 +61,10 @@ public class PanoramaController {
         writer(httpResponse,skinStr);
     }
 
+    /**
+     * 获取全景显示所需的图片
+     * @param httpResponse 请求响应体
+     */
     @RequestMapping(value = "/tour.xml/vtourskin.png", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -90,12 +103,68 @@ public class PanoramaController {
         }
     }
 
+    /**
+     * 获取得全景数据，data包含全景中所有属性
+     * @param instanceId 全景唯一标识
+     * @return
+     */
     @RequestMapping(value = "/panorama/{instanceId}", method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
-    Message getPanoramaConfig(@PathVariable("instanceId") String instanceId) {
+    Message getPanorama(@PathVariable("instanceId") String instanceId) {
         JSONObject jsonObject = panoramaService.get(instanceId);
+        if(jsonObject.isEmpty()){
+            return new Message(Message.Type.DATA_NOEXIST,jsonObject);
+        }
         return new Message(Message.Type.OK,jsonObject);
+    }
+
+    /**
+     * 编辑全景: panorama/update,POST
+     * 可以编辑name，info，isShare，coor，region，但是全景图片不能添加和删除了,可以把全景由共享改为非共享，反之亦然
+     * 已审核的共享全景一旦编辑，状态改为待审核
+     * 参数：id,全景id，name，info，isShare，coor，region
+     * 返回：
+     * OK:编辑成功
+     * FAIL:全景不属于当前用户或子账号，不能编辑
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/panorama/update", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+    public
+    @ResponseBody
+    Message updatePanorama(@RequestBody Map<String,Object> objectMap) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        String type = panoramaService.update(objectMap);
+        return new Message(Message.Type.valueOf(type));
+    }
+
+    /**
+     * 编辑全热点等信息: panorama/updateHotspot,POST
+     * 用户或子账号编辑全景热点，后台直接把热点json保存到数据库
+     * 已审核的共享全景一旦编辑，状态改为待审核
+     * 参数: id,全景id，angleOfView,起始视角json, hotspot,热点json,sceneGroup,场景顺序
+     * 返回：
+     * OK:编辑成功
+     * FAIL:全景不属于当前用户或子账号，不能编辑
+     * @param objectMap
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/panorama/updateHotspot", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+    public
+    @ResponseBody
+    Message updateHotspot(@RequestBody Map<String,Object> objectMap) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        String type = panoramaService.updateHotspot(objectMap);
+        return new Message(Message.Type.valueOf(type));
     }
 
     /**

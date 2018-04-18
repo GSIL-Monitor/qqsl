@@ -640,4 +640,12 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         }
         return jsonArray;
     }
+
+    public String update(Map<String, Object> objectMap) {
+        return "";
+    }
+
+    public String updateHotspot(Map<String, Object> objectMap) {
+        return "";
+    }
 }
