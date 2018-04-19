@@ -123,7 +123,7 @@ public class PanoramaController {
      * 编辑全景: panorama/update,POST
      * 可以编辑name，info，isShare，coor，region，但是全景图片不能添加和删除了,可以把全景由共享改为非共享，反之亦然
      * 已审核的共享全景一旦编辑，状态改为待审核
-     * 参数：id,全景id，name，info，isShare，coor，region
+     * 参数：id,全景id，name，info，isShare，coor，region,
      * 返回：
      * OK:编辑成功
      * FAIL:全景不属于当前用户或子账号，不能编辑
@@ -138,7 +138,14 @@ public class PanoramaController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        String type = panoramaService.update(objectMap);
+        Panorama panorama = panoramaService.find(Long.valueOf(objectMap.get("id").toString()));
+        if(panorama==null){
+            return new Message(Message.Type.DATA_NOEXIST);
+        }
+        if (!isOperate(panorama)) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        String type = panoramaService.update(panorama,objectMap);
         return new Message(Message.Type.valueOf(type));
     }
 
@@ -163,8 +170,62 @@ public class PanoramaController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        String type = panoramaService.updateHotspot(objectMap);
+        Panorama panorama = panoramaService.find(Long.valueOf(objectMap.get("id").toString()));
+        if(panorama==null){
+            return new Message(Message.Type.DATA_NOEXIST);
+        }
+        if (!isOperate(panorama)) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        String type = panoramaService.updateHotspot(panorama,objectMap);
         return new Message(Message.Type.valueOf(type));
+    }
+
+    private boolean isOperate(Panorama panorama) {
+        User user = authentService.getUserFromSubject();
+        Account account = authentService.getAccountFromSubject();
+        if(user!=null){
+            if(panorama.getUserId().equals(user.getId())){
+                return true;
+            }
+            return false;
+        }
+        if(account!=null){
+            long userId = account.getUser().getId();
+            if(panorama.getUserId().equals(userId)){
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * 删除全景：panorma/delete,POST
+     * 用户和子账号均可删除全景，
+     * 参数: id,全景id
+     * 返回：
+     * OK:删除成功
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/panorama/delete", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+    public
+    @ResponseBody
+    Message delete(@RequestBody Map<String,Object> objectMap) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Panorama panorama = panoramaService.find(Long.valueOf(objectMap.get("id").toString()));
+        if(panorama==null){
+            return new Message(Message.Type.DATA_NOEXIST);
+        }
+        if (!isOperate(panorama)) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        panoramaService.delete(panorama);
+        return new Message(Message.Type.OK);
     }
 
     /**
@@ -258,15 +319,5 @@ public class PanoramaController {
         }
         return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonHaveScene(panoramas));
     }
-
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"admin:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/admin/lists", method = RequestMethod.GET)
-    public @ResponseBody Message adminLists(){
-        List<Panorama> panoramas = panoramaService.findAllPending();
-        if (panoramas == null || panoramas.size() == 0) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonAdmin(panoramas));
-    }
+    
 }
