@@ -555,6 +555,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panoramaJson.put("name",panorama.getName());
         panoramaJson.put("reviewDate",panorama.getReviewDate());
         panoramaJson.put("region",panorama.getRegion());
+        panoramaJson.put("sceneGroup",panorama.getSceneGroup());
         panoramaJson.put("scenes",sceneService.getScenes(panorama.getScenes()));
         return panoramaJson;
     }
