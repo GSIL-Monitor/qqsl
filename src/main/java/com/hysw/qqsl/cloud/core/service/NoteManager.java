@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;

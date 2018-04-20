@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

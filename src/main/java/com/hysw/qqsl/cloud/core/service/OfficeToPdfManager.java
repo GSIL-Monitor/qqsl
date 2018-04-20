@@ -5,7 +5,7 @@ import com.artofsolving.jodconverter.DefaultDocumentFormatRegistry;
 import com.artofsolving.jodconverter.DocumentConverter;
 import com.artofsolving.jodconverter.DocumentFormat;
 import com.hysw.qqsl.cloud.core.entity.ConverterObject;
-import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

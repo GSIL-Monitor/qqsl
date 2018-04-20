@@ -2,7 +2,7 @@ package com.hysw.qqsl.cloud.util;
 
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.service.NoteCache;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;

@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.util.*;

@@ -78,7 +78,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
-        pollingService.changeMessageStatus(account,true);
+//        pollingService.changeMessageStatus(account,true);
         pollingService.changeShareStatus(account,true);
     }
 
@@ -102,7 +102,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setContent(contentJson.toString());
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
-        pollingService.changeMessageStatus(account,true);
+//        pollingService.changeMessageStatus(account,true);
         pollingService.changeCooperateStatus(account,true);
     }
 
@@ -130,6 +130,9 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     public void feedbackMessage(Feedback feedback) {
         AccountMessage accountMessage = new AccountMessage();
         Account account = accountService.find(feedback.getAccountId());
+        if (account == null) {
+            return;
+        }
         accountMessage.setAccount(account);
         accountMessage.setContent("尊敬的水利云用户您好，关于您反馈的消息，管理员已经对您提出的问题进行了回复。");
         accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);

@@ -69,6 +69,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private MessageService messageService;
 	@Autowired
 	private FieldService fieldService;
+	@Autowired
+	private AccountManager accountManager;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -148,6 +150,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
 				getAccessTokenService.getAccessToken();
 			}
+			accountManager.init();
+			logger.info("未确认子账户加入缓存");
 		}
 	}
 
