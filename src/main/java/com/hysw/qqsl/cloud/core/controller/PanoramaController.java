@@ -284,12 +284,12 @@ public class PanoramaController {
      * 获取个人全景列表（无场景，无兴趣点）
      * @return
      */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/lists", method = RequestMethod.GET)
     public @ResponseBody Message lists(){
         User user = authentService.getUserFromSubject();
-        List<Panorama> panoramas = null;
+        List<Panorama> panoramas;
         if (user == null) {
             Account account = authentService.getAccountFromSubject();
             panoramas = panoramaService.findByAccount(account);
@@ -319,5 +319,5 @@ public class PanoramaController {
         }
         return MessageService.message(Message.Type.OK,panoramaService.panoramasToJsonHaveScene(panoramas));
     }
-    
+
 }

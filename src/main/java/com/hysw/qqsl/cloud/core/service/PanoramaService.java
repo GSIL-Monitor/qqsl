@@ -584,13 +584,14 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("advice", panorama.getAdvice());
             jsonObject.put("coor", panorama.getCoor());
             jsonObject.put("region", panorama.getRegion());
-            jsonObject.put("reviewDate", panorama.getReviewDate().getTime());
+            jsonObject.put("reviewDate", panorama.getReviewDate()==null?"":panorama.getReviewDate()==null);
             jsonObject.put("status", panorama.getStatus());
-            jsonObject.put("share", panorama.getShare());
+            jsonObject.put("isShare", panorama.getShare());
             jsonObject.put("info", panorama.getInfo());
             jsonObject.put("thumbUrl", panorama.getThumbUrl());
             jsonObject.put("createDate", panorama.getCreateDate().getTime());
             jsonObject.put("modifyDate", panorama.getModifyDate().getTime());
+            jsonObject.put("sceneGroup",panorama.getSceneGroup());
             jsonArray.add(jsonObject);
         }
         return jsonArray;
