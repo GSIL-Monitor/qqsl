@@ -49,6 +49,8 @@ public class Panorama extends  BaseEntity {
     private String hotspot;
     /** 起始视角 */
     private String angleOfView;
+    /** 场景顺序 */
+    private String sceneGroup;
     /** 用户id */
     private Long userId;
     /** 子账户id */
@@ -156,6 +158,16 @@ public class Panorama extends  BaseEntity {
 
     public void setAngleOfView(String angleOfView) {
         this.angleOfView = angleOfView;
+    }
+
+    @Basic(fetch = FetchType.EAGER)
+    @Column(length = 2048)
+    public String getSceneGroup() {
+        return sceneGroup;
+    }
+
+    public void setSceneGroup(String sceneGroup) {
+        this.sceneGroup = sceneGroup;
     }
 
     public Long getUserId() {

@@ -4,6 +4,7 @@ import com.aliyun.oss.OSSException;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.PanoramaDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
+import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
@@ -20,6 +21,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.util.*;
@@ -112,7 +114,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     public List<Panorama> findAllPending() {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("status", CommonEnum.Review.PENDING));
-        filters.add(Filter.eq("share", true));
+       // filters.add(Filter.eq("share", true));
         List<Panorama> panoramas = panoramaDao.findList(0, null, filters);
         return panoramas;
     }
@@ -582,13 +584,14 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("advice", panorama.getAdvice());
             jsonObject.put("coor", panorama.getCoor());
             jsonObject.put("region", panorama.getRegion());
-            jsonObject.put("reviewDate", panorama.getReviewDate().getTime());
+            jsonObject.put("reviewDate", panorama.getReviewDate()==null?"":panorama.getReviewDate()==null);
             jsonObject.put("status", panorama.getStatus());
-            jsonObject.put("share", panorama.getShare());
+            jsonObject.put("isShare", panorama.getShare());
             jsonObject.put("info", panorama.getInfo());
             jsonObject.put("thumbUrl", panorama.getThumbUrl());
             jsonObject.put("createDate", panorama.getCreateDate().getTime());
             jsonObject.put("modifyDate", panorama.getModifyDate().getTime());
+            jsonObject.put("sceneGroup",panorama.getSceneGroup());
             jsonArray.add(jsonObject);
         }
         return jsonArray;
@@ -637,6 +640,117 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("thumbUrl", panorama.getThumbUrl());
             jsonObject.put("createDate", panorama.getCreateDate().getTime());
             jsonObject.put("modifyDate", panorama.getModifyDate().getTime());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    /**
+     * 全景基本信息修改
+     * @param panorama
+     * @param objectMap
+     * @return
+     */
+    public String update(Panorama panorama,Map<String, Object> objectMap) {
+        //参数：id,全景id，name，info，isShare，coor，region,
+        if(objectMap.get("instanceId")!=null&&StringUtils.hasText(objectMap.get("instanceId").toString())){
+            panorama.setInstanceId(objectMap.get("instanceId").toString());
+        }
+        if(objectMap.get("name")!=null&&StringUtils.hasText(objectMap.get("name").toString())){
+            panorama.setName(objectMap.get("name").toString());
+        }
+        if(objectMap.get("info")!=null&&StringUtils.hasText(objectMap.get("info").toString())){
+            panorama.setInfo(objectMap.get("info").toString());
+        }
+        if(objectMap.get("isShare")!=null&&StringUtils.hasText(objectMap.get("isShare").toString())){
+            panorama.setShare((Boolean)objectMap.get("isShare"));
+        }
+        if(objectMap.get("coor")!=null&&StringUtils.hasText(objectMap.get("coor").toString())){
+            panorama.setCoor(objectMap.get("coor").toString());
+        }
+        if(objectMap.get("region")!=null&&StringUtils.hasText(objectMap.get("region").toString())){
+            panorama.setRegion(objectMap.get("region").toString());
+        }
+        panorama.setStatus(CommonEnum.Review.PENDING);
+        panoramaDao.save(panorama);
+        return  Message.Type.OK.toString();
+    }
+
+    /**
+     * 热点更新
+     * @param panorama
+     * @param objectMap
+     * @return
+     */
+    public String updateHotspot(Panorama panorama,Map<String, Object> objectMap) {
+        //参数: id,全景id，angleOfView,起始视角json, hotspot,热点json,sceneGroup,场景顺序
+        if(objectMap.get("instanceId")!=null&&StringUtils.hasText(objectMap.get("instanceId").toString())){
+            panorama.setInstanceId(objectMap.get("instanceId").toString());
+        }
+        if(objectMap.get("angleOfView")!=null&&StringUtils.hasText(objectMap.get("angleOfView").toString())){
+            panorama.setAngleOfView(objectMap.get("angleOfView").toString());
+        }
+        if(objectMap.get("hotspot")!=null&&StringUtils.hasText(objectMap.get("hotspot").toString())){
+            panorama.setInfo(objectMap.get("info").toString());
+        }
+        if(objectMap.get("sceneGroup")!=null&&StringUtils.hasText(objectMap.get("sceneGroup").toString())){
+            panorama.setSceneGroup(objectMap.get("sceneGroup").toString());
+        }
+        panorama.setStatus(CommonEnum.Review.PENDING);
+        panoramaDao.save(panorama);
+        return  Message.Type.OK.toString();
+    }
+
+    public void delete(Panorama panorama) {
+        panoramaDao.remove(panorama);
+    }
+
+    /**
+     * 全景审核
+     * @param map
+     * @param flag
+     * @return
+     */
+    public String review(Map<String, Object> map, boolean flag) {
+        Panorama panorama = panoramaDao.find(Long.valueOf(map.get("id").toString()));
+        if(panorama == null){
+            return Message.Type.DATA_NOEXIST.toString();
+        }
+        //审核通过
+        if(flag){
+           panorama.setStatus(CommonEnum.Review.PASS);
+           panorama.setReviewDate(new Date());
+           panoramaDao.save(panorama);
+        }else{
+            panorama.setStatus(CommonEnum.Review.NOTPASS);
+            panorama.setReviewDate(new Date());
+            panorama.setAdvice(map.get("advice").toString());
+            panoramaDao.save(panorama);
+        }
+        return Message.Type.OK.toString();
+    }
+
+    /**
+     * 获取需要审核的全景列表
+     * @return
+     */
+    public JSONArray getPanoramas() {
+        //每个全景只传递，name，instanceId, info, thumbUrl, coor, region
+        List<Panorama> panoramas = findAllPending();
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject;
+        Panorama panorama;
+        if(panoramas.isEmpty()){
+            return jsonArray;
+        }
+        for(int i = 0;i<panoramas.size();i++){
+            panorama = panoramas.get(i);
+            jsonObject = new JSONObject();
+            jsonObject.put("name",panorama.getName());
+            jsonObject.put("instanceId",panorama.getInstanceId());
+            jsonObject.put("thumbUrl",panorama.getThumbUrl());
+            jsonObject.put("coor",panorama.getCoor());
+            jsonObject.put("region",panorama.getRegion());
             jsonArray.add(jsonObject);
         }
         return jsonArray;
