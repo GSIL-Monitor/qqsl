@@ -59,6 +59,7 @@ public class AccountServiceTest extends BaseTest{
         accountService.flush();
         account = accountService.findByPhoneConfirmed("13007781310");
         Assert.assertTrue(account.getName().equals("刘建斌"));
+        Assert.assertTrue(account.getRemark().equals("无"));
     }
 
     @Test

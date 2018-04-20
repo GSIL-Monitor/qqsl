@@ -67,25 +67,14 @@ public class AccountService extends BaseService<Account,Long> {
                 return null;
             }
         }
-        String userName = user.getUserName();
-        if(user.getName()!=null){
-            userName = user.getName();
-        }
-        if(user.getCompanyName()!=null){
-            userName = user.getCompanyName();
-        }
-        String noteMessage = userName + "企业邀请您成为其企业子账号，同意回复Y，不同意回复N。（24小时有效期）";
+        String noteMessage = userService.nickName(user.getId()) + "企业邀请您成为其企业子账号，同意回复Y，不同意回复N。（24小时有效期）";
         //新方式发送短信
 //        Note note = new Note(phone,noteMessage);
         Account account = new Account();
         account.setPhone(phone);
         account.setName(name.toString());
-        if (department != null) {
-            account.setDepartment(department.toString());
-        }
-        if (remark != null) {
-            account.setRemark(remark.toString());
-        }
+        account.setDepartment(department != null?department.toString():null);
+        account.setRemark(remark != null ? remark.toString() : null);
         account.setRoles(CommonAttributes.ROLES[4]);
         account.setStatus(Account.Status.AWAITING);
 
@@ -304,12 +293,8 @@ public class AccountService extends BaseService<Account,Long> {
             return false;
         }
         account.setName(name.toString());
-        if (department != null) {
-            account.setDepartment(department.toString());
-        }
-        if (remark != null) {
-            account.setRemark(remark.toString());
-        }
+        account.setDepartment(department != null?department.toString():null);
+        account.setRemark(remark!=null?remark.toString():null);
         save(account);
         return true;
     }
@@ -337,9 +322,7 @@ public class AccountService extends BaseService<Account,Long> {
                 msg = "您已经成为==>" + userService.nickName(account1.getUser().getId()) + "<==企业的子账户，该项不能重复操作，如需绑定到另一企业，请先解绑。";
                 break;
             }
-            if (account1.getId().toString().equals(accountId)) {
-                account = account1;
-            }
+            account = account1.getId().toString().equals(accountId) ? account1 : null;
         }
         if (null != account && !flag) {
             account.setStatus(Account.Status.CONFIRMED);
@@ -364,9 +347,7 @@ public class AccountService extends BaseService<Account,Long> {
                 flag = true;
                 break;
             }
-            if (account1.getId().toString().equals(accountId)) {
-                account = account1;
-            }
+            account = account1.getId().toString().equals(accountId) ? account1 : null;
         }
         if (null != account && !flag) {
             remove(account);
