@@ -102,16 +102,6 @@ public class MyTask {
 //    }
 
     /**
-     * 删除简单建筑物
-     */
-    @Scheduled(cron =  "0 0 4 * * *")
-//    @Scheduled(fixedDelay = 60000*5 )
-    public void deleteSimpleBuild(){
-        buildService.deleteSimpleBuild();
-        logger.info("删除cut为true的建筑物");
-    }
-
-    /**
      * 刷新微信token
      */
     @Scheduled(fixedDelay = 7100000 )

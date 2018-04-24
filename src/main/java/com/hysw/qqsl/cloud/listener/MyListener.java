@@ -42,8 +42,6 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	@Autowired
 	private BuildGroupService buildGroupService;
 	@Autowired
-	private BuildBelongService buildBelongService;
-	@Autowired
 	private SensorService sensorService;
 	@Autowired
 	private GoodsService goodsService;
@@ -80,8 +78,6 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			logger.info("获取sts凭证的线程已启动");
 			new Thread(noteManager).start();
 			logger.info("发送短信的线程已启动");
-			new Thread(buildBelongService).start();
-			logger.info("建筑物线面归属线程启动");
 			new Thread(emailManager).start();
 			logger.info("邮件服务线程启动");
 			messageService.init();

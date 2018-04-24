@@ -24,8 +24,6 @@ public class FieldServiceTest extends BaseTest {
     @Autowired
     private BuildService buildService;
     @Autowired
-    private BuildBelongService buildBelongService;
-    @Autowired
     private BuildGroupService buildGroupService;
 
     @Test

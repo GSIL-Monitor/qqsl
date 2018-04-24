@@ -8,7 +8,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -28,12 +30,14 @@ public class SceneServiceTest extends BaseTest {
     public void testSave(){
         Panorama panorama = read();
         if(panorama.getScenes()==null||panorama.getScenes().size()==0){
+            List<Scene> scenes = new ArrayList<>();
             Scene scene = new Scene();
             scene.setFileName("666(1)");
             scene.setThumbUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/works/75c116470f1a1e3b/thumb.jpg");
             scene.setInstanceId("75c116470f1a1e3b");
            // scene.setOriginUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/sourceimg/1522044969009cco.jpg");
             scene.setPanorama(panorama);
+            scenes.add(scene);
             sceneService.save(scene);
             scene = new Scene();
             scene.setFileName("湟中维新渠化效果(1)");
@@ -41,7 +45,11 @@ public class SceneServiceTest extends BaseTest {
             scene.setInstanceId("590a999cd358fb6e");
             //scene.setOriginUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/1/sourceimg/1522044969010jmg.jpg");
             scene.setPanorama(panorama);
+            scenes.add(scene);
             sceneService.save(scene);
+            sceneService.flush();
+            panorama.setScenes(scenes);
+            panoramaService.flush();
         }
         panorama = panoramaService.find(1l);
         assertNotNull(panorama.getId());
@@ -69,6 +77,7 @@ public class SceneServiceTest extends BaseTest {
             panorama.setReviewDate(new Date());
             panorama.setName("333333");
             panoramaService.save(panorama);
+            panoramaService.flush();
         }
         return panorama;
     }

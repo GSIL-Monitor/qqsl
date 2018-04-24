@@ -45,10 +45,10 @@ public class PanoramaServiceTest extends BaseTest {
         ossService.downloadFileToLocal("26/1522811870947bik.jpg", "1522811870947bik.jpg");
     }
 
-    @Test
-    public void testEXEC() throws IOException {
-        Runtime.getRuntime().exec("C:\\Users\\Administrator\\Desktop\\krpano-1.19-pr10-win\\MAKE VTOUR (MULTIRES) droplet.bat D:\\qqsl\\out\\production\\resources\\panorama\\1522811870947bik.jpg");
-    }
+//    @Test
+//    public void testEXEC() throws IOException {
+//        Runtime.getRuntime().exec("C:\\Users\\Administrator\\Desktop\\krpano-1.19-pr10-win\\MAKE VTOUR (MULTIRES) droplet.bat D:\\qqsl\\out\\production\\resources\\panorama\\1522811870947bik.jpg");
+//    }
 
     @Test
     public void createRandomDir(){
