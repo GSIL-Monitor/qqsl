@@ -302,11 +302,11 @@ public class UserServiceTest extends BaseTest{
 		Assert.assertTrue(!b);
 	}
 
-	@Test
-	public void testUnbindAccount(){
-		boolean b = userService.unbindAccount(accountService.find(1l), userService.find(1l));
-		Assert.assertTrue(b);
-	}
+//	@Test
+//	public void testUnbindAccount(){
+//		boolean b = userService.unbindAccount(accountService.find(1l), userService.find(1l));
+//		Assert.assertTrue(b);
+//	}
 
 //	@Test
 //	public void testIsOwn(){

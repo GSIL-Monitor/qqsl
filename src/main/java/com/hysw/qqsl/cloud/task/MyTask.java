@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.task;
 
-import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.pay.service.TradeService;
@@ -10,8 +10,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 /**
  * Created by leinuo on 17-1-12.
@@ -52,14 +50,16 @@ public class MyTask {
     private StorageLogService storageLogService;
     @Autowired
     private ProjectLogService projectLogService;
+    @Autowired
+    private AccountManager accountManager;
 
 //    @Autowired
 //    private CustomRealm customRealm;
 
-   @Scheduled(fixedDelay = 60000*10 )
+    @Scheduled(fixedDelay = 60000*10 )
     public void stsTokenTask(){
-       ossService.setStsToken();
-       logger.info("阿里云STS刷新");
+        ossService.setStsToken();
+        logger.info("阿里云STS刷新");
     }
 
     /**
@@ -100,16 +100,6 @@ public class MyTask {
 //    public void checkOnline(){
 //        UserRealm.sessionCheck();
 //    }
-
-    /**
-     * 删除简单建筑物
-     */
-    @Scheduled(cron =  "0 0 4 * * *")
-//    @Scheduled(fixedDelay = 60000*5 )
-    public void deleteSimpleBuild(){
-        buildService.deleteSimpleBuild();
-        logger.info("删除cut为true的建筑物");
-    }
 
     /**
      * 刷新微信token
@@ -163,5 +153,14 @@ public class MyTask {
     public void deleteNotNearlyWeekLog(){
         projectLogService.deleteNotNearlyWeekLog();
         logger.info("删除缓存中超过一周时间的日志");
+    }
+
+    /**
+     * 删除24小时未确认的子账户
+     */
+    @Scheduled(fixedDelay = 60000*10 )
+    public void deteleExpiredAndAwaitingAccount(){
+        accountManager.changeExpired();
+        logger.info("删除24小时未确认的子账户");
     }
 }

@@ -116,8 +116,8 @@ public class Message implements Serializable{
 		TRADE_HAS_NOPAY(4082),
 		/** 订单未支付，比如删除一个未支付的订单，返回这个错误。*/
 		TRADE_NOPAY(4083),
-		/** 子账号信息不全，比如子账号刚注册，没有完善昵称、真实姓名等信息，这时候对子账号在协同工作分配项目，返回这个错误。*/
-		ACCOUNT_NOINFO(4090),
+		/** 子账号未确认 */
+		ACCOUNT_NO_CONFIRMED(4090),
 		/** 全景下没有场景，无法显示或编辑 */
 		PANORAMA_NO_SCENE(4101),
 		/** 新建全景时，图片下载失败 */

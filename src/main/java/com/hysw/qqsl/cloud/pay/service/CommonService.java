@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.pay.service;
 
-import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.service.EmailService;
 import com.hysw.qqsl.cloud.core.service.NoteCache;
 import com.hysw.qqsl.cloud.core.service.UserMessageService;

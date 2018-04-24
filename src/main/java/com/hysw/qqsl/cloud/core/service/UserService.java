@@ -511,7 +511,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @param account
 	 * @return
 	 */
-	public boolean unbindAccount(Account account,User user) {
+	public boolean deleteAccount(Account account,User user) {
 		//收回权限
 		cooperateService.cooperateRevoke(user,account);
 		List<Account> accounts = user.getAccounts();

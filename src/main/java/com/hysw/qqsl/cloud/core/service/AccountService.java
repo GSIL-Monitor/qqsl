@@ -3,9 +3,9 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.AccountDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.Note;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
@@ -37,7 +37,7 @@ public class AccountService extends BaseService<Account,Long> {
     @Autowired
     private UserMessageService userMessageService;
     @Autowired
-    private PollingService pollingService;
+    private AccountManager accountManager;
 
     @Autowired
     public void setBaseDao(AccountDao accountDao){
@@ -57,31 +57,33 @@ public class AccountService extends BaseService<Account,Long> {
      * @param phone
      * @param user
      */
-    public JSONObject invite(String phone,User user) {
-        Account account = findByPhone(phone);
-        String inviteCode = SettingUtils.createRandomVcode();
-        String userName = user.getUserName();
-        if(user.getName()!=null){
-            userName = user.getName();
+    public JSONObject create(String phone,User user,Object name,Object department,Object remark) {
+        List<Account> accounts = findByPhone(phone);
+        for (Account account : accounts) {
+            if (account.getStatus() == Account.Status.CONFIRMED) {
+                return null;
+            }
+            if (account.getPhone().equals(phone) && account.getUser().getId().equals(user.getId())) {
+                return null;
+            }
         }
-        if(user.getCompanyName()!=null){
-            userName = user.getCompanyName();
-        }
-        String noteMessage = account==null? "恭喜你已经被邀请成为"+userName+"企业的子账号，初始密码为"+inviteCode+"。请打开www.qingqingshuili.com网页登录并完善个人信息。": "恭喜你已经被邀请成为"+userName+"企业的子账号。";
-        Note note = new Note(phone,noteMessage);
-        if (account == null) {
-            account = new Account();
-            account.setPhone(phone);
-            account.setPassword(DigestUtils.md5Hex(inviteCode));
-            account.setRoles(CommonAttributes.ROLES[4]);
-        } else {
-            return null;
-        }
+        String noteMessage = userService.nickName(user.getId()) + "企业邀请您成为其企业子账号，同意回复Y，不同意回复N。（24小时有效期）";
+        //新方式发送短信
+//        Note note = new Note(phone,noteMessage);
+        Account account = new Account();
+        account.setPhone(phone);
+        account.setName(name.toString());
+        account.setDepartment(department != null?department.toString():null);
+        account.setRemark(remark != null ? remark.toString() : null);
+        account.setRoles(CommonAttributes.ROLES[4]);
+        account.setStatus(Account.Status.AWAITING);
+
         //记录子账号邀请消息
         account.setUser(user);
         save(account);
-        pollingService.addAccount(account);
-        noteCache.add(phone,note);
+        accountManager.add(account);
+//        pollingService.addAccount(account);
+//        noteCache.add(phone,note);
         return makeSimpleAccountJson(account);
     }
 
@@ -90,9 +92,10 @@ public class AccountService extends BaseService<Account,Long> {
      * @param phone
      * @return
      */
-    public Account findByPhone(String phone) {
+    public Account findByPhoneConfirmed(String phone) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("phone",phone));
+        filters.add(Filter.eq("status", Account.Status.CONFIRMED));
         List<Account> accounts = accountDao.findList(0,null,filters);
         if(accounts.size()==1){
             accounts.get(0).getUser();
@@ -102,14 +105,27 @@ public class AccountService extends BaseService<Account,Long> {
         }
     }
 
+    public List<Account> findByPhone(String phone) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("phone",phone));
+        return accountDao.findList(0,null,filters);
+    }
+
+    public List<Account> findByEmail(String email) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("email",email));
+        return accountDao.findList(0,null,filters);
+    }
+
     /**
      * 根据email查询子账号
      * @param email
      * @return
      */
-    public Account findByEmail(String email) {
+    public Account findByEmailConfirmed(String email) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("email",email));
+        filters.add(Filter.eq("status", Account.Status.CONFIRMED));
         List<Account> accounts = accountDao.findList(0,null,filters);
         if(accounts.size()==1){
             accounts.get(0).getUser();
@@ -124,33 +140,16 @@ public class AccountService extends BaseService<Account,Long> {
      * @param argument
      * @return
      */
-    public Account findByPhoneOrEmial(String argument){
-        Account account = null;
+    public List<Account> findByPhoneOrEmial(String argument){
+        List<Account> accounts = null;
         if(SettingUtils.phoneRegex(argument)){
-            account = findByPhone(argument);
+            accounts = findByPhone(argument);
         }else if(SettingUtils.emailRegex(argument)){
-            account = findByEmail(argument);
+            accounts = findByEmail(argument);
         }
-        return account;
+        return accounts;
     }
 
-    /**
-     * 根据手机号查询子账号
-     * @param userName
-     * @return
-     */
-    private Account findByUserName(String userName){
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("userName",userName));
-        List<Account> accounts = accountDao.findList(0,null,filters);
-        if(accounts.size()==1){
-            accounts.get(0).getUser();
-            return accounts.get(0);
-        }else{
-            return null;
-        }
-
-    }
     /**
      * 获取子账号json数据
      * @param account
@@ -163,7 +162,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("email",account.getEmail());
         jsonObject.put("name",account.getName());
         jsonObject.put("phone",account.getPhone());
-//        jsonObject.put("userName",account.getUserName());
+        jsonObject.put("remark",account.getRemark());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
         User user = getUserByAccountId(account.getId());
@@ -199,7 +198,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("email",account.getEmail());
         jsonObject.put("name",account.getName());
         jsonObject.put("phone",account.getPhone());
-//        jsonObject.put("userName",account.getUserName());
+        jsonObject.put("remark",account.getRemark());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
         return jsonObject;
@@ -263,22 +262,40 @@ public class AccountService extends BaseService<Account,Long> {
         return subjectJson;
     }
 
-    /**
-     * 子账号解绑企业
-     * @param user
-     * @return
-     */
-    public boolean unbindUser(User user,Account account) {
-        List<Account> accounts = user.getAccounts();
-        for (Account account1 : accounts) {
-            if (account1.getId().equals(account.getId())) {
-                accounts.remove(account1);
-            }
+//    /**
+//     * 子账号解绑企业
+//     * @param user
+//     * @return
+//     */
+//    public boolean unbindUser(User user,Account account) {
+//        List<Account> accounts = user.getAccounts();
+//        for (Account account1 : accounts) {
+//            if (account1.getId().equals(account.getId())) {
+//                accounts.remove(account1);
+//            }
+//        }
+//        user.setAccounts(accounts);
+//        userService.save(user);
+//        //记录子账号解绑企业的消息
+//        userMessageService.unbindMessage(account,user);
+//        return true;
+//    }
+
+    public List<Account> findAllAwaiting() {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("status", Account.Status.AWAITING));
+        return accountDao.findList(0,null,filters);
+    }
+
+    public boolean accountUpdate(Object id, Object name, Object department, Object remark) {
+        Account account = find(Long.valueOf(id.toString()));
+        if (account == null) {
+            return false;
         }
-        user.setAccounts(accounts);
-        userService.save(user);
-        //记录子账号解绑企业的消息
-        userMessageService.unbindMessage(account,user);
+        account.setName(name.toString());
+        account.setDepartment(department != null?department.toString():null);
+        account.setRemark(remark!=null?remark.toString():null);
+        save(account);
         return true;
     }
 
@@ -291,5 +308,51 @@ public class AccountService extends BaseService<Account,Long> {
 //        }
 //        return jsonArray;
 //    }
+
+    /**
+     * 激活子账号
+     */
+    public void activateAccount(List<Account> accounts,String accountId) {
+        String msg = "";
+        boolean flag = false;
+        Account account = null;
+        for (Account account1 : accounts) {
+            if (account1.getStatus() == Account.Status.CONFIRMED) {
+                flag = true;
+                msg = "您已经成为==>" + userService.nickName(account1.getUser().getId()) + "<==企业的子账户，该项不能重复操作，如需绑定到另一企业，请先解绑。";
+                break;
+            }
+            account = account1.getId().toString().equals(accountId) ? account1 : null;
+        }
+        if (null != account && !flag) {
+            account.setStatus(Account.Status.CONFIRMED);
+            String inviteCode = SettingUtils.createRandomVcode();
+            account.setPassword(DigestUtils.md5Hex(inviteCode));
+            save(account);
+            msg = "尊敬的用户您好，恭喜您已成为==>" + userService.nickName(account.getUser().getId()) + "<==企业的子账户,密码为："+inviteCode+"。";
+            userMessageService.accountMessageAgree(account);
+        }
+        Note note = new Note(account.getPhone(), msg);
+        noteCache.add(account.getPhone(),note);
+    }
+
+    /**
+     * 拒绝成为该企业子账号
+     */
+    public void refusedAccount(List<Account> accounts,String accountId) {
+        boolean flag = false;
+        Account account = null;
+        for (Account account1 : accounts) {
+            if (account1.getStatus() == Account.Status.CONFIRMED) {
+                flag = true;
+                break;
+            }
+            account = account1.getId().toString().equals(accountId) ? account1 : null;
+        }
+        if (null != account && !flag) {
+            remove(account);
+            userMessageService.accountMessageRefused(account);
+        }
+    }
 
 }

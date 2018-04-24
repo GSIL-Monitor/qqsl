@@ -95,14 +95,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-		Map<List<Graph>, List<Build>> map = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE);
-		List<Graph> list = null;
-		for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
-			list = entry.getKey();
-			break;
-		}
-		logger.info(list.size());
-		Assert.assertTrue(list.size() == 0);
+		JSONObject jsonObject = new JSONObject();
+		coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE,fileName,jsonObject);
+		Assert.assertTrue(jsonObject.get(fileName).equals(Message.Type.OK.getStatus()));
 	}
 
 	/**
@@ -125,8 +120,8 @@ public class CoordinateServiceTest extends BaseTest {
 			String fileName=testFile.getOriginalFilename();
 			String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 					fileName.length());
-			Map<List<Graph>, List<Build>> map = coordinateService.readExcels(testFile.getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE);
-			Assert.assertTrue(map==null);
+			JSONObject jsonObject = new JSONObject();
+			coordinateService.readExcels(testFile.getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -152,8 +147,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
         try {
-        	coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+        	coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
         } catch (Exception e) {
             flag = true;
         }
@@ -179,8 +175,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -206,8 +203,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -233,8 +231,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -259,8 +258,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -285,8 +285,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -311,8 +312,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -337,8 +339,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -363,8 +366,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE, fileName, jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -389,8 +393,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -415,8 +420,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -441,8 +447,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
+		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -467,18 +474,13 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-		List<Graph> list = null;
+		JSONObject jsonObject = new JSONObject();
 		try {
-			Map<List<Graph>, List<Build>> map = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
-			for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
-				list = entry.getKey();
-				break;
-			}
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
 		Assert.assertTrue(!flag);
-		Assert.assertTrue(list.size()==10);
 	}
 
 	/**
@@ -499,18 +501,13 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-		List<Graph> list = null;
+		JSONObject jsonObject = new JSONObject();
 		try {
-			Map<List<Graph>, List<Build>> map = coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
-			for (Map.Entry<List<Graph>, List<Build>> entry : map.entrySet()) {
-				list = entry.getKey();
-				break;
-			}
+			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
 		Assert.assertTrue(!flag);
-		Assert.assertTrue(list.size()==10);
 	}
 
 	/**
@@ -530,8 +527,9 @@ public class CoordinateServiceTest extends BaseTest {
 		String fileName=testFile.getOriginalFilename();
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
-		Map<List<Graph>, List<Build>> map=coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE);
-		Assert.assertTrue(map == null);
+		JSONObject jsonObject = new JSONObject();
+		coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+		Assert.assertTrue(jsonObject.get(fileName).equals(Message.Type.COOR_FORMAT_ERROR.getStatus()));
 	}
 
 	/**
@@ -643,121 +641,6 @@ public class CoordinateServiceTest extends BaseTest {
 		Assert.assertTrue(coordinates.size()==0);
 	}
 
-
-	@Test
-	public void testReadExcel() throws IOException {
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "789.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/789.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		Project project = projectService.find(531l);
-		Workbook wb;
-		if (fileName.endsWith("xls")) {
-			wb = new HSSFWorkbook(testFile.getFileItem().getInputStream());
-		}else{
-			wb = new XSSFWorkbook(testFile.getFileItem().getInputStream());
-		}
-		for (int numSheet = 0; numSheet < wb.getNumberOfSheets(); numSheet++) {
-			Sheet sheet = wb.getSheetAt(numSheet);
-			if (sheet == null) {
-				continue;
-			}
-			Build build = null;
-			for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
-				if (sheet.getSheetName().trim().equals(commonType.getTypeC())) {
-					String s = commonType.name();
-					List<BuildGroup> completeBuildGroups = buildGroupService.getCompleteBuildGroups();
-					boolean flag=false;
-					for (int j = 0; j < completeBuildGroups.size(); j++) {
-						BuildGroup buildGroup = completeBuildGroups.get(j);
-						for (int k = 0; k < buildGroup.getBuilds().size(); k++) {
-							if (buildGroup.getBuilds().get(k).getType().toString().equals(s)) {
-								build = buildGroup.getBuilds().get(k);
-								flag = true;
-								break;
-							}
-						}
-						if(flag){
-							break;
-						}
-					}
-					break;
-				}
-			}
-			Build build1 = new Build();
-			List<Attribe> attribes = new ArrayList<>();
-			Attribe attribe;
-			for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
-				Row row = sheet.getRow(rowNum);
-				if (row != null) {
-					String a = null;
-					String b = null;
-					String c = null;
-					String d = null;
-					String comment = null;
-					if (row.getCell(0) != null) {
-						row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
-						a = row.getCell(0).getStringCellValue();
-					}
-					if (row.getCell(1) != null) {
-						row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
-						b = row.getCell(1).getStringCellValue();
-					}
-					if (row.getCell(2) != null) {
-						row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
-						c = row.getCell(2).getStringCellValue();
-					}
-					if (row.getCell(3) != null) {
-						row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
-						d = row.getCell(3).getStringCellValue();
-						Comment cellComment = row.getCell(3).getCellComment();
-						if (cellComment != null) {
-							comment = cellComment.getString().getString();
-						}
-
-					}
-					if (b == null || b.trim().equals("")) {
-						continue;
-					}
-					if (b.equals("名称")) {
-						if (rowNum != 0) {
-							build1.setAttribeList(attribes);
-							buildService.save(build1);
-							build1 = new Build();
-							attribes = new ArrayList<>();
-						}
-						build1.setName(build.getName());
-						build1.setAlias(build.getAlias());
-						build1.setType(build.getType());
-						build1.setProject(project);
-						continue;
-					}
-					if (d != null && !d.trim().equals("") && comment != null && !comment.trim().equals("")) {
-						if (comment.equals("coor1")) {
-							build1.setCenterCoor(d);
-						}else if (comment.equals("coor2")) {
-							build1.setPositionCoor(d);
-						}else {
-							attribe = new Attribe();
-							attribe.setAlias(comment);
-							attribe.setValue(d);
-							attribe.setBuild(build1);
-							attribes.add(attribe);
-						}
-					}
-					if (rowNum == sheet.getLastRowNum()) {
-						build1.setAttribeList(attribes);
-						buildService.save(build1);
-					}
-
-				}
-			}
-		}
-	}
 
 	/**
 	 * 写excel文件类

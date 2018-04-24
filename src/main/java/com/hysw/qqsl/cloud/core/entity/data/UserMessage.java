@@ -34,8 +34,8 @@ public class UserMessage extends BaseEntity {
 		SHARE_PROJECT,
 		/** 分享测站 */
 		SHARE_STATION,
-		/** 子账号解绑企业 */
-		UNBIND_USER,
+		/** 子账号 */
+		ACCOUNT,
 		/** 认证 */
 		CERTIFY,
 		/** 反馈回复 */

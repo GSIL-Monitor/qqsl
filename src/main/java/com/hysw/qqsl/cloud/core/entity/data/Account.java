@@ -26,8 +26,6 @@ public class Account extends BaseEntity {
 
     private static final long serialVersionUID = 5684132177393981035L;
 
-    /** 所属user */
-    private User user;
     /** 真实姓名 */
     private String name;
     /** 密码 */
@@ -52,10 +50,24 @@ public class Account extends BaseEntity {
     private Integer loginFailureCount;
     /** 用户角色 */
     private String roles;
-    /** 子账号消息 */
-    private List<AccountMessage> accountMessages = new ArrayList<>();
     /** 子账号的登录方式 */
     private String loginType;
+    /** 子账号状态 */
+    private Status status;
+    /** 所属user */
+    private User user;
+    /** 子账号消息 */
+    private List<AccountMessage> accountMessages = new ArrayList<>();
+
+    /** 子账号状态 */
+    public enum Status {
+        // 待确认
+        AWAITING,
+        // 已确认
+        CONFIRMED
+    }
+
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     public User getUser() {
@@ -183,5 +195,13 @@ public class Account extends BaseEntity {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
