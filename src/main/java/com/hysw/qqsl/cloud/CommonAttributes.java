@@ -63,9 +63,9 @@ public final class CommonAttributes {
      *  云通信短信API产品,开发者无需替换
      */
     public static final String NOTE_PRODUCT = "Dysmsapi";
-    public final String NOTE_DOMAIN = "dysmsapi.aliyuncs.com";
-    public final String NOTE_ACCESS_KEY_ID = "LTAIiqDcBGxauAX2";
-    public final String NOTE_ACCESS_KEY_SECRET = "zHqMn50rQj04oTMdolx1lTZk7YHxdF";
+    public static final String NOTE_DOMAIN = "dysmsapi.aliyuncs.com";
+    public static final String NOTE_ACCESS_KEY_ID = "LTAIiqDcBGxauAX2";
+    public static final String NOTE_ACCESS_KEY_SECRET = "zHqMn50rQj04oTMdolx1lTZk7YHxdF";
 
     /**
      * sts服务相关参数

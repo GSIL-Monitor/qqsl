@@ -31,8 +31,12 @@ public class Note extends BaseEntity {
 	private String sendMsg;
 	/** 回复内容 */
 	private String reply;
-
+    /** 子帐号id*/
 	private String accountId;
+	/**短信流水号*/
+	private String  bizId;
+	/**阿里云短信id*/
+	private String messageId;
 
 
 	public  Note(){
@@ -89,6 +93,22 @@ public class Note extends BaseEntity {
 
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
+	}
+
+	public String getBizId() {
+		return bizId;
+	}
+
+	public void setBizId(String bizId) {
+		this.bizId = bizId;
+	}
+
+	public String getMessageId() {
+		return messageId;
+	}
+
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
 	}
 }
 
