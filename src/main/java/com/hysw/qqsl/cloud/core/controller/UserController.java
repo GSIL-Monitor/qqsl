@@ -907,7 +907,7 @@ public class UserController {
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/account/create",method = RequestMethod.POST)
-    public @ResponseBody Message invite(@RequestBody Map<String, Object> map) {
+    public @ResponseBody Message create(@RequestBody Map<String, Object> map) {
         Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
@@ -1047,6 +1047,13 @@ public class UserController {
         User user = authentService.getUserFromSubject();
         Polling polling=pollingService.findByUser(user.getId());
         return MessageService.message(Message.Type.OK,pollingService.toJson(polling));
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public @ResponseBody Message test(){
+        User user = userService.find(17l);
+        accountService.create("13007781310", user, "陈雷", null, null);
+        return MessageService.message(Message.Type.OK);
     }
 }
 

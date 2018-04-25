@@ -212,6 +212,9 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panorama.setRegion(region.toString());
         panorama.setInfo(info.toString());
         panorama.setInstanceId(DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis())));
+        panorama.setAngleOfView("{\"viewSettings\": []}");
+        panorama.setSceneGroup("{\"sceneGroups\": []}");
+        panorama.setHotspot("{}");
         String thumbUrl = null;
         if (images != null) {
             if (path == null || path.length() == 0) {

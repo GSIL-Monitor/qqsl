@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -13,6 +14,7 @@ import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.google.gson.Gson;
@@ -438,6 +440,7 @@ public class NoteService extends BaseService<Note, Long> {
 		//组装请求对象-具体描述见控制台-文档部分内容
 		SendSmsRequest request = new SendSmsRequest();
 		//必填:待发送手机号
+		request.setMethod(MethodType.POST);
 		request.setPhoneNumbers(phone);
 		//必填:短信签名-可在短信控制台中找到
 		request.setSignName("鸿源水务青清水利");
@@ -446,13 +449,12 @@ public class NoteService extends BaseService<Note, Long> {
 		//可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
 		request.setTemplateParam("{\"company\":\""+companyName+"\"}");
 		//选填-上行短信扩展码(无特殊需求用户请忽略此字段)
-		//request.setSmsUpExtendCode("90997");
+//		request.setSmsUpExtendCode("2133620");
 		//可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
 		request.setOutId(System.currentTimeMillis()+"");
 		//hint 此处可能会抛出异常，注意catch
-		SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
-
-		return sendSmsResponse;
+        SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
+        return sendSmsResponse;
 	}
 
 	/**
@@ -510,7 +512,7 @@ public class NoteService extends BaseService<Note, Long> {
 
 				//TODO 根据文档中具体的消息格式进行消息体的解析
 				String arg = (String) contentMap.get("arg");
-
+				System.out.println();
 				//TODO 这里开始编写您的业务代码
 
 			}catch(com.google.gson.JsonSyntaxException e){
@@ -528,7 +530,7 @@ public class NoteService extends BaseService<Note, Long> {
 
 	}
 
-	public void receiveMsg() throws Exception{
+	public void receiveMsg(){
 		DefaultAlicomMessagePuller puller=new DefaultAlicomMessagePuller();
 		//设置异步线程池大小及任务队列的大小，还有无数据线程休眠时间
 		puller.setConsumeMinThreadSize(6);
@@ -536,24 +538,28 @@ public class NoteService extends BaseService<Note, Long> {
 		puller.setThreadQueueSize(200);
 		puller.setPullMsgThreadSize(1);
 		//和服务端联调问题时开启,平时无需开启，消耗性能
-		puller.openDebugLog(false);
+        /*
+         * TODO 将messageType和queueName替换成您需要的消息类型名称和对应的队列名称
+         *云通信产品下所有的回执消息类型:
+         *1:短信回执：SmsReport，
+         *2:短息上行：SmsUp
+         *3:语音呼叫：VoiceReport
+         *4:流量直冲：FlowReport
+         */
+        puller.openDebugLog(false);
 
-		String accessKeyId = "LTAIiqDcBGxauAX2";
-		String accessKeySecret = "zHqMn50rQj04oTMdolx1lTZk7YHxdF";
-		/*
-		* TODO 将messageType和queueName替换成您需要的消息类型名称和对应的队列名称
-		*云通信产品下所有的回执消息类型:
-		*1:短信回执：SmsReport，
-		*2:短息上行：SmsUp
-		*3:语音呼叫：VoiceReport
-		*4:流量直冲：FlowReport
-		*/
 		String messageType1="SmsReport";//此处应该替换成相应产品的消息类型
 		String queueName1="Alicom-Queue-30150706-SmsReport";//在云通信页面开通相应业务消息后，就能在页面上获得对应的queueName,格式类似Alicom-Queue-xxxxxx-SmsReport
 		String messageType="SmsUp";//此处应该替换成相应产品的消息类型
 		String queueName="Alicom-Queue-30150706-SmsUp";//在云通信页面开通相应业务消息后，就能在页面上获得对应的queueName,格式类似Alicom-Queue-xxxxxx-SmsReport
-		puller.startReceiveMsg(accessKeyId,accessKeySecret, messageType, queueName, new MyMessageListener());
-		puller.startReceiveMsg(accessKeyId,accessKeySecret, messageType1, queueName1, new MyMessageListener());
+        try {
+            puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType, queueName, new MyMessageListener());
+			puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType1, queueName1, new MyMessageListener());
+        } catch (ClientException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
 	}
 

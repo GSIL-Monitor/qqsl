@@ -71,6 +71,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private FieldService fieldService;
 	@Autowired
 	private AccountManager accountManager;
+    @Autowired
+    private NoteService noteService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -158,6 +160,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 				}
 				logger.info("激活全景切图插件");
 			}
+//			noteService.receiveMsg();
+//            logger.info("启动短信回执接口");
 		}
 	}
 
