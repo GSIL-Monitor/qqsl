@@ -150,12 +150,14 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			}
 			accountManager.init();
 			logger.info("未确认子账户加入缓存");
-			try {
-				Runtime.getRuntime().exec("/home/qqsl/krpano/./krpanotools register FXsqTqaGNSZER5dSETEm+VzQEh9sWSa5DZMFsSmMxYV9GcXs8W3R8A/mWXrGNUceXvrihmh28hfRF1ivrW0HMzEychPvNiD8B/4/ZzDaUE9Rh6Ig22aKJGDbja1/kYIqmc/VKfItRE2RTSOIbIroxOtsz626NIpxWksAAifwhpNwuPXqDQpz2sRUMBzoPqZktpkItoSenN2mKd8Klfx7pOuB6CIK3e1CDXgyndqOt2mWybLZcU/wfJVAecfxk15ghiqrzaDsbqrdABDowg==");
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (System.getProperties().getProperty("os.name").toLowerCase().contains("linux")) {
+				try {
+					Runtime.getRuntime().exec("/home/qqsl/krpano/./krpanotools register FXsqTqaGNSZER5dSETEm+VzQEh9sWSa5DZMFsSmMxYV9GcXs8W3R8A/mWXrGNUceXvrihmh28hfRF1ivrW0HMzEychPvNiD8B/4/ZzDaUE9Rh6Ig22aKJGDbja1/kYIqmc/VKfItRE2RTSOIbIroxOtsz626NIpxWksAAifwhpNwuPXqDQpz2sRUMBzoPqZktpkItoSenN2mKd8Klfx7pOuB6CIK3e1CDXgyndqOt2mWybLZcU/wfJVAecfxk15ghiqrzaDsbqrdABDowg==");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				logger.info("激活全景切图插件");
 			}
-			logger.info("激活全景切图插件");
 		}
 	}
 

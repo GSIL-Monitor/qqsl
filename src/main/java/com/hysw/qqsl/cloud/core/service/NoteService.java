@@ -18,7 +18,6 @@ import com.aliyuncs.profile.IClientProfile;
 import com.google.gson.Gson;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.NoteDao;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDB;
@@ -83,7 +82,7 @@ public class NoteService extends BaseService<Note, Long> {
 		return noteElements;
 	}
 
-	private NoteService(){
+    public NoteService(){
 		initIAcsClient();
 	}
 	/**
@@ -432,6 +431,7 @@ public class NoteService extends BaseService<Note, Long> {
 	 * @throws ClientException
 	 */
 	public SendSmsResponse sendSms(String phone,String companyName) throws ClientException {
+
 		//可自助调整超时时间
 		System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
 		System.setProperty("sun.net.client.defaultReadTimeout", "10000");
