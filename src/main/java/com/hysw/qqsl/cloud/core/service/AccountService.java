@@ -1,5 +1,8 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.AccountDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
@@ -38,6 +41,8 @@ public class AccountService extends BaseService<Account,Long> {
     private UserMessageService userMessageService;
     @Autowired
     private AccountManager accountManager;
+    @Autowired
+    private NoteService noteService;
 
     @Autowired
     public void setBaseDao(AccountDao accountDao){
@@ -67,9 +72,12 @@ public class AccountService extends BaseService<Account,Long> {
                 return null;
             }
         }
-        String noteMessage = userService.nickName(user.getId()) + "企业邀请您成为其企业子账号，同意回复Y，不同意回复N。（24小时有效期）";
-        //新方式发送短信
-//        Note note = new Note(phone,noteMessage);
+//        try {
+//            SendSmsResponse sendSmsResponse = noteService.sendSms(phone, userService.nickName(user.getId()));
+//            QuerySendDetailsResponse querySendDetailsResponse = noteService.querySendDetails(sendSmsResponse.getBizId(), phone);
+//        } catch (ClientException e) {
+//            return null;
+//        }
         Account account = new Account();
         account.setPhone(phone);
         account.setName(name.toString());
