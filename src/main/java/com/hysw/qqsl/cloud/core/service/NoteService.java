@@ -432,7 +432,6 @@ public class NoteService extends BaseService<Note, Long> {
 	 * @throws ClientException
 	 */
 	public SendSmsResponse sendSms(String phone,String companyName) throws ClientException {
-
 		//可自助调整超时时间
 		System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
 		System.setProperty("sun.net.client.defaultReadTimeout", "10000");
