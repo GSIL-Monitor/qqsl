@@ -68,6 +68,7 @@ public class AccountService extends BaseService<Account,Long> {
     public JSONObject create(String phone,User user,Object name,Object department,Object remark) {
         Account account = findByPhone(phone);
 //        Note note;
+
         if (null == account) {
             try {
                 SendSmsResponse sendSmsResponse = noteService.sendSms(phone, userService.nickName(user.getId()));
