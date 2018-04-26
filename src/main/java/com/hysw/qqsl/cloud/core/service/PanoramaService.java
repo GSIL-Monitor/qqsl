@@ -544,12 +544,13 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         if(panorama == null){
             return panoramaJson;
         }
-        panoramaJson.put("hotSpot",panorama.getHotspot()==null?"":JSONObject.fromObject(panorama.getHotspot()));
+        JSONObject jsonObject = new JSONObject();
+        panoramaJson.put("hotSpot",panorama.getHotspot()==null?jsonObject:JSONObject.fromObject(panorama.getHotspot()));
         panoramaJson.put("advice",panorama.getAdvice());
         panoramaJson.put("id",panorama.getId());
         //  panoramaJson.put("cdnHost",panoramaConfig.getCdnHost());
         panoramaJson.put("createDate",panorama.getCreateDate());
-        panoramaJson.put("angleOfView",panorama.getAngleOfView()==null?"":JSONObject.fromObject(panorama.getAngleOfView()));
+        panoramaJson.put("angleOfView",panorama.getAngleOfView()==null?jsonObject:JSONObject.fromObject(panorama.getAngleOfView()));
         panoramaJson.put("coor",panorama.getCoor()==null?"":JSONObject.fromObject(panorama.getCoor()));
         panoramaJson.put("instanceId",panorama.getInstanceId());
         panoramaJson.put("info",panorama.getInfo());
@@ -558,7 +559,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panoramaJson.put("name",panorama.getName());
         panoramaJson.put("reviewDate",panorama.getReviewDate());
         panoramaJson.put("region",panorama.getRegion());
-        panoramaJson.put("sceneGroup",StringUtils.hasText(panorama.getSceneGroup())?panorama.getSceneGroup():"");
+        panoramaJson.put("sceneGroup",StringUtils.hasText(panorama.getSceneGroup())?JSONObject.fromObject(panorama.getSceneGroup()):jsonObject);
         panoramaJson.put("scenes",sceneService.getScenes(panorama.getScenes()));
         return panoramaJson;
     }
