@@ -588,6 +588,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("name", panorama.getName());
             jsonObject.put("advice", panorama.getAdvice());
             jsonObject.put("coor", panorama.getCoor());
+            jsonObject.put("id",panorama.getId());
             jsonObject.put("region", panorama.getRegion());
             jsonObject.put("reviewDate", panorama.getReviewDate()==null?"":panorama.getReviewDate()==null);
             jsonObject.put("status", panorama.getStatus());
@@ -621,6 +622,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject = new JSONObject();
             jsonObject.put("name", panorama.getName());
             jsonObject.put("instanceId", panorama.getInstanceId());
+            jsonObject.put("id", panorama.getId());
             jsonArray.add(jsonObject);
         }
         return jsonArray;
@@ -753,6 +755,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject = new JSONObject();
             jsonObject.put("name",panorama.getName());
             jsonObject.put("instanceId",panorama.getInstanceId());
+            jsonObject.put("id", panorama.getId());
             jsonObject.put("thumbUrl",panorama.getThumbUrl());
             jsonObject.put("coor",panorama.getCoor());
             jsonObject.put("region",panorama.getRegion());
@@ -760,5 +763,5 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         }
         return jsonArray;
     }
-    
+
 }
