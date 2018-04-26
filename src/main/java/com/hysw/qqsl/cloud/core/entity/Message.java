@@ -118,6 +118,8 @@ public class Message implements Serializable{
 		TRADE_NOPAY(4083),
 		/** 子账号未确认 */
 		ACCOUNT_NO_CONFIRMED(4090),
+		/** 子账号已被邀请 */
+		ACCOUNT_INVITED(4091),
 		/** 全景下没有场景，无法显示或编辑 */
 		PANORAMA_NO_SCENE(4101),
 		/** 新建全景时，图片下载失败 */

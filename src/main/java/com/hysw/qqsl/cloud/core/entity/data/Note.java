@@ -32,11 +32,7 @@ public class Note extends BaseEntity {
 	/** 回复内容 */
 	private String reply;
     /** 子帐号id*/
-	private String accountId;
-	/**短信流水号*/
-	private String  bizId;
-	/**阿里云短信id*/
-	private String messageId;
+	private Long accountId;
 
 
 	public  Note(){
@@ -87,28 +83,13 @@ public class Note extends BaseEntity {
 		this.reply = reply;
 	}
 
-	public String getAccountId() {
+	public Long getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(String accountId) {
+	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
 	}
 
-	public String getBizId() {
-		return bizId;
-	}
-
-	public void setBizId(String bizId) {
-		this.bizId = bizId;
-	}
-
-	public String getMessageId() {
-		return messageId;
-	}
-
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
-	}
 }
 

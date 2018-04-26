@@ -931,9 +931,11 @@ public class UserController {
         }
         JSONObject create = accountService.create(phone, user,map.get("name"),map.get("department"),map.get("remark"));
         if (create == null) {
-            return MessageService.message(Message.Type.DATA_EXIST);
-        }else {
-            return MessageService.message(Message.Type.OK,create);
+            return MessageService.message(Message.Type.ACCOUNT_INVITED);//子账号已被邀请
+        } else if (create.isEmpty()) {
+            return MessageService.message(Message.Type.DATA_EXIST);//子账户已存在
+        } else {
+            return MessageService.message(Message.Type.OK, create);
         }
     }
 

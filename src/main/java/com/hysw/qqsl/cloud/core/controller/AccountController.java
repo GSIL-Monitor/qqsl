@@ -106,18 +106,12 @@ public class AccountController {
         if(!SettingUtils.phoneRegex(phone)){
             return MessageService.message(Message.Type.FAIL);
         }
-        List<Account> accounts = accountService.findByPhone(phone);
-        if (accounts.size() == 0) {
+        Account account = accountService.findByPhone(phone);
+        if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        boolean flag = false;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                break;
-            }
-        }
-        if (!flag) {
+
+        if (account.getStatus() == Account.Status.AWAITING) {
             return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         if (noteService.isSend(phone, session)) {
@@ -143,20 +137,11 @@ public class AccountController {
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
             return MessageService.message(Message.Type.FAIL);
         }
-        List<Account> accounts = accountService.findByPhoneOrEmial(code);
-        if (accounts.size() == 0) {
+        Account account = accountService.findByPhoneOrEmial(code);
+        if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        Account account = null;
-        boolean flag = false;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                account = account1;
-                break;
-            }
-        }
-        if (!flag) {
+        if (account.getStatus() == Account.Status.AWAITING) {
             return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         if(SettingUtils.phoneRegex(code)){
@@ -212,18 +197,11 @@ public class AccountController {
         if(!SettingUtils.emailRegex(email)){
             return MessageService.message(Message.Type.FAIL);
         }
-        List<Account> accounts = accountService.findByEmail(email);
-        if (accounts.size() == 0) {
+        Account account = accountService.findByEmail(email);
+        if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        boolean flag = false;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                break;
-            }
-        }
-        if (!flag) {
+        if (account.getStatus() == Account.Status.AWAITING) {
             return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         emailService.getVerifyCoderesetPassword(email,session);
@@ -254,20 +232,11 @@ public class AccountController {
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
             return MessageService.message(Message.Type.FAIL);
         }
-        List<Account> accounts = accountService.findByPhone(verification.getPhone());
-        if (accounts.size() == 0) {
+        Account account = accountService.findByPhone(verification.getPhone());
+        if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        Account account = null;
-        boolean flag = false;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                account = account1;
-                break;
-            }
-        }
-        if (!flag) {
+        if (account.getStatus() == Account.Status.AWAITING) {
             return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         String password = map.get("password").toString();
@@ -300,20 +269,11 @@ public class AccountController {
         if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
             return MessageService.message(Message.Type.FAIL);
         }
-        List<Account> accounts = accountService.findByEmail(verification.getEmail());
-        if (accounts.size() == 0) {
+        Account account = accountService.findByEmail(verification.getEmail());
+        if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        Account account = null;
-        boolean flag = false;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                account = account1;
-                break;
-            }
-        }
-        if (!flag) {
+        if (account.getStatus() == Account.Status.AWAITING) {
             return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         String password = map.get("password").toString();
@@ -466,20 +426,11 @@ public class AccountController {
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
             return MessageService.message(Message.Type.FAIL);
         }
-        List<Account> accounts = accountService.findByPhoneOrEmial(code);
-        if (accounts.size() == 0) {
+        Account account = accountService.findByPhoneOrEmial(code);
+        if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        Account account = null;
-        boolean flag = false;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                account = account1;
-                break;
-            }
-        }
-        if (!flag) {
+        if (account.getStatus() == Account.Status.AWAITING) {
             return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         if (!account.getPassword().equals(map.get("password").toString())) {
@@ -533,20 +484,11 @@ public class AccountController {
         if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
             return MessageService.message(Message.Type.FAIL);
         }
-        List<Account> accounts = accountService.findByPhoneOrEmial(code);
-        if (accounts.size() == 0) {
+        Account account = accountService.findByPhoneOrEmial(code);
+        if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        Account account = null;
-        boolean flag = false;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                account = account1;
-                break;
-            }
-        }
-        if (!flag) {
+        if (account.getStatus() == Account.Status.AWAITING) {
             return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         if (!account.getPassword().equals(map.get("password").toString())) {
@@ -577,20 +519,11 @@ public class AccountController {
             return MessageService.message(Message.Type.CODE_NOEXIST);
         }
         String code = verification.getEmail()==null?verification.getPhone():verification.getEmail();
-        List<Account> accounts = accountService.findByPhoneOrEmial(code);
-        if (accounts.size() == 0) {
+        Account account = accountService.findByPhoneOrEmial(code);
+        if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        Account account = null;
-        boolean flag = false;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                account = account1;
-                break;
-            }
-        }
-        if (!flag) {
+        if (account.getStatus() == Account.Status.AWAITING) {
             return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         if (map.get("verification") == null) {

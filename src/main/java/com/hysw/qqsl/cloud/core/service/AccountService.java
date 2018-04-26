@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
+import com.google.gson.JsonObject;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.AccountDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
@@ -63,36 +64,43 @@ public class AccountService extends BaseService<Account,Long> {
      * @param user
      */
     public JSONObject create(String phone,User user,Object name,Object department,Object remark) {
-        List<Account> accounts = findByPhone(phone);
-        for (Account account : accounts) {
-            if (account.getStatus() == Account.Status.CONFIRMED) {
+        Account account = findByPhone(phone);
+        Note note;
+        if (null == account) {
+            try {
+                SendSmsResponse sendSmsResponse = noteService.sendSms(phone, userService.nickName(user.getId()));
+                QuerySendDetailsResponse querySendDetailsResponse = noteService.querySendDetails(sendSmsResponse.getBizId(), phone);
+                note = new Note();
+                note.setPhone(phone);
+                note.setSendMsg(querySendDetailsResponse.getMessage());
+            } catch (ClientException e) {
                 return null;
             }
-            if (account.getPhone().equals(phone) && account.getUser().getId().equals(user.getId())) {
+            account = new Account();
+            account.setPhone(phone);
+            account.setName(name.toString());
+            account.setDepartment(department != null?department.toString():null);
+            account.setRemark(remark != null ? remark.toString() : null);
+            account.setRoles(CommonAttributes.ROLES[4]);
+            account.setStatus(Account.Status.AWAITING);
+
+            //记录子账号邀请消息
+            account.setUser(user);
+            save(account);
+            note.setAccountId(account.getId());
+            noteService.save(note);
+            accountManager.add(account);
+//        pollingService.addAccount(account);
+//        noteCache.add(phone,note);
+            return makeSimpleAccountJson(account);
+        }else{
+            if (account.getStatus() == Account.Status.CONFIRMED) {
+                return new JSONObject();
+            } else if (account.getStatus() == Account.Status.AWAITING) {
                 return null;
             }
         }
-//        try {
-//            SendSmsResponse sendSmsResponse = noteService.sendSms(phone, userService.nickName(user.getId()));
-//            QuerySendDetailsResponse querySendDetailsResponse = noteService.querySendDetails(sendSmsResponse.getBizId(), phone);
-//        } catch (ClientException e) {
-//            return null;
-//        }
-        Account account = new Account();
-        account.setPhone(phone);
-        account.setName(name.toString());
-        account.setDepartment(department != null?department.toString():null);
-        account.setRemark(remark != null ? remark.toString() : null);
-        account.setRoles(CommonAttributes.ROLES[4]);
-        account.setStatus(Account.Status.AWAITING);
-
-        //记录子账号邀请消息
-        account.setUser(user);
-        save(account);
-        accountManager.add(account);
-//        pollingService.addAccount(account);
-//        noteCache.add(phone,note);
-        return makeSimpleAccountJson(account);
+        return null;
     }
 
     /**
@@ -113,16 +121,28 @@ public class AccountService extends BaseService<Account,Long> {
         }
     }
 
-    public List<Account> findByPhone(String phone) {
+    public Account findByPhone(String phone) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("phone",phone));
-        return accountDao.findList(0,null,filters);
+        List<Account> accounts = accountDao.findList(0, null, filters);
+        if(accounts.size()==1){
+            accounts.get(0).getUser();
+            return accounts.get(0);
+        }else{
+            return null;
+        }
     }
 
-    public List<Account> findByEmail(String email) {
+    public Account findByEmail(String email) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("email",email));
-        return accountDao.findList(0,null,filters);
+        List<Account> accounts = accountDao.findList(0, null, filters);
+        if(accounts.size()==1){
+            accounts.get(0).getUser();
+            return accounts.get(0);
+        }else{
+            return null;
+        }
     }
 
     /**
@@ -148,14 +168,14 @@ public class AccountService extends BaseService<Account,Long> {
      * @param argument
      * @return
      */
-    public List<Account> findByPhoneOrEmial(String argument){
-        List<Account> accounts = null;
+    public Account findByPhoneOrEmial(String argument){
+        Account account = null;
         if(SettingUtils.phoneRegex(argument)){
-            accounts = findByPhone(argument);
+            account = findByPhone(argument);
         }else if(SettingUtils.emailRegex(argument)){
-            accounts = findByEmail(argument);
+            account = findByEmail(argument);
         }
-        return accounts;
+        return account;
     }
 
     /**
@@ -320,19 +340,15 @@ public class AccountService extends BaseService<Account,Long> {
     /**
      * 激活子账号
      */
-    public void activateAccount(List<Account> accounts,String accountId) {
+    public void activateAccount(Account account) {
         String msg = "";
-        boolean flag = false;
-        Account account = null;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                msg = "您已经成为==>" + userService.nickName(account1.getUser().getId()) + "<==企业的子账户，该项不能重复操作，如需绑定到另一企业，请先解绑。";
-                break;
-            }
-            account = account1.getId().toString().equals(accountId) ? account1 : null;
+        if (account == null) {
+            return;
         }
-        if (null != account && !flag) {
+        if (account.getStatus() == Account.Status.CONFIRMED) {
+            msg = "您已经成为==>" + userService.nickName(account.getUser().getId()) + "<==企业的子账户，该项不能重复操作，如需绑定到另一企业，请先解绑。";
+        }
+        if (account.getStatus()==Account.Status.AWAITING) {
             account.setStatus(Account.Status.CONFIRMED);
             String inviteCode = SettingUtils.createRandomVcode();
             account.setPassword(DigestUtils.md5Hex(inviteCode));
@@ -342,25 +358,24 @@ public class AccountService extends BaseService<Account,Long> {
         }
         Note note = new Note(account.getPhone(), msg);
         noteCache.add(account.getPhone(),note);
+        flush();
     }
 
     /**
      * 拒绝成为该企业子账号
      */
-    public void refusedAccount(List<Account> accounts,String accountId) {
-        boolean flag = false;
-        Account account = null;
-        for (Account account1 : accounts) {
-            if (account1.getStatus() == Account.Status.CONFIRMED) {
-                flag = true;
-                break;
-            }
-            account = account1.getId().toString().equals(accountId) ? account1 : null;
+    public void refusedAccount(Account account) {
+        if (account == null) {
+            return;
         }
-        if (null != account && !flag) {
-            remove(account);
+        if (account.getStatus() == Account.Status.CONFIRMED) {
+            return;
+        }
+        if (account.getStatus() == Account.Status.AWAITING) {
             userMessageService.accountMessageRefused(account);
+            remove(account);
         }
+        flush();
     }
 
 }

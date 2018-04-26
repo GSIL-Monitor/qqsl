@@ -4,10 +4,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @anthor Administrator
@@ -48,10 +45,13 @@ public class AccountManager{
             return;
         }
         for (Map.Entry<String, List<Account>> entry : map.entrySet()) {
-            for (Account account : entry.getValue()) {
-                if (account.getCreateDate().getTime() + 24 * 60 * 60 * 1000l < System.currentTimeMillis()) {
+            Iterator<Account> iterator = entry.getValue().iterator();
+            while (iterator.hasNext()) {
+                Account account = iterator.next();
+                if (account.getCreateDate().getTime() + 5 * 60 * 1000l < System.currentTimeMillis()) {
                     accountService.remove(account);
                     userMessageService.accountMessageExpired(account);
+                    iterator.remove();
                     delete(account);
                 }
             }
