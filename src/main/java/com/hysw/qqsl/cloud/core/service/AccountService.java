@@ -65,14 +65,14 @@ public class AccountService extends BaseService<Account,Long> {
      */
     public JSONObject create(String phone,User user,Object name,Object department,Object remark) {
         Account account = findByPhone(phone);
-        Note note;
+//        Note note;
         if (null == account) {
             try {
                 SendSmsResponse sendSmsResponse = noteService.sendSms(phone, userService.nickName(user.getId()));
-                QuerySendDetailsResponse querySendDetailsResponse = noteService.querySendDetails(sendSmsResponse.getBizId(), phone);
-                note = new Note();
-                note.setPhone(phone);
-                note.setSendMsg(querySendDetailsResponse.getMessage());
+//                QuerySendDetailsResponse querySendDetailsResponse = noteService.querySendDetails(sendSmsResponse.getBizId(), phone);
+//                note = new Note();
+//                note.setPhone(phone);
+//                note.setSendMsg(querySendDetailsResponse.getSmsSendDetailDTOs().get(0).getContent());
             } catch (ClientException e) {
                 return null;
             }
@@ -87,8 +87,8 @@ public class AccountService extends BaseService<Account,Long> {
             //记录子账号邀请消息
             account.setUser(user);
             save(account);
-            note.setAccountId(account.getId());
-            noteService.save(note);
+//            note.setAccountId(account.getId());
+//            noteService.save(note);
             accountManager.add(account);
 //        pollingService.addAccount(account);
 //        noteCache.add(phone,note);
