@@ -203,6 +203,11 @@ public class CommonEnum {
          * 谷坊
          */
         GF("build","谷坊"),
+        /**
+         * 溢洪道
+         */
+        @Deprecated
+        YHD("build","溢洪道"),
         /** 节水建筑物 */
         /**
          * 滴灌

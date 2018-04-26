@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -497,6 +499,9 @@ public class FieldService implements Serializable {
             JSONObject jsonObject = JSONObject.fromObject(o);
             if (jsonObject.get("baseType") != null) {
                 for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                    if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                        continue;
+                    }
                     if (commonType.name().equals(jsonObject.get("baseType").toString().trim())) {
                         baseType = commonType.getTypeC();
                     }
@@ -554,6 +559,9 @@ public class FieldService implements Serializable {
             Object longitude,latitude,elevation,baseType,description;
             WriteExecl we = new WriteExecl();
             for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
                 if (commonType.name().equals(entry.getKey().toString())) {
                     sheet = wb.createSheet(commonType.getTypeC());
                     break;
@@ -585,6 +593,9 @@ public class FieldService implements Serializable {
                     }
                     if (baseType != null) {
                         for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                            if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                                continue;
+                            }
                             if (baseType.toString().equals(commonType.name())) {
                                 baseType1=commonType.getTypeC();
                             }
@@ -743,6 +754,9 @@ public class FieldService implements Serializable {
     public JSONArray getModelType() {
         JSONArray jsonArray = new JSONArray();
         for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                continue;
+            }
             jsonArray.add("{\"baseType\":\"" + commonType.getType() + "\",\"type\":\"" + commonType.name() + "\",\"name\":\"" + commonType.getTypeC() + "\"}");
         }
         return jsonArray;
@@ -760,6 +774,9 @@ public class FieldService implements Serializable {
         List<String> lineAera = new LinkedList<>();
         for (String s : list) {
             for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
                 if (commonType.name().equals(s)) {
                     if (commonType.getType().equals("line")||commonType.getType().equals("area")) {
                         lineAera.add(s);
@@ -791,6 +808,9 @@ public class FieldService implements Serializable {
             Cell cell = null;
             WriteExecl we = new WriteExecl();
             for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
                 if (commonType.name().equals(s)) {
                     sheet = wb.createSheet(commonType.getTypeC());
                     break;
@@ -817,6 +837,9 @@ public class FieldService implements Serializable {
             Sheet sheet = null;
             WriteExecl we = new WriteExecl();
             for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
                 if (commonType.name().equals(entry.getKey().toString())) {
                     sheet = wb.createSheet(commonType.getTypeC());
                     break;
@@ -933,6 +956,9 @@ public class FieldService implements Serializable {
             Sheet sheet = null;
             WriteExecl we = new WriteExecl();
             for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
                 if (commonType.name().equals(entry.getKey().toString())) {
                     sheet = wb.createSheet(commonType.getTypeC());
                     break;
