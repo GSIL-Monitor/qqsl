@@ -760,4 +760,5 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         }
         return jsonArray;
     }
+    
 }

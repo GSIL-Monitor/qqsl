@@ -1,12 +1,15 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
+import com.hysw.qqsl.cloud.core.entity.data.Scene;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +39,10 @@ public class PanoramaController {
     private PanoramaService panoramaService;
     @Autowired
     private AuthentService authentService;
+    @Autowired
+    private SceneService sceneService;
+    @Autowired
+    private OssService ossService;
 
     /**
      * 获取全景显示xml
@@ -143,10 +151,43 @@ public class PanoramaController {
             return new Message(Message.Type.DATA_NOEXIST);
         }
         if (!isOperate(panorama)) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         String type = panoramaService.update(panorama,objectMap);
         return new Message(Message.Type.valueOf(type));
+    }
+
+    /**
+     * 全景下载
+     * @param id
+     * @return
+     */
+/*    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)*/
+    @RequestMapping(value = "/downloadUrl/{id}", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Message downloadUrl(@PathVariable("id") Long id) {
+        Panorama panorama = panoramaService.find(id);
+        if (!isOperate(panorama)) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        JSONArray jsonArray = new JSONArray();
+        if(panorama.getScenes()==null||panorama.getScenes().size()==0){
+            return new Message(Message.Type.OK,jsonArray);
+        }
+        String url;
+        Scene scene;
+        JSONObject jsonObject;
+        for(int i=0;i<panorama.getScenes().size();i++){
+            jsonObject = new JSONObject();
+            scene = panorama.getScenes().get(i);
+            url = ossService.getObjectUrl(scene.getThumbUrl(), CommonAttributes.BUCKET_NAME);
+            jsonObject.put("id",scene.getId());
+            jsonObject.put("downloadUrl",StringUtils.hasText(url)?url:"");
+            jsonArray.add(jsonObject);
+        }
+        return new Message(Message.Type.OK,jsonArray);
     }
 
     /**
@@ -175,7 +216,7 @@ public class PanoramaController {
             return new Message(Message.Type.DATA_NOEXIST);
         }
         if (!isOperate(panorama)) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         String type = panoramaService.updateHotspot(panorama,objectMap);
         return new Message(Message.Type.valueOf(type));
@@ -222,7 +263,7 @@ public class PanoramaController {
             return new Message(Message.Type.DATA_NOEXIST);
         }
         if (!isOperate(panorama)) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         panoramaService.delete(panorama);
         return new Message(Message.Type.OK);

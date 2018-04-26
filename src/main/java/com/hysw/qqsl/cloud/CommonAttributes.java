@@ -1,8 +1,11 @@
 package com.hysw.qqsl.cloud;
 
 import com.alipay.api.domain.Picture;
+import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.pay.service.aliPay.AliPayService;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 /**
  * 公共参数
@@ -43,7 +46,9 @@ public final class CommonAttributes {
      * oss服务存储地址
      */
     public static final String END_POINT = "http://oss-cn-hangzhou.aliyuncs.com";
+    // public static final String BUCKET_NAME = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"qqsl": "qqsl-dev";
     public static final String BUCKET_NAME = "qqsl";
+    //public static final String BUCKET_IMAGE = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"qqslimage":"qqslimage-dev";
     public static final String BUCKET_IMAGE = "qqslimage";
     //	public static final String[] OSSIMAGE= {"http://localhost:8080/qqsl//","http://localhost:8080/qqsl/","http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
     public static final String[] OSSIMAGE = {"http://localhost:8080/qqsl//", "http://localhost:8080/qqsl/", "http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
