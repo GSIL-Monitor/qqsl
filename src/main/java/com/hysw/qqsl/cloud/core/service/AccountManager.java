@@ -48,7 +48,7 @@ public class AccountManager{
             Iterator<Account> iterator = entry.getValue().iterator();
             while (iterator.hasNext()) {
                 Account account = iterator.next();
-                if (account.getCreateDate().getTime() + 5 * 60 * 1000l < System.currentTimeMillis()) {
+                if (account.getCreateDate().getTime() + 24 * 60 * 60 * 1000l < System.currentTimeMillis()) {
                     accountService.remove(account);
                     userMessageService.accountMessageExpired(account);
                     iterator.remove();
