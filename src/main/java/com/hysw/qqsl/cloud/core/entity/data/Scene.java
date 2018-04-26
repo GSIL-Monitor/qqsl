@@ -25,6 +25,11 @@ public class Scene extends BaseEntity{
     /** 缩略图 */
     private String thumbUrl;
 
+    /**
+     * 阿里云地址
+     */
+    private String originUrl;
+
     /** 唯一编码 */
     private String instanceId;
 
@@ -64,5 +69,13 @@ public class Scene extends BaseEntity{
 
     public void setPanorama(Panorama panorama) {
         this.panorama = panorama;
+    }
+
+    public String getOriginUrl() {
+        return originUrl;
+    }
+
+    public void setOriginUrl(String originUrl) {
+        this.originUrl = originUrl;
     }
 }
