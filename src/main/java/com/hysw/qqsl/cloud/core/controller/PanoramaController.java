@@ -162,8 +162,8 @@ public class PanoramaController {
      * @param id
      * @return
      */
-/*    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)*/
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/downloadUrl/{id}", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -182,7 +182,7 @@ public class PanoramaController {
         for(int i=0;i<panorama.getScenes().size();i++){
             jsonObject = new JSONObject();
             scene = panorama.getScenes().get(i);
-            url = ossService.getObjectUrl(scene.getThumbUrl(), CommonAttributes.BUCKET_NAME);
+            url = ossService.getObjectUrl(scene.getOriginUrl(), CommonAttributes.BUCKET_NAME);
             jsonObject.put("id",scene.getId());
             jsonObject.put("downloadUrl",StringUtils.hasText(url)?url:"");
             jsonArray.add(jsonObject);

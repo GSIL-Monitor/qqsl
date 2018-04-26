@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.aliyun.oss.model.AccessControlList;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.hysw.qqsl.cloud.BaseTest;
+import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
 import com.hysw.qqsl.cloud.core.service.OssService;
 import org.apache.commons.logging.Log;
@@ -36,10 +37,10 @@ public class OssServiceTest extends BaseTest {
 
 	@Test
 	public void test1(){
-		AccessControlList acl = ossService.getClient().getBucketAcl("qqsl");
+		AccessControlList acl = ossService.getClient().getBucketAcl(CommonAttributes.BUCKET_NAME);
 		System.out.println(acl.toString());
-		ossService.getClient().setBucketAcl("qqsl", CannedAccessControlList.PublicReadWrite);
-		acl = ossService.getClient().getBucketAcl("qqsl");
+		ossService.getClient().setBucketAcl(CommonAttributes.BUCKET_NAME, CannedAccessControlList.PublicReadWrite);
+		acl = ossService.getClient().getBucketAcl(CommonAttributes.BUCKET_NAME);
 		System.out.println(acl.toString());
 	}
 }

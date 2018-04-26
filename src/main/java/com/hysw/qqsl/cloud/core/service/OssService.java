@@ -336,7 +336,7 @@ public class OssService extends BaseService<Oss,Long>{
 	 */
 	public void deleteObject(String key,String bucket) {
 		String bucketName = null;
-		if (bucket.equals("qqsl")) {
+		if (bucket.equals(CommonAttributes.BUCKET_NAME)) {
 			bucketName=qqslBucketName;
 		} else if (bucket.equals("image")) {
 			bucketName = imageBucketName;
@@ -625,7 +625,7 @@ public class OssService extends BaseService<Oss,Long>{
 	public String downloadFileToLocal(String key, String path) throws OSSException {
 // 下载object到文件
 		File file = new File(path);
-		client.getObject(new GetObjectRequest("qqsl", "panorama/" + key), file);
+		client.getObject(new GetObjectRequest(CommonAttributes.BUCKET_NAME, "panorama/" + key), file);
 // 关闭client
 //		ossClient.shutdown();
 		return file.getAbsolutePath();

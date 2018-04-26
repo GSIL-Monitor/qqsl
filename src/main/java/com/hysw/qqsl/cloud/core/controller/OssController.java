@@ -63,7 +63,7 @@ public class OssController {
     Message getObjectFiles(
 			@RequestParam("id") String id) {
 		List<ObjectFile> objectFiles = ossService
-				.getFiles("project" + "/" + id,"qqsl");
+				.getFiles("project" + "/" + id,CommonAttributes.BUCKET_NAME);
 		return MessageService.message(Message.Type.OK,objectFiles);
 	}
 
@@ -199,13 +199,13 @@ public class OssController {
 		}
 		String key = map.get("key");
 		// 删除project下的文件
-		ossService.deleteObject(key,"qqsl");
+		ossService.deleteObject(key,CommonAttributes.BUCKET_NAME);
 		if (extensiones.contains(key.substring(key.lastIndexOf(".") + 1)
 				.toLowerCase())) {
 			key = key.replaceAll("project", "pdf");
 			key = key.substring(0, key.lastIndexOf('.')) + ".pdf";
 			// 删除pdf
-			ossService.deleteObject(key,"qqsl");
+			ossService.deleteObject(key,CommonAttributes.BUCKET_NAME);
 		}
 		return MessageService.message(Message.Type.OK);
 	}
@@ -230,13 +230,13 @@ public class OssController {
 		for (int i = 0; i < key1.length; i++) {
 			key = key1[i];
 			// 删除project下的文件
-			ossService.deleteObject(key,"qqsl");
+			ossService.deleteObject(key,CommonAttributes.BUCKET_NAME);
 			if (extensiones.contains(key.substring(key.lastIndexOf(".") + 1)
 					.toLowerCase())) {
 				key = key.replaceAll("project", "pdf");
 				key = key.substring(0, key.lastIndexOf('.')) + ".pdf";
 				// 删除pdf
-				ossService.deleteObject(key,"qqsl");
+				ossService.deleteObject(key,CommonAttributes.BUCKET_NAME);
 			}
 		}
 		return MessageService.message(Message.Type.OK);
