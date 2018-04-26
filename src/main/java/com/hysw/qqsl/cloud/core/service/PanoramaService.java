@@ -554,7 +554,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panoramaJson.put("coor",panorama.getCoor()==null?"":JSONObject.fromObject(panorama.getCoor()));
         panoramaJson.put("instanceId",panorama.getInstanceId());
         panoramaJson.put("info",panorama.getInfo());
-        panoramaJson.put("thumbUrl",panorama.getThumbUrl());
+        panoramaJson.put("thumbUrl",StringUtils.hasText(panorama.getThumbUrl())?panorama.getThumbUrl():"");
         panoramaJson.put("status",panorama.getStatus());
         panoramaJson.put("name",panorama.getName());
         panoramaJson.put("reviewDate",panorama.getReviewDate());
@@ -594,7 +594,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("status", panorama.getStatus());
             jsonObject.put("isShare", panorama.getShare());
             jsonObject.put("info", panorama.getInfo());
-            jsonObject.put("thumbUrl", panorama.getThumbUrl());
+            jsonObject.put("thumbUrl",StringUtils.hasText(panorama.getThumbUrl())?panorama.getThumbUrl():"");
             jsonObject.put("createDate", panorama.getCreateDate().getTime());
             jsonObject.put("modifyDate", panorama.getModifyDate().getTime());
             jsonObject.put("sceneGroup",panorama.getSceneGroup());
@@ -644,7 +644,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("region", panorama.getRegion());
             jsonObject.put("status", panorama.getStatus());
             jsonObject.put("info", panorama.getInfo());
-            jsonObject.put("thumbUrl", panorama.getThumbUrl());
+            jsonObject.put("thumbUrl",StringUtils.hasText(panorama.getThumbUrl())?panorama.getThumbUrl():"");
             jsonObject.put("createDate", panorama.getCreateDate().getTime());
             jsonObject.put("modifyDate", panorama.getModifyDate().getTime());
             jsonArray.add(jsonObject);
@@ -756,7 +756,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("name",panorama.getName());
             jsonObject.put("instanceId",panorama.getInstanceId());
             jsonObject.put("id", panorama.getId());
-            jsonObject.put("thumbUrl",panorama.getThumbUrl());
+            jsonObject.put("thumbUrl",StringUtils.hasText(panorama.getThumbUrl())?panorama.getThumbUrl():"");
             jsonObject.put("coor",panorama.getCoor());
             jsonObject.put("region",panorama.getRegion());
             jsonArray.add(jsonObject);
