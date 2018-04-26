@@ -44,6 +44,8 @@ public class AccountService extends BaseService<Account,Long> {
     private AccountManager accountManager;
     @Autowired
     private NoteService noteService;
+    @Autowired
+    private PollingService pollingService;
 
     @Autowired
     public void setBaseDao(AccountDao accountDao){
@@ -90,7 +92,7 @@ public class AccountService extends BaseService<Account,Long> {
 //            note.setAccountId(account.getId());
 //            noteService.save(note);
             accountManager.add(account);
-//        pollingService.addAccount(account);
+            pollingService.addAccount(account);
 //        noteCache.add(phone,note);
             return makeSimpleAccountJson(account);
         }else{
