@@ -20,6 +20,7 @@ import com.aliyuncs.profile.IClientProfile;
 import com.google.gson.Gson;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.NoteDao;
+import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDB;
@@ -59,6 +60,8 @@ public class NoteService extends BaseService<Note, Long> {
 	private UnitService unitService;
 	@Autowired
 	private ElementDBService elementDBService;
+	@Autowired
+	private AccountService accountService;
 	private IAcsClient acsClient=null;
 	@Autowired
 	public void setBaseDao(NoteDao noteDao) {
@@ -493,28 +496,40 @@ public class NoteService extends BaseService<Note, Long> {
 	/**
 	 * 监听阿里云短信的回执和回复信息
 	 */
-	static class MyMessageListener implements MessageListener {
+	class MyMessageListener implements MessageListener {
 		private Gson gson=new Gson();
-
 		@Override
 		public boolean dealMessage(Message message) {
 
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			//消息的几个关键值
-			System.out.println("message receiver time from mns:" + format.format(new Date()));
-			System.out.println("message handle: " + message.getReceiptHandle());
-			System.out.println("message body: " + message.getMessageBodyAsString());
-			System.out.println("message id: " + message.getMessageId());
-			System.out.println("message dequeue count:" + message.getDequeueCount());
-			System.out.println("Thread:" + Thread.currentThread().getName());
+//			System.out.println("message receiver time from mns:" + format.format(new Date()));
+//			System.out.println("message handle: " + message.getReceiptHandle());
+//			System.out.println("message body: " + message.getMessageBodyAsString());
+//			System.out.println("message id: " + message.getMessageId());
+//			System.out.println("message dequeue count:" + message.getDequeueCount());
+//			System.out.println("Thread:" + Thread.currentThread().getName());
 			try{
 				Map<String,Object> contentMap=gson.fromJson(message.getMessageBodyAsString(), HashMap.class);
 
 				//TODO 根据文档中具体的消息格式进行消息体的解析
-				String arg = (String) contentMap.get("arg");
-				System.out.println();
+//				String arg = (String) contentMap.get("arg");
+//				System.out.println();
 				//TODO 这里开始编写您的业务代码
-
+				Object phone = contentMap.get("phone_number");
+				Object content = contentMap.get("content");
+				if (phone != null && SettingUtils.phoneRegex(String.valueOf(phone)) && content != null && content.toString().equalsIgnoreCase("y")) {
+					Account account = accountService.findByPhone(String.valueOf(phone));
+					if (account != null && account.getStatus() == Account.Status.AWAITING) {
+						accountService.activateAccount(account);
+					}
+				}
+				if (phone != null && SettingUtils.phoneRegex(String.valueOf(phone)) && content != null && content.toString().equalsIgnoreCase("n")) {
+					Account account = accountService.findByPhone(String.valueOf(phone));
+					if (account != null && account.getStatus() == Account.Status.AWAITING) {
+						accountService.refusedAccount(account);
+					}
+				}
 			}catch(com.google.gson.JsonSyntaxException e){
 				logger.error("error_json_format:"+message.getMessageBodyAsString(),e);
 				//理论上不会出现格式错误的情况，所以遇见格式错误的消息，只能先delete,否则重新推送也会一直报错
@@ -548,13 +563,13 @@ public class NoteService extends BaseService<Note, Long> {
          */
         puller.openDebugLog(false);
 
-		String messageType1="SmsReport";//此处应该替换成相应产品的消息类型
-		String queueName1="Alicom-Queue-30150706-SmsReport";//在云通信页面开通相应业务消息后，就能在页面上获得对应的queueName,格式类似Alicom-Queue-xxxxxx-SmsReport
+//		String messageType1="SmsReport";//此处应该替换成相应产品的消息类型
+//		String queueName1="Alicom-Queue-30150706-SmsReport";//在云通信页面开通相应业务消息后，就能在页面上获得对应的queueName,格式类似Alicom-Queue-xxxxxx-SmsReport
 		String messageType="SmsUp";//此处应该替换成相应产品的消息类型
 		String queueName="Alicom-Queue-30150706-SmsUp";//在云通信页面开通相应业务消息后，就能在页面上获得对应的queueName,格式类似Alicom-Queue-xxxxxx-SmsReport
         try {
             puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType, queueName, new MyMessageListener());
-			puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType1, queueName1, new MyMessageListener());
+//			puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType1, queueName1, new MyMessageListener());
         } catch (ClientException e) {
             e.printStackTrace();
         } catch (ParseException e) {

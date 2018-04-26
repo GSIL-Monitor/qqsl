@@ -301,6 +301,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		build1.setAttribeList(attribes);
 		if (build1.getRemark() == null) {
 			for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+				if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+					continue;
+				}
 				if (commonType.name().equals(build1.getType().toString())) {
 					build1.setRemark(commonType.getTypeC());
 					break;
@@ -318,6 +321,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	private Build pickBuildFromBuilds(Sheet sheet) {
 		Build build = null;
 		for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+			if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+				continue;
+			}
 			if (sheet.getSheetName().trim().equals(commonType.getTypeC())) {
 				if (!commonType.getType().equals("build")) {
 					return null;
@@ -390,7 +396,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					continue;
 				}
 				if (longitude == null || latitude == null
-						|| elevation == null||longitude.trim().equals("经度")) {
+						|| elevation == null||longitude.trim().equals("经度")||longitude.equals("")||latitude.equals("")||elevation.equals("")) {
 					continue;
 				}
 				JSONObject jsonObject = coordinateXYZToBLH(longitude, latitude, code,wgs84Type);
@@ -407,6 +413,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				graph.setCoordinates(list);
 				if (type != null&&!type.trim().equals("")) {
 					for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+						if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+							continue;
+						}
                         graph.setBaseType(CommonEnum.CommonType.TSD);
                         if (commonType.getTypeC().equals(type.trim())) {
                             graph.setBaseType(commonType);
@@ -659,6 +668,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			if(list.get(i).getCoordinates().get(0).getLongitude().equals("0")){
 				type = Coordinate.Type.LINE;
 				for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+					if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+						continue;
+					}
 					if (!commonType.getType().equals("line")) {
 						continue;
 					}
@@ -668,6 +680,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					}
 				}
 				for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+					if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+						continue;
+					}
 					if (!commonType.getType().equals("area")) {
 						continue;
 					}
@@ -678,6 +693,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				}
 				baseType = CommonEnum.CommonType.GONGGXM;
 				for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+					if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+						continue;
+					}
 					if (commonType.getType().equals("build")) {
 						continue;
 					}
@@ -749,7 +767,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			coordinate.setProject(project);
 			coordinate.setCoordinateStr(jsonCoordinates.toString());
 			coordinate.setDescription(description);
-			if (description != null && !description.trim().equals("")) {
+			if (description != null && !description.trim().equals("")&&((JSONArray) JSONObject.fromObject(jsonCoordinates).get("coordinate")).size()!=0) {
 				save(coordinate);
 				//		保存筛选出的建筑简单数据
 				pointToBuild(entry.getValue(),builds,project,coordinate.getId());
@@ -777,7 +795,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			}
 			if (graph.getDescription() != null) {
 				build1.setRemark(graph.getDescription());
-			}
+			}else{
+			    build1.setRemark(build1.getType().getTypeC());
+            }
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("longitude", coordinateBase.getLongitude());
 			jsonObject.put("latitude", coordinateBase.getLatitude());

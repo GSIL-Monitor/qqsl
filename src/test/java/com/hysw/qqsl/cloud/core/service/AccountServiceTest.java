@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -28,6 +29,8 @@ public class AccountServiceTest extends BaseTest{
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AccountManager accountManager;
 
     @Test
     public void testRepeatCreate(){
@@ -38,8 +41,8 @@ public class AccountServiceTest extends BaseTest{
         jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
         accountService.flush();
         Assert.assertTrue(null == jsonObject || jsonObject.isEmpty());
-        List<Account> accounts = accountService.findByPhone("13007781310");
-        Assert.assertTrue(accounts.size() == 1);
+        Account account = accountService.findByPhone("13007781310");
+        Assert.assertTrue(account != null);
     }
 
     @Test
@@ -48,11 +51,11 @@ public class AccountServiceTest extends BaseTest{
         JSONObject jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
         accountService.flush();
         Assert.assertTrue(!jsonObject.isEmpty());
-        List<Account> accounts = accountService.findByPhone("13007781310");
-        Assert.assertTrue(accounts.get(0).getStatus()==Account.Status.AWAITING);
-        accountService.activateAccount(accounts,accounts.get(0).getId().toString());
+        Account account = accountService.findByPhone("13007781310");
+        Assert.assertTrue(account.getStatus()==Account.Status.AWAITING);
+        accountService.activateAccount(account);
         accountService.flush();
-        Account account = accountService.findByPhoneConfirmed("13007781310");
+        account = accountService.findByPhoneConfirmed("13007781310");
         Assert.assertTrue(account.getStatus()==Account.Status.CONFIRMED);
         Assert.assertTrue(account.getName().equals("陈雷"));
         accountService.accountUpdate(account.getId(), "刘建斌", null, "无");
@@ -68,12 +71,32 @@ public class AccountServiceTest extends BaseTest{
         JSONObject jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
         accountService.flush();
         Assert.assertTrue(!jsonObject.isEmpty());
-        List<Account> accounts = accountService.findByPhone("13007781310");
-        Assert.assertTrue(accounts.get(0).getStatus()==Account.Status.AWAITING);
-        accountService.refusedAccount(accounts,accounts.get(0).getId().toString());
+        Account account = accountService.findByPhone("13007781310");
+        Assert.assertTrue(account.getStatus()==Account.Status.AWAITING);
+        accountService.refusedAccount(account);
         accountService.flush();
-        accounts = accountService.findByPhone("13007781310");
-        Assert.assertTrue(accounts.size() == 0);
+        account = accountService.findByPhone("13007781310");
+        Assert.assertTrue(account == null);
+    }
+
+    @Test
+    public void changeExpired() {
+        Account account = new Account();
+        account.setId(1l);
+        account.setPhone("13513997110");
+        User user = new User();
+        user.setId(1l);
+        account.setUser(user);
+        account.setCreateDate(new Date(12345678));
+        accountManager.add(account);
+        account = new Account();
+        account.setId(2l);
+        account.setPhone("13513997110");
+        user.setId(1l);
+        account.setUser(user);
+        account.setCreateDate(new Date(12345678));
+        accountManager.add(account);
+        accountManager.changeExpired();
     }
 
 }

@@ -222,6 +222,9 @@ public class BuildGroupService {
     private void setType(Build build) {
         String name = build.getName();
         for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                continue;
+            }
             if (commonType.getTypeC().equals(name)) {
                 build.setType(commonType);
                 build.setPy(commonType.name().substring(0,1));

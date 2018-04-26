@@ -160,8 +160,8 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 				}
 				logger.info("激活全景切图插件");
 			}
-//			noteService.receiveMsg();
-//            logger.info("启动短信回执接口");
+			noteService.receiveMsg();
+            logger.info("启动短信回执接口");
 		}
 	}
 

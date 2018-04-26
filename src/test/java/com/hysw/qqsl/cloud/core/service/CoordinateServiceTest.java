@@ -7,6 +7,7 @@ import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.build.*;
 import com.hysw.qqsl.cloud.core.entity.data.*;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.fileupload.FileItem;
@@ -60,6 +61,9 @@ public class CoordinateServiceTest extends BaseTest {
 			map.put(list.get(i), list.get(i + 1));
 		}
 		for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+			if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+				continue;
+			}
 			String value = map.get(commonType.getTypeC());
 			if (!value.equals(commonType.name())) {
 				logger.info(commonType.getTypeC() + ":"
@@ -690,6 +694,9 @@ public class CoordinateServiceTest extends BaseTest {
 			Sheet sheet = null;
 			WriteExecl we = new WriteExecl();
 			for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+				if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+					continue;
+				}
 				if (commonType.name().equals(entry.getKey().toString())) {
 					sheet = wb.createSheet(commonType.getTypeC());
 					break;

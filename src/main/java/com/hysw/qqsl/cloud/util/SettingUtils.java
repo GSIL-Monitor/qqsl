@@ -2,9 +2,8 @@ package com.hysw.qqsl.cloud.util;
 
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Setting;
-import com.hysw.qqsl.cloud.core.service.MessageService;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -19,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
@@ -415,6 +415,26 @@ public class SettingUtils {
 			vcode = vcode + (int) (Math.random() * 10);
 		}
 		return vcode;
+	}
+
+	/**
+	 * 过滤枚举被废弃的值
+	 * @param enumm
+	 * @param name
+	 * @return
+	 */
+	public static boolean changeDeprecatedEnum(Object enumm,String name){
+		Field field = null;
+		try {
+			field = enumm.getClass().getField(name);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+		Deprecated support = field.getAnnotation(Deprecated.class);
+		if (support != null&&support.annotationType().getName().equalsIgnoreCase("java.lang.Deprecated")) {
+			return true;
+		}
+		return false;
 	}
 
 	public static void main(String[] args) {
