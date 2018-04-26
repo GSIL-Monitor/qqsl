@@ -1347,7 +1347,7 @@ public class FieldService implements Serializable {
                 jsonObject.put("simpleFlag",true);
             }
             jsonObject.put("type", build.getType());
-            jsonObject.put("remark", build.getRemark());
+            jsonObject.put("remark", build.getRemark()==null?"":build.getRemark());
             jsonArray1.add(jsonObject);
         }
         return jsonArray1;

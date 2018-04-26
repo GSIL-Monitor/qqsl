@@ -795,7 +795,9 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			}
 			if (graph.getDescription() != null) {
 				build1.setRemark(graph.getDescription());
-			}
+			}else{
+			    build1.setRemark(build1.getType().getTypeC());
+            }
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("longitude", coordinateBase.getLongitude());
 			jsonObject.put("latitude", coordinateBase.getLatitude());

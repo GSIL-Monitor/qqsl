@@ -140,8 +140,8 @@ public class FieldController {
      * @param type 来源 DESIGN设计，FIELD外业
      * @return FAIL参数验证失败，EXIST项目不存在，OK成功
      */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/field", method = RequestMethod.GET)
     public @ResponseBody Message field(@RequestParam long id,@RequestParam String type) {
         Project project = projectService.find(id);
