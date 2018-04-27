@@ -538,7 +538,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         }
     }
 
-    public JSONObject get(String instsnceId){
+    public JSONObject get(String instsnceId,boolean isEdit){
         Panorama panorama = findByInstanceId(instsnceId);
         JSONObject panoramaJson = new JSONObject();
         if(panorama == null){
@@ -560,7 +560,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panoramaJson.put("reviewDate",panorama.getReviewDate());
         panoramaJson.put("region",panorama.getRegion());
         panoramaJson.put("sceneGroup",StringUtils.hasText(panorama.getSceneGroup())?JSONObject.fromObject(panorama.getSceneGroup()):jsonObject);
-        panoramaJson.put("scenes",sceneService.getScenes(panorama.getScenes()));
+        panoramaJson.put("scenes",sceneService.getScenes(panorama.getScenes(),isEdit));
         return panoramaJson;
     }
 
@@ -623,30 +623,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("name", panorama.getName());
             jsonObject.put("instanceId", panorama.getInstanceId());
             jsonObject.put("id", panorama.getId());
-            jsonArray.add(jsonObject);
-        }
-        return jsonArray;
-    }
-
-    /**
-     * 获取panoramas的json
-     * @param panoramas
-     * @return
-     */
-    public JSONArray panoramasToJsonAdmin(List<Panorama> panoramas){
-        JSONObject jsonObject;
-        JSONArray jsonArray = new JSONArray();
-        for (Panorama panorama : panoramas) {
-            jsonObject = new JSONObject();
-            jsonObject.put("instanceId", panorama.getInstanceId());
-            jsonObject.put("name", panorama.getName());
-            jsonObject.put("coor", panorama.getCoor());
-            jsonObject.put("region", panorama.getRegion());
-            jsonObject.put("status", panorama.getStatus());
-            jsonObject.put("info", panorama.getInfo());
-            jsonObject.put("thumbUrl",StringUtils.hasText(panorama.getThumbUrl())?panorama.getThumbUrl():"");
-            jsonObject.put("createDate", panorama.getCreateDate().getTime());
-            jsonObject.put("modifyDate", panorama.getModifyDate().getTime());
             jsonArray.add(jsonObject);
         }
         return jsonArray;

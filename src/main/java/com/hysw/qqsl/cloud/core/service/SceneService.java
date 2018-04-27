@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.SceneDao;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
 import com.hysw.qqsl.cloud.core.entity.data.Scene;
@@ -8,6 +9,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,8 @@ import java.util.Map;
 @Service("sceneService")
 public class SceneService  extends BaseService<Scene, Long> {
 
+    @Autowired
+    private OssService ossService;
     @Autowired
     private SceneDao sceneDao;
     @Autowired
@@ -56,13 +60,14 @@ public class SceneService  extends BaseService<Scene, Long> {
         return thumbUrl;
     }
 
-    public JSONArray getScenes(List<Scene> scenes) {
+    public JSONArray getScenes(List<Scene> scenes,boolean isEdit) {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject;
         Scene scene;
         if(scenes.size()==0){
             return jsonArray;
         }
+        String url = "";
         for(int i=0;i<scenes.size();i++){
             scene = scenes.get(i);
             jsonObject = new JSONObject();
@@ -73,6 +78,10 @@ public class SceneService  extends BaseService<Scene, Long> {
             jsonObject.put("instanceId",scene.getInstanceId());
             jsonObject.put("fileName",scene.getFileName());
             jsonObject.put("panorama",scene.getPanorama().getId());
+            if(isEdit){
+                url = ossService.getObjectUrl(scene.getOriginUrl(), CommonAttributes.BUCKET_NAME);
+                jsonObject.put("downloadUrl", StringUtils.hasText(url)?url:"");
+            }
             jsonArray.add(jsonObject);
         }
         return jsonArray;

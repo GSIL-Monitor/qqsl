@@ -41,8 +41,7 @@ public class PanoramaController {
     private AuthentService authentService;
     @Autowired
     private SceneService sceneService;
-    @Autowired
-    private OssService ossService;
+
 
     /**
      * 获取全景显示xml
@@ -120,7 +119,7 @@ public class PanoramaController {
     public
     @ResponseBody
     Message getPanorama(@PathVariable("instanceId") String instanceId) {
-        JSONObject jsonObject = panoramaService.get(instanceId);
+        JSONObject jsonObject = panoramaService.get(instanceId,false);
         if(jsonObject.isEmpty()){
             return new Message(Message.Type.DATA_NOEXIST,jsonObject);
         }
@@ -164,30 +163,19 @@ public class PanoramaController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadUrl/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/panorama/full/{id}", method = RequestMethod.GET)
     public
     @ResponseBody
     Message downloadUrl(@PathVariable("id") Long id) {
         Panorama panorama = panoramaService.find(id);
+        if(panorama==null){
+            return new Message(Message.Type.DATA_NOEXIST);
+        }
         if (!isOperate(panorama)) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        JSONArray jsonArray = new JSONArray();
-        if(panorama.getScenes()==null||panorama.getScenes().size()==0){
-            return new Message(Message.Type.OK,jsonArray);
-        }
-        String url;
-        Scene scene;
-        JSONObject jsonObject;
-        for(int i=0;i<panorama.getScenes().size();i++){
-            jsonObject = new JSONObject();
-            scene = panorama.getScenes().get(i);
-            url = ossService.getObjectUrl(scene.getOriginUrl(), CommonAttributes.BUCKET_NAME);
-            jsonObject.put("id",scene.getId());
-            jsonObject.put("downloadUrl",StringUtils.hasText(url)?url:"");
-            jsonArray.add(jsonObject);
-        }
-        return new Message(Message.Type.OK,jsonArray);
+        JSONObject jsonObject = panoramaService.get(panorama.getInstanceId(),true);
+        return new Message(Message.Type.OK,jsonObject);
     }
 
     /**
