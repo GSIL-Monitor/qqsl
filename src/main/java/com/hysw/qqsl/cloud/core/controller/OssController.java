@@ -77,7 +77,7 @@ public class OssController {
 	public @ResponseBody
 	Message getObjectFiles1(@RequestParam String  dir, @RequestParam String bucket){
 		List<ObjectFile> objectFiles = ossService
-				.getFiles(dir,bucket);
+				.getFiles(dir.substring(0,dir.lastIndexOf("/")),bucket);
 		return MessageService.message(Message.Type.OK,objectFiles);
 	}
 
