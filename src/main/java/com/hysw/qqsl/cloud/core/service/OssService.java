@@ -515,22 +515,16 @@ public class OssService extends BaseService<Oss,Long>{
 		if (unitNames.contains(dir.substring(dir.lastIndexOf("/") + 1))) {
 			return null;
 		}
-		String bucketName = null;
-		if(bucket.equals("qqsl")){
-			bucketName=qqslBucketName;
-		}else if(bucket.equals("image")){
-			bucketName=imageBucketName;
-		}
 		List<String> newDirs = Arrays.asList(CommonAttributes.NEWDIR);
 		List<String> oldDirs = Arrays.asList(CommonAttributes.OLDDIR);
 		List<ObjectFile> files = new ArrayList<ObjectFile>();
 		// office文件夹
-		List<OSSObjectSummary> ossObjectSummaries = getObjects(dir,bucketName);
+		List<OSSObjectSummary> ossObjectSummaries = getObjects(dir,bucket);
 		// 循环生成文件信息
-		getFiles(files, ossObjectSummaries,bucketName);
+		getFiles(files, ossObjectSummaries,bucket);
 		if(newDirs.contains(dir.substring(dir.lastIndexOf("/")+1))){
-			ossObjectSummaries = getObjects(dir.replaceAll(dir.substring(dir.lastIndexOf("/")+1), oldDirs.get(newDirs.indexOf(dir.substring(dir.lastIndexOf("/")+1)))),bucketName);
-			getFiles(files, ossObjectSummaries,bucketName);
+			ossObjectSummaries = getObjects(dir.replaceAll(dir.substring(dir.lastIndexOf("/")+1), oldDirs.get(newDirs.indexOf(dir.substring(dir.lastIndexOf("/")+1)))),bucket);
+			getFiles(files, ossObjectSummaries,bucket);
 			return files;
 		}else{
 			return files;	
