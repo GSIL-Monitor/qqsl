@@ -218,7 +218,18 @@ public class XmlUtils {
         String str2 = "";
         List<String> strs2 = Arrays.asList(str2.split(","));
         System.out.println(strs2);*/
-        DecimalFormat df1 = new DecimalFormat("#.00");
+
+        String key = "panorama/26/15252256025839ge.jpg";
+        String key2 = "http://qqslimage.oss-cn-hangzhou.aliyuncs.com/panorama/26/15252256025839ge.tiles/thumb.jpg";
+        System.out.println(key2.substring(0,key2.lastIndexOf("/")));
+        String key3 = key2.substring(0,key2.lastIndexOf("/"));
+        System.out.println(key3.substring(key3.lastIndexOf(".")));
+        String prefix = key.replace(key.substring(key.lastIndexOf(".")+1),key3.substring(key3.lastIndexOf(".")+1));
+
+        System.out.println(prefix.substring(prefix.indexOf("/")+1)+"/");
+
+
+   /*     DecimalFormat df1 = new DecimalFormat("#.00");
         DecimalFormat df2 = new DecimalFormat("######0.00");
         double d1 = 1.0;
         double d2 = 5;
@@ -254,6 +265,6 @@ public class XmlUtils {
             Integer integer = iterator1.next();
             if (integer == 2)
                 iterator.remove();   //注意这个地方
-        }
+        }*/
     }
 }

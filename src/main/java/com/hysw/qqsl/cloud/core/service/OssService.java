@@ -19,6 +19,8 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.OssDao;
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
+import com.hysw.qqsl.cloud.core.entity.data.Panorama;
+import com.hysw.qqsl.cloud.core.entity.data.Scene;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -46,6 +48,8 @@ public class OssService extends BaseService<Oss,Long>{
 
 	@Autowired
 	private OssDao ossDao;
+	@Autowired
+	private PanoramaService panoramaService;
 	private Log logger = LogFactory.getLog(getClass());
 	private String qqslBucketName;
 	private String imageBucketName;
@@ -686,6 +690,30 @@ public class OssService extends BaseService<Oss,Long>{
 			return signedUrl.toString();
 		}catch (Exception e){
 			return "";
+		}
+	}
+
+	/**
+	 * 删除oss的全景图片
+	 * @param panorama
+	 */
+	public void deletePanorama(Panorama panorama) {
+		Panorama panorama1 = panoramaService.findByInstanceId(panorama.getInstanceId());
+		List<Scene> scenes = panorama1.getScenes();
+		if (scenes==null||scenes.size()==0){
+			return;
+		}
+		String key,prefix;
+		for(int i = 0;i<scenes.size();i++){
+			key = scenes.get(i).getOriginUrl();
+			if(key==null){
+				continue;
+			}
+			deleteObject(key,CommonAttributes.BUCKET_NAME);
+			String key2 = scenes.get(i).getThumbUrl();
+			String key3 = key2.substring(0,key2.lastIndexOf("/"));
+			prefix = key.replace(key.substring(key.lastIndexOf(".")+1),key3.substring(key3.lastIndexOf(".")+1));
+			setBucketLife(prefix.substring(prefix.indexOf("/")+1)+"/","panorama");
 		}
 	}
 }

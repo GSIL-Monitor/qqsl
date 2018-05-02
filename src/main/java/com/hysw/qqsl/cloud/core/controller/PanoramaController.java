@@ -41,7 +41,8 @@ public class PanoramaController {
     private AuthentService authentService;
     @Autowired
     private SceneService sceneService;
-
+    @Autowired
+    private OssService ossService;
 
     /**
      * 获取全景显示xml
@@ -163,7 +164,7 @@ public class PanoramaController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/panorama/full/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/full/{id}", method = RequestMethod.GET)
     public
     @ResponseBody
     Message downloadUrl(@PathVariable("id") Long id) {

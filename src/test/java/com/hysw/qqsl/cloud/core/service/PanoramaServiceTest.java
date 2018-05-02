@@ -17,6 +17,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -110,4 +111,12 @@ public class PanoramaServiceTest extends BaseTest {
         System.out.println();
     }
 
+    @Test
+    public void dataClear(){
+        List<Panorama> panoramas = panoramaService.findAll();
+        for(int i = 0;i<panoramas.size();i++){
+            logger.info(panoramas.get(i).getInstanceId());
+            panoramaService.delete(panoramas.get(i));
+        }
+    }
 }

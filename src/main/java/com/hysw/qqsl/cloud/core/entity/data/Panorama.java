@@ -186,7 +186,7 @@ public class Panorama extends  BaseEntity {
         this.accountId = accountId;
     }
 
-    @OneToMany(mappedBy="panorama", fetch=FetchType.LAZY , cascade={CascadeType.PERSIST})
+    @OneToMany(mappedBy="panorama", fetch=FetchType.LAZY , cascade={CascadeType.PERSIST,CascadeType.REMOVE})
     @JsonIgnore
     public List<Scene> getScenes() {
         return scenes;

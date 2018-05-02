@@ -564,7 +564,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         return panoramaJson;
     }
 
-    private Panorama findByInstanceId(String instsnceId) {
+    public Panorama findByInstanceId(String instsnceId) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("instanceId",instsnceId));
         List<Panorama> panoramas = panoramaDao.findList(0,null,filters);
@@ -685,6 +685,9 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     }
 
     public void delete(Panorama panorama) {
+        if(panorama.getInstanceId()!=null){
+            ossService.deletePanorama(panorama);
+        }
         panoramaDao.remove(panorama);
     }
 

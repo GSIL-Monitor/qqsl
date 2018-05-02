@@ -68,6 +68,20 @@ public class OssController {
 	}
 
 	/**
+	 * 根据treePath(阿里云路径)得到文件列表
+	 * @return message消息体,OK:获取成功
+	 */
+	@RequiresAuthentication
+	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequestMapping(value = "/objectFiles1", method = RequestMethod.GET)
+	public @ResponseBody
+	Message getObjectFiles1(@RequestParam String  dir, @RequestParam String bucket){
+		List<ObjectFile> objectFiles = ossService
+				.getFiles(dir,bucket);
+		return MessageService.message(Message.Type.OK,objectFiles);
+	}
+
+	/**
 	 * 根据treePath(阿里云路径)得到文件url,一般获取图片的url
 	 * @param key 文件对应的oss地址
 	 * @return message消息体,FAIL:文件不存在,url获取失败,OK:url获取成功
@@ -265,11 +279,6 @@ public class OssController {
 		}
 	}
 
-	@RequestMapping(value = "/getPng", method = RequestMethod.GET)
-	public @ResponseBody Message directToken11(){
-		//ossService.getThumbUrl();
-		return new Message(Message.Type.OK,null);
-	}
 
 
 }
