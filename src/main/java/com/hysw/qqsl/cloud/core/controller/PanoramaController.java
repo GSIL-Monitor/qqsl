@@ -138,7 +138,7 @@ public class PanoramaController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/panorama/update", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/update", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
     Message updatePanorama(@RequestBody Map<String,Object> objectMap) {
@@ -192,7 +192,7 @@ public class PanoramaController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/panorama/updateHotspot", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/updateHotspot", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
     Message updateHotspot(@RequestBody Map<String,Object> objectMap) {
