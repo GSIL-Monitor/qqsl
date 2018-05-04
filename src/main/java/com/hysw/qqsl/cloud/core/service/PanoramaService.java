@@ -491,20 +491,27 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         JSONObject jsonObject = JSONObject.fromObject(panorama.getSceneGroup());
         JSONArray sceneGroups = (JSONArray) jsonObject.get("sceneGroups");
         if(sceneGroups==null||sceneGroups.isEmpty()){
-            context.put("prefixPath","");
-            context.put("afterPath",".tiles");
+            List<Scene> scenes = panorama.getScenes();
+            JSONArray scene = sceneService.getScenes(scenes,false);
+            context.put("flag", "2000");
+            String str = scenes.get(0).getThumbUrl();
+            String path = str.substring(0,str.lastIndexOf("/"));
+            String prefixPath = path.substring(0,path.lastIndexOf("/"));
+            context.put("prefixPath",prefixPath);
+            context.put("scenes",scene);
         }else {
+            context.put("flag", "2001");
             JSONObject jsonObject1 = (JSONObject) sceneGroups.get(0);
             JSONArray scenes = (JSONArray) jsonObject1.get("scenes");
-            context.put("status", scenes==null?"4101":"200");
+            context.put("status","200");
             context.put("scenes",scenes);
             JSONObject jsonObject2 = (JSONObject) scenes.get(0);
             String str = jsonObject2.getString("imgPath");
             String path = str.substring(0,str.lastIndexOf("/"));
             String prefixPath = path.substring(0,path.lastIndexOf("/"));
             context.put("prefixPath",prefixPath);
-            context.put("afterPath",".tiles");
         }
+        context.put("afterPath",".tiles");
         context.put("skinPath","skin.xml");
         return getString(template,context);
     }
