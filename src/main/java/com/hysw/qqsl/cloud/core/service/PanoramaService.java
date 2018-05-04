@@ -494,6 +494,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             List<Scene> scenes = panorama.getScenes();
             JSONArray scene = sceneService.getScenes(scenes,false);
             context.put("flag", "2000");
+            context.put("status","200");
             String str = scenes.get(0).getThumbUrl();
             String path = str.substring(0,str.lastIndexOf("/"));
             String prefixPath = path.substring(0,path.lastIndexOf("/"));
