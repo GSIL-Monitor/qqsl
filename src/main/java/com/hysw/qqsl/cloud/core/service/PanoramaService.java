@@ -1,6 +1,8 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.aliyun.oss.OSSException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.PanoramaDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
@@ -486,14 +488,19 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             context.put("status", "4021");
             return getString(template,context);
         }
-        List<Scene> scenes = panorama.getScenes();
-        context.put("status", scenes==null?"4101":"200");
-        context.put("scenes",scenes);
-        if(scenes==null){
+        JSONObject jsonObject = JSONObject.fromObject(panorama.getSceneGroup());
+        JSONArray sceneGroups = (JSONArray) jsonObject.get("sceneGroups");
+        if(sceneGroups==null||sceneGroups.isEmpty()){
             context.put("prefixPath","");
             context.put("afterPath",".tiles");
         }else {
-            String path = scenes.get(0).getThumbUrl().substring(0,scenes.get(0).getThumbUrl().lastIndexOf("/"));
+            JSONObject jsonObject1 = (JSONObject) sceneGroups.get(0);
+            JSONArray scenes = (JSONArray) jsonObject1.get("scenes");
+            context.put("status", scenes==null?"4101":"200");
+            context.put("scenes",scenes);
+            JSONObject jsonObject2 = (JSONObject) scenes.get(0);
+            String str = jsonObject2.getString("imgPath");
+            String path = str.substring(0,str.lastIndexOf("/"));
             String prefixPath = path.substring(0,path.lastIndexOf("/"));
             context.put("prefixPath",prefixPath);
             context.put("afterPath",".tiles");
@@ -545,12 +552,12 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             return panoramaJson;
         }
         JSONObject jsonObject = new JSONObject();
-        panoramaJson.put("hotSpot",panorama.getHotspot()==null?jsonObject:JSONObject.fromObject(panorama.getHotspot()));
+         panoramaJson.put("hotSpot",panorama.getHotspot()==null?jsonObject:JSONObject.fromObject(panorama.getHotspot()));
         panoramaJson.put("advice",panorama.getAdvice());
         panoramaJson.put("id",panorama.getId());
         //  panoramaJson.put("cdnHost",panoramaConfig.getCdnHost());
         panoramaJson.put("createDate",panorama.getCreateDate());
-        panoramaJson.put("angleOfView",panorama.getAngleOfView()==null?jsonObject:JSONObject.fromObject(panorama.getAngleOfView()));
+        panoramaJson.put("angleOfView",JSONObject.fromObject(panorama.getAngleOfView()));
         panoramaJson.put("coor",panorama.getCoor()==null?"":JSONObject.fromObject(panorama.getCoor()));
         panoramaJson.put("instanceId",panorama.getInstanceId());
         panoramaJson.put("info",panorama.getInfo());
@@ -559,7 +566,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panoramaJson.put("name",panorama.getName());
         panoramaJson.put("reviewDate",panorama.getReviewDate());
         panoramaJson.put("region",panorama.getRegion());
-        panoramaJson.put("sceneGroup",StringUtils.hasText(panorama.getSceneGroup())?JSONObject.fromObject(panorama.getSceneGroup()):jsonObject);
+        panoramaJson.put("sceneGroup",panorama.getSceneGroup());
         panoramaJson.put("scenes",sceneService.getScenes(panorama.getScenes(),isEdit));
         return panoramaJson;
     }
@@ -590,7 +597,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("coor", panorama.getCoor());
             jsonObject.put("id",panorama.getId());
             jsonObject.put("region", panorama.getRegion());
-            jsonObject.put("reviewDate", panorama.getReviewDate()==null?"":panorama.getReviewDate()==null);
+            jsonObject.put("reviewDate", panorama.getReviewDate()==null?"":panorama.getReviewDate());
             jsonObject.put("status", panorama.getStatus());
             jsonObject.put("isShare", panorama.getShare());
             jsonObject.put("info", panorama.getInfo());
@@ -623,6 +630,8 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject.put("name", panorama.getName());
             jsonObject.put("instanceId", panorama.getInstanceId());
             jsonObject.put("id", panorama.getId());
+            jsonObject.put("coor", panorama.getCoor());
+            jsonObject.put("thumbUrl",StringUtils.hasText(panorama.getThumbUrl())?panorama.getThumbUrl():"");
             jsonArray.add(jsonObject);
         }
         return jsonArray;
@@ -671,18 +680,57 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             panorama.setInstanceId(objectMap.get("instanceId").toString());
         }
         if(objectMap.get("angleOfView")!=null&&StringUtils.hasText(objectMap.get("angleOfView").toString())){
-            panorama.setAngleOfView(objectMap.get("angleOfView").toString());
+            JSONObject jsonObject;
+            JSONObject jsonObject1 = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
+            Map<String,Object> map1 = (Map<String, Object>) objectMap.get("angleOfView");
+            List<Object> objects = (List<Object>)map1.get("viewSettings");
+            Map<String,Object> map;
+            for(int i = 0;i<objects.size();i++){
+                jsonObject = new JSONObject();
+                map = (Map<String, Object>) objects.get(i);
+                for (Iterator iter = map.keySet().iterator(); iter.hasNext(); ) {
+                    String name = (String) iter.next();
+                    Object value = map.get(name);
+                    jsonObject.put(name,value.toString());
+                }
+                jsonArray.add(jsonObject);
+            }
+            jsonObject1.put("viewSettings",jsonArray);
+          //  System.out.println(jsonObject1);
+            //{viewSettings=[{sceneName=scene_15252474010379r2, hlookat=91.9526107419074, vlookat=29.49114625905075, fov=90, fovmin=5, fovmax=120, vlookatmin=-90, vlookatmax=90, keepView=0}]}
+
+           /* Map<String,Object> map = (Map<String, Object>) objectMap.get("hotSpot");
+            String json = mapToJsonStr(map);*/
+            panorama.setAngleOfView(jsonObject1.toString());
         }
-        if(objectMap.get("hotspot")!=null&&StringUtils.hasText(objectMap.get("hotspot").toString())){
-            panorama.setInfo(objectMap.get("info").toString());
+        if(objectMap.get("hotSpot")!=null&&StringUtils.hasText(objectMap.get("hotSpot").toString())){
+            Map<String,Object> map = (Map<String, Object>) objectMap.get("hotSpot");
+            String json = mapToJsonStr(map);
+            panorama.setHotspot(json);
         }
         if(objectMap.get("sceneGroup")!=null&&StringUtils.hasText(objectMap.get("sceneGroup").toString())){
-            panorama.setSceneGroup(objectMap.get("sceneGroup").toString());
+            Map<String,Object> map = (Map<String, Object>) objectMap.get("sceneGroup");
+            String json = mapToJsonStr(map);
+            panorama.setSceneGroup(json);
         }
         panorama.setStatus(CommonEnum.Review.PENDING);
         panoramaDao.save(panorama);
         return  Message.Type.OK.toString();
     }
+
+
+    public String mapToJsonStr(Map<String, Object> map){
+        ObjectMapper mapper = new ObjectMapper();
+        String json = "";
+        try {
+            json = mapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
 
     public void delete(Panorama panorama) {
         if(panorama.getInstanceId()!=null){
@@ -706,13 +754,12 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         if(flag){
            panorama.setStatus(CommonEnum.Review.PASS);
            panorama.setReviewDate(new Date());
-           panoramaDao.save(panorama);
         }else{
             panorama.setStatus(CommonEnum.Review.NOTPASS);
             panorama.setReviewDate(new Date());
             panorama.setAdvice(map.get("advice").toString());
-            panoramaDao.save(panorama);
         }
+        panoramaDao.save(panorama);
         return Message.Type.OK.toString();
     }
 
@@ -734,6 +781,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject = new JSONObject();
             jsonObject.put("name",panorama.getName());
             jsonObject.put("instanceId",panorama.getInstanceId());
+            jsonObject.put("reviewDate", panorama.getReviewDate()==null?"":panorama.getReviewDate());
             jsonObject.put("id", panorama.getId());
             jsonObject.put("thumbUrl",StringUtils.hasText(panorama.getThumbUrl())?panorama.getThumbUrl():"");
             jsonObject.put("coor",panorama.getCoor());

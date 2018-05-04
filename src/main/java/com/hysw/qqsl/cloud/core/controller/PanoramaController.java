@@ -142,10 +142,10 @@ public class PanoramaController {
     public
     @ResponseBody
     Message updatePanorama(@RequestBody Map<String,Object> objectMap) {
-        Message message = CommonController.parameterCheck(objectMap);
+      /*  Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
-        }
+        }*/
         Panorama panorama = panoramaService.find(Long.valueOf(objectMap.get("id").toString()));
         if(panorama==null){
             return new Message(Message.Type.DATA_NOEXIST);

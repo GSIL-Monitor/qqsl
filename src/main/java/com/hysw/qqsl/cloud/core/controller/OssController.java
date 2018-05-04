@@ -271,6 +271,7 @@ public class OssController {
 		User user = authentService.getUserFromSubject();
 		if (user == null) {
 			Account account = authentService.getAccountFromSubject();
+			user = account.getUser();
 		}
 		try {
 			return MessageService.message(Message.Type.OK, ossService.directToken(user));
