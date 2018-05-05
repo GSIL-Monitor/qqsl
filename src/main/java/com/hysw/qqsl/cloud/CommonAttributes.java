@@ -69,8 +69,8 @@ public final class CommonAttributes {
      */
     public static final String NOTE_PRODUCT = "Dysmsapi";
     public static final String NOTE_DOMAIN = "dysmsapi.aliyuncs.com";
-    public static final String NOTE_ACCESS_KEY_ID = "LTAIiqDcBGxauAX2";
-    public static final String NOTE_ACCESS_KEY_SECRET = "zHqMn50rQj04oTMdolx1lTZk7YHxdF";
+    public static final String NOTE_ACCESS_KEY_ID = "LTAIiqDcBGxauAX2"; //H6JSh0Yx0cPz2cGa
+    public static final String NOTE_ACCESS_KEY_SECRET = "zHqMn50rQj04oTMdolx1lTZk7YHxdF";//0joCPK6L1S0KLxCnOwD2Gm3wulC7vG
 
     /**
      * sts服务相关参数

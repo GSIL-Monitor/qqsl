@@ -707,7 +707,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             jsonObject1.put("viewSettings",jsonArray);
           //  System.out.println(jsonObject1);
             //{viewSettings=[{sceneName=scene_15252474010379r2, hlookat=91.9526107419074, vlookat=29.49114625905075, fov=90, fovmin=5, fovmax=120, vlookatmin=-90, vlookatmax=90, keepView=0}]}
-
            /* Map<String,Object> map = (Map<String, Object>) objectMap.get("hotSpot");
             String json = mapToJsonStr(map);*/
             panorama.setAngleOfView(jsonObject1.toString());

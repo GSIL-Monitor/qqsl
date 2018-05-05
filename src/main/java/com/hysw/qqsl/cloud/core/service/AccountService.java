@@ -197,7 +197,10 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
         User user = getUserByAccountId(account.getId());
-        JSONObject userJson = makeUserJson(user);
+        JSONObject userJson = new JSONObject();
+        if(user!=null){
+            userJson = makeUserJson(user);
+        }
         List<AccountMessage> accountMessages = accountMessageService.getMessage(account);
         JSONArray messageJsons = new JSONArray();
         JSONObject messageJson;
