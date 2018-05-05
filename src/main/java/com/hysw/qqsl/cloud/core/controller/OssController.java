@@ -272,6 +272,9 @@ public class OssController {
 		if (user == null) {
 			Account account = authentService.getAccountFromSubject();
 			user = account.getUser();
+			if(user==null){
+				return MessageService.message(Message.Type.FAIL);
+			}
 		}
 		try {
 			return MessageService.message(Message.Type.OK, ossService.directToken(user));
