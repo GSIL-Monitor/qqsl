@@ -1105,6 +1105,10 @@
         set(hotspot[get(schp_name)].linkedscene,%3);
         set(hotspot[get(schp_name)].width,'prop');
         set(hotspot[get(schp_name)].height,'50');
+
+        <!-- 自定义 -->
+        set(hotspot[get(schp_name)].background-size,'cover');
+
          set(hotspot[get(schp_name)].visible,%8);
         set(hotspot[get(schp_name)].hsvrfalse,true);
         if(%7 == false,
@@ -1140,6 +1144,10 @@
         set(hotspot[get(schp_name)].ath,%4); set(hotspot[get(schp_name)].atv,%5);
         set(hotspot[get(schp_name)].hotspottitle,%3); set(hotspot[get(schp_name)].hotspotlink,%9);
         set(hotspot[get(schp_name)].width,'prop'); set(hotspot[get(schp_name)].height,'50');
+
+        <!-- 自定义 -->
+        set(hotspot[get(schp_name)].background-size,'cover');
+
         set(hotspot[get(schp_name)].visible,%8); if(%7 == false,
         set(hotspot[get(schp_name)].onclick,'js(window.open(get(hotspot[get(name)].hotspotlink), "_blank"));'); ,
         set(hotspot[get(schp_name)].ondown,'draghotspot();');
@@ -1181,6 +1189,10 @@
       set(hotspot[get(schp_name)].wordcontent,%9);
       set(hotspot[get(schp_name)].width,'prop');
       set(hotspot[get(schp_name)].height,'50');
+
+        <!-- 自定义 -->
+        set(hotspot[get(schp_name)].background-size,'cover');
+
       set(hotspot[get(schp_name)].visible,%8);
       if(%7 == false,
         set(hotspot[get(schp_name)].onclick,js(showPictext(get(hotspot[get(name)].hotspottitle),%9)));
