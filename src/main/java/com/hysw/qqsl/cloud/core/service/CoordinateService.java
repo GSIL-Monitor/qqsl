@@ -209,7 +209,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 						comment = cellComment.getString().getString();
 					}
 				}
-                if ((b == null || b.trim().equals("")) && rowNum != sheet.getLastRowNum()) {
+                if ((b == null || b.trim().equals("")) /*&& rowNum != sheet.getLastRowNum()*/) {
                     continue;
                 }
                 if (b.trim().equals("名称")) {

@@ -46,10 +46,10 @@ public final class CommonAttributes {
      * oss服务存储地址
      */
     public static final String END_POINT = "http://oss-cn-hangzhou.aliyuncs.com";
-    // public static final String BUCKET_NAME = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"qqsl": "qqsl-dev";
-    public static final String BUCKET_NAME = "qqsl";
-    //public static final String BUCKET_IMAGE = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"qqslimage":"qqslimage-dev";
-    public static final String BUCKET_IMAGE = "qqslimage";
+//    public static final String BUCKET_NAME = "qqsl";
+     public static final String BUCKET_NAME = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"qqsl": "qqsl-dev";
+//    public static final String BUCKET_IMAGE = "qqslimage";
+    public static final String BUCKET_IMAGE = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"qqslimage":"qqslimage-dev";
     //	public static final String[] OSSIMAGE= {"http://localhost:8080/qqsl//","http://localhost:8080/qqsl/","http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
     public static final String[] OSSIMAGE = {"http://localhost:8080/qqsl//", "http://localhost:8080/qqsl/", "http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
     /**
@@ -71,7 +71,8 @@ public final class CommonAttributes {
     public static final String NOTE_DOMAIN = "dysmsapi.aliyuncs.com";
     public static final String NOTE_ACCESS_KEY_ID = "LTAIiqDcBGxauAX2"; //H6JSh0Yx0cPz2cGa
     public static final String NOTE_ACCESS_KEY_SECRET = "zHqMn50rQj04oTMdolx1lTZk7YHxdF";//0joCPK6L1S0KLxCnOwD2Gm3wulC7vG
-
+    public static final String NOTE_ACCESS_KEY_ID_TEST = "H6JSh0Yx0cPz2cGa";
+    public static final String NOTE_ACCESS_KEY_SECRET_TEST = "0joCPK6L1S0KLxCnOwD2Gm3wulC7vG";
     /**
      * sts服务相关参数
      */

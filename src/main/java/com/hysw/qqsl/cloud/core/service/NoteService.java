@@ -503,12 +503,12 @@ public class NoteService extends BaseService<Note, Long> {
 
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			//消息的几个关键值
-//			System.out.println("message receiver time from mns:" + format.format(new Date()));
-//			System.out.println("message handle: " + message.getReceiptHandle());
-//			System.out.println("message body: " + message.getMessageBodyAsString());
-//			System.out.println("message id: " + message.getMessageId());
-//			System.out.println("message dequeue count:" + message.getDequeueCount());
-//			System.out.println("Thread:" + Thread.currentThread().getName());
+			System.out.println("message receiver time from mns:" + format.format(new Date()));
+			System.out.println("message handle: " + message.getReceiptHandle());
+			System.out.println("message body: " + message.getMessageBodyAsString());
+			System.out.println("message id: " + message.getMessageId());
+			System.out.println("message dequeue count:" + message.getDequeueCount());
+			System.out.println("Thread:" + Thread.currentThread().getName());
 			try{
 				Map<String,Object> contentMap=gson.fromJson(message.getMessageBodyAsString(), HashMap.class);
 
@@ -568,8 +568,10 @@ public class NoteService extends BaseService<Note, Long> {
 		String messageType="SmsUp";//此处应该替换成相应产品的消息类型
 		String queueName="Alicom-Queue-30150706-SmsUp";//在云通信页面开通相应业务消息后，就能在页面上获得对应的queueName,格式类似Alicom-Queue-xxxxxx-SmsReport
         try {
-            puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType, queueName, new MyMessageListener());
-//			puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType1, queueName1, new MyMessageListener());
+			if (SettingUtils.getInstance().getSetting().getStatus().equals("run")) {
+				puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID, CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType, queueName, new MyMessageListener());
+//				puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType1, queueName1, new MyMessageListener());
+			}
         } catch (ClientException e) {
             e.printStackTrace();
         } catch (ParseException e) {

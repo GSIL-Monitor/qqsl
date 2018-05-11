@@ -22,8 +22,6 @@ public class MyTask {
     @Autowired
     private OssService ossService;
     @Autowired
-    private OfficeToPdfManager officeToPdfManager;
-    @Autowired
     private UploadCache uploadCache;
 
     @Autowired
