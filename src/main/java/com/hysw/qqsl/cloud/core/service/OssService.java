@@ -710,4 +710,58 @@ public class OssService extends BaseService<Oss,Long>{
 			setBucketLife(prefix.substring(prefix.indexOf("/")+1)+"/","panorama");
 		}
 	}
+
+
+	/////////////////////////////////////////////
+	//用于全景兼容
+
+
+	//列出所有原qqslimage下的全景key值
+	public List<String> getAllPanoramaFromOss(String id){
+		List<String> panoramaKeys = new ArrayList<>();
+		// 构造ListObjectsRequest请求
+		ListObjectsRequest listObjectsRequest = new ListObjectsRequest(CommonAttributes.BUCKET_IMAGE);
+		listObjectsRequest.setPrefix("panorama/"+id+"/");
+// 递归列出fun目录下的所有文件
+		ObjectListing listing = client.listObjects(listObjectsRequest);
+// 遍历所有Object
+		System.out.println("Objects:");
+		for (OSSObjectSummary objectSummary : listing.getObjectSummaries()) {
+			if(objectSummary.getKey().equals("panorama/")||objectSummary.getKey().contains(".tiles")){
+				continue;
+			}
+			panoramaKeys.add(objectSummary.getKey());
+		}
+		System.out.println(panoramaKeys.size());
+		System.out.println(panoramaKeys);
+// 遍历所有CommonPrefix
+		System.out.println("\nCommonPrefixs:");
+		for (String commonPrefix : listing.getCommonPrefixes()) {
+			System.out.println(commonPrefix);
+		}
+		return panoramaKeys;
+	}
+
+	//复制所有全景到qqslimage-dev下
+	public void copyToDev(List<String> list){
+		String str,idStr,name;
+		Panorama panorama;
+		for(String key:list){
+			name = key.substring(key.lastIndexOf("/")+1);
+			str = key.substring(0,key.lastIndexOf("/"));
+			idStr = str.substring(str.indexOf("/")+1);
+			panorama = panoramaService.find(Long.valueOf(idStr));
+			if(panorama.getUserId()==null){
+				continue;
+			}
+			System.out.println(panorama.getUserId());
+			// 拷贝Object
+			CopyObjectResult result = client.copyObject(
+					CommonAttributes.BUCKET_IMAGE,key.trim(), "qqsl-dev", "panorama/"+panorama.getUserId()+"/"+name);
+			System.out.println("ETag: " + result.getETag() + " LastModified: " + result.getLastModified());
+		}
+		// 关闭client
+		client.shutdown();
+
+	}
 }
