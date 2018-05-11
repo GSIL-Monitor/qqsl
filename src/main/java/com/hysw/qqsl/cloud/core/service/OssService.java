@@ -717,11 +717,11 @@ public class OssService extends BaseService<Oss,Long>{
 
 
 	//列出所有原qqslimage下的全景key值
-	public void getAllPanoramaFromOss(){
+	public List<String> getAllPanoramaFromOss(String id){
 		List<String> panoramaKeys = new ArrayList<>();
 		// 构造ListObjectsRequest请求
 		ListObjectsRequest listObjectsRequest = new ListObjectsRequest(CommonAttributes.BUCKET_IMAGE);
-		listObjectsRequest.setPrefix("panorama/");
+		listObjectsRequest.setPrefix("panorama/"+id+"/");
 // 递归列出fun目录下的所有文件
 		ObjectListing listing = client.listObjects(listObjectsRequest);
 // 遍历所有Object
@@ -739,7 +739,7 @@ public class OssService extends BaseService<Oss,Long>{
 		for (String commonPrefix : listing.getCommonPrefixes()) {
 			System.out.println(commonPrefix);
 		}
-
+		return panoramaKeys;
 	}
 
 	//复制所有全景到qqslimage-dev下

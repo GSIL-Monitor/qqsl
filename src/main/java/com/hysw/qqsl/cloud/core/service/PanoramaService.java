@@ -204,6 +204,40 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         return "PANORAMA_NO_SCENE";
     }
 
+    public String testHistoryData(Panorama panorama,User user,String fileName,String oirginName){
+        panorama.setStatus(CommonEnum.Review.PENDING);
+        panorama.setShare(Boolean.valueOf(false));
+        panorama.setUserId(user.getId());
+        panorama.setInstanceId(DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis())));
+        panorama.setAngleOfView("{\"viewSettings\": []}");
+        panorama.setSceneGroup("{\"sceneGroups\": []}");
+        panorama.setHotspot("{}");
+        String thumbUrl = null;
+            if (path == null || path.length() == 0) {
+                getTargetFilePath();
+            }
+            File randomFile = createRandomDir();
+            String path = downloadPicture11(user,fileName,randomFile,oirginName);
+            if (!StringUtils.hasText(path)) {
+                return "PANORAMA_IMAGE_NOT_EXIST";//下载失败
+            }
+            List<String> paths = new ArrayList<>();
+            paths.add(path);
+            boolean flag = cutPicture(paths);
+            if (!flag) {
+                return "PANORAMA_SLICE_ERROE";//图片切割失败
+            }
+            uploadCutPicture(randomFile.getName(), user);
+            thumbUrl = sceneService.saveScene(user, panorama,fileName,oirginName);
+            delAllFile(path);
+            panorama.setThumbUrl(thumbUrl);
+            save(panorama);
+            return "OK";
+    }
+
+
+
+
     /**
      * 下载图片
      *
@@ -221,6 +255,21 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             }
         }
         return paths;
+    }
+
+    /**
+     * 下载图片
+     *
+     * @param randomFile
+     */
+    private String downloadPicture11(User user, String fileName, File randomFile,String oirginName) {
+       String path="";
+            try {
+               path = (ossService.downloadFileToLocal(user.getId() + "/" + fileName+".jpg", randomFile.getAbsolutePath() + System.getProperty("file.separator") + oirginName));
+            } catch (OSSException e) {
+
+            }
+        return path;
     }
 
     /**
@@ -673,7 +722,11 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             panorama.setShare((Boolean) objectMap.get("isShare"));
         }
         if (objectMap.get("coor") != null && StringUtils.hasText(objectMap.get("coor").toString())) {
-            panorama.setCoor(objectMap.get("coor").toString());
+            JSONObject coorJson = SettingUtils.checkCoordinateIsInvalid(objectMap.get("coor").toString());
+            if (coorJson != null) {
+                panorama.setCoor(coorJson.toString());
+            }
+            return Message.Type.FAIL.toString();
         }
         if (objectMap.get("region") != null && StringUtils.hasText(objectMap.get("region").toString())) {
             panorama.setRegion(objectMap.get("region").toString());
