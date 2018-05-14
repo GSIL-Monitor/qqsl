@@ -196,6 +196,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("remark",account.getRemark());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
+        jsonObject.put("status",account.getStatus().toString());
         User user = getUserByAccountId(account.getId());
         JSONObject userJson = new JSONObject();
         if(user!=null){
@@ -235,6 +236,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("remark",account.getRemark());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
+        jsonObject.put("status",account.getStatus().toString());
         return jsonObject;
     }
 
