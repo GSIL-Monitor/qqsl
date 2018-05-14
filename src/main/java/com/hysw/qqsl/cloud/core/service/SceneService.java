@@ -73,7 +73,7 @@ public class SceneService  extends BaseService<Scene, Long> {
             scene.setFileName(fileName);
             scene.setInstanceId(oirginName);
             scene.setThumbUrl("http://qqslimage.oss-cn-hangzhou.aliyuncs.com/panorama/" + user.getId() + "/" + scene.getInstanceId() + ".tiles/thumb.jpg");
-            scene.setOriginUrl("panorama/"+user.getId() + "/" + oirginName);
+            scene.setOriginUrl("panorama/"+user.getId() + "/" + oirginName+".jpg");
             scene.setPanorama(panorama);
             save(scene);
             if (flag) {

@@ -265,7 +265,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     private String downloadPicture11(User user, String fileName, File randomFile,String oirginName) {
        String path="";
             try {
-               path = (ossService.downloadFileToLocal(user.getId() + "/" + fileName+".jpg", randomFile.getAbsolutePath() + System.getProperty("file.separator") + oirginName));
+               path = (ossService.downloadFileToLocal(user.getId() + "/" + fileName+".jpg", randomFile.getAbsolutePath() + System.getProperty("file.separator") + oirginName+".jpg"));
             } catch (OSSException e) {
 
             }
@@ -722,11 +722,15 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             panorama.setShare((Boolean) objectMap.get("isShare"));
         }
         if (objectMap.get("coor") != null && StringUtils.hasText(objectMap.get("coor").toString())) {
-            JSONObject coorJson = SettingUtils.checkCoordinateIsInvalid(objectMap.get("coor").toString());
-            if (coorJson != null) {
-                panorama.setCoor(coorJson.toString());
+            if(isJson(objectMap.get("coor"))){
+                panorama.setCoor(objectMap.get("coor").toString());
+            }else{
+                JSONObject coorJson = SettingUtils.checkCoordinateIsInvalid(objectMap.get("coor").toString());
+                if (coorJson != null) {
+                    panorama.setCoor(coorJson.toString());
+                }
+                return Message.Type.FAIL.toString();
             }
-            return Message.Type.FAIL.toString();
         }
         if (objectMap.get("region") != null && StringUtils.hasText(objectMap.get("region").toString())) {
             panorama.setRegion(objectMap.get("region").toString());
@@ -736,6 +740,15 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         return Message.Type.OK.toString();
     }
 
+    public boolean isJson(Object content){
+
+        try {
+            JSONObject jsonStr= JSONObject.fromObject(content);
+            return  true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
     /**
      * 热点更新
      *
