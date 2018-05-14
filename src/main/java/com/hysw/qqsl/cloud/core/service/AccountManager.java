@@ -40,7 +40,7 @@ public class AccountManager{
     /**
      * 检查超过24小时未确认的，并删除,同时通知用户
      */
-    public void changeExpired(){
+    public void changeExpiredAndDelete(){
         if (map.size() == 0) {
             return;
         }

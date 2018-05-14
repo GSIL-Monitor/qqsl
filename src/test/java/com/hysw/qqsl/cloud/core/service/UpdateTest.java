@@ -54,7 +54,8 @@ public class UpdateTest {
     @Autowired
     private AdminService adminService;
 
-    /** 删除全部account  accountMessage user_account表 删除build表中的cut属性   project表中的cooperate属性全部改为null*/
+    /** 删除全部account  accountMessage user_account表 删除build表中的cut属性   project表中的cooperate属性全部改为null
+     * 修改mylistener 中的短信上行接口为run启动*/
     @Test
     public void projectCooperateIsNULL() {
         List<Project> projects = (List<Project>) SettingUtils.objectCopy(projectService.findAll());

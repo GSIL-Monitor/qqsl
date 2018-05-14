@@ -11,6 +11,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
 import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.util.HttpRequestUtil;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -46,6 +47,10 @@ public class AccountService extends BaseService<Account,Long> {
     private NoteService noteService;
     @Autowired
     private PollingService pollingService;
+    @Autowired
+    private HttpRequestUtil httpRequestUtil;
+    @Autowired
+    private ApplicationTokenService applicationTokenService;
 
     @Autowired
     public void setBaseDao(AccountDao accountDao){
@@ -386,4 +391,25 @@ public class AccountService extends BaseService<Account,Long> {
         flush();
     }
 
+    /**
+     * 激活子账号
+     */
+    public void activeAccount() {
+        JSONArray jsonArray = httpRequestUtil.jsonArrayHttpRequest(SettingUtils.getInstance().getSetting().getAliPayIP() + ":8080/qqsl/user/getSmsUpList?token=" + applicationTokenService.getToken(), "GET", null);
+        for (Object o : jsonArray) {
+            JSONObject jsonObject = JSONObject.fromObject(o);
+            if (jsonObject.get("reply").toString().equalsIgnoreCase("y")) {
+                Account account = findByPhone(String.valueOf(jsonObject.get("phone")));
+                if (account != null && account.getStatus() == Account.Status.AWAITING) {
+                    activateAccount(account);
+                }
+            }
+            if (jsonObject.get("reply").toString().equalsIgnoreCase("n")) {
+                Account account = findByPhone(String.valueOf(jsonObject.get("phone")));
+                if (account != null && account.getStatus() == Account.Status.AWAITING) {
+                    refusedAccount(account);
+                }
+            }
+        }
+    }
 }

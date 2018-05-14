@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -31,8 +32,6 @@ public class Note extends BaseEntity {
 	private String sendMsg;
 	/** 回复内容 */
 	private String reply;
-    /** 子帐号id*/
-	private Long accountId;
 
 
 	public  Note(){
@@ -44,6 +43,7 @@ public class Note extends BaseEntity {
 		this.sendMsg = sendMsg;
 	}
 
+	@Transient
 	public String getName() {
 		return name;
 	}
@@ -59,6 +59,7 @@ public class Note extends BaseEntity {
 		this.phone = phone;
 	}
 
+	@Transient
 	public String getSendMsg() {
 		return sendMsg;
 	}
@@ -81,14 +82,6 @@ public class Note extends BaseEntity {
 
 	public void setReply(String reply) {
 		this.reply = reply;
-	}
-
-	public Long getAccountId() {
-		return accountId;
-	}
-
-	public void setAccountId(Long accountId) {
-		this.accountId = accountId;
 	}
 
 }

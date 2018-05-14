@@ -67,6 +67,8 @@ public class UserController {
     private PollingService pollingService;
     @Autowired
     private CommonController commonController;
+    @Autowired
+    private ApplicationTokenService applicationTokenService;
 
     /**
      * 注册时发送手机验证码
@@ -1051,11 +1053,20 @@ public class UserController {
         return MessageService.message(Message.Type.OK,pollingService.toJson(polling));
     }
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public @ResponseBody Message test(){
-        User user = userService.find(17l);
-        accountService.create("13007781310", user, "陈雷", null, null);
-        return MessageService.message(Message.Type.OK);
+    /**
+     * 获取短信上行列表
+     * @param token
+     * @return
+     */
+    @RequestMapping(value = "/getSmsUpList", method = RequestMethod.GET)
+    public @ResponseBody
+    Message getSmsUpList(@RequestParam String token) {
+        if (applicationTokenService.decrypt(token)) {
+            return MessageService.message(Message.Type.OK, noteService.getNoteList());
+        }
+        return MessageService.message(Message.Type.FAIL);
     }
+
+
 }
 
