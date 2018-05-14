@@ -57,12 +57,12 @@ public class UpdateTest {
     @Autowired
     private AdminService adminService;
 
-    /** 删除全部account  accountMessage  删除build中的cut   project中的share全部改为null*/
+    /** 删除全部account  accountMessage user_account表 删除build表中的cut属性   project表中的cooperate属性全部改为null*/
     @Test
-    public void projectShareIsNULL() {
+    public void projectCooperateIsNULL() {
         List<Project> projects = projectService.findAll();
         for (Project project : projects) {
-            project.setShares(null);
+            project.setCooperate(null);
             projectService.save(project);
         }
     }

@@ -35,7 +35,7 @@ public class GetAccessTokenService {
             accessToken = jsonObject.get("access_token");
         } while (accessToken==null);
         token = accessToken.toString();
-        System.out.println(token);
+//        System.out.println(token);
     }
 
     public String getToken(){
