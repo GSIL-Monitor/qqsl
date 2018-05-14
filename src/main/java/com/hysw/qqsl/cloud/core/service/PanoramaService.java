@@ -726,10 +726,10 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                 panorama.setCoor(objectMap.get("coor").toString());
             }else{
                 JSONObject coorJson = SettingUtils.checkCoordinateIsInvalid(objectMap.get("coor").toString());
-                if (coorJson != null) {
-                    panorama.setCoor(coorJson.toString());
+                if (coorJson == null) {
+                    return Message.Type.FAIL.toString();
                 }
-                return Message.Type.FAIL.toString();
+                panorama.setCoor(coorJson.toString());
             }
         }
         if (objectMap.get("region") != null && StringUtils.hasText(objectMap.get("region").toString())) {
