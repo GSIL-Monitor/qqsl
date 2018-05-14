@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.dao.ProjectDao;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.listener.TestExecutionListener;
 import com.hysw.qqsl.cloud.pay.entity.data.Package;
@@ -27,7 +28,7 @@ import java.util.List;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners(value = {TestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ContextConfiguration(locations = {"classpath*:/applicationContext-test.xml", "classpath*:/applicationContext-cache-test.xml"})
+@ContextConfiguration(locations = {"classpath*:/applicationContext-test.xml", "classpath*:/applicationContext-cache-test.xml","classpath*:/applicationContext-shiro-test.xml"})
 @Transactional(transactionManager = "transactionManager")
 @Rollback(value = true)
 public class UpdateTest {
@@ -60,10 +61,11 @@ public class UpdateTest {
     /** 删除全部account  accountMessage user_account表 删除build表中的cut属性   project表中的cooperate属性全部改为null*/
     @Test
     public void projectCooperateIsNULL() {
-        List<Project> projects = projectService.findAll();
-        for (Project project : projects) {
-            project.setCooperate(null);
-            projectService.save(project);
+        List<Project> projects = (List<Project>) SettingUtils.objectCopy(projectService.findAll());
+        for (int i = 0; i < projects.size(); i++) {
+            projects.get(i).setCooperate(null);
+            projectService.save(projects.get(i));
+            projectService.flush();
         }
     }
 }
