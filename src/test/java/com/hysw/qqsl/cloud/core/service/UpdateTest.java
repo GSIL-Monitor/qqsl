@@ -1,13 +1,9 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.dao.ProjectDao;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.listener.TestExecutionListener;
-import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
