@@ -450,7 +450,7 @@ public class NoteService extends BaseService<Note, Long> {
 		//必填:短信模板-可在短信控制台中找到
 		request.setTemplateCode("SMS_132991461");
 		//可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
-		request.setTemplateParam("{\"company\":\""+companyName+"\"}");
+		request.setTemplateParam("{\"company\":\"["+companyName+"]\"}");
 		//选填-上行短信扩展码(无特殊需求用户请忽略此字段)
 //		request.setSmsUpExtendCode("2133620");
 		//可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
@@ -501,14 +501,14 @@ public class NoteService extends BaseService<Note, Long> {
 		@Override
 		public boolean dealMessage(Message message) {
 
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			//消息的几个关键值
-			System.out.println("message receiver time from mns:" + format.format(new Date()));
-			System.out.println("message handle: " + message.getReceiptHandle());
-			System.out.println("message body: " + message.getMessageBodyAsString());
-			System.out.println("message id: " + message.getMessageId());
-			System.out.println("message dequeue count:" + message.getDequeueCount());
-			System.out.println("Thread:" + Thread.currentThread().getName());
+//			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//			消息的几个关键值
+//			System.out.println("message receiver time from mns:" + format.format(new Date()));
+//			System.out.println("message handle: " + message.getReceiptHandle());
+//			System.out.println("message body: " + message.getMessageBodyAsString());
+//			System.out.println("message id: " + message.getMessageId());
+//			System.out.println("message dequeue count:" + message.getDequeueCount());
+//			System.out.println("Thread:" + Thread.currentThread().getName());
 			try{
 				Map<String,Object> contentMap=gson.fromJson(message.getMessageBodyAsString(), HashMap.class);
 

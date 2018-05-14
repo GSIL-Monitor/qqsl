@@ -352,14 +352,14 @@ public class AccountService extends BaseService<Account,Long> {
             return;
         }
         if (account.getStatus() == Account.Status.CONFIRMED) {
-            msg = "您已经成为==>" + userService.nickName(account.getUser().getId()) + "<==企业的子账户，该项不能重复操作，如需绑定到另一企业，请先解绑。";
+            msg = "您已经成为[" + userService.nickName(account.getUser().getId()) + "]企业的子账户，该项不能重复操作，如需绑定到另一企业，请先解绑。";
         }
         if (account.getStatus()==Account.Status.AWAITING) {
             account.setStatus(Account.Status.CONFIRMED);
             String inviteCode = SettingUtils.createRandomVcode();
             account.setPassword(DigestUtils.md5Hex(inviteCode));
             save(account);
-            msg = "尊敬的用户您好，恭喜您已成为==>" + userService.nickName(account.getUser().getId()) + "<==企业的子账户,密码为："+inviteCode+"。";
+            msg = "尊敬的用户您好，恭喜您已成为[" + userService.nickName(account.getUser().getId()) + "]企业的子账户,密码为："+inviteCode+"。";
             userMessageService.accountMessageAgree(account);
         }
         Note note = new Note(account.getPhone(), msg);

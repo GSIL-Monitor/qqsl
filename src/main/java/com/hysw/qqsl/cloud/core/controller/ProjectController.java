@@ -687,6 +687,9 @@ public class ProjectController {
         if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
+        if (account.getStatus() == Account.Status.AWAITING) {
+            return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
+        }
         Project project = projectService.find(projectId);
         //判断子账号,项目归属
         User own = authentService.getUserFromSubject();
@@ -733,6 +736,9 @@ public class ProjectController {
         Account account = accountService.find(accountId);
         if (account == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (account.getStatus() == Account.Status.AWAITING) {
+            return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         User own = authentService.getUserFromSubject();
         Project project;
