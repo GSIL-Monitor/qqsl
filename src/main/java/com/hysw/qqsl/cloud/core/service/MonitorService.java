@@ -68,8 +68,8 @@ public class MonitorService {
         try {
             return httpRequestUtil.jsonArrayHttpRequest(url + method + "?token=" + token, "GET", null);
         } catch (Exception e) {
-            Note note = new Note("13028710937", "异常：监测子系统");
-            noteCache.add("13028710937",note);
+            Note note = new Note(SettingUtils.getInstance().getSetting().getNotice(), "异常：监测子系统");
+            noteCache.add(SettingUtils.getInstance().getSetting().getNotice(),note);
         }
         return null;
     }

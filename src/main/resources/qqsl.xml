@@ -34,6 +34,7 @@
 	<setting name="packageModel" value="packageModel.xml"/>
 	<setting name="goods" value="goods.xml"/>
 	<setting name="station" value="station.xml"/>
+	<setting name="notice" value="13028710937"/>
 
 </qqsl>
 

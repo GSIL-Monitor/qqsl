@@ -62,6 +62,8 @@ public class Setting implements Serializable {
 	private String station;
 
 	private String nat123;
+	/** 异常通知人电话 */
+	private String notice;
  	
  	public String getStatus() {
 		return status;
@@ -258,5 +260,13 @@ public class Setting implements Serializable {
 
 	public void setNat123(String nat123) {
 		this.nat123 = nat123;
+	}
+
+	public String getNotice() {
+		return notice;
+	}
+
+	public void setNotice(String notice) {
+		this.notice = notice;
 	}
 }
