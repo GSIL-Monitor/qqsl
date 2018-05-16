@@ -680,7 +680,7 @@ public class StationController {
 
 
     /**
-     * 可查看测站列表
+     * 子账户可查看测站列表
      * @return
      */
     @RequiresAuthentication
