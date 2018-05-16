@@ -1069,14 +1069,5 @@ public class UserController {
         return MessageService.message(Message.Type.FAIL);
     }
 
-    @RequestMapping(value = "/getIP", method = RequestMethod.GET)
-    public @ResponseBody
-    Message getIP() throws UnknownHostException {
-        InetAddress addr = InetAddress.getLocalHost();
-        String ip=addr.getHostAddress().toString(); //获取本机ip
-        return MessageService.message(Message.Type.OK,ip);
-    }
-
-
 }
 
