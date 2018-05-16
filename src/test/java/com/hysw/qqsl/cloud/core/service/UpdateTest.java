@@ -26,7 +26,7 @@ import java.util.List;
 @TestExecutionListeners(value = {TestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ContextConfiguration(locations = {"classpath*:/applicationContext-test.xml", "classpath*:/applicationContext-cache-test.xml","classpath*:/applicationContext-shiro-test.xml"})
 @Transactional(transactionManager = "transactionManager")
-@Rollback(value = true)
+@Rollback(value = false)
 public class UpdateTest {
 
     @Autowired
@@ -61,6 +61,7 @@ public class UpdateTest {
         List<Project> projects = (List<Project>) SettingUtils.objectCopy(projectService.findAll());
         for (int i = 0; i < projects.size(); i++) {
             projects.get(i).setCooperate(null);
+            projects.get(i).setViews(null);
             projectService.save(projects.get(i));
             projectService.flush();
         }
