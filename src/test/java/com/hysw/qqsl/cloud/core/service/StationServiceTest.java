@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.StationModel;
+import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +32,8 @@ public class StationServiceTest extends BaseTest {
     private StationService stationService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private AccountService accountService;
     // 宏电水位站
     private String huangshh01_instanceId = "0010000001";
     private String huangshh02_instanceId = "0010000002";
@@ -267,5 +271,23 @@ public class StationServiceTest extends BaseTest {
         Assert.assertNotNull(array);
     }
 
+    @Test
+    public void cooperateMul() {
+        List<Station> stations = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
+        Station station = stationService.find(1l);
+        stations.add(station);
+        Account account = accountService.find(1l);
+        accounts.add(account);
+        stationService.cooperateMul(stations, accounts);
+        accountService.flush();
+        accounts = new ArrayList<>();
+        account = accountService.find(1l);
+        accounts.add(account);
+        stationService.unCooperate(station, accounts);
+        stationService.flush();
+        station = stationService.find(1l);
+        Assert.assertTrue(station.getCooperate().equals("[{\"id\":2,\"name\":\"陈雷\",\"phone\":\"13007781310\"}]"));
+    }
 
 }

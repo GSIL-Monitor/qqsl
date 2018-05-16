@@ -66,7 +66,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
      */
     public void viewMessage(Project project, Account account,boolean isView) {
         AccountMessage accountMessage = new AccountMessage();
-        String cooperateCode = isView?"0":"1";
+        String cooperateCode = isView?"0":"1"; //0分享 1取消分享
         JSONObject contentJson = new JSONObject();
         contentJson.put("cooperateCode",cooperateCode);
         contentJson.put("nickName",userService.nickName(project.getUser().getId()));
@@ -139,5 +139,28 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setType(AccountMessage.Type.FEEDBACK);
         accountMessageDao.save(accountMessage);
         pollingService.changeMessageStatus(account,true);
+    }
+
+    /**
+     * 测站分享
+     * @param station
+     * @param account
+     * @param isView
+     */
+    public void cooperateStationMessage(Station station, Account account,boolean isView) {
+        AccountMessage accountMessage = new AccountMessage();
+        String cooperateCode = isView?"0":"1";//0分享 1取消分享
+        JSONObject contentJson = new JSONObject();
+        contentJson.put("cooperateCode",cooperateCode);
+        contentJson.put("nickName",userService.nickName(station.getUser().getId()));
+        contentJson.put("stationName",station.getName());
+        contentJson.put("stationId",station.getId());
+        accountMessage.setAccount(account);
+        accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
+        accountMessage.setContent(contentJson.toString());
+        accountMessage.setAccount(account);
+        accountMessage.setType(AccountMessage.Type.COOPERATE_STATION);
+        accountMessageDao.save(accountMessage);
+        pollingService.changeStationStatus(account,true);
     }
 }

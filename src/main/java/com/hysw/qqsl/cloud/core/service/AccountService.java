@@ -7,10 +7,7 @@ import com.google.gson.JsonObject;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.AccountDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
-import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
-import com.hysw.qqsl.cloud.core.entity.data.Note;
-import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.HttpRequestUtil;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import com.hysw.qqsl.cloud.wechat.util.WeChatHttpRequest;
@@ -415,5 +412,21 @@ public class AccountService extends BaseService<Account,Long> {
                 }
             }
         }
+    }
+
+    /**
+     * 根据ids查询account列表
+     * @param accountIds
+     * @return
+     */
+    public List<Account> findByIdList(Object accountIds) {
+        String[] split = accountIds.toString().split(",");
+        Account account;
+        List<Account> accounts = new ArrayList<>();
+        for (String s : split) {
+            account = find(Long.valueOf(s));
+            accounts.add(account);
+        }
+        return accounts;
     }
 }

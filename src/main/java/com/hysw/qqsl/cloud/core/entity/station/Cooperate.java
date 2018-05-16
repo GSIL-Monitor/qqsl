@@ -2,6 +2,8 @@ package com.hysw.qqsl.cloud.core.entity.station;
 
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,5 +59,26 @@ public class Cooperate {
             }
         }
         return false;
+    }
+
+    public void addToStation(){
+        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        for (Account account : visits) {
+            jsonObject = new JSONObject();
+            jsonObject.put("id", account.getId());
+            jsonObject.put("name", account.getName());
+            jsonObject.put("phone", account.getPhone());
+            jsonArray.add(jsonObject);
+        }
+        station.setCooperate(jsonArray.toString());
+    }
+
+    public void setVisits(List<Account> visits) {
+        this.visits = visits;
+    }
+
+    public List<Account> getVisits() {
+        return visits;
     }
 }
