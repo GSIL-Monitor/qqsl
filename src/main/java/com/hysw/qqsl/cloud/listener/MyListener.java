@@ -160,7 +160,7 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 				}
 				logger.info("激活全景切图插件");
 			}
-			if (SettingUtils.getInstance().getSetting().getStatus().equals("run")||SettingUtils.getInstance().getSetting().getAliPayIP().equals("112.124.104.190")) {
+			if (SettingUtils.getInstance().getSetting().getStatus().equals("run")) {
 				noteService.receiveMsg();
 				logger.info("启动短信回执接口");
 			}

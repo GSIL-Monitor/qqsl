@@ -13,6 +13,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.util.HttpRequestUtil;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import com.hysw.qqsl.cloud.wechat.util.WeChatHttpRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -395,8 +396,11 @@ public class AccountService extends BaseService<Account,Long> {
      * 激活子账号
      */
     public void activeAccount() {
-        JSONArray jsonArray = httpRequestUtil.jsonArrayHttpRequest(SettingUtils.getInstance().getSetting().getAliPayIP() + ":8080/qqsl/user/getSmsUpList?token=" + applicationTokenService.getToken(), "GET", null);
-        for (Object o : jsonArray) {
+        JSONObject jsonObject1 = WeChatHttpRequest.jsonObjectHttpRequest("http://"+SettingUtils.getInstance().getSetting().getAliPayIP() + ":8080/qqsl/user/getSmsUpList?token=" + applicationTokenService.getToken(), "GET", null);
+        if (jsonObject1.get("data") == null||JSONArray.fromObject(jsonObject1.get("data")).size()==0) {
+            return;
+        }
+        for (Object o : JSONArray.fromObject(jsonObject1.get("data"))) {
             JSONObject jsonObject = JSONObject.fromObject(o);
             if (jsonObject.get("reply").toString().equalsIgnoreCase("y")) {
                 Account account = findByPhone(String.valueOf(jsonObject.get("phone")));
