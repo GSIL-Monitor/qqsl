@@ -520,6 +520,7 @@ public class UserService extends BaseService<User, Long> {
 		for (Account account1 : accounts) {
 			if (account.getId().equals(account1.getId())) {
 				accounts.remove(account1);
+				break;
 			}
 		}
 		accountService.remove(account);
