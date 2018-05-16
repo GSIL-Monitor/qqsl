@@ -678,4 +678,19 @@ public class StationController {
         return MessageService.message(Message.Type.OK);
     }
 
+
+    /**
+     * 可查看测站列表
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/account/list", method = RequestMethod.GET)
+    public @ResponseBody Message stationsList(){
+        Account account = authentService.getAccountFromSubject();
+        List<JSONObject> stations = stationService.getStations(account);
+        pollingService.changeStationStatus(account, false);
+        return MessageService.message(Message.Type.OK, stations);
+    }
+
 }

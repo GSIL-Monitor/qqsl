@@ -57,8 +57,6 @@ public class AccountController {
     private PollingService pollingService;
     @Autowired
     private CommonController commonController;
-    @Autowired
-    private StationService stationService;
 
     private Log logger = LogFactory.getLog(this.getClass());
 
@@ -724,20 +722,5 @@ public class AccountController {
         Polling polling=pollingService.findByAccount(account.getId());
         return MessageService.message(Message.Type.OK,pollingService.toJson(polling));
     }
-
-    /**
-     * 可查看测站列表
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/station/list", method = RequestMethod.GET)
-    public @ResponseBody Message stationsList(){
-        Account account = authentService.getAccountFromSubject();
-        List<JSONObject> stations = stationService.getStations(account);
-        pollingService.changeStationStatus(account, false);
-        return MessageService.message(Message.Type.OK, stations);
-    }
-
 
 }
