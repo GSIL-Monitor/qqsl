@@ -20,6 +20,7 @@ import com.aliyuncs.profile.IClientProfile;
 import com.google.gson.Gson;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.NoteDao;
+import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDB;
@@ -520,11 +521,14 @@ public class NoteService extends BaseService<Note, Long> {
 				//TODO 这里开始编写您的业务代码
 				Object phone = contentMap.get("phone_number");
 				Object content = contentMap.get("content");
-				Note note = new Note();
 				if (phone != null && content != null) {
-					note.setPhone(phone.toString());
-					note.setReply(content.toString());
-					noteService.save(note);
+					Note note = noteService.findByPhone(phone);
+					if (note == null) {
+						note = new Note();
+						note.setPhone(phone.toString());
+						note.setReply(content.toString());
+						noteService.save(note);
+					}
 				}
 			}catch(com.google.gson.JsonSyntaxException e){
 				logger.error("error_json_format:"+message.getMessageBodyAsString(),e);
@@ -539,6 +543,16 @@ public class NoteService extends BaseService<Note, Long> {
 			return true;
 		}
 
+	}
+
+	protected Note findByPhone(Object phone) {
+		List<Filter> filters = new ArrayList<>();
+		filters.add(Filter.eq("phone", phone));
+		List<Note> list = noteDao.findList(0, null, filters);
+		if (list.size() == 1) {
+			return list.get(0);
+		}
+		return null;
 	}
 
 	public void receiveMsg(){
@@ -564,10 +578,8 @@ public class NoteService extends BaseService<Note, Long> {
 		String messageType="SmsUp";//此处应该替换成相应产品的消息类型
 		String queueName="Alicom-Queue-30150706-SmsUp";//在云通信页面开通相应业务消息后，就能在页面上获得对应的queueName,格式类似Alicom-Queue-xxxxxx-SmsReport
         try {
-			if (SettingUtils.getInstance().getSetting().getStatus().equals("run")) {
-				puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID, CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType, queueName, new MyMessageListener());
-//				puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType1, queueName1, new MyMessageListener());
-			}
+        	puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID, CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType, queueName, new MyMessageListener());
+//			puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType1, queueName1, new MyMessageListener());
         } catch (ClientException e) {
             e.printStackTrace();
         } catch (ParseException e) {
