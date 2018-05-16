@@ -523,7 +523,6 @@ public class UserService extends BaseService<User, Long> {
 				break;
 			}
 		}
-		accountService.remove(account);
 		user.setAccounts(accounts);
 		save(user);
 		if (account.getStatus() == Account.Status.CONFIRMED) {
@@ -531,6 +530,7 @@ public class UserService extends BaseService<User, Long> {
 			Note note = new Note(account.getPhone(), msg);
 			noteCache.add(account.getPhone(),note);
 		}
+		accountService.remove(account);
 		return true;
 	}
 
