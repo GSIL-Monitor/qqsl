@@ -160,7 +160,7 @@ public class MyTask {
     /**
      * 删除24小时未确认的子账户
      */
-    @Scheduled(fixedDelay = 60000*10 )
+    @Scheduled(fixedDelay = 60000*5 )
     public void deteleExpiredAndAwaitingAccount(){
         accountService.activeAccount();
         logger.info("激活子账号");

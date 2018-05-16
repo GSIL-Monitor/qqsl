@@ -33,6 +33,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -1065,6 +1067,14 @@ public class UserController {
             return MessageService.message(Message.Type.OK, noteService.getNoteList());
         }
         return MessageService.message(Message.Type.FAIL);
+    }
+
+    @RequestMapping(value = "/getIP", method = RequestMethod.GET)
+    public @ResponseBody
+    Message getIP() throws UnknownHostException {
+        InetAddress addr = InetAddress.getLocalHost();
+        String ip=addr.getHostAddress().toString(); //获取本机ip
+        return MessageService.message(Message.Type.OK,ip);
     }
 
 
