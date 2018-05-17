@@ -523,13 +523,13 @@ public class UserService extends BaseService<User, Long> {
 				break;
 			}
 		}
-		user.setAccounts(accounts);
-		save(user);
 		if (account.getStatus() == Account.Status.CONFIRMED) {
 			String msg = "[" + userService.nickName(account.getUser().getId()) + "]企业已解除与您的子账号关系，相关权限已被收回，您的子账户已被移除。";
 			Note note = new Note(account.getPhone(), msg);
 			noteCache.add(account.getPhone(),note);
 		}
+		user.setAccounts(accounts);
+		save(user);
 		accountService.remove(account);
 		return true;
 	}
