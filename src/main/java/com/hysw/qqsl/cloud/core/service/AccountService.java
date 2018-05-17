@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -231,6 +232,10 @@ public class AccountService extends BaseService<Account,Long> {
      */
     public JSONObject makeSimpleAccountJson(Account account) {
         JSONObject jsonObject = new JSONObject();
+        if (account == null) {
+            jsonObject.put("name","子账号已删除");
+            return jsonObject;
+        }
         jsonObject.put("id",account.getId());
         jsonObject.put("department",account.getDepartment());
         jsonObject.put("email",account.getEmail());
