@@ -516,20 +516,21 @@ public class UserService extends BaseService<User, Long> {
 	public boolean deleteAccount(Account account,User user) {
 		//收回权限
 		cooperateService.cooperateRevoke(user,account);
+		user = userService.findByDao(user.getId());
 		List<Account> accounts = user.getAccounts();
 		for (Account account1 : accounts) {
 			if (account.getId().equals(account1.getId())) {
 				accounts.remove(account1);
+				if (account.getStatus() == Account.Status.CONFIRMED) {
+					String msg = "[" + userService.nickName(account.getUser().getId()) + "]企业已解除与您的子账号关系，相关权限已被收回，您的子账户已被移除。";
+					Note note = new Note(account.getPhone(), msg);
+					noteCache.add(account.getPhone(),note);
+				}
+				accountService.remove(account1);
 				break;
 			}
 		}
-		if (account.getStatus() == Account.Status.CONFIRMED) {
-			String msg = "[" + userService.nickName(account.getUser().getId()) + "]企业已解除与您的子账号关系，相关权限已被收回，您的子账户已被移除。";
-			Note note = new Note(account.getPhone(), msg);
-			noteCache.add(account.getPhone(),note);
-		}
 		user.setAccounts(accounts);
-		accountService.remove(account);
 		save(user);
 		return true;
 	}
