@@ -529,8 +529,8 @@ public class UserService extends BaseService<User, Long> {
 			noteCache.add(account.getPhone(),note);
 		}
 		user.setAccounts(accounts);
-		save(user);
 		accountService.remove(account);
+		save(user);
 		return true;
 	}
 
