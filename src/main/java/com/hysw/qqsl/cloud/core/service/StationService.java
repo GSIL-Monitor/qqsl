@@ -846,4 +846,18 @@ public class StationService extends BaseService<Station, Long> {
             cooperate.setVisits(visits);
         }
     }
+
+    /**
+     * 解绑子账号
+     * @param user
+     * @param account
+     */
+    public void unCooperate(User user, Account account) {
+        List<Station> stations = findByUser(user);
+        for (int i = 0; i < stations.size(); i++) {
+            List<Account> accounts = new ArrayList<>();
+            accounts.add(account);
+            unCooperate(stations.get(i),accounts);
+        }
+    }
 }

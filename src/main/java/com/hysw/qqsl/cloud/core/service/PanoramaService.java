@@ -867,4 +867,21 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         return jsonArray;
     }
 
+    /**
+     * 收回子账号全景权限
+     * @param user
+     * @param account
+     */
+    public void revoke(User user, Account account) {
+        List<Panorama> panoramas = findByUser(user);
+        for (int i = 0; i < panoramas.size(); i++) {
+            if (panoramas.get(i).getAccountId() == null) {
+                continue;
+            }
+            if (account.getId().toString().equals(panoramas.get(i).getAccountId().toString())) {
+                panoramas.get(i).setAccountId(null);
+                save(panoramas.get(i));
+            }
+        }
+    }
 }

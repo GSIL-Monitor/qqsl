@@ -52,6 +52,10 @@ public class UserService extends BaseService<User, Long> {
 	private PollingService pollingService;
 	@Autowired
 	private NoteCache noteCache;
+    @Autowired
+    private StationService stationService;
+    @Autowired
+    private PanoramaService panoramaService;
 	@Autowired
 	public void setBaseDao(UserDao userDao) {
 		super.setBaseDao(userDao);
@@ -516,7 +520,11 @@ public class UserService extends BaseService<User, Long> {
 	public boolean deleteAccount(Account account,User user) {
 		//收回权限
 		cooperateService.cooperateRevoke(user,account);
-		user = userService.findByDao(user.getId());
+		//收回全景权限
+        panoramaService.revoke(user,account);
+        //收回测站权限
+        stationService.unCooperate(user, account);
+        user = userService.findByDao(user.getId());
 		List<Account> accounts = user.getAccounts();
 		for (Account account1 : accounts) {
 			if (account.getId().equals(account1.getId())) {

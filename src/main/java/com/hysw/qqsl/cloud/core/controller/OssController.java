@@ -256,6 +256,7 @@ public class OssController {
 		return MessageService.message(Message.Type.OK);
 	}
 
+
 	/**
 	 * 直传token
 	 * @return
@@ -265,8 +266,8 @@ public class OssController {
 	 * </ul>
 	 */
 	@RequiresAuthentication
-	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
 	public @ResponseBody Message directToken(@RequestParam String bucketName){
 		Message message = CommonController.parametersCheck(bucketName);
 		if (message.getType() != Message.Type.OK) {
@@ -286,7 +287,6 @@ public class OssController {
 			return MessageService.message(Message.Type.FAIL);
 		}
 	}
-
 
 
 }

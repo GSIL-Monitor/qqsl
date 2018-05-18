@@ -640,7 +640,7 @@ public class OssService extends BaseService<Oss,Long>{
 		String dir = "panorama/"+user.getId()+"/";
 		String host = "http://" + bucketName + "." + endpoint;
 		OSSClient client = new OSSClient(endpoint, CommonAttributes.ACCESSKEY_ID, CommonAttributes.SECRET_ACCESSKEY);
-		long expireTime = 30;
+		long expireTime = 8*3600+1800;
 		long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
 		Date expiration = new Date(expireEndTime);
 		PolicyConditions policyConds = new PolicyConditions();
@@ -651,7 +651,8 @@ public class OssService extends BaseService<Oss,Long>{
 		byte[] binaryData = postPolicy.getBytes("utf-8");
 		String encodedPolicy = BinaryUtil.toBase64String(binaryData);
 		String postSignature = client.calculatePostSignature(postPolicy);
-
+//		byte[] bytes = BinaryUtil.fromBase64String(encodedPolicy);
+//		String s = new String(bytes);
 		Map<String, String> respMap = new LinkedHashMap<>();
 		respMap.put("OSSAccessKeyId", CommonAttributes.ACCESSKEY_ID);
 		respMap.put("policy", encodedPolicy);
