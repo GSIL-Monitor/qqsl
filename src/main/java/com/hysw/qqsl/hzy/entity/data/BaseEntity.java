@@ -1,4 +1,4 @@
-package com.hysw.qqsl.cloud.core.entity.data;
+package com.hysw.qqsl.hzy.entity.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hysw.qqsl.cloud.listener.EntityListener;
