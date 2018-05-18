@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
  * @since 2018年5月16日
  * @author 雪庭(flysic) qq: 119238122 github: https://github.com/flysic
  */
-public class RiverSegment {
+public class RiverSegment extends BaseEntity {
 
     // 河段长度
     private float length;

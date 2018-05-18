@@ -17,7 +17,7 @@ import java.util.List;
  * @since 2018年5月16日
  * @author 雪庭(flysic) qq: 119238122 github: https://github.com/flysic
  */
-public class HzUser {
+public class HzUser extends BaseEntity {
 
     // 姓名
     private String name;
