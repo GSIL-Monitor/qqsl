@@ -7,11 +7,10 @@ import com.google.gson.JsonObject;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.AccountDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
-import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
-import com.hysw.qqsl.cloud.core.entity.data.Note;
-import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.*;
+import com.hysw.qqsl.cloud.util.HttpRequestUtil;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import com.hysw.qqsl.cloud.wechat.util.WeChatHttpRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -21,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,6 +46,10 @@ public class AccountService extends BaseService<Account,Long> {
     private NoteService noteService;
     @Autowired
     private PollingService pollingService;
+    @Autowired
+    private HttpRequestUtil httpRequestUtil;
+    @Autowired
+    private ApplicationTokenService applicationTokenService;
 
     @Autowired
     public void setBaseDao(AccountDao accountDao){
@@ -196,6 +200,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("remark",account.getRemark());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
+        jsonObject.put("status",account.getStatus().toString());
         User user = getUserByAccountId(account.getId());
         JSONObject userJson = new JSONObject();
         if(user!=null){
@@ -227,6 +232,10 @@ public class AccountService extends BaseService<Account,Long> {
      */
     public JSONObject makeSimpleAccountJson(Account account) {
         JSONObject jsonObject = new JSONObject();
+        if (account == null) {
+            jsonObject.put("name","子账号已删除");
+            return jsonObject;
+        }
         jsonObject.put("id",account.getId());
         jsonObject.put("department",account.getDepartment());
         jsonObject.put("email",account.getEmail());
@@ -235,6 +244,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("remark",account.getRemark());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
+        jsonObject.put("status",account.getStatus().toString());
         return jsonObject;
     }
 
@@ -384,4 +394,44 @@ public class AccountService extends BaseService<Account,Long> {
         flush();
     }
 
+    /**
+     * 激活子账号
+     */
+    public void activeAccount() {
+        JSONObject jsonObject1 = WeChatHttpRequest.jsonObjectHttpRequest("http://"+SettingUtils.getInstance().getSetting().getAliPayIP() + ":8080/qqsl/user/getSmsUpList?token=" + applicationTokenService.getToken(), "GET", null);
+        if (jsonObject1.get("data") == null||JSONArray.fromObject(jsonObject1.get("data")).size()==0) {
+            return;
+        }
+        for (Object o : JSONArray.fromObject(jsonObject1.get("data"))) {
+            JSONObject jsonObject = JSONObject.fromObject(o);
+            if (jsonObject.get("reply").toString().equalsIgnoreCase("y")) {
+                Account account = findByPhone(String.valueOf(jsonObject.get("phone")));
+                if (account != null && account.getStatus() == Account.Status.AWAITING) {
+                    activateAccount(account);
+                }
+            }
+            if (jsonObject.get("reply").toString().equalsIgnoreCase("n")) {
+                Account account = findByPhone(String.valueOf(jsonObject.get("phone")));
+                if (account != null && account.getStatus() == Account.Status.AWAITING) {
+                    refusedAccount(account);
+                }
+            }
+        }
+    }
+
+    /**
+     * 根据ids查询account列表
+     * @param accountIds
+     * @return
+     */
+    public List<Account> findByIdList(Object accountIds) {
+        String[] split = accountIds.toString().split(",");
+        Account account;
+        List<Account> accounts = new ArrayList<>();
+        for (String s : split) {
+            account = find(Long.valueOf(s));
+            accounts.add(account);
+        }
+        return accounts;
+    }
 }

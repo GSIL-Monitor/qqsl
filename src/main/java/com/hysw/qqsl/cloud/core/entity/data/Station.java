@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.station.Camera;
+import com.hysw.qqsl.cloud.core.entity.station.Cooperate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -48,6 +49,8 @@ public class Station extends BaseEntity {
     private String  picture;
 
     private User user;
+
+    private String cooperate;
 
     /** 河底高程*/
     private Double bottomElevation;
@@ -209,4 +212,13 @@ public class Station extends BaseEntity {
         this.camera = camera;
     }
 
+    @Basic(fetch = FetchType.EAGER)
+    @Column(columnDefinition = "text")
+    public String getCooperate() {
+        return cooperate;
+    }
+
+    public void setCooperate(String cooperate) {
+        this.cooperate = cooperate;
+    }
 }

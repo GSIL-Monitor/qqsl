@@ -35,7 +35,9 @@ public class AccountMessage extends BaseEntity{
         /** 项目协同 */
         COOPERATE_PROJECT,
         /** 反馈回复 */
-        FEEDBACK
+        FEEDBACK,
+        /** 测站查看 */
+        COOPERATE_STATION
     }
 
     @ManyToOne(fetch=FetchType.EAGER)

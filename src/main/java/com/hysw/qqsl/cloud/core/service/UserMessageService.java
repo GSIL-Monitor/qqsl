@@ -73,7 +73,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 //	}
 
 	/**
-	 * 记录分享和取消分享的消息
+	 * 记录项目分享和取消分享的消息
 	 * @param project
 	 * @param user
 	 */

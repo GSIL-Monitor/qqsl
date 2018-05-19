@@ -50,6 +50,10 @@ public class MyTask {
     private ProjectLogService projectLogService;
     @Autowired
     private AccountManager accountManager;
+    @Autowired
+    private NoteService noteService;
+    @Autowired
+    private AccountService accountService;
 
 //    @Autowired
 //    private CustomRealm customRealm;
@@ -156,9 +160,13 @@ public class MyTask {
     /**
      * 删除24小时未确认的子账户
      */
-    @Scheduled(fixedDelay = 60000*10 )
+    @Scheduled(fixedDelay = 60000*5 )
     public void deteleExpiredAndAwaitingAccount(){
-        accountManager.changeExpired();
+        accountService.activeAccount();
+        logger.info("激活子账号");
+        accountManager.changeExpiredAndDelete();
         logger.info("删除24小时未确认的子账户");
+        noteService.deleteExpiredNote();
+        logger.info("删除24小时内的上行短信记录");
     }
 }

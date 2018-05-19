@@ -52,6 +52,10 @@ public class UserService extends BaseService<User, Long> {
 	private PollingService pollingService;
 	@Autowired
 	private NoteCache noteCache;
+    @Autowired
+    private StationService stationService;
+    @Autowired
+    private PanoramaService panoramaService;
 	@Autowired
 	public void setBaseDao(UserDao userDao) {
 		super.setBaseDao(userDao);
@@ -516,20 +520,26 @@ public class UserService extends BaseService<User, Long> {
 	public boolean deleteAccount(Account account,User user) {
 		//收回权限
 		cooperateService.cooperateRevoke(user,account);
+		//收回全景权限
+        panoramaService.revoke(user,account);
+        //收回测站权限
+        stationService.unCooperate(user, account);
+        user = userService.findByDao(user.getId());
 		List<Account> accounts = user.getAccounts();
 		for (Account account1 : accounts) {
 			if (account.getId().equals(account1.getId())) {
 				accounts.remove(account1);
+				if (account.getStatus() == Account.Status.CONFIRMED) {
+					String msg = "[" + userService.nickName(account.getUser().getId()) + "]企业已解除与您的子账号关系，相关权限已被收回，您的子账户已被移除。";
+					Note note = new Note(account.getPhone(), msg);
+					noteCache.add(account.getPhone(),note);
+				}
+				accountService.remove(account1);
+				break;
 			}
 		}
-		accountService.remove(account);
 		user.setAccounts(accounts);
 		save(user);
-		if (account.getStatus() == Account.Status.CONFIRMED) {
-			String msg = "[" + userService.nickName(account.getUser().getId()) + "]企业已解除与您的子账号关系，相关权限已被收回，您的子账户已被移除。";
-			Note note = new Note(account.getPhone(), msg);
-			noteCache.add(account.getPhone(),note);
-		}
 		return true;
 	}
 

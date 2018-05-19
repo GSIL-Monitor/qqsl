@@ -20,13 +20,14 @@ import com.aliyuncs.profile.IClientProfile;
 import com.google.gson.Gson;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.NoteDao;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
+import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.Verification;
 import com.hysw.qqsl.cloud.core.entity.data.ElementDB;
 import com.hysw.qqsl.cloud.core.entity.element.Element;
 import com.hysw.qqsl.cloud.core.entity.element.ElementGroup;
 import com.hysw.qqsl.cloud.core.entity.element.Unit;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
@@ -62,6 +63,8 @@ public class NoteService extends BaseService<Note, Long> {
 	private ElementDBService elementDBService;
 	@Autowired
 	private AccountService accountService;
+	@Autowired
+	private NoteService noteService;
 	private IAcsClient acsClient=null;
 	@Autowired
 	public void setBaseDao(NoteDao noteDao) {
@@ -518,16 +521,13 @@ public class NoteService extends BaseService<Note, Long> {
 				//TODO 这里开始编写您的业务代码
 				Object phone = contentMap.get("phone_number");
 				Object content = contentMap.get("content");
-				if (phone != null && SettingUtils.phoneRegex(String.valueOf(phone)) && content != null && content.toString().equalsIgnoreCase("y")) {
-					Account account = accountService.findByPhone(String.valueOf(phone));
-					if (account != null && account.getStatus() == Account.Status.AWAITING) {
-						accountService.activateAccount(account);
-					}
-				}
-				if (phone != null && SettingUtils.phoneRegex(String.valueOf(phone)) && content != null && content.toString().equalsIgnoreCase("n")) {
-					Account account = accountService.findByPhone(String.valueOf(phone));
-					if (account != null && account.getStatus() == Account.Status.AWAITING) {
-						accountService.refusedAccount(account);
+				if (phone != null && content != null) {
+					Note note = noteService.findByPhone(phone);
+					if (note == null) {
+						note = new Note();
+						note.setPhone(phone.toString());
+						note.setReply(content.toString());
+						noteService.save(note);
 					}
 				}
 			}catch(com.google.gson.JsonSyntaxException e){
@@ -543,6 +543,16 @@ public class NoteService extends BaseService<Note, Long> {
 			return true;
 		}
 
+	}
+
+	protected Note findByPhone(Object phone) {
+		List<Filter> filters = new ArrayList<>();
+		filters.add(Filter.eq("phone", phone));
+		List<Note> list = noteDao.findList(0, null, filters);
+		if (list.size() == 1) {
+			return list.get(0);
+		}
+		return null;
 	}
 
 	public void receiveMsg(){
@@ -568,10 +578,8 @@ public class NoteService extends BaseService<Note, Long> {
 		String messageType="SmsUp";//此处应该替换成相应产品的消息类型
 		String queueName="Alicom-Queue-30150706-SmsUp";//在云通信页面开通相应业务消息后，就能在页面上获得对应的queueName,格式类似Alicom-Queue-xxxxxx-SmsReport
         try {
-			if (SettingUtils.getInstance().getSetting().getStatus().equals("run")) {
-				puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID, CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType, queueName, new MyMessageListener());
-//				puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType1, queueName1, new MyMessageListener());
-			}
+        	puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID, CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType, queueName, new MyMessageListener());
+//			puller.startReceiveMsg(CommonAttributes.NOTE_ACCESS_KEY_ID,CommonAttributes.NOTE_ACCESS_KEY_SECRET, messageType1, queueName1, new MyMessageListener());
         } catch (ClientException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -580,5 +588,33 @@ public class NoteService extends BaseService<Note, Long> {
 
 	}
 
+	public void deleteExpiredNote() {
+		List<Note> notes = noteService.findAll();
+		Iterator<Note> iterator = notes.iterator();
+		while (iterator.hasNext()) {
+			Note note = iterator.next();
+			if (note.getCreateDate().getTime() + 24 * 60 * 60 * 1000l < System.currentTimeMillis()) {
+				noteService.remove(note);
+				iterator.remove();
+			}
+		}
+	}
+
+	/**
+	 * 生成note--》Json列表
+	 * @return
+	 */
+	public JSONArray getNoteList() {
+		List<Note> notes = noteService.findAll();
+		JSONObject jsonObject;
+		JSONArray jsonArray = new JSONArray();
+		for (Note note : notes) {
+			jsonObject = new JSONObject();
+			jsonObject.put("phone", note.getPhone());
+			jsonObject.put("reply", note.getReply());
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray;
+	}
 
 }

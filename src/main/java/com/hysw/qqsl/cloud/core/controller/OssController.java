@@ -256,6 +256,7 @@ public class OssController {
 		return MessageService.message(Message.Type.OK);
 	}
 
+
 	/**
 	 * 直传token
 	 * @return
@@ -265,9 +266,13 @@ public class OssController {
 	 * </ul>
 	 */
 	@RequiresAuthentication
-	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
 	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-	public @ResponseBody Message directToken(){
+	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
+	public @ResponseBody Message directToken(@RequestParam String bucketName){
+		Message message = CommonController.parametersCheck(bucketName);
+		if (message.getType() != Message.Type.OK) {
+			return message;
+		}
 		User user = authentService.getUserFromSubject();
 		if (user == null) {
 			Account account = authentService.getAccountFromSubject();
@@ -277,12 +282,11 @@ public class OssController {
 			}
 		}
 		try {
-			return MessageService.message(Message.Type.OK, ossService.directToken(user));
+			return MessageService.message(Message.Type.OK, ossService.directToken(user,bucketName));
 		} catch (UnsupportedEncodingException e) {
 			return MessageService.message(Message.Type.FAIL);
 		}
 	}
-
 
 
 }

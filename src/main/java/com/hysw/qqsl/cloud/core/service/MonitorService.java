@@ -34,6 +34,7 @@ public class MonitorService {
     private HttpRequestUtil httpRequestUtil;
     @Autowired
     private NoteCache noteCache;
+    private long sendTime=0;
 
     Setting setting = SettingUtils.getInstance().getSetting();
 
@@ -68,8 +69,11 @@ public class MonitorService {
         try {
             return httpRequestUtil.jsonArrayHttpRequest(url + method + "?token=" + token, "GET", null);
         } catch (Exception e) {
-            Note note = new Note("13028710937", "异常：监测子系统");
-            noteCache.add("13028710937",note);
+            if (sendTime+3600*1000l < System.currentTimeMillis()) {
+                Note note = new Note(SettingUtils.getInstance().getSetting().getNotice(), "异常：监测子系统");
+                noteCache.add(SettingUtils.getInstance().getSetting().getNotice(),note);
+                sendTime = System.currentTimeMillis();
+            }
         }
         return null;
     }

@@ -5,9 +5,13 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Panorama;
-import com.hysw.qqsl.cloud.core.entity.data.Scene;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
+import com.hysw.qqsl.cloud.pay.entity.PackageItem;
+import com.hysw.qqsl.cloud.pay.entity.PackageModel;
+import com.hysw.qqsl.cloud.pay.entity.ServeItem;
+import com.hysw.qqsl.cloud.pay.service.PackageService;
+import com.hysw.qqsl.cloud.pay.service.TradeService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -40,9 +44,9 @@ public class PanoramaController {
     @Autowired
     private AuthentService authentService;
     @Autowired
-    private SceneService sceneService;
+    private TradeService tradeService;
     @Autowired
-    private OssService ossService;
+    private PackageService packageService;
 
     /**
      * 获取全景显示xml
@@ -289,6 +293,15 @@ public class PanoramaController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
+        User user = authentService.getUserFromSubject();
+        if (user == null) {
+            user = authentService.getAccountFromSubject().getUser();
+        }
+        //是否可以保存全景
+        message=isAllowSavePanorma(user);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
         Object name = objectMap.get("name");
         Object coor = objectMap.get("coor");
         Object region = objectMap.get("region");
@@ -408,6 +421,26 @@ public class PanoramaController {
         }
         panoramaService.review(map,false);
         return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 是否允许保存全景
+     * @param user
+     * @Return Message
+     */
+    public Message isAllowSavePanorma(User user) {
+        com.hysw.qqsl.cloud.pay.entity.data.Package aPackage = packageService.findByUser(user);
+        if (aPackage == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        int size = panoramaService.findByUser(user).size();
+        PackageModel packageModel = tradeService.getPackageModel(aPackage.getType().toString());
+        for (PackageItem packageItem : packageModel.getPackageItems()) {
+            if (packageItem.getServeItem().getType() == ServeItem.Type.PANO && size < packageItem.getLimitNum()) {
+                return MessageService.message(Message.Type.OK);
+            }
+        }
+        return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
 }

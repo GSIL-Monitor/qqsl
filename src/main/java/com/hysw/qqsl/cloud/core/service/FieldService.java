@@ -757,7 +757,7 @@ public class FieldService implements Serializable {
             if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
                 continue;
             }
-            jsonArray.add("{\"baseType\":\"" + commonType.getType() + "\",\"type\":\"" + commonType.name() + "\",\"name\":\"" + commonType.getTypeC() + "\"}");
+            jsonArray.add("{\"baseType\":\"" + commonType.getType() + "\",\"type\":\"" + commonType.name() + "\",\"name\":\"" + commonType.getTypeC() + "\",\"abbreviate\":\"" + commonType.getAbbreviate() + "\"}");
         }
         return jsonArray;
     }

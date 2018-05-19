@@ -96,7 +96,7 @@ public class AccountServiceTest extends BaseTest{
         account.setUser(user);
         account.setCreateDate(new Date(12345678));
         accountManager.add(account);
-        accountManager.changeExpired();
+        accountManager.changeExpiredAndDelete();
     }
 
 }
