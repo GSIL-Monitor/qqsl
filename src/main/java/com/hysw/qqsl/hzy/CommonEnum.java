@@ -41,6 +41,8 @@ public class CommonEnum {
         // 总河长
         MASTER,
         // 副总河长
-        SLAVE
+        SLAVE,
+        // 河长
+        NORMAL
     }
 }

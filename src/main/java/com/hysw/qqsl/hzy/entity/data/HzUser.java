@@ -55,11 +55,11 @@ public class HzUser extends BaseEntity {
         this.name = name;
     }
 
-    public Strig getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Strig phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -96,10 +96,6 @@ public class HzUser extends BaseEntity {
 
     public void setRiverSegments(List<RiverSegment> riverSegments) {
         this.riverSegments = riverSegments;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getPassword() {

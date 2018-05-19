@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hysw.qqsl.hzy.CommonEnum;
 
 /**
  * 行政区
@@ -18,7 +19,7 @@ public class Region extends BaseEntity {
     // 名称
     private String name;
     // 级别
-    private RiginLevel level;
+    private CommonEnum.RegionLevel level;
     // 描述
     private String remark;
     // 父级
@@ -38,11 +39,11 @@ public class Region extends BaseEntity {
         this.name = name;
     }
 
-    public RiginLevel getLevel() {
+    public CommonEnum.RegionLevel getLevel() {
         return level;
     }
 
-    public void setLevel(RiginLevel level) {
+    public void setLevel(CommonEnum.RegionLevel level) {
         this.level = level;
     }
 
