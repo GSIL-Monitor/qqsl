@@ -24,6 +24,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Scene;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -267,8 +268,11 @@ public class OssService extends BaseService<Oss,Long>{
 		if (dir.endsWith("png")) {
 			meta.setContentType("image/png");
 		}
+		/*PutObjectRequest putObjectRequest = new PutObjectRequest(
+				imageBucketName, dir, inputStream, meta);*/
+
 		PutObjectRequest putObjectRequest = new PutObjectRequest(
-				imageBucketName, dir, inputStream, meta);
+				"qqslimage-dev", dir, inputStream, meta);
 		@SuppressWarnings("unused")
 		PutObjectResult result = client.putObject(putObjectRequest);
 		logger.debug("上传文件成功：" + dir);
@@ -629,6 +633,15 @@ public class OssService extends BaseService<Oss,Long>{
 		return file.getAbsolutePath();
 	}
 
+	public String downloadFileToLocal1(String key, String path) throws OSSException {
+// 下载object到文件
+		File file = new File(path);
+		client.getObject(new GetObjectRequest("qqsl-dev", "panorama/" + key), file);
+// 关闭client
+//		ossClient.shutdown();
+		return file.getAbsolutePath();
+	}
+
 	/**
 	 * 生成直传token
 	 * @param user
@@ -718,51 +731,55 @@ public class OssService extends BaseService<Oss,Long>{
 
 
 	//列出所有原qqslimage下的全景key值
-	public List<String> getAllPanoramaFromOss(){
+	public List<String> getAllPanoramaFromOss(long id){
 		List<String> panoramaKeys = new ArrayList<>();
 		// 构造ListObjectsRequest请求
-		ListObjectsRequest listObjectsRequest = new ListObjectsRequest(CommonAttributes.BUCKET_IMAGE);
-		listObjectsRequest.setPrefix("panorama/");
+		ListObjectsRequest listObjectsRequest = new ListObjectsRequest("qqslimage");
+		listObjectsRequest.setPrefix("panorama/"+id+"/");
 // 递归列出fun目录下的所有文件
 		ObjectListing listing = client.listObjects(listObjectsRequest);
 // 遍历所有Object
-		System.out.println("Objects:");
+		//System.out.println("Objects:");
 		for (OSSObjectSummary objectSummary : listing.getObjectSummaries()) {
 			if(objectSummary.getKey().equals("panorama/")||objectSummary.getKey().contains(".tiles")){
 				continue;
 			}
 			panoramaKeys.add(objectSummary.getKey());
 		}
-		System.out.println(panoramaKeys.size());
-		System.out.println(panoramaKeys);
+		/*System.out.println(panoramaKeys.size());
+		System.out.println(panoramaKeys);*/
 // 遍历所有CommonPrefix
-		System.out.println("\nCommonPrefixs:");
+	//	System.out.println("\nCommonPrefixs:");
 		for (String commonPrefix : listing.getCommonPrefixes()) {
-			System.out.println(commonPrefix);
+		//	System.out.println(commonPrefix);
 		}
 		return panoramaKeys;
 	}
 
 	//复制所有全景到qqslimage-dev下
-	public void copyToDev(List<String> list){
-		String str,idStr,name;
-		Panorama panorama;
+	public Map<String,Object> copyToDev(List<String> list,Panorama panorama){
+		Map<String,Object> map = new HashedMap();
+		String name;
 		for(String key:list){
+			String originName = System.currentTimeMillis()+"";
+			key = key.replaceAll("\"","").trim();
 			name = key.substring(key.lastIndexOf("/")+1);
-			str = key.substring(0,key.lastIndexOf("/"));
-			idStr = str.substring(str.indexOf("/")+1);
-			panorama = panoramaService.find(Long.valueOf(idStr));
 			if(panorama.getUserId()==null){
+				System.out.println(panorama.getId()+":用户id为空，可忽略-----------------------------");
 				continue;
 			}
-			System.out.println(panorama.getUserId());
+			System.out.println(panorama.getUserId()+"::"+name);
 			// 拷贝Object
 			CopyObjectResult result = client.copyObject(
-					CommonAttributes.BUCKET_IMAGE,key.trim(), "qqsl-dev", "panorama/"+panorama.getUserId()+"/"+name);
+			//		CommonAttributes.BUCKET_IMAGE,key.trim(), "qqsl-dev", "panorama/"+panorama.getUserId()+"/"+name);
+					"qqslimage",key.trim(), "qqsl-dev", "panorama/"+panorama.getUserId()+"/"+originName+".jpg");
 			System.out.println("ETag: " + result.getETag() + " LastModified: " + result.getLastModified());
+			map.put(name,originName);
 		}
+		map.put("list",list);
+		return map;
 		// 关闭client
-		client.shutdown();
+		//client.shutdown();
 
 	}
 }

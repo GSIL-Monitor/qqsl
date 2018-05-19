@@ -60,6 +60,34 @@ public class SceneService  extends BaseService<Scene, Long> {
         return thumbUrl;
     }
 
+
+    /**
+     * 保存场景
+     * @param user
+     * @param panorama
+     * @param images
+     */
+    public String saveScene1(User user, Panorama panorama, List<String> images,Map<String,Object> map) {
+        String name;
+        boolean flag = true;
+        String thumbUrl = null;
+        for (String image : images) {
+            name = image.substring(image.lastIndexOf("/")+1).replaceAll("\"","");
+            Scene scene = new Scene();
+            scene.setFileName(name.substring(0,name.lastIndexOf(".")));
+            scene.setInstanceId(map.get(name).toString());
+            scene.setThumbUrl("http://"+CommonAttributes.BUCKET_IMAGE+".oss-cn-hangzhou.aliyuncs.com/panorama/" + user.getId() + "/" + scene.getInstanceId() + ".tiles/thumb.jpg");
+            scene.setOriginUrl("panorama/"+user.getId() + "/" + scene.getInstanceId()+".jpg");
+            scene.setPanorama(panorama);
+            save(scene);
+            if (flag) {
+                thumbUrl = scene.getThumbUrl();
+                flag = false;
+            }
+        }
+        return thumbUrl;
+    }
+
     /**
      * 保存场景
      * @param user
@@ -78,7 +106,6 @@ public class SceneService  extends BaseService<Scene, Long> {
             save(scene);
             if (flag) {
                 thumbUrl = scene.getThumbUrl();
-
             }
 
         return thumbUrl;
