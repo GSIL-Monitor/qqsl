@@ -16,6 +16,7 @@ import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -204,6 +205,38 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         return "PANORAMA_NO_SCENE";
     }
 
+    public String addPanoramaTest(Panorama panorama,User user,Map<String,Object> map) {
+        panorama.setStatus(CommonEnum.Review.PENDING);
+        panorama.setUserId(user.getId());
+        panorama.setInstanceId(DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis())));
+        panorama.setAngleOfView("{\"viewSettings\": []}");
+        panorama.setSceneGroup("{\"sceneGroups\": []}");
+        panorama.setHotspot("{}");
+        String thumbUrl = null;
+            if (path == null || path.length() == 0) {
+                getTargetFilePath();
+            }
+            File randomFile = createRandomDir();
+            List<String> images1 = (List<String>) map.get("list");
+            downloadPicture111(user, images1, randomFile,map);
+            List<String> paths = (List<String>) map.get("paths");
+            if (paths == null || paths.size() == 0) {
+                System.out.println(panorama.getId()+":下载失败!");
+                return "PANORAMA_IMAGE_NOT_EXIST";//下载失败
+            }
+            boolean flag = cutPicture(paths);
+            if (!flag) {
+                System.out.println(panorama.getId()+":图片切割失败!");
+                return "PANORAMA_SLICE_ERROE";//图片切割失败
+            }
+            uploadCutPicture(randomFile.getName(), user);
+            thumbUrl = sceneService.saveScene1(user, panorama, images1,map);
+            delAllFile(path);
+            panorama.setThumbUrl(thumbUrl);
+            save(panorama);
+            return "OK";
+    }
+
     public String testHistoryData(Panorama panorama,User user,String fileName,String oirginName){
         panorama.setStatus(CommonEnum.Review.PENDING);
         panorama.setShare(Boolean.valueOf(false));
@@ -257,6 +290,20 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         return paths;
     }
 
+    private Map<String,Object> downloadPicture111(User user, List<String> images, File randomFile,Map<String,Object> map) {
+        List<String> paths = new ArrayList<>();
+        for (String image : images) {
+            String fileName = image.substring(image.lastIndexOf("/")+1).replaceAll("\"","");
+            String originName = map.get(fileName).toString();
+            try {
+                paths.add(ossService.downloadFileToLocal1(user.getId() + "/" + originName+".jpg", randomFile.getAbsolutePath() + System.getProperty("file.separator") + originName+".jpg"));
+            } catch (OSSException e) {
+                continue;
+            }
+        }
+        map.put("paths",paths);
+        return map;
+    }
     /**
      * 下载图片
      *
