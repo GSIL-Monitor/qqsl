@@ -33,8 +33,6 @@ public class UserService extends BaseService<User, Long> {
 	@Autowired
 	private AccountService accountService;
 	@Autowired
-	private AccountMessageService accountMessageService;
-	@Autowired
 	private UserMessageService userMessageService;
 	@Autowired
 	private CooperateService cooperateService;
