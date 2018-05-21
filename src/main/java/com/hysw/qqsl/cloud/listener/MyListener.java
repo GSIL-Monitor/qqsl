@@ -149,9 +149,9 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			}
 			pollingService.init();
 			logger.info("初始化轮询状态");
-			if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
+		/*	if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
 				getAccessTokenService.getAccessToken();
-			}
+			}*/
 			accountManager.init();
 			logger.info("未确认子账户加入缓存");
             try {

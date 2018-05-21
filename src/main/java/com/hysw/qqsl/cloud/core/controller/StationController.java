@@ -628,7 +628,7 @@ public class StationController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        Object stationIds = map.get("stations");
+        Object stationIds = map.get("stationIds");
         Object accountIds = map.get("accountIds");
         if (stationIds == null || accountIds == null) {
             return MessageService.message(Message.Type.FAIL);
