@@ -37,7 +37,7 @@ public class CommonEnum {
     /**
      * 河长级别
      */
-    public enum HzLevel {
+    public enum HzType {
         // 总河长
         MASTER,
         // 副总河长

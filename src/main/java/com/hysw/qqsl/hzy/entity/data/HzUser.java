@@ -1,7 +1,8 @@
 package com.hysw.qqsl.hzy.entity.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hysw.qqsl.hzy.CommonEnum.HzLevel;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.hysw.qqsl.hzy.CommonEnum.HzType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
@@ -10,6 +11,8 @@ import javax.persistence.OneToMany;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.*;
+
 /**
  * 河长用户
  * 河长云主要用户，职责是巡河，生成巡河记录，处理事件，报告事件
@@ -17,6 +20,10 @@ import java.util.List;
  * @since 2018年5月16日
  * @author 雪庭(flysic) qq: 119238122 github: https://github.com/flysic
  */
+@Entity(name = "hzy.HzUser")
+@Table(name="hzy_hz_user")
+@SequenceGenerator(name="sequenceGenerator", sequenceName="hzy_hz_user_sequence")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer"})
 public class HzUser extends BaseEntity {
 
     // 姓名
@@ -25,8 +32,8 @@ public class HzUser extends BaseEntity {
     private String phone;
     // 描述
     private String remark;
-    // 级别
-    private HzLevel level;
+    // 类型
+    private HzType type;
     // 行政区
     private Region region;
     // 管理的河道
@@ -71,12 +78,12 @@ public class HzUser extends BaseEntity {
         this.remark = remark;
     }
 
-    public HzLevel getLevel() {
-        return level;
+    public HzType getType() {
+        return type;
     }
 
-    public void setLevel(HzLevel level) {
-        this.level = level;
+    public void setType(HzType type) {
+        this.type = type;
     }
 
     @ManyToOne(fetch = FetchType.EAGER)

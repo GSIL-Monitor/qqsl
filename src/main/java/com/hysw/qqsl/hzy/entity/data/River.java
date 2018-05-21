@@ -1,10 +1,9 @@
 package com.hysw.qqsl.hzy.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.hzy.CommonEnum;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 
 /**
  * 河流
@@ -16,6 +15,10 @@ import javax.persistence.FetchType;
  * @since 2018年5月16日
  * @author 雪庭(flysic) qq: 119238122 github: https://github.com/flysic
  */
+@Entity(name = "hzy.River")
+@Table(name="hzy_river")
+@SequenceGenerator(name="sequenceGenerator", sequenceName="hzy_river_sequence")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer"})
 public class River extends BaseEntity {
 
     // 流域面积(km²）

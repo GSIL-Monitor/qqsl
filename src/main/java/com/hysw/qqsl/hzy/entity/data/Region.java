@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.hzy.CommonEnum;
 
 /**
@@ -14,6 +15,10 @@ import com.hysw.qqsl.hzy.CommonEnum;
  * @since 2018年5月16日
  * @author 雪庭(flysic) qq: 119238122 github: https://github.com/flysic
  */
+@Entity(name = "hzy.Region")
+@Table(name="hzy_region")
+@SequenceGenerator(name="sequenceGenerator", sequenceName="hzy_region_sequence")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer"})
 public class Region extends BaseEntity {
 
     // 名称
@@ -64,7 +69,7 @@ public class Region extends BaseEntity {
         this.parent = parent;
     }
 
-    @OneToMany(mappedBy="region", fetch=FetchType.LAZY , cascade={CascadeType.PERSIST})
+    @OneToMany(mappedBy="parent", fetch=FetchType.LAZY , cascade={CascadeType.PERSIST})
     @JsonIgnore
     public List<Region> getChilds() {
         return childs;

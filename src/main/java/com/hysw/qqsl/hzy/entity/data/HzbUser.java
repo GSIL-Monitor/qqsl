@@ -1,5 +1,8 @@
 package com.hysw.qqsl.hzy.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.*;
 import javax.persistence.OneToOne;
 import java.util.Date;
 
@@ -10,6 +13,10 @@ import java.util.Date;
  * @since 2018年5月16日
  * @author 雪庭(flysic) qq: 119238122 github: https://github.com/flysic
  */
+@Entity(name = "hzy.HzbUser")
+@Table(name="hzy_hzb_user")
+@SequenceGenerator(name="sequenceGenerator", sequenceName="hzy_hzb_user_sequence")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer"})
 public class HzbUser extends  BaseEntity{
 
     // 名称

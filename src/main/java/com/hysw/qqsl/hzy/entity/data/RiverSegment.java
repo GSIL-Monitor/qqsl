@@ -1,7 +1,8 @@
 package com.hysw.qqsl.hzy.entity.data;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.*;
 
 /**
  * 河段
@@ -12,6 +13,10 @@ import javax.persistence.ManyToOne;
  * @since 2018年5月16日
  * @author 雪庭(flysic) qq: 119238122 github: https://github.com/flysic
  */
+@Entity(name = "hzy.RiverSegment")
+@Table(name="hzy_river_segment")
+@SequenceGenerator(name="sequenceGenerator", sequenceName="hzy_river_segment_sequence")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer"})
 public class RiverSegment extends BaseEntity {
 
     // 河段长度
