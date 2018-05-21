@@ -92,7 +92,7 @@ public class FieldService implements Serializable {
                 return false;
             }
             if (!SettingUtils.coordinateParameterCheck(longitude, latitude, elevation)) {
-                return false;
+                continue;
             }
             coordinateBase = new CoordinateBase();
             coordinateBases = new ArrayList<>();
