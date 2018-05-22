@@ -200,6 +200,7 @@ public class AspectService {
             try {
                 return (Message) joinPoint.proceed();
             } catch (Throwable e) {
+                e.printStackTrace();
                 return MessageService.message(Message.Type.FAIL);
             }
         }

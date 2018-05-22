@@ -42,8 +42,6 @@ public class FieldService implements Serializable {
     private CoordinateService coordinateService;
     @Autowired
     private TransFromService transFromService;
-    private Workbook workbook;
-
 
     public boolean saveField(Map<String, Object> objectMap) {
         Build build;
