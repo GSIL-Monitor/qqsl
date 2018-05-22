@@ -923,7 +923,6 @@ public class UserController {
         message = CommonController.parametersCheck(phone);
         if (message.getType() != Message.Type.OK) {
             return message;
-
         }
         if(!SettingUtils.phoneRegex(phone)){
             message = MessageService.message(Message.Type.FAIL);
