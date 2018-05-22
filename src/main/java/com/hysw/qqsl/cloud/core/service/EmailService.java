@@ -196,6 +196,7 @@ public class EmailService {
             // 7. 保存设置
             mimeMessage.saveChanges();
         }catch (Exception e){
+            e.printStackTrace();
             return null;
         }
         return mimeMessage;

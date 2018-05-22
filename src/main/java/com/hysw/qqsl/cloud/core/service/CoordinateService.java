@@ -106,8 +106,10 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					return;
 				}
 			} catch (OfficeXmlFileException e) {
+				e.printStackTrace();
 				logger.info("坐标文件03-07相互拷贝异常");
 			} catch (NumberFormatException e) {
+				e.printStackTrace();
 				logger.info("经纬度有多余小数");
 			}
 		}
@@ -920,6 +922,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
         try {
             is = mFile.getInputStream();
         } catch (IOException e) {
+			e.printStackTrace();
             logger.info("坐标文件或格式异常");
             jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR.getStatus());
             return;
@@ -929,6 +932,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
         try {
 			readExcels(is, central, s, project, wgs84Type, fileName, jsonObject);
         } catch (Exception e) {
+			e.printStackTrace();
             logger.info("坐标文件或格式异常");
             jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR.getStatus());
             return;

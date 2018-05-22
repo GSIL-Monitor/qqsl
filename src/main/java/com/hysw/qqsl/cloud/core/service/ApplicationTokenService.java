@@ -52,6 +52,7 @@ public class ApplicationTokenService {
                 return false;
             }
         } catch (NumberFormatException e) {
+            e.printStackTrace();
             return false;
         }
         return true;

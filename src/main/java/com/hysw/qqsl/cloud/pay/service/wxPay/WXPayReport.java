@@ -99,6 +99,7 @@ public class WXPayReport {
                 return sb.toString();
             }
             catch (Exception ex) {
+                ex.printStackTrace();
                 return null;
             }
 

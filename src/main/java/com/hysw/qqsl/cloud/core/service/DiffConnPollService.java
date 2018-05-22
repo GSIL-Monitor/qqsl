@@ -56,6 +56,7 @@ public class DiffConnPollService extends BaseService<DiffConnPoll,Long> {
         try {
             Long.valueOf(timeout.toString());
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
         DiffConnPoll diffConnPoll = new DiffConnPoll(userName.toString(),password.toString(),Long.valueOf(timeout.toString()));

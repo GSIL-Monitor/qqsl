@@ -127,6 +127,7 @@ public class ElementService {
 						   try{
 							   value = value+Integer.valueOf(elementChild.getValue());
 						   }catch(Exception e){
+							   e.printStackTrace();
 						   }
 					   }
 				   }

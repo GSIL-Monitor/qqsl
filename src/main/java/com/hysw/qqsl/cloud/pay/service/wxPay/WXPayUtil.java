@@ -50,6 +50,7 @@ public class WXPayUtil {
             try {
                 stream.close();
             } catch (Exception ex) {
+                ex.printStackTrace();
                 // do nothing
             }
             return data;
@@ -96,6 +97,7 @@ public class WXPayUtil {
             writer.close();
         }
         catch (Exception ex) {
+            ex.printStackTrace();
         }
         return output;
     }

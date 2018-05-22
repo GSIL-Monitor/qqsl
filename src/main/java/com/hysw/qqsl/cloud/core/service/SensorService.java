@@ -146,6 +146,7 @@ public class SensorService extends BaseService<Sensor,Long>{
                     return false;
                 }
             }catch (NumberFormatException e){
+                e.printStackTrace();
                 return false;
             }
 

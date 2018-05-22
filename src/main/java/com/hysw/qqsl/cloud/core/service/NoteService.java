@@ -535,6 +535,7 @@ public class NoteService extends BaseService<Note, Long> {
 				//理论上不会出现格式错误的情况，所以遇见格式错误的消息，只能先delete,否则重新推送也会一直报错
 				return true;
 			} catch (Throwable e) {
+				e.printStackTrace();
 				//您自己的代码部分导致的异常，应该return false,这样消息不会被delete掉，而会根据策略进行重推
 				return false;
 			}

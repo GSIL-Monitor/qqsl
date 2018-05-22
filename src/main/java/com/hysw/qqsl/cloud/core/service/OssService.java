@@ -353,6 +353,7 @@ public class OssService extends BaseService<Oss,Long>{
 			client.deleteObject(bucketName, key);
 			 logger.info(key+"删除成功");
 		} catch (Exception e) {
+			e.printStackTrace();
             logger.info(key+"删除失败");
 		}
 	}
@@ -377,6 +378,7 @@ public class OssService extends BaseService<Oss,Long>{
 			try {
 				lifecycles = client.getBucketLifecycle(qqslBucketName);
 			} catch (OSSException e) {
+				e.printStackTrace();
 				lifecycles = new ArrayList<LifecycleRule>();
 			}
 		}else if(flag.equals("interest")){
@@ -386,6 +388,7 @@ public class OssService extends BaseService<Oss,Long>{
 			try {
 				lifecycles = client.getBucketLifecycle(imageBucketName);
 			} catch (OSSException e) {
+				e.printStackTrace();
 				lifecycles = new ArrayList<LifecycleRule>();
 			}
 		}else if(flag.equals("panorama")){
@@ -395,6 +398,7 @@ public class OssService extends BaseService<Oss,Long>{
 			try {
 				lifecycles = client.getBucketLifecycle(imageBucketName);
 			} catch (OSSException e) {
+				e.printStackTrace();
 				lifecycles = new ArrayList<LifecycleRule>();
 			}
 		}
@@ -560,6 +564,7 @@ public class OssService extends BaseService<Oss,Long>{
 				getObjectMetadata(key);
 				file.setPreviewUrl(getObjectUrl(key,bucketName));
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			files.add(file);
 		}
@@ -697,6 +702,7 @@ public class OssService extends BaseService<Oss,Long>{
 			URL signedUrl = client.generatePresignedUrl(request);
 			return signedUrl.toString();
 		}catch (Exception e){
+			e.printStackTrace();
 			return "";
 		}
 	}

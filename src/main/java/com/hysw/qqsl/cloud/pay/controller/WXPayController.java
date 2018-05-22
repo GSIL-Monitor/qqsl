@@ -159,6 +159,7 @@ public class WXPayController {
 
             }
         } catch (NullPointerException e) {
+            e.printStackTrace();
             return "<xml>\n" +
                     "  <return_code><![CDATA[FAIL]]></return_code>\n" +
                     "</xml>";

@@ -55,6 +55,7 @@ public class PositionServiceTest extends BaseTest {
         try {
             s = RSACoderUtil.decryptAES(data, CommonAttributes.tokenKey, CommonAttributes.tokenIv);
         } catch (Exception e) {
+            e.printStackTrace();
             flag = true;
         }
         JSONObject jsonObject = JSONObject.fromObject(s);

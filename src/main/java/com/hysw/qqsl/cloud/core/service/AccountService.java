@@ -81,6 +81,7 @@ public class AccountService extends BaseService<Account,Long> {
 //                note.setPhone(phone);
 //                note.setSendMsg(querySendDetailsResponse.getSmsSendDetailDTOs().get(0).getContent());
             } catch (ClientException e) {
+                e.printStackTrace();
                 return null;
             }
             account = new Account();
