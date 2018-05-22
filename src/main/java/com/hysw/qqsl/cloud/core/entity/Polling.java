@@ -13,12 +13,15 @@ public class Polling {
     private boolean cooperateStatus;
     /** 测站轮询状态 */
     private boolean stationStatus;
+    /** 子账号轮询状态 */
+    private boolean accountStatus;
 
     public Polling() {
         this.shareStatus = false;
         this.messageStatus = false;
         this.cooperateStatus = false;
         this.stationStatus = false;
+        this.accountStatus = false;
     }
 
     public boolean isShareStatus() {
@@ -51,5 +54,13 @@ public class Polling {
 
     public void setStationStatus(boolean stationStatus) {
         this.stationStatus = stationStatus;
+    }
+
+    public boolean isAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(boolean accountStatus) {
+        this.accountStatus = accountStatus;
     }
 }

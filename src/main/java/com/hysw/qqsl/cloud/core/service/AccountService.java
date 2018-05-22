@@ -99,6 +99,7 @@ public class AccountService extends BaseService<Account,Long> {
 //            noteService.save(note);
             accountManager.add(account);
             pollingService.addAccount(account);
+            pollingService.changeAccountStatus(account,true);
 //        noteCache.add(phone,note);
             return makeSimpleAccountJson(account);
         }else{
@@ -246,6 +247,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
         jsonObject.put("status",account.getStatus().toString());
+        pollingService.changeAccountStatus(account,false);
         return jsonObject;
     }
 
@@ -341,6 +343,7 @@ public class AccountService extends BaseService<Account,Long> {
         account.setDepartment(department != null?department.toString():null);
         account.setRemark(remark!=null?remark.toString():null);
         save(account);
+        pollingService.changeAccountStatus(account,true);
         return true;
     }
 
@@ -376,6 +379,7 @@ public class AccountService extends BaseService<Account,Long> {
         Note note = new Note(account.getPhone(), msg);
         noteCache.add(account.getPhone(),note);
         flush();
+        pollingService.changeAccountStatus(account,true);
     }
 
     /**
@@ -393,6 +397,7 @@ public class AccountService extends BaseService<Account,Long> {
             remove(account);
         }
         flush();
+        pollingService.changeAccountStatus(account,true);
     }
 
     /**

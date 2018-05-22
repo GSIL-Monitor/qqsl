@@ -538,6 +538,7 @@ public class UserService extends BaseService<User, Long> {
 		}
 		user.setAccounts(accounts);
 		save(user);
+		pollingService.changeAccountStatus(account,true);
 		return true;
 	}
 

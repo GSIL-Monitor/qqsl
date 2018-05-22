@@ -54,6 +54,7 @@ public class PollingService {
         jsonObject.put("messageStatus",polling.isMessageStatus());
         jsonObject.put("shareStatus",polling.isShareStatus());
         jsonObject.put("stationStatus",polling.isStationStatus());
+        jsonObject.put("accountStatus", polling.isAccountStatus());
         return jsonObject;
     }
 
@@ -137,6 +138,23 @@ public class PollingService {
         }else{
             Polling polling = userPolling.get(((User)object).getId());
             polling.setCooperateStatus(flag);
+            userPolling.put(((User)object).getId(), polling);
+        }
+    }
+
+    /**
+     * 改变子账户轮询状态
+     * @param object
+     * @param flag
+     */
+    public void changeAccountStatus(Object object,boolean flag) {
+        if (object instanceof Account) {
+            Polling polling = accountPolling.get(((Account)object).getId());
+            polling.setAccountStatus(flag);
+            accountPolling.put(((Account)object).getId(), polling);
+        }else{
+            Polling polling = userPolling.get(((User)object).getId());
+            polling.setAccountStatus(flag);
             userPolling.put(((User)object).getId(), polling);
         }
     }
