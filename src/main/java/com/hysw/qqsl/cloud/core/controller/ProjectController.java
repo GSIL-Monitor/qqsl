@@ -741,7 +741,6 @@ public class ProjectController {
             return MessageService.message(Message.Type.ACCOUNT_NO_CONFIRMED);
         }
         User own = authentService.getUserFromSubject();
-
         Project project;
         for (int i = 0; i < projectIds.size(); i++) {
             project = projectService.find((long) (projectIds.get(i)));
