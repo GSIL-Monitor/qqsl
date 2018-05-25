@@ -928,7 +928,7 @@ public class UserController {
             message = MessageService.message(Message.Type.FAIL);
             return message;
         }
-        User user = authentService.getUserFromSubject();
+        User user = userService.find(authentService.getUserFromSubject().getId());
         //        是否允许创建子账号
         if (userService.isAllowCreateAccount(user)) {
             return MessageService.message(Message.Type.PACKAGE_LIMIT);

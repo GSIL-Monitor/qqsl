@@ -55,6 +55,8 @@ public class UserService extends BaseService<User, Long> {
     @Autowired
     private PanoramaService panoramaService;
 	@Autowired
+	private AccountManager accountManager;
+	@Autowired
 	public void setBaseDao(UserDao userDao) {
 		super.setBaseDao(userDao);
 	}
@@ -522,7 +524,7 @@ public class UserService extends BaseService<User, Long> {
         panoramaService.revoke(user,account);
         //收回测站权限
         stationService.unCooperate(user, account);
-        user = userService.findByDao(user.getId());
+        user = userService.find(user.getId());
 		List<Account> accounts = user.getAccounts();
 		for (Account account1 : accounts) {
 			if (account.getId().equals(account1.getId())) {
@@ -532,13 +534,14 @@ public class UserService extends BaseService<User, Long> {
 					Note note = new Note(account.getPhone(), msg);
 					noteCache.add(account.getPhone(),note);
 				}
+				pollingService.changeAccountStatus(account,true);
+				accountManager.delete(account);
 				accountService.remove(account1);
 				break;
 			}
 		}
 		user.setAccounts(accounts);
 		save(user);
-		pollingService.changeAccountStatus(account,true);
 		return true;
 	}
 
@@ -590,11 +593,10 @@ public class UserService extends BaseService<User, Long> {
 
 	/**
 	 * 是否允许创建子账号
-	 * @param user1
+	 * @param user
 	 * @return  false  允许创建 true  不允许创建
 	 */
-	public boolean isAllowCreateAccount(User user1) {
-		User user = find(user1.getId());
+	public boolean isAllowCreateAccount(User user) {
 		Package aPackage = packageService.findByUser(user);
 		if (aPackage == null) {
 			return true;

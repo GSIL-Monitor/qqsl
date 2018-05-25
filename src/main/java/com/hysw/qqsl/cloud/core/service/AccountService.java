@@ -95,6 +95,10 @@ public class AccountService extends BaseService<Account,Long> {
             //记录子账号邀请消息
             account.setUser(user);
             save(account);
+            List<Account> accounts = user.getAccounts();
+            accounts.add(account);
+            user.setAccounts(accounts);
+            userService.save(user);
 //            note.setAccountId(account.getId());
 //            noteService.save(note);
             accountManager.add(account);
@@ -373,6 +377,11 @@ public class AccountService extends BaseService<Account,Long> {
             String inviteCode = SettingUtils.createRandomVcode();
             account.setPassword(DigestUtils.md5Hex(inviteCode));
             save(account);
+            User user = userService.find(account.getUser().getId());
+            List<Account> accounts = user.getAccounts();
+            accounts.add(account);
+            user.setAccounts(accounts);
+            userService.save(user);
             msg = "尊敬的用户您好，恭喜您已成为[" + userService.nickName(account.getUser().getId()) + "]企业的子账户,密码为："+inviteCode+"。";
             userMessageService.accountMessageAgree(account);
         }
@@ -394,7 +403,18 @@ public class AccountService extends BaseService<Account,Long> {
         }
         if (account.getStatus() == Account.Status.AWAITING) {
             userMessageService.accountMessageRefused(account);
+            accountManager.delete(account);
             remove(account);
+            User user = userService.find(account.getUser().getId());
+            List<Account> accounts = user.getAccounts();
+            for (Account account1 : accounts) {
+                if (account1.getId().equals(account.getId())) {
+                    accounts.remove(account1);
+                    break;
+                }
+            }
+            user.setAccounts(accounts);
+            userService.save(user);
         }
         flush();
         pollingService.changeAccountStatus(account,true);
