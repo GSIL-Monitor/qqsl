@@ -1,5 +1,7 @@
 package com.hysw.qqsl.cloud.util;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -13,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.*;
@@ -187,22 +190,58 @@ public class XmlUtils {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * 根据坐标获取具体地址
+     * @param coor 坐标字符串
+     * @return
+     */
+    public static String getAdd(String coor){
+        //lat 小  log  大
+        //参数解释: 纬度,经度 type 001 (100代表道路，010代表POI，001代表门址，111可以同时显示前三项)
+       // String urlString = "http://gc.ditu.aliyun.com/regeocoding?l="+lat+","+log+"&type=111";
+        String urlString = "http://restapi.amap.com/v3/geocode/regeo?key=8325164e247e15eea68b59e89200988b&s=rsv3&location="+coor+"&radius=2800&callback=jsonp_452865_&platform=JS&logversion=2.0&sdkversion=1.3&appname=http%3A%2F%2Flbs.amap.com%2Fconsole%2Fshow%2Fpicker&csid=49851531-2AE3-4A3B-A8C8-675A69BCA316";
+        //String urlString = "http://restapi.amap.com/v3/place/text?s=rsv3&children=&key=8325164e247e15eea68b59e89200988b&page=1&offset=10&city=610100&language=zh_cn&callback=jsonp_25126_&platform=JS&logversion=2.0&sdkversion=1.3&appname=http%3A%2F%2Flbs.amap.com%2Fconsole%2Fshow%2Fpicker&csid=19FA0D45-180F-4D45-BCB4-C6C265F55FF6&keywords="+address;
+        String res = "";
+        try {
+            //http://restapi.amap.com/v3/geocode/regeo?key=8325164e247e15eea68b59e89200988b&s=rsv3&location=101.539737903028,36.79828256329313&radius=2800&callback=jsonp_452865_&platform=JS&logversion=2.0&sdkversion=1.3&appname=http%3A%2F%2Flbs.amap.com%2Fconsole%2Fshow%2Fpicker&csid=49851531-2AE3-4A3B-A8C8-675A69BCA316
+            URL url = new URL(urlString);
+            java.net.HttpURLConnection conn = (java.net.HttpURLConnection)url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("GET");
+            java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(conn.getInputStream(),"UTF-8"));
+            String line;
+            while ((line = in.readLine()) != null) {
+                res += line+"\n";
+            }
+            in.close();
+        } catch (Exception e) {
+            System.out.println("error in wapaction,and e is " + e.getMessage());
+        }
+        return res;
+    }
 
 
 
 
     public static void main(String[] agrs) {
+        // lat 31.2990170   纬度
+        //log 121.3466440    经度
+        String add = getAdd("101.539737903028,36.79828256329313");
+        String json = add.substring(add.indexOf("(")+1,add.lastIndexOf(")"));
+        JSONObject jsonObject = JSONObject.fromObject(json);
+        jsonObject = JSONObject.fromObject(jsonObject.get("regeocode"));
+        System.out.println(jsonObject.getString("formatted_address"));
+      /*  JSONArray jsonArray = JSONArray.fromObject(jsonObject.getString("addrList"));
+        JSONObject j_2 = JSONObject.fromObject(jsonArray.get(0));
+        String allAdd = j_2.getString("admName");
+        String str= allAdd.replaceAll(",","");
+        System.out.println(str);*/
+        //{"longitude":"","latitude":"32.88323333321792","elevation":"4405.429021279564"}
+       // {"longitude":"101.50464694444672","latitude":"36.7285541666189","elevation":"2705.48780033033"}
+
+
+
+
         //   XmlUtils xmlUtils = new XmlUtils();
         //  xmlUtils.xmlEdit("buildsGeology.xml");
         //  xmlUtils.xmlEdit("buildsDimension.xml");
@@ -218,17 +257,6 @@ public class XmlUtils {
         String str2 = "";
         List<String> strs2 = Arrays.asList(str2.split(","));
         System.out.println(strs2);*/
-
-        String key = "panorama/26/15252256025839ge.jpg";
-        String key2 = "http://qqslimage.oss-cn-hangzhou.aliyuncs.com/panorama/26/15252256025839ge.tiles/thumb.jpg";
-        System.out.println(key2.substring(0,key2.lastIndexOf("/")));
-        String key3 = key2.substring(0,key2.lastIndexOf("/"));
-        System.out.println(key3.substring(key3.lastIndexOf(".")));
-        String prefix = key.replace(key.substring(key.lastIndexOf(".")+1),key3.substring(key3.lastIndexOf(".")+1));
-
-        System.out.println(prefix.substring(prefix.indexOf("/")+1)+"/");
-
-
    /*     DecimalFormat df1 = new DecimalFormat("#.00");
         DecimalFormat df2 = new DecimalFormat("######0.00");
         double d1 = 1.0;

@@ -206,7 +206,6 @@ public class PanoramaService extends BaseService<Panorama, Long> {
     }
 
     public String addPanoramaTest(Panorama panorama,User user,Map<String,Object> map) {
-        panorama.setStatus(CommonEnum.Review.PENDING);
         panorama.setUserId(user.getId());
         panorama.setInstanceId(DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis())));
         panorama.setAngleOfView("{\"viewSettings\": []}");

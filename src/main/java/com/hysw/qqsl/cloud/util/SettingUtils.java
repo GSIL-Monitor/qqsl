@@ -437,6 +437,7 @@ public class SettingUtils {
 		return false;
 	}
 
+
 	public static void main(String[] args) {
 		String url = "rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd";
 		System.out.print(rtmpRegex(url));
