@@ -251,6 +251,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
         jsonObject.put("status",account.getStatus().toString());
+        pollingService.changeAccountStatus(account.getUser(),false);
         return jsonObject;
     }
 
