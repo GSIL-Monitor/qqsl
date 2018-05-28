@@ -532,7 +532,7 @@ public class UserService extends BaseService<User, Long> {
 					Note note = new Note(account.getPhone(), msg);
 					noteCache.add(account.getPhone(),note);
 				}
-				pollingService.changeAccountStatus(account,true);
+//				pollingService.changeAccountStatus(account,true);
 				accountManager.delete(account);
 				accountService.remove(account);
 				break;
