@@ -522,7 +522,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
 	 */
 	public boolean deleteAccount(Account account,User user) {
-        user = userService.findByDao(user.getId());
+        user = userService.find(user.getId());
 		List<Account> accounts = user.getAccounts();
 		for (Account account1 : accounts) {
 			if (account.getId().equals(account1.getId())) {
@@ -538,7 +538,9 @@ public class UserService extends BaseService<User, Long> {
 				break;
 			}
 		}
-		user.setAccounts(accounts);
+		List<Account> accounts1 = new ArrayList<>();
+		accounts1.addAll(accounts);
+		user.setAccounts(accounts1);
 		save(user);
 		return true;
 	}

@@ -420,7 +420,9 @@ public class AccountService extends BaseService<Account,Long> {
                     break;
                 }
             }
-            user.setAccounts(accounts);
+            List<Account> accounts1 = new ArrayList<>();
+            accounts1.addAll(accounts);
+            user.setAccounts(accounts1);
             userService.save(user);
         }
         flush();
