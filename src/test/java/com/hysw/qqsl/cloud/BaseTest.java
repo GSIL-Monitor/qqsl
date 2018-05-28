@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 @TestExecutionListeners(value = {TestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ContextConfiguration(locations = {"classpath*:/applicationContext-test.xml", "classpath*:/applicationContext-cache-test.xml","classpath*:/applicationContext-shiro-test.xml"})
 @Transactional(transactionManager = "transactionManager")
-@Rollback(value = true)
+@Rollback(value = false)
 public class BaseTest {
 
 	// log
