@@ -42,8 +42,6 @@ public class FieldService implements Serializable {
     private CoordinateService coordinateService;
     @Autowired
     private TransFromService transFromService;
-    private Workbook workbook;
-
 
     public boolean saveField(Map<String, Object> objectMap) {
         Build build;
@@ -92,7 +90,7 @@ public class FieldService implements Serializable {
                 return false;
             }
             if (!SettingUtils.coordinateParameterCheck(longitude, latitude, elevation)) {
-                return false;
+                continue;
             }
             coordinateBase = new CoordinateBase();
             coordinateBases = new ArrayList<>();

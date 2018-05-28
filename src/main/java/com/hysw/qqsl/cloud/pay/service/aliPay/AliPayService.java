@@ -93,6 +93,7 @@ public class AliPayService {
                 return jsonObject;
             }
         } catch (AlipayApiException e) {
+            e.printStackTrace();
             return null;
         }
     }

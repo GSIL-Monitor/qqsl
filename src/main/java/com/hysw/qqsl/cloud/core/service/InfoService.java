@@ -150,6 +150,7 @@ public class InfoService {
 		try {
 			investment = Double.valueOf(value);
 		} catch (Exception e) {
+			e.printStackTrace();
 			investment = 0.0d;
 		}
 		if (investment < 100.0f) {

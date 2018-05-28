@@ -283,6 +283,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             try {
                 paths.add(ossService.downloadFileToLocal(user.getId() + "/" + fileName, randomFile.getAbsolutePath() + System.getProperty("file.separator") + fileName.toString()));
             } catch (OSSException e) {
+                e.printStackTrace();
                 continue;
             }
         }
@@ -297,6 +298,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             try {
                 paths.add(ossService.downloadFileToLocal1(user.getId() + "/" + originName+".jpg", randomFile.getAbsolutePath() + System.getProperty("file.separator") + originName+".jpg"));
             } catch (OSSException e) {
+                e.printStackTrace();
                 continue;
             }
         }
@@ -313,7 +315,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             try {
                path = (ossService.downloadFileToLocal(user.getId() + "/" + fileName+".jpg", randomFile.getAbsolutePath() + System.getProperty("file.separator") + oirginName+".jpg"));
             } catch (OSSException e) {
-
+                e.printStackTrace();
             }
         return path;
     }
@@ -379,6 +381,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         try {
             traverseFolder(str, str.length(), user);
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -415,8 +418,10 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             p = Runtime.getRuntime().exec(cmd);
             readCommandInfo(p);
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         } catch (InterruptedException e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -792,6 +797,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
             JSONObject jsonStr= JSONObject.fromObject(content);
             return  true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

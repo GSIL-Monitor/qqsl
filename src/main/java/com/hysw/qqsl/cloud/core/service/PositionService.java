@@ -243,6 +243,7 @@ public class PositionService {
         try {
             diffConnPoll.setTimeout(Long.valueOf(timeout));
         }catch (Exception e){
+            e.printStackTrace();
             return false;
         }
         diffConnPollService.save(diffConnPoll);

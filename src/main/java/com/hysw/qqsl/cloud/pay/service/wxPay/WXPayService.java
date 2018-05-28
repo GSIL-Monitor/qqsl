@@ -43,7 +43,7 @@ public class WXPayService {
             r = wxPay.unifiedOrder(data);
 //            System.out.println(r);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             return null;
         }
         try {
@@ -53,6 +53,7 @@ public class WXPayService {
                 return jsonObject;
             }
         } catch (NullPointerException e) {
+            e.printStackTrace();
             return null;
         }
         return null;
@@ -69,7 +70,7 @@ public class WXPayService {
             Map<String, String> r = wxPay.closeOrder(data);
 //            System.out.println(r);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -86,7 +87,7 @@ public class WXPayService {
             r = wxPay.orderQuery(data);
 //            System.out.println(r);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             return null;
         }
         try {
@@ -100,6 +101,7 @@ public class WXPayService {
                 return jsonObject;
             }
         } catch (NullPointerException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -116,7 +118,7 @@ public class WXPayService {
             Map<String, String> r = wxPay.reverse(data);
 //            System.out.println(r);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -140,7 +142,7 @@ public class WXPayService {
             r = wxPay.refund(data);
 //            System.out.println(r);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             return false;
         }
         try {
@@ -148,6 +150,7 @@ public class WXPayService {
                 return true;
             }
         } catch (NullPointerException e) {
+            e.printStackTrace();
             return false;
         }
         return false;
@@ -172,7 +175,7 @@ public class WXPayService {
             Map<String, String> r = wxPay.refund(data);
 //            System.out.println(r);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -187,7 +190,7 @@ public class WXPayService {
             Map<String, String> r = wxPay.refundQuery(data);
 //            System.out.println(r);
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

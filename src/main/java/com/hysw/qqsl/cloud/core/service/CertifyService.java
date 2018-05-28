@@ -221,6 +221,7 @@ public class CertifyService extends BaseService<Certify, Long> {
         try {
             is = ossService.downloadFile(CommonAttributes.BUCKET_NAME, "user/" + id + "/" + image);
         } catch (OSSException e) {
+            e.printStackTrace();
             return face;
         }
         ByteArrayOutputStream outputStream = null;
@@ -236,6 +237,7 @@ public class CertifyService extends BaseService<Certify, Long> {
             Base64 base64 = new Base64();
             face = base64.encodeAsString(outputStream.toByteArray());
         } catch (IOException e) {
+            e.printStackTrace();
             return face;
         }finally {
             IOUtils.safeClose(outputStream);

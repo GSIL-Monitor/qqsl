@@ -81,6 +81,7 @@ public class AccountService extends BaseService<Account,Long> {
 //                note.setPhone(phone);
 //                note.setSendMsg(querySendDetailsResponse.getSmsSendDetailDTOs().get(0).getContent());
             } catch (ClientException e) {
+                e.printStackTrace();
                 return null;
             }
             account = new Account();
@@ -94,10 +95,15 @@ public class AccountService extends BaseService<Account,Long> {
             //记录子账号邀请消息
             account.setUser(user);
             save(account);
+            List<Account> accounts = user.getAccounts();
+            accounts.add(account);
+            user.setAccounts(accounts);
+            userService.save(user);
 //            note.setAccountId(account.getId());
 //            noteService.save(note);
             accountManager.add(account);
             pollingService.addAccount(account);
+            pollingService.changeAccountStatus(account,true);
 //        noteCache.add(phone,note);
             return makeSimpleAccountJson(account);
         }else{
@@ -245,6 +251,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
         jsonObject.put("status",account.getStatus().toString());
+        pollingService.changeAccountStatus(account,false);
         return jsonObject;
     }
 
@@ -340,6 +347,7 @@ public class AccountService extends BaseService<Account,Long> {
         account.setDepartment(department != null?department.toString():null);
         account.setRemark(remark!=null?remark.toString():null);
         save(account);
+        pollingService.changeAccountStatus(account,true);
         return true;
     }
 
@@ -369,12 +377,18 @@ public class AccountService extends BaseService<Account,Long> {
             String inviteCode = SettingUtils.createRandomVcode();
             account.setPassword(DigestUtils.md5Hex(inviteCode));
             save(account);
+            User user = userService.find(account.getUser().getId());
+            List<Account> accounts = user.getAccounts();
+            accounts.add(account);
+            user.setAccounts(accounts);
+            userService.save(user);
             msg = "尊敬的用户您好，恭喜您已成为[" + userService.nickName(account.getUser().getId()) + "]企业的子账户,密码为："+inviteCode+"。";
             userMessageService.accountMessageAgree(account);
         }
         Note note = new Note(account.getPhone(), msg);
         noteCache.add(account.getPhone(),note);
         flush();
+        pollingService.changeAccountStatus(account,true);
     }
 
     /**
@@ -389,9 +403,21 @@ public class AccountService extends BaseService<Account,Long> {
         }
         if (account.getStatus() == Account.Status.AWAITING) {
             userMessageService.accountMessageRefused(account);
+            accountManager.delete(account);
             remove(account);
+            User user = userService.find(account.getUser().getId());
+            List<Account> accounts = user.getAccounts();
+            for (Account account1 : accounts) {
+                if (account1.getId().equals(account.getId())) {
+                    accounts.remove(account1);
+                    break;
+                }
+            }
+            user.setAccounts(accounts);
+            userService.save(user);
         }
         flush();
+        pollingService.changeAccountStatus(account,true);
     }
 
     /**

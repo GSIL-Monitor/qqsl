@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.core.entity.data.Account;
+import com.hysw.qqsl.cloud.core.entity.data.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,8 @@ public class AccountManager{
     private AccountService accountService;
     @Autowired
     private UserMessageService userMessageService;
+    @Autowired
+    private UserService userService;
     private Map<String, List<Account>> map = new LinkedHashMap<>();
 
     /**
@@ -49,10 +52,20 @@ public class AccountManager{
             while (iterator.hasNext()) {
                 Account account = iterator.next();
                 if (account.getCreateDate().getTime() + 24 * 60 * 60 * 1000l < System.currentTimeMillis()) {
-                    accountService.remove(account);
                     userMessageService.accountMessageExpired(account);
+                    User user = userService.find(account.getUser().getId());
+                    List<Account> accounts = user.getAccounts();
+                    for (Account account1 : accounts) {
+                        if (account1.getId().equals(account.getId())) {
+                            accounts.remove(account1);
+                            break;
+                        }
+                    }
                     iterator.remove();
                     delete(account);
+                    user.setAccounts(accounts);
+                    accountService.remove(account);
+                    userService.save(user);
                 }
             }
         }

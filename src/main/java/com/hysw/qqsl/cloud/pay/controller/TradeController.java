@@ -141,6 +141,7 @@ public class TradeController {
         try {
             Integer.valueOf(goodsNum.toString());
         } catch (Exception e) {
+            e.printStackTrace();
             return MessageService.message(Message.Type.FAIL);
         }
         return MessageService.message(Message.Type.OK, tradeService.createGoodsTrade(goodsModel, goodsNum, goodsType,remark, user));
