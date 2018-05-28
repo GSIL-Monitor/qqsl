@@ -71,6 +71,12 @@ public class UserController {
     private CommonController commonController;
     @Autowired
     private ApplicationTokenService applicationTokenService;
+    @Autowired
+    private CooperateService cooperateService;
+    @Autowired
+    private StationService stationService;
+    @Autowired
+    private PanoramaService panoramaService;
 
     /**
      * 注册时发送手机验证码
@@ -1001,6 +1007,12 @@ public class UserController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
+        //收回权限
+        cooperateService.cooperateRevoke(user,account);
+        //收回全景权限
+        panoramaService.revoke(user,account);
+        //收回测站权限
+        stationService.unCooperate(user, account);
         if (userService.deleteAccount(account, user)) {
             return MessageService.message(Message.Type.OK);
         } else {

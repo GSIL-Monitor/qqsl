@@ -72,6 +72,9 @@ public class AccountManager{
     }
 
     public void delete(Account account) {
+        if (account.getStatus() != Account.Status.AWAITING) {
+            return;
+        }
         List<Account> accounts = map.get(account.getPhone());
         accounts.remove(account);
         map.put(account.getPhone(), accounts);

@@ -35,8 +35,6 @@ public class UserService extends BaseService<User, Long> {
 	@Autowired
 	private UserMessageService userMessageService;
 	@Autowired
-	private CooperateService cooperateService;
-	@Autowired
 	private PackageService packageService;
 	@Autowired
 	private TradeService tradeService;
@@ -50,10 +48,6 @@ public class UserService extends BaseService<User, Long> {
 	private PollingService pollingService;
 	@Autowired
 	private NoteCache noteCache;
-    @Autowired
-    private StationService stationService;
-    @Autowired
-    private PanoramaService panoramaService;
 	@Autowired
 	private AccountManager accountManager;
 	@Autowired
@@ -74,7 +68,17 @@ public class UserService extends BaseService<User, Long> {
 
 	public User findByDao(Long id){
 		User user = userDao.find(id);
-		user.getAccounts();
+		user.getAccounts().size();
+		Certify certify = certifyService.findByUser(user);
+		user.setPersonalStatus(certify.getPersonalStatus());
+		user.setCompanyStatus(certify.getCompanyStatus());
+		if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+			user.setName(certify.getName());
+		}
+		if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || certify.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+			user.setCompanyName(certify.getCompanyName());
+		}
+		buildPackage(user);
 		return user;
 	}
 
@@ -518,13 +522,7 @@ public class UserService extends BaseService<User, Long> {
 	 * @return
 	 */
 	public boolean deleteAccount(Account account,User user) {
-		//收回权限
-		cooperateService.cooperateRevoke(user,account);
-		//收回全景权限
-        panoramaService.revoke(user,account);
-        //收回测站权限
-        stationService.unCooperate(user, account);
-        user = userService.find(user.getId());
+        user = userService.findByDao(user.getId());
 		List<Account> accounts = user.getAccounts();
 		for (Account account1 : accounts) {
 			if (account.getId().equals(account1.getId())) {
@@ -536,7 +534,7 @@ public class UserService extends BaseService<User, Long> {
 				}
 				pollingService.changeAccountStatus(account,true);
 				accountManager.delete(account);
-				accountService.remove(account1);
+				accountService.remove(account);
 				break;
 			}
 		}

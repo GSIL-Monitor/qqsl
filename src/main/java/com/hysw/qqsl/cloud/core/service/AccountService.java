@@ -94,10 +94,10 @@ public class AccountService extends BaseService<Account,Long> {
 
             //记录子账号邀请消息
             account.setUser(user);
-            save(account);
             List<Account> accounts = user.getAccounts();
             accounts.add(account);
             user.setAccounts(accounts);
+            save(account);
             userService.save(user);
 //            note.setAccountId(account.getId());
 //            noteService.save(note);
@@ -373,12 +373,19 @@ public class AccountService extends BaseService<Account,Long> {
             msg = "您已经成为[" + userService.nickName(account.getUser().getId()) + "]企业的子账户，该项不能重复操作，如需绑定到另一企业，请先解绑。";
         }
         if (account.getStatus()==Account.Status.AWAITING) {
+            accountManager.delete(account);
             account.setStatus(Account.Status.CONFIRMED);
             String inviteCode = SettingUtils.createRandomVcode();
             account.setPassword(DigestUtils.md5Hex(inviteCode));
             save(account);
             User user = userService.find(account.getUser().getId());
             List<Account> accounts = user.getAccounts();
+            for (Account account1 : accounts) {
+                if (account.getId().equals(account1.getId())) {
+                    accounts.remove(account1);
+                    break;
+                }
+            }
             accounts.add(account);
             user.setAccounts(accounts);
             userService.save(user);

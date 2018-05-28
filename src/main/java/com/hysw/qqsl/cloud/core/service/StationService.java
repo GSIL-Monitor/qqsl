@@ -31,10 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 测站服务类
@@ -818,11 +815,19 @@ public class StationService extends BaseService<Station, Long> {
         Cooperate cooperate = new Cooperate(station);
         makeCooperateVisits(station,cooperate);
         for (Account account : accounts) {
-            cooperate.unRegister(account);
-            accountMessageService.cooperateStationMessage(station,account,false);
+            Iterator<Account> iterator = cooperate.getVisits().iterator();
+            while (iterator.hasNext()) {
+                Account account1 = iterator.next();
+                if (account.getId().equals(account1.getId())) {
+                    cooperate.unRegister(account);
+                    accountMessageService.cooperateStationMessage(station, account, false);
+                    iterator = cooperate.getVisits().iterator();
+                }
+            }
         }
         cooperate.addToStation();
         save(station);
+        flush();
     }
 
     /**

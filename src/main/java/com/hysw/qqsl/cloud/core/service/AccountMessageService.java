@@ -155,7 +155,6 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         contentJson.put("nickName",userService.nickName(station.getUser().getId()));
         contentJson.put("stationName",station.getName());
         contentJson.put("stationId",station.getId());
-        accountMessage.setAccount(account);
         accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
         accountMessage.setContent(contentJson.toString());
         accountMessage.setAccount(account);
