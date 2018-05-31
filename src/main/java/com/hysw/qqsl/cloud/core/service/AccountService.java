@@ -434,7 +434,7 @@ public class AccountService extends BaseService<Account,Long> {
      */
     public void activeAccount() {
         JSONObject jsonObject1 = WeChatHttpRequest.jsonObjectHttpRequest("http://"+SettingUtils.getInstance().getSetting().getAliPayIP() + ":8080/qqsl/user/getSmsUpList?token=" + applicationTokenService.getToken(), "GET", null);
-        if (jsonObject1.get("data") == null||JSONArray.fromObject(jsonObject1.get("data")).size()==0) {
+        if (jsonObject1 == null || jsonObject1.get("data") == null || JSONArray.fromObject(jsonObject1.get("data")).size() == 0) {
             return;
         }
         for (Object o : JSONArray.fromObject(jsonObject1.get("data"))) {

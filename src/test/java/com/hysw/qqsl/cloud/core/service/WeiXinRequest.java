@@ -26,6 +26,8 @@ public class WeiXinRequest extends BaseTest{
     @Autowired
     private CreateCode createCode;
     @Autowired
+    private GetAccessTokenService getAccessTokenService;
+    @Autowired
     private UploadFodderService uploadFodderService;
     private String httpsGetUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
     private String httpsPostUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
@@ -86,7 +88,9 @@ public class WeiXinRequest extends BaseTest{
 
     @Test
     public void getFodderList(){
-        uploadFodderService.getFodderList("news",0,19);
+        getAccessTokenService.getAccessToken();
+        JSONObject news = uploadFodderService.getFodderList("news", 0, 19);
+        System.out.println(news.toString());
     }
 
     @Test
@@ -119,5 +123,12 @@ public class WeiXinRequest extends BaseTest{
         jsonObject.put("loginType", "wechat");
         JSONObject jsonObject1 = WeChatHttpRequest.jsonObjectHttpRequest("localhost:8080/qqsl/user/login", "POST", jsonObject.toString());
         System.out.println(jsonObject1);
+    }
+
+    @Test
+    public void getJsapiTicket() {
+        getAccessTokenService.getAccessToken();
+        String jsapiTicket = getAccessTokenService.getJsapiTicket();
+        System.out.println(jsapiTicket);
     }
 }
