@@ -1012,7 +1012,7 @@ public class UserController {
         //收回全景权限
         panoramaService.revoke(user,account);
         //收回测站权限
-        stationService.unCooperate(user, account);
+        stationService.unCooperate(user, account) ;
         if (userService.deleteAccount(account, user)) {
             return MessageService.message(Message.Type.OK);
         } else {
