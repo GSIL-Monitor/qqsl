@@ -63,7 +63,9 @@ public class AccountManager{
                     }
                     iterator.remove();
                     delete(account);
-                    user.setAccounts(accounts);
+                    List<Account> accounts1 = new ArrayList<>();
+                    accounts1.addAll(accounts);
+                    user.setAccounts(accounts1);
                     accountService.remove(account);
                     userService.save(user);
                 }
