@@ -52,7 +52,7 @@ public class FieldService implements Serializable {
         CoordinateBase coordinateBase;
         List<CoordinateBase> coordinateBases;
         GeoCoordinate geoCoordinate;
-        List<GeoCoordinate> geoCoordinates = new LinkedList<>();
+        List<GeoCoordinate> geoCoordinates = new LinkedList<>() ;
         JSONObject jsonObject;
         Graph graph;
         Object code;
