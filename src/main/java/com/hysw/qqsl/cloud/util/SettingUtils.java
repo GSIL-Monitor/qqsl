@@ -4,6 +4,7 @@ import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Setting;
+import com.hysw.qqsl.cloud.core.entity.build.GeoCoordinate;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -437,12 +438,32 @@ public class SettingUtils {
 		return false;
 	}
 
-
-	public static void main(String[] args) {
-		String url = "rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd";
-		System.out.print(rtmpRegex(url));
-		Pattern pattern = Pattern.compile("[A-z0-9]+\\.(?!\\.)");
-		System.out.println(pattern.matcher("ba4b2fde89ab43739e3d3e74d8b08f4a.hd").find());
+	/**
+	 * 根据输入的地点坐标计算中心点
+	 * @param geoCoordinateList
+	 * @return
+	 */
+	public static GeoCoordinate getCenterPointFromListOfCoordinates(List<GeoCoordinate> geoCoordinateList) {
+		int total = geoCoordinateList.size();
+		double X = 0, Y = 0, Z = 0;
+		for (GeoCoordinate g : geoCoordinateList) {
+			double lat, lon, x, y, z;
+			lat = g.getLatitude() * Math.PI / 180;
+			lon = g.getLongitude() * Math.PI / 180;
+			x = Math.cos(lat) * Math.cos(lon);
+			y = Math.cos(lat) * Math.sin(lon);
+			z = Math.sin(lat);
+			X += x;
+			Y += y;
+			Z += z;
+		}
+		X = X / total;
+		Y = Y / total;
+		Z = Z / total;
+		double Lon = Math.atan2(Y, X);
+		double Hyp = Math.sqrt(X * X + Y * Y);
+		double Lat = Math.atan2(Z, Hyp);
+		return new GeoCoordinate(Lat * 180 / Math.PI, Lon * 180 / Math.PI);
 	}
 
 }

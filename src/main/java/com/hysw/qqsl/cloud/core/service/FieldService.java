@@ -4,6 +4,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.build.AttribeGroup;
 import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
+import com.hysw.qqsl.cloud.core.entity.build.GeoCoordinate;
 import com.hysw.qqsl.cloud.core.entity.build.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -42,12 +43,16 @@ public class FieldService implements Serializable {
     private CoordinateService coordinateService;
     @Autowired
     private TransFromService transFromService;
+    @Autowired
+    private ElementDBService elementDBService;
 
     public boolean saveField(Map<String, Object> objectMap) {
         Build build;
         Attribe attribe;
         CoordinateBase coordinateBase;
         List<CoordinateBase> coordinateBases;
+        GeoCoordinate geoCoordinate;
+        List<GeoCoordinate> geoCoordinates = new LinkedList<>();
         JSONObject jsonObject;
         Graph graph;
         Object code;
@@ -97,6 +102,7 @@ public class FieldService implements Serializable {
             coordinateBase.setLongitude(longitude.toString());
             coordinateBase.setLatitude(latitude.toString());
             coordinateBase.setElevation(elevation.toString());
+            geoCoordinate = new GeoCoordinate(Double.valueOf(latitude.toString()), Double.valueOf(longitude.toString()));
             coordinateBases.add(coordinateBase);
             graph = new Graph();
             graph.setCoordinates(coordinateBases);
@@ -104,6 +110,7 @@ public class FieldService implements Serializable {
             graph.setDescription(description.toString());
             graph.setAlias(alias.toString());
             graphs.add(graph);
+            geoCoordinates.add(geoCoordinate);
             if (attribes != null) {
                 build = isSameBuild(builds1, longitude.toString(), latitude.toString());
                 if (delete != null && Boolean.valueOf(delete.toString())) {
@@ -171,6 +178,15 @@ public class FieldService implements Serializable {
         }
         JSONArray jsonArray = new JSONArray();
         listToString(graphs, jsonArray);
+        geoCoordinate = SettingUtils.getCenterPointFromListOfCoordinates(geoCoordinates);
+        List<ElementDB> elementDBs = elementDBService.findByProjectAndAlias(project);
+        if (elementDBs.size() == 0) {
+            ElementDB elementDB = new ElementDB();
+            elementDB.setAlias("21A1");
+            elementDB.setProject(project);
+            elementDB.setValue(""+geoCoordinate.getLongitude()+","+geoCoordinate.getLatitude()+",0");
+            elementDBService.save(elementDB);
+        }
         for (Coordinate coordinate1 : coordinates1) {
             if (coordinate1.getDeviceMac().equals(deviceMac.toString().trim())) {
                 coordinate2 = coordinate1;
