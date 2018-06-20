@@ -231,7 +231,7 @@ public class FieldController {
             return MessageService.message(Message.Type.FAIL);
         }
         if (wb == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
         }
         ByteArrayOutputStream bos = null;
         InputStream is = null;
