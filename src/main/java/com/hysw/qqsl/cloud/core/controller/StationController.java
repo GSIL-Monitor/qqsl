@@ -59,16 +59,23 @@ public class StationController {
     private MonitorService monitorService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private UserService userService;
     /**
      * 获取token
      * @return message消息体,附带token令牌
      */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/token", method = RequestMethod.GET)
     public @ResponseBody
     Message getToken() {
-        return MessageService.message(Message.Type.OK, applicationTokenService.getToken());
+        User user = authentService.getUserFromSubject();
+        if (user == null) {
+            user = authentService.getAccountFromSubject()==null?null:authentService.getAccountFromSubject().getUser();
+        }
+        user = userService.find(16l);
+        return MessageService.message(Message.Type.OK, applicationTokenService.makeIntendedEffectToken(user));
     }
 
 
@@ -691,6 +698,19 @@ public class StationController {
         List<JSONObject> stations = stationService.getStations(account);
         pollingService.changeStationStatus(account, false);
         return MessageService.message(Message.Type.OK, stations);
+    }
+
+    @RequestMapping(value = "/intendedEffectToken", method = RequestMethod.GET)
+    public @ResponseBody
+    Message intendedEffectToken(@RequestParam String token, @RequestParam String noticeStr, @RequestParam String code) {
+        Message message = CommonController.parametersCheck(token, noticeStr, code);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        if (applicationTokenService.validateIntendedEffectToken(token,noticeStr, code)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.UNAUTHORIZED);
     }
 
 }

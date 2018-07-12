@@ -169,4 +169,10 @@ public class MyTask {
         noteService.deleteExpiredNote();
         logger.info("删除24小时内的上行短信记录");
     }
+
+    @Scheduled(fixedDelay = 60000*1 )
+    public void expiredIntendedEffectToken(){
+        applicationTokenService.expiredIntendedEffectToken();
+        logger.info("效验token过期");
+    }
 }

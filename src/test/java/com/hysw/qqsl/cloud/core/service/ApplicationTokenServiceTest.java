@@ -2,8 +2,10 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.ApplicationTokenService;
 import com.hysw.qqsl.cloud.util.RSACoderUtil;
+import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ApplicationTokenServiceTest extends BaseTest {
     @Autowired
     private ApplicationTokenService applicationTokenService;
+    @Autowired
+    private UserService userService;
 
     /**
      * 测试新生成token并解析
@@ -75,4 +79,11 @@ public class ApplicationTokenServiceTest extends BaseTest {
         boolean decrypt6 = applicationTokenService.decrypt("--------------------------------------------------");
         Assert.assertTrue(!decrypt6);
     }
+
+//    @Test
+//    public void intendedEffectToken(){
+//        String token = applicationTokenService.makeIntendedEffectToken();
+//        Assert.assertTrue(applicationTokenService.validateIntendedEffectToken(token,code));
+//        Assert.assertTrue(!applicationTokenService.validateIntendedEffectToken(token.code));
+//    }
 }
