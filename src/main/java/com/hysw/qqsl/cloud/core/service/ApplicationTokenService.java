@@ -124,7 +124,6 @@ public class ApplicationTokenService {
         Iterator<Map.Entry<String, Long>> iterator = intendedEffectToken.entrySet().iterator();
         if (iterator.hasNext()) {
             Map.Entry<String, Long> next = iterator.next();
-            String key = next.getKey();
             Long value = next.getValue();
             if (System.currentTimeMillis() - value > 5 * 60 * 1000) {
                 iterator.remove();
