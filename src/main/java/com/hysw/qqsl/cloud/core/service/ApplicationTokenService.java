@@ -122,7 +122,7 @@ public class ApplicationTokenService {
 
     public void expiredIntendedEffectToken(){
         Iterator<Map.Entry<String, Long>> iterator = intendedEffectToken.entrySet().iterator();
-        if (iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Map.Entry<String, Long> next = iterator.next();
             Long value = next.getValue();
             if (System.currentTimeMillis() - value > 5 * 60 * 1000) {
