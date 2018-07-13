@@ -272,7 +272,7 @@ public class OssService extends BaseService<Oss,Long>{
 				imageBucketName, dir, inputStream, meta);*/
 
 		PutObjectRequest putObjectRequest = new PutObjectRequest(
-				"qqslimage-dev", dir, inputStream, meta);
+				CommonAttributes.BUCKET_IMAGE, dir, inputStream, meta);
 		@SuppressWarnings("unused")
 		PutObjectResult result = client.putObject(putObjectRequest);
 		logger.debug("上传文件成功：" + dir);
