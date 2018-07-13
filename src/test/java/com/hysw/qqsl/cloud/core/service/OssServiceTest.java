@@ -116,6 +116,9 @@ public class OssServiceTest extends BaseTest {
 	}
 */
 
+	/**
+	 * 得到json数据:[{"68":["panorama/68/西纳川A.jpg"]},{"69":["panorama/69/西纳川B.jpg"]},{"70":["panorama/70/西纳川C.jpg"]}]
+	 */
 	@Test
 	public void getImage(){
 		List<Panorama> panoramas = panoramaService.findAll();
@@ -254,8 +257,6 @@ public void updateStatus(){
 
 @Test
 public void addRegin(){
-
-
 	List<Panorama> panoramas = panoramaService.findAll();
 	Panorama panorama;
 	String coor,regin,json;
