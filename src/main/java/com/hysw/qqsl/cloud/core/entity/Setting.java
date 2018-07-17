@@ -46,6 +46,11 @@ public class Setting implements Serializable {
 	 */
 	private String aliPayIP;
 
+	/**
+	 * 短信上行接口的ip地址
+	 */
+	private String primaryIP;
+
 
 	/** 建筑物 */
 	private String buildsModel;
@@ -268,5 +273,13 @@ public class Setting implements Serializable {
 
 	public void setNotice(String notice) {
 		this.notice = notice;
+	}
+
+	public String getPrimaryIP() {
+		return primaryIP;
+	}
+
+	public void setPrimaryIP(String primaryIP) {
+		this.primaryIP = primaryIP;
 	}
 }
