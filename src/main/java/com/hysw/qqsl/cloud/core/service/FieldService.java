@@ -113,7 +113,7 @@ public class FieldService implements Serializable {
             geoCoordinates.add(geoCoordinate);
             if (attribes != null) {
                 build = isSameBuild(builds1, longitude.toString(), latitude.toString());
-                if (delete != null && Boolean.valueOf(delete.toString())) {
+                if (delete != null && Boolean.valueOf(delete.toString())&&build!=null) {
                     buildService.remove(build);
                     continue;
                 }

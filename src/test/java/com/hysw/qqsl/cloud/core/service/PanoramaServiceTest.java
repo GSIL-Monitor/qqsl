@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.annotation.Rollback;
+//import org.springframework.test.annotation.Rollback;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -111,7 +111,7 @@ public class PanoramaServiceTest extends BaseTest {
         System.out.println();
     }
 
-    @Test
+    //@Test
     public void dataClear(){
         List<Panorama> panoramas = panoramaService.findAll();
         for(int i = 0;i<panoramas.size();i++){

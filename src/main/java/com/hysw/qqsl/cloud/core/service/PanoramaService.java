@@ -180,7 +180,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panorama.setAngleOfView("{\"viewSettings\": []}");
         panorama.setSceneGroup("{\"sceneGroups\": []}");
         panorama.setHotspot("{}");
-        String thumbUrl = null;
+        String thumbUrl;
         if (images != null) {
             if (path == null || path.length() == 0) {
                 getTargetFilePath();
@@ -211,6 +211,7 @@ public class PanoramaService extends BaseService<Panorama, Long> {
         panorama.setAngleOfView("{\"viewSettings\": []}");
         panorama.setSceneGroup("{\"sceneGroups\": []}");
         panorama.setHotspot("{}");
+
         String thumbUrl = null;
             if (path == null || path.length() == 0) {
                 getTargetFilePath();
@@ -935,5 +936,19 @@ public class PanoramaService extends BaseService<Panorama, Long> {
                 save(panoramas.get(i));
             }
         }
+    }
+
+    public List<Panorama> findById(Long id) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.gt("id", id));
+        List<Panorama> panoramas = panoramaDao.findList(0, null, filters);
+        return panoramas;
+    }
+
+    public List<Panorama> findByName(String trim) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("name", trim));
+        List<Panorama> panoramas = panoramaDao.findList(0, null, filters);
+        return panoramas;
     }
 }

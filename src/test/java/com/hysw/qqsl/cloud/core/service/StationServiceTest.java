@@ -290,4 +290,15 @@ public class StationServiceTest extends BaseTest {
         Assert.assertTrue(station.getCooperate().equals("[{\"id\":2,\"name\":\"陈雷\",\"phone\":\"13007781310\"}]"));
     }
 
+    @Test
+    public void addPicture(){
+        List<Station> stations = stationService.findAll();
+        Station station;
+        for(int i = 0;i<stations.size();i++){
+            station = stations.get(i);
+            station.getUser();
+            station.setPicture("https://qqsl.oss-cn-hangzhou.aliyuncs.com/user/16/station/"+station.getId()+".jpg");
+        }
+    }
+
 }

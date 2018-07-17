@@ -788,4 +788,51 @@ public class OssService extends BaseService<Oss,Long>{
 		//client.shutdown();
 
 	}
+///panorama/6/1526694390164.tiles
+	//panorama/6/1526694390164.tiles
+	public void copyCuts(String object) {
+	/*	List<ObjectFile> files = getFiles(object,bucketName);
+		if(files==null||files.size()==0){
+			logger.info(object+"无文件");
+		}*/
+		CopyObjectResult result = null;
+		//List<OSSObjectSummary> summaries = getObjects(object,bucketName);
+		List<OSSObjectSummary> summaries = getObjects(object,"qqslimage-dev");
+		for (OSSObjectSummary ossObjectSummary:summaries){
+			result = client.copyObject("qqslimage-dev",ossObjectSummary.getKey(), "qqslimage",ossObjectSummary.getKey());
+			System.out.println("ETag: " + result.getETag() + " LastModified: " + result.getLastModified());
+		}
+// 关闭OSSClient。
+	//
+	}
+
+	public void fin(){
+		client.shutdown();
+	}
+//panorama/55/1526691245934.tiles/pano_b.jpg
+	public void getObjectAndCopy() {
+		CopyObjectResult result;
+		String str1 = "panorama/16, panorama/25, panorama/26, panorama/37, panorama/50, panorama/55, panorama/6";
+		List<String> strings = Arrays.asList(str1.split(","));
+		List<String> list;
+		List<OSSObjectSummary> summaries;
+			list = getFolder(strings.get(1),"qqslimage-dev");
+			for(String str:list){
+				summaries = getObjects(str.substring(0,str.lastIndexOf("/")),"qqslimage-dev");
+				for (OSSObjectSummary ossObjectSummary:summaries){
+					result = client.copyObject("qqslimage-dev",ossObjectSummary.getKey(),"qqslimage",ossObjectSummary.getKey());
+					System.out.println(ossObjectSummary.getKey()+"-------ETag: " + result.getETag() + " LastModified: " + result.getLastModified());
+				}
+			}
+			System.out.println("----------------------"+strings.get(0)+"-------------------------------");
+
+		//ossService.getObjectAndCopy("panorama/37");
+// 关闭OSSClient。
+		client.shutdown();
+	}
+
+	public void copyOrigin(String originUrl) {
+		CopyObjectResult result = client.copyObject("qqsl-dev",originUrl, "qqsl",originUrl);
+		System.out.println("-------ETag: " + result.getETag() + " LastModified: " + result.getLastModified());
+	}
 }
