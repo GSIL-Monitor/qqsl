@@ -26,6 +26,7 @@ import java.util.Map;
 public class HttpRequestUtil {
     @Autowired
     private NoteCache noteCache;
+    private long sendTime=0;
 
     /**
      *
@@ -81,6 +82,11 @@ public class HttpRequestUtil {
             jsonArray = JSONArray.fromObject(buffer.toString());
         } catch (ConnectException ce) {
             ce.printStackTrace();
+            if (sendTime+3600*1000l < System.currentTimeMillis()) {
+                Note note = new Note(SettingUtils.getInstance().getSetting().getNotice(), "异常：监测子系统");
+                noteCache.add(SettingUtils.getInstance().getSetting().getNotice(),note);
+                sendTime = System.currentTimeMillis();
+            }
             System.out.println("链接超时");
         } catch (Exception e) {
             e.printStackTrace();

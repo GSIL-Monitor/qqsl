@@ -32,9 +32,7 @@ public class MonitorService {
     private SensorService sensorService;
     @Autowired
     private HttpRequestUtil httpRequestUtil;
-    @Autowired
-    private NoteCache noteCache;
-    private long sendTime=0;
+
 
     Setting setting = SettingUtils.getInstance().getSetting();
 
@@ -66,17 +64,7 @@ public class MonitorService {
         String url = "http://" + setting.getWaterIP() + ":8080/";
         String method = "sensors";
         String token = applicationTokenService.getToken();
-        try {
-            return httpRequestUtil.jsonArrayHttpRequest(url + method + "?token=" + token, "GET", null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (sendTime+3600*1000l < System.currentTimeMillis()) {
-                Note note = new Note(SettingUtils.getInstance().getSetting().getNotice(), "异常：监测子系统");
-                noteCache.add(SettingUtils.getInstance().getSetting().getNotice(),note);
-                sendTime = System.currentTimeMillis();
-            }
-        }
-        return null;
+        return httpRequestUtil.jsonArrayHttpRequest(url + method + "?token=" + token, "GET", null);
     }
 
 
