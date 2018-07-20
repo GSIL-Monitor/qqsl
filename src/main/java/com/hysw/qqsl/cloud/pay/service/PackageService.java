@@ -236,7 +236,7 @@ public class PackageService extends BaseService<Package,Long>{
      * @return false 满足要求  true 不满足要求
      */
     public Boolean isRequirementPackage(Long userId,PackageModel packageModel){
-        User user = userService.findByDao(userId);
+        User user = userService.find(userId);
         Package aPackage = findByUser(user);
         if (aPackage == null) {
             return false;
