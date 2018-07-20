@@ -247,7 +247,7 @@ public class User extends BaseEntity {
 		this.roles = roles;
 	}
 
-	@ManyToMany(mappedBy="users")
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY , cascade={CascadeType.PERSIST})
 	@JsonIgnore
 	public List<Account> getAccounts() {
 		return accounts;

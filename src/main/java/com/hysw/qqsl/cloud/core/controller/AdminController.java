@@ -9,6 +9,7 @@ import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
@@ -54,6 +55,8 @@ public class AdminController {
     private CommonController commonController;
     @Autowired
     private SessionDAO sessionDAO;
+    @Autowired
+    private PanoramaService panoramaService;
 
     /**
      * 缓存的刷新，包括info.xml;projectModel.xml;elementGroup.xml,
@@ -415,5 +418,6 @@ public class AdminController {
         return MessageService.message(Message.Type.OK);
 
     }
+
 
 }

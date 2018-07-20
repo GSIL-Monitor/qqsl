@@ -33,6 +33,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +69,14 @@ public class UserController {
     private PollingService pollingService;
     @Autowired
     private CommonController commonController;
+    @Autowired
+    private ApplicationTokenService applicationTokenService;
+    @Autowired
+    private CooperateService cooperateService;
+    @Autowired
+    private StationService stationService;
+    @Autowired
+    private PanoramaService panoramaService;
 
     /**
      * 注册时发送手机验证码
@@ -894,25 +904,30 @@ public class UserController {
     //////////////////子账号//////////////////////////
 
     /**
-     * 企业账号邀请子账号
-     * @param map phone 手机号
+     * 企业账号创建子账号
+     * @param map <ul>
+     *            <li>phone 手机号</li>
+     *            <li>name 真实姓名</li>
+     *            <li>department 所属部门</li>
+     *            <li>remark 备注</li>
+     * </ul>
      * @return FAIL参数验证错误UNKNOWN手机号格式错误NO_ALLOW不允许创建子账号OK成功
      */
     @PackageIsExpire
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/account/invite",method = RequestMethod.POST)
-    public @ResponseBody Message invite(@RequestBody Map<String, Object> map) {
+    @RequestMapping(value = "/account/create",method = RequestMethod.POST)
+    public @ResponseBody Message create(@RequestBody Map<String, Object> map) {
         Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        if (map.get("phone") == null || !StringUtils.hasText(map.get("phone").toString())) {
+        if (map.get("phone") == null || !StringUtils.hasText(map.get("phone").toString())||map.get("name") == null || !StringUtils.hasText(map.get("name").toString())) {
             return MessageService.message(Message.Type.FAIL);
         }
         String phone = map.get("phone").toString();
         message = CommonController.parametersCheck(phone);
-        if(message.getType().equals(Message.Type.FAIL)){
+        if (message.getType() != Message.Type.OK) {
             return message;
         }
         if(!SettingUtils.phoneRegex(phone)){
@@ -924,11 +939,45 @@ public class UserController {
         if (userService.isAllowCreateAccount(user)) {
             return MessageService.message(Message.Type.PACKAGE_LIMIT);
         }
-        JSONObject invite = accountService.invite(phone, user);
-        if (invite == null) {
-            return MessageService.message(Message.Type.DATA_EXIST);
-        }else {
-            return MessageService.message(Message.Type.OK,invite);
+        JSONObject create = accountService.create(phone, user,map.get("name"),map.get("department"),map.get("remark"));
+        if (create == null) {
+            return MessageService.message(Message.Type.ACCOUNT_INVITED);//子账号已被邀请
+        } else if (create.isEmpty()) {
+            return MessageService.message(Message.Type.DATA_EXIST);//子账户已存在
+        } else {
+            return MessageService.message(Message.Type.OK, create);
+        }
+    }
+
+    /**
+     * 编辑子账号
+     * @param map
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/account/update", method = RequestMethod.POST)
+    public @ResponseBody Message accountUpdate(@RequestBody Map<String, Object> map){
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object id = map.get("id");
+        Object name = map.get("name");
+        Object department = map.get("department");
+        Object remark = map.get("remark");
+        if (id == null || name == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        try {
+            Long.valueOf(id.toString());
+        } catch (Exception e) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if (accountService.accountUpdate(id, name, department, remark)) {
+            return MessageService.message(Message.Type.OK);
+        }else{
+            return MessageService.message(Message.Type.FAIL);
         }
     }
 
@@ -939,8 +988,8 @@ public class UserController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public @ResponseBody Message unbind(@RequestBody Map<String, Object> map){
+    @RequestMapping(value = "/account/delete", method = RequestMethod.POST)
+    public @ResponseBody Message delete(@RequestBody Map<String, Object> map){
         Message message = CommonController.parameterCheck(map);
         if (message.getType() != Message.Type.OK) {
             return message;
@@ -958,7 +1007,13 @@ public class UserController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (userService.unbindAccount(account, user)) {
+        //收回权限
+        cooperateService.cooperateRevoke(user,account);
+        //收回全景权限
+        panoramaService.revoke(user,account);
+        //收回测站权限
+        stationService.unCooperate(user, account) ;
+        if (userService.deleteAccount(account, user)) {
             return MessageService.message(Message.Type.OK);
         } else {
             return MessageService.message(Message.Type.FAIL);
@@ -1011,5 +1066,20 @@ public class UserController {
         Polling polling=pollingService.findByUser(user.getId());
         return MessageService.message(Message.Type.OK,pollingService.toJson(polling));
     }
+
+    /**
+     * 获取短信上行列表
+     * @param token
+     * @return
+     */
+    @RequestMapping(value = "/getSmsUpList", method = RequestMethod.GET)
+    public @ResponseBody
+    Message getSmsUpList(@RequestParam String token) {
+        if (applicationTokenService.decrypt(token)) {
+            return MessageService.message(Message.Type.OK, noteService.getNoteList());
+        }
+        return MessageService.message(Message.Type.FAIL);
+    }
+
 }
 

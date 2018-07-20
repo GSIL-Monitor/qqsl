@@ -1,8 +1,11 @@
 package com.hysw.qqsl.cloud;
 
 import com.alipay.api.domain.Picture;
+import com.hysw.qqsl.cloud.core.entity.Setting;
 import com.hysw.qqsl.cloud.pay.service.aliPay.AliPayService;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 /**
  * 公共参数
@@ -43,8 +46,10 @@ public final class CommonAttributes {
      * oss服务存储地址
      */
     public static final String END_POINT = "http://oss-cn-hangzhou.aliyuncs.com";
-    public static final String BUCKET_NAME = "qqsl";
-    public static final String BUCKET_IMAGE = "qqslimage";
+//    public static final String BUCKET_NAME = "qqsl";
+     public static final String BUCKET_NAME = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"qqsl": "qqsl-dev";
+//    public static final String BUCKET_IMAGE = "qqslimage";
+    public static final String BUCKET_IMAGE = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"qqslimage":"qqslimage-dev";
     //	public static final String[] OSSIMAGE= {"http://localhost:8080/qqsl//","http://localhost:8080/qqsl/","http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
     public static final String[] OSSIMAGE = {"http://localhost:8080/qqsl//", "http://localhost:8080/qqsl/", "http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
     /**
@@ -59,7 +64,15 @@ public final class CommonAttributes {
     public static final String ALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwjm4O865ntBwxVbrOBuXEBSogH5VynB9blwHlbsJ+1H0WeqrDvNZXeqBIE19SQau0ReSkMTKbZwTtIFF23ialwncECMRn7c2FmJkmkRAVD0Xok0XKqxAu++hnBVsXjfTSNuBJmRphWzZzOH0AbiGnXmw/5Gt5OBXSoV3FO1itV4MQDJAIxQnZ1mzWHcR7E7od35FxHFKVQ142nGeQohQy4EGa3BgDui/gvZzWMK0MGEBvYTL/z3av50Bq7V8zTTVfKWwiHjEQzVjQBOg7TwyUfEd0f2l3RHM5i0g4cF9XWe+6G8GQI4ZCLYVLZ4RwOzHX4tNZ1zao5Wk7jrSlwMsfQIDAQAB";
     public static final String APP_PRIVATE_KEY = "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDKp90Gi7270FFl7FydBWrKyhh0XLV2G0HJ/STd7nZH2HZMlvkuyIrwuDtt3NKMuuk82Ym50ttVpwNVcqEmtlj+1w8Cm6Tvs6B7MPTQrHYps99NZnSo0EvSi6JXrlnAHdCZE03gDV7kSMjdeO/3nIEdiMbnB4ZNDwX9+bDhvN0lG/yccM9phzVgkas9V4ZMOmeHzx6GPC6t1MjylPuNjtG1sSm9OVbIWEcbWZdlF2oZyLXZR596aHm+D4mb/GAOCJCpFCJpBGO6Si5O+FlGGLp7ZrF0V8Q7CJICi8AXwQ+JhjTQIr0XbEWtE0xxcYCHueY2/noAuooQWpFNe28UnybvAgMBAAECggEAP/pyyug/BBYmPHk8W84kAtV+lu3V0+2S/YPPqcjoypHJ9zAKhvyE8K4ZBPwb9JXloHJFCsdIu2e4o7dGrQQQYJPgh0A/9/TLi1jPUTnBLDU/IB5iYhEwfs3aeLfwWbiP7GOtyDgwZv2bfF/70j40fPB7auBzQ8ykZaP4dau8XURCp87NPRricSSLKMnHN3NLNRMve4aRQLmneCAOFQFtImo8mo4SxYjFoFhWDluvGncXHeJ3uw5EjJM24Beyrdb33Bm5O1cVnEUtM99vR0bt/CVov5/mB7CLvCM4A9EMLso+OBSzMEDKYpD6G5Pus294Z9kvk9hdZ5IpMVxNOepW0QKBgQDuw9kj6n/Eh2rEO2m6fTVqdfStG9ljfMSHlda76KmYyynMxTsi1wbe6kiQS8OWQ3M+tdgnSM3wfIxqwmJTYgKoOOBegUr99qGwfDSoy6OHrDxzL9Nk+aVJhi0KAps/79e5PrB72UBOObJlUks7sLSn7EfEm/CMjtkhmf9K0iI/dQKBgQDZSL/LnjUzxi8jno+i9k9qykHsyqXyBvvQAJ5lyitZ+qV3fKY2q2pckmTc8o2kMug9l2B0CtOIG2490O74Fru479+P4Bk0CEURTEkOtAouGBmHR/LkpJBNv5Gpcv9Bm7rxO4pqjqvr7UlWBwvPzEdLBRUyZiaZmyXqTMtSiFPEUwKBgCZZMmEAYvEPxugpmrunLJMiyt+a33mJKo+UU17u6X5u8xG+g9b+rk3TV0BFyu4xeysRTdxRZzI+7taezegSj9aw++hx37eWizWrXVHXEzbRRQxDHDLVneSHNmirLoBAZ2eLWBEsPZXS0oJPi2HU6c8mtggv+5y3vMwWzdgYlAOZAoGAbwz+cXvnZxG4T/UfJkPK7SJ4NSSRUbR+CJ34Vr/QDknLPdloPfK4Bp4PjNkuySf3iFsQwd4ypJKYcmGRcRx1TxzR3v/DAdPkMOYTRL+BoHNSwNBl9LOiyQnK0ZbjnM2R6u7qXHGUrpz06VHqmIaoPVBYuAx7V/BynWAoXoMshN8CgYA0a4iHa7M2tvkE7JBH6tYCDmk9ZbU1ChOMg5YgEJ5fDTNhkMJml+uvjOtl7286OXoRvMnyoGa8GrBUIu205OXaNymGfYC7ec2MO1B0Nf89CHvvo8x1ctxr4PbXVpD9waeoptdoVSUpErcuHHSVye35Cz51T0oGG04D140cxXQ4PQ==";
 
-
+    /**
+     *  云通信短信API产品,开发者无需替换
+     */
+    public static final String NOTE_PRODUCT = "Dysmsapi";
+    public static final String NOTE_DOMAIN = "dysmsapi.aliyuncs.com";
+    public static final String NOTE_ACCESS_KEY_ID = "LTAIiqDcBGxauAX2"; //H6JSh0Yx0cPz2cGa
+    public static final String NOTE_ACCESS_KEY_SECRET = "zHqMn50rQj04oTMdolx1lTZk7YHxdF";//0joCPK6L1S0KLxCnOwD2Gm3wulC7vG
+    public static final String NOTE_ACCESS_KEY_ID_TEST = "H6JSh0Yx0cPz2cGa";
+    public static final String NOTE_ACCESS_KEY_SECRET_TEST = "0joCPK6L1S0KLxCnOwD2Gm3wulC7vG";
     /**
      * sts服务相关参数
      */
@@ -103,36 +116,7 @@ public final class CommonAttributes {
      * 树形结构顶级节点
      */
     public static final String TOP_TREE_ID = "999999";
-    /**
-     * 项目信息name
-     */
-    public static final String[] TYPEC = {"点坐标", "线坐标", "面坐标", "外业"};
-    public static final String[] TYPEE = {"POINT", "LINE", "AREA", "FIELD"};
-    /**
-     * 同时添加C和E 对应
-     */
-    public static final String[] BASETYPEC = {"泉室", "截水廊道", "大口井", "土井", "机井", "涝池", "闸", "倒虹吸", "跌水",
-            "消力池", "护坦", "海漫", "渡槽", "涵洞", "隧洞", "农口", "斗门", "公路桥", "车便桥", "各级渠道", "检查井", "分水井", "供水井", "减压井", "减压池",
-            "排气井", "放水井", "蓄水池", "各级管道", "防洪堤", "排洪渠", "挡墙", "谷坊", "淤地坝", "溢洪道", "滴灌", "喷头", "给水栓", "施肥设施",
-            "过滤系统", "林地", "耕地", "草地", "居民区", "工矿区", "电力", "次级交通", "河床", "水面", "水位", "水文",
-            "雨量", "水质", "泵站", "电站厂房", "地质点", "其他", "普通点", "供水干管", "供水支管", "供水斗管", "供水干渠", "供水支渠", "供水斗渠", "排水干管", "排水支管", "排水斗管",
-            "排水干渠", "排水支渠", "排水斗渠", "灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域", "公共线面"};
-    public static final String[] BASETYPEE = {"QS", "JSLD", "DKJ", "TJ", "JJ", "LC", "FSZ", "DHX", "DS",
-            "XIAOLC", "HUT", "HAIM", "DC", "HD", "SD", "NK", "DM", "GLQ", "CBQ", "GJQD", "JCJ", "FSJ", "GSJ", "JYJ", "JYC",
-            "PAIQJ", "FANGSJ", "XSC", "GJGD", "FHD", "PHQ", "DANGQ", "GF", "YDB", "YHD", "DG", "PT", "JSS", "SFSS",
-            "GLXT", "LD", "GD", "CD", "JMQ", "GKQ", "DL", "CJJT", "HEC", "SHUIM", "SHUIW", "SHUIWEN",
-            "YUL", "SHUIZ", "BZ", "DZCF", "DIZD", "TSD", "POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
-            "PSGQ", "PSZQ", "PSDQ", "GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY", "GONGGXM"};
-    public static final String[] TYPELINEAREAC = {"普通点", "供水干管", "供水支管", "供水斗管", "供水干渠", "供水支渠", "供水斗渠", "排水干管", "排水支管", "排水斗管",
-            "排水干渠", "排水支渠", "排水斗渠", "灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域", "防洪堤", "排洪渠", "公共线面"};
-    public static final String[] TYPELINEAREAE = {"POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
-            "PSGQ", "PSZQ", "PSDQ", "GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY", "FHD", "PHQ", "GONGGXM"};
-    public static final String[] TYPELINEC = {"普通点", "供水干管", "供水支管", "供水斗管", "供水干渠", "供水支渠", "供水斗渠", "排水干管", "排水支管", "排水斗管",
-            "排水干渠", "排水支渠", "排水斗渠", "公共线面", "防洪堤", "排洪渠"};
-    public static final String[] TYPELINEE = {"POINT", "GSGG", "GSZG", "GSDG", "GSGQ", "GSZQ", "GSDQ", "PSGG", "PSZG", "PSDG",
-            "PSGQ", "PSZQ", "PSDQ", "GONGGXM", "FHD", "PHQ"};
-    public static final String[] TYPEAREAC = {"灌溉范围", "保护范围", "供水区域", "治理范围", "库区淹没范围", "水域"};
-    public static final String[] TYPEAREAE = {"GGFW", "BHFW", "GSQY", "ZLFW", "KQYMFW", "SHUIY"};
+
     /**
      * unitService 用于测试的验证数据
      */
@@ -175,11 +159,6 @@ public final class CommonAttributes {
             + "CONTACTS_OWN_NAME,name,NOTE:CONTACTS_OWN_NAME,phone,NOTE:CONTACTS_OWN_NAME,email,NOTE:introduce:"
             + "CONTACTS_OWN_NAME:CONTACTS_OWN_NAME,name,NOTE:CONTACTS_OWN_NAME,phone,NOTE:CONTACTS_OWN_NAME,email,NOTE:"
             + "CO NTACTS_OWN_NAME:CONTACTS_OWN_NAME:CONTACTS_OWN_NAME,name:CONTACTS_OWN_NAME,phone:CONTACTS_OWN_NAME,email:CONTACTS_OWN_MASTER,master";
-    public static final String[] STAGEE = {"VISIT_INVITE_ELEMENT", "VISIT_INVITE_FILE", "VISIT_PREPARATION_ELEMENT", "VISIT_PREPARATION_FILE", "VISIT_BUILDING_ELEMENT", "VISIT_BUILDING_FILE", "VISIT_MAINTENANCE_ELEMENT", "VISIT_MAINTENANCE_FILE", "VISIT_VIEW"};
-    public static final String[] STAGEC = {"招投标要素", "招投标文件", "项目前期要素", "项目前期文件", "建设期要素", "建设期文件", "运营期要素", "运营期文件", "查看"};
-    //要素数据组类型
-    public static final String[] ComplexTypeE = {"FORESTRY", "FARMLAND", "GRASSLAND", "RESIDENTIAL", "MINERAL", "POWER", "SECOND_TRAFFIC", "CHAMBER", "GALLERY", "DUG_WELL", "DOINAKA", "ELECTRIC", "FULA", "SLUICE", "GATE", "INVERTSIPHON", "DROP", "FLUME", "CULVERT", "TUNNEL", "FARMING", "OFFLET", "ROAD_BRIDGE", "MARK_BRIDGE", "CHANNEL", "MANHOLE", "DISTRIBUTOR", "SUPPLE", "RELIEF", "RELEASE", "POOL", "PIPE", "DISCHANGE_CHANNEL", "FLOOD_BANK", "DAM", "PUMP", "POWER_HOUSE", "CHECK_DAM", "SILT_ARRESTER", "SPILLWAY", "DRIP", "SPRINKLER", "WATER_COCK", "FERTILIZATION_SYSTEMS", "FILTERING"};
-    public static final String[] ComplexTypeC = {"林地", "耕地", "草地", "居民区", "工矿区", "电力", "次级交通", "泉室", "截水廊道", "大口井", "土井", "机井", "涝池", "引水闸", "分水闸", "倒虹吸", "跌水", "渡槽", "涵洞", "隧洞", "农口", "斗门", "公路桥", "车便桥", "各级渠道", "检查井", "分水井", "供水井", "减压井", "减压池", "蓄水池", "各级管道", "排洪渠", "防洪堤", "水坝", "泵站", "电站厂房", "谷坊", "淤地坝", "溢洪道", "滴灌", "喷头", "给水栓", "施肥设施", "过滤系统"};
     public static final String publicKeyApplication = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrlidjOAuMWRuCJtlcaFhIjHyvV/JKQCUh+9Mc0qNuzFsc+GqDWJEgg2F8iXXRR35eI9lcmX6b6K9Et/GctUSnT1Djrc8xSmwNKQy4sRaylNJYxDgfhkKwjt/jCjDPQ7QpBKLXJIX6MzC2qZzxHnMt4wdY3v0vV122JSs+MM8MrwIDAQAB";
     public static final String privateKeyApplication = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKuWJ2M4C4xZG4Im" +
             "2VxoWEiMfK9X8kpAJSH70xzSo27MWxz4aoNYkSCDYXyJddFHfl4j2VyZfpvor0S3\n" +
@@ -211,16 +190,6 @@ public final class CommonAttributes {
 //    测试账号密码
 //    public static final String APPID = "wx0d8493d76fa4b58d";
 //    public static final String APPSECRET = "0a638eccdd73d77f317c900afd01ea55";
-
-    public static final String TRADEBASETYPEC[] = {"试用版", "青春版", "朝阳版", "旭日版","水文站","雨量站","水位站","水质站","全景效果图","航测3D建模"};
-    public static final String TRADEBASETYPEE[] = {"TEST", "YOUTH", "SUN", "SUNRISE","HYDROLOGIC_STATION","RAINFALL_STATION","WATER_LEVEL_STATION",
-            "WATER_QUALITY_STATION","PANORAMA","AIRSURVEY"};
-
-    public static final String TRADETYPEC[] = {"套餐服务", "测站服务", "数据服务"};
-    public static final String TRADETYPEE[] = {"PACKAGE", "STATION", "GOODS"};
-
-    public static final String TRADEBUYTYPEC[] = {"购买", "续费", "升级"};
-    public static final String TRADEBUYTYPEE[] = {"BUY", "RENEW", "UPGRADE"};
 
     /**
      * 身份证图片信息转文字信息Code

@@ -190,6 +190,7 @@ public class ProjectServiceTest extends BaseTest {
 		boolean b = projectService.updateProject(project);
 			assertTrue(!b);
 		}catch (Exception e){
+			e.printStackTrace();
 			return;
 		}
 		Project project1 = projectService.find(projects.get(0).getId());

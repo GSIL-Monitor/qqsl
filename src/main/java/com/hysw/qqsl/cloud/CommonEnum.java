@@ -1,5 +1,7 @@
 package com.hysw.qqsl.cloud;
 
+import com.hysw.qqsl.cloud.core.entity.Message;
+
 /**
  * Created by flysic on 17-4-10.
  */
@@ -71,281 +73,305 @@ public class CommonEnum {
         /**
          * 泉室
          */
-        QS,
+        QS("build","泉室","qs"),
         /**
          * 截水廊道
          */
-        JSLD,
+        JSLD("build","截水廊道","jsld"),
         /**
          * 大口井
          */
-        DKJ,
+        DKJ("build","大口井","dkj"),
         /**
          * 土井
          */
-        TJ,
+        TJ("build","土井","tj"),
         /**
          * 机井
          */
-        JJ,
+        JJ("build","机井","jj"),
         /**
          * 涝池
          */
-        LC,
+        LC("build","涝池","lc"),
         /** 渠系建筑物 */
         /**
          * 闸
          */
-        FSZ,
+        FSZ("build","闸","z"),
         /**
          * 倒虹吸
          */
-        DHX,
+        DHX("build","倒虹吸","dhx"),
         /**
          * 跌水
          */
-        DS,
+        DS("build","跌水","ds"),
         /** 消力池 */
-        XIAOLC,
+        XIAOLC("build","消力池","xlc"),
         /** 护坦 */
-        HUT,
+        HUT("build","护坦","ht"),
         /** 海漫 */
-        HAIM,
+        HAIM("build","海漫","hm"),
         /**
          * 渡槽
          */
-        DC,
+        DC("build","渡槽","dc"),
         /**
          * 涵洞
          */
-        HD,
+        HD("build","涵洞","hd"),
         /**
          * 隧洞
          */
-        SD,
+        SD("build","隧洞","sd"),
         /**
          * 农口
          */
-        NK,
+        NK("build","农口","nk"),
         /**
          * 斗门
          */
-        DM,
+        DM("build","斗门","dm"),
         /**
          * 公路桥
          */
-        GLQ,
+        GLQ("build","公路桥","glq"),
         /**
          * 车便桥
          */
-        CBQ,
+        CBQ("build","车便桥","cbq"),
         /**
          * 各级渠道
          */
-        GJQD,
+        GJQD("build","各级渠道","gjqd"),
         /** 管道建筑物 */
         /**
          * 检查井
          */
-        JCJ,
+        JCJ("build","检查井","jcj"),
         /**
          * 分水井
          */
-        FSJ,
+        FSJ("build","分水井","fsj"),
         /**
          * 供水井
          */
-        GSJ,
+        GSJ("build","供水井","gsj"),
         /**
          * 减压井
          */
-        JYJ,
+        JYJ("build","减压井","jyj"),
         /**
          * 减压池
          */
-        JYC,
+        JYC("build","减压池","jyc"),
         /**
          * 排气井
          */
-        PAIQJ,
+        PAIQJ("build","排气井","pqj"),
         /**
          * 放水井
          */
-        FANGSJ,
+        FANGSJ("build","放水井","fsj"),
         /**
          * 蓄水池
          */
-        XSC,
+        XSC("build","蓄水池","xsc"),
         /**
          * 各级管道
          */
-        GJGD,
+        GJGD("build","各级管道","gjgd"),
         /** 挡水建筑物 */
         /**
          * 防洪堤
          */
-        FHD,
+        FHD("line","防洪堤","fhd"),
         /**
          * 排洪渠
          */
-        PHQ,
+        PHQ("line","排洪渠","phq"),
         /**
          * 挡墙
          */
-        DANGQ,
+        DANGQ("build","挡墙","dq"),
         /**
          * 淤地坝
          */
-        YDB,
+        YDB("build","淤地坝","ydb"),
         /**
          * 谷坊
          */
-        GF,
+        GF("build","谷坊","gf"),
         /**
          * 溢洪道
          */
-        YHD,
+        @Deprecated
+        YHD("build","溢洪道","yhd"),
         /** 节水建筑物 */
         /**
          * 滴灌
          */
-        DG,
+        DG("build","滴灌","dg"),
         /**
          * 喷头
          */
-        PT,
+        PT("build","喷头","pt"),
         /**
          * 给水栓
          */
-        JSS,
+        JSS("build","给水栓","gss"),
         /**
          * 施肥设施
          */
-        SFSS,
+        SFSS("build","施肥设施","sfss"),
         /**
          * 过滤系统
          */
-        GLXT,
+        GLXT("build","过滤系统","glxt"),
         /** 地籍 */
         /** 林地 */
-        LD,
+        LD("build","林地","ld"),
         /** 耕地 */
-        GD,
+        GD("build","耕地","gd"),
         /** 草地 */
-        CD,
+        CD("build","草地","cd"),
         /** 居民区 */
-        JMQ,
+        JMQ("build","居民区","jmq"),
         /** 工矿区 */
-        GKQ,
+        GKQ("build","工矿区","gkq"),
         /** 电力 */
-        DL,
+        DL("build","电力","dl"),
         /** 次级交通 */
-        CJJT,
+        CJJT("build","次级交通","cjjt"),
         /** 河床 */
-        HEC,
+        HEC("build","河床","hc"),
         /** 水面 */
-        SHUIM,
+        SHUIM("build","水面","sm"),
         /** 水文测点 */
         /** 水位 */
-        SHUIW,
+        SHUIW("build","水位","sw"),
         /** 水文 */
-        SHUIWEN,
+        SHUIWEN("build","水文","sw"),
         /** 雨量 */
-        YUL,
+        YUL("build","雨量","yl"),
         /** 水质 */
-        SHUIZ,
+        SHUIZ("build","水质","sz"),
         /** 其他 */
         /**
          * 泵站
          */
-        BZ,
+        BZ("build","泵站","bz"),
         /**
          * 电站厂房
          */
-        DZCF,
+        DZCF("build","电站厂房","dzcf"),
         /**
          * 地质点
          */
-        DIZD,
+        DIZD("build","地质点","dzd"),
         /** 其他 */
-        TSD,
+        TSD("build","其他","qt"),
         /** 线面 */
         /**
          * 普通点
          */
-        POINT,
+        POINT("line","普通点","ptd"),
         /**
          * 供水干管
          */
-        GSGG,
+        GSGG("line","供水干管","gsgg"),
         /**
          * 供水支管
          */
-        GSZG,
+        GSZG("line","供水支管","gszg"),
         /**
          * 供水斗管
          */
-        GSDG,
+        GSDG("line","供水斗管","gsdg"),
         /**
          * 供水干渠
          */
-        GSGQ,
+        GSGQ("line","供水干渠","gsgq"),
         /**
          * 供水支渠
          */
-        GSZQ,
+        GSZQ("line","供水支渠","gszq"),
         /**
          * 供水斗渠
          */
-        GSDQ,
+        GSDQ("line","供水斗渠","ggdq"),
         /**
          * 排水干管
          */
-        PSGG,
+        PSGG("line","排水干管","psgg"),
         /**
          * 排水支管
          */
-        PSZG,
+        PSZG("line","排水支管","pszg"),
         /**
          * 排水斗管
          */
-        PSDG,
+        PSDG("line","排水斗管","psdg"),
         /**
          * 排水干渠
          */
-        PSGQ,
+        PSGQ("line","排水干渠","psgq"),
         /**
          * 排水支渠
          */
-        PSZQ,
+        PSZQ("line","排水支渠","pszq"),
         /**
          * 排水斗渠
          */
-        PSDQ,
+        PSDQ("line","排水斗渠","psdq"),
         /**
          * 灌溉范围
          */
-        GGFW,
+        GGFW("area","灌溉范围","ggfw"),
         /**
          * 保护范围
          */
-        BHFW,
+        BHFW("area","保护范围","bhfw"),
         /**
          * 供水区域
          */
-        GSQY,
+        GSQY("area","供水区域","gsqy"),
         /**
          * 治理范围
          */
-        ZLFW,
+        ZLFW("area","治理范围","zlfw"),
         /**
          * 库区淹没范围
          */
-        KQYMFW,
+        KQYMFW("area","库区淹没范围","kqymfw"),
         /** 水域 */
-        SHUIY,
+        SHUIY("area","水域","sy"),
         /** 公共线面 */
-        GONGGXM;
+        GONGGXM("line","公共线面","ggxm");
+        //必须增加一个构造函数,变量,得到该变量的值
+        private String  type="";
+        private String typeC = "";
+        private String abbreviate = "";
+
+
+        CommonType(String type, String typeC,String abbreviate) {
+            this.type = type;
+            this.typeC = typeC;
+            this.abbreviate = abbreviate;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getTypeC() {
+            return typeC;
+        }
+
+        public String getAbbreviate() {
+            return abbreviate;
+        }
 
         public static CommonType valueOf(int ordinal) {
             if (ordinal < 0 || ordinal >= values().length) {

@@ -37,24 +37,6 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     }
 
     /**
-     * 记录企业解绑子账号的消息
-     * @param user
-     */
-    public void bindMsessage(User user, Account account,boolean isBind) {
-        AccountMessage accountMessage = new AccountMessage();
-        accountMessage.setAccount(account);
-        JSONObject contentJson = new JSONObject();
-        contentJson.put("nickName",userService.nickName(user.getId()));
-        String bindCode = isBind?"0":"1";
-        contentJson.put("bindCode",bindCode);
-        accountMessage.setContent(contentJson.toString());
-        accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
-        accountMessage.setType(AccountMessage.Type.INVITE_ACCOUNT);
-        accountMessageDao.save(accountMessage);
-        pollingService.changeMessageStatus(account,true);
-    }
-
-    /**
      * 子账号登录查询账号消息
      * @param account
      * @return
@@ -84,7 +66,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
      */
     public void viewMessage(Project project, Account account,boolean isView) {
         AccountMessage accountMessage = new AccountMessage();
-        String cooperateCode = isView?"0":"1";
+        String cooperateCode = isView?"0":"1"; //0分享 1取消分享
         JSONObject contentJson = new JSONObject();
         contentJson.put("cooperateCode",cooperateCode);
         contentJson.put("nickName",userService.nickName(project.getUser().getId()));
@@ -96,7 +78,7 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
-        pollingService.changeMessageStatus(account,true);
+//        pollingService.changeMessageStatus(account,true);
         pollingService.changeShareStatus(account,true);
     }
 
@@ -118,10 +100,9 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
         accountMessage.setAccount(account);
         accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
         accountMessage.setContent(contentJson.toString());
-        accountMessage.setAccount(account);
         accountMessage.setType(AccountMessage.Type.COOPERATE_PROJECT);
         accountMessageDao.save(accountMessage);
-        pollingService.changeMessageStatus(account,true);
+//        pollingService.changeMessageStatus(account,true);
         pollingService.changeCooperateStatus(account,true);
     }
 
@@ -131,9 +112,9 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
      * @return
      */
     private String covert(CooperateVisit.Type type) {
-        for (int i = 0; i < CommonAttributes.STAGEE.length; i++) {
-            if(CommonAttributes.STAGEE[i].equals(type.toString())){
-                return CommonAttributes.STAGEC[i];
+        for (CooperateVisit.Type type1 : CooperateVisit.Type.values()) {
+            if(type1.name().equals(type.toString())){
+                return type1.getTypeC();
             }
         }
         return null;
@@ -149,11 +130,36 @@ public class AccountMessageService extends BaseService<AccountMessage,Long> {
     public void feedbackMessage(Feedback feedback) {
         AccountMessage accountMessage = new AccountMessage();
         Account account = accountService.find(feedback.getAccountId());
+        if (account == null) {
+            return;
+        }
         accountMessage.setAccount(account);
         accountMessage.setContent("尊敬的水利云用户您好，关于您反馈的消息，管理员已经对您提出的问题进行了回复。");
         accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
         accountMessage.setType(AccountMessage.Type.FEEDBACK);
         accountMessageDao.save(accountMessage);
         pollingService.changeMessageStatus(account,true);
+    }
+
+    /**
+     * 测站分享
+     * @param station
+     * @param account
+     * @param isView
+     */
+    public void cooperateStationMessage(Station station, Account account,boolean isView) {
+        AccountMessage accountMessage = new AccountMessage();
+        String cooperateCode = isView?"0":"1";//0分享 1取消分享
+        JSONObject contentJson = new JSONObject();
+        contentJson.put("cooperateCode",cooperateCode);
+        contentJson.put("nickName",userService.nickName(station.getUser().getId()));
+        contentJson.put("stationName",station.getName());
+        contentJson.put("stationId",station.getId());
+        accountMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
+        accountMessage.setContent(contentJson.toString());
+        accountMessage.setAccount(account);
+        accountMessage.setType(AccountMessage.Type.COOPERATE_STATION);
+        accountMessageDao.save(accountMessage);
+        pollingService.changeStationStatus(account,true);
     }
 }

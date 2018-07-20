@@ -1,15 +1,9 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.data.Admin;
-import com.hysw.qqsl.cloud.core.entity.data.Certify;
-import com.hysw.qqsl.cloud.core.entity.data.Project;
-import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.listener.TestExecutionListener;
-import com.hysw.qqsl.cloud.pay.entity.data.Package;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,9 +24,9 @@ import java.util.List;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners(value = {TestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ContextConfiguration(locations = {"classpath*:/applicationContext-test.xml", "classpath*:/applicationContext-cache-test.xml"})
+@ContextConfiguration(locations = {"classpath*:/applicationContext-test.xml", "classpath*:/applicationContext-cache-test.xml","classpath*:/applicationContext-shiro-test.xml"})
 @Transactional(transactionManager = "transactionManager")
-@Rollback(value = true)
+@Rollback(value = false)
 public class UpdateTest {
 
     @Autowired
@@ -60,66 +54,16 @@ public class UpdateTest {
     @Autowired
     private AdminService adminService;
 
-    /**
-     * 添加管理员账号
-     */
+    /** 删除全部account  accountMessage user_account表 删除build表中的cut属性   project表中的cooperate属性全部改为null
+     * 修改mylistener 中的短信上行接口为run启动*/
     @Test
-    public void addAdmin(){
-        Admin admin1 = adminService.findByUserName("zhugy");
-        if (admin1 == null) {
-            admin1 = new Admin();
-            admin1.setDepartment("朱广云");
-            admin1.setEmail("123456@qq.com");
-            admin1.setEnabled(true);
-            admin1.setLocked(false);
-            admin1.setName("朱广云");
-            admin1.setPhone("15009719246");
-            admin1.setUserName("zhugy");
-            admin1.setRoles("admin:simple");
-            admin1.setPassword(DigestUtils.md5Hex("qqsl"));
-            adminService.save(admin1);
-        }
-        admin1 = adminService.findByUserName("zhaod");
-        if (admin1 == null) {
-            admin1 = new Admin();
-            admin1.setDepartment("赵东");
-            admin1.setEmail("123456@qq.com");
-            admin1.setEnabled(true);
-            admin1.setLocked(false);
-            admin1.setName("赵东");
-            admin1.setPhone("15111718639");
-            admin1.setUserName("zhaod");
-            admin1.setRoles("admin:simple");
-            admin1.setPassword(DigestUtils.md5Hex("qqsl"));
-            adminService.save(admin1);
-        }
-        admin1 = adminService.findByUserName("wensq");
-        if (admin1 == null) {
-            admin1 = new Admin();
-            admin1.setDepartment("温生麒");
-            admin1.setEmail("123456@qq.com");
-            admin1.setEnabled(true);
-            admin1.setLocked(false);
-            admin1.setName("温生麒");
-            admin1.setPhone("13519710141");
-            admin1.setUserName("wensq");
-            admin1.setRoles("admin:simple");
-            admin1.setPassword(DigestUtils.md5Hex("qqsl"));
-            adminService.save(admin1);
-        }
-        admin1 = adminService.findByUserName("songfs");
-        if (admin1 == null) {
-            admin1 = new Admin();
-            admin1.setDepartment("宋生发");
-            admin1.setEmail("123456@qq.com");
-            admin1.setEnabled(true);
-            admin1.setLocked(false);
-            admin1.setName("宋生发");
-            admin1.setPhone("13639750192");
-            admin1.setUserName("songsf");
-            admin1.setRoles("admin:simple");
-            admin1.setPassword(DigestUtils.md5Hex("qqsl"));
-            adminService.save(admin1);
+    public void projectCooperateIsNULL() {
+        List<Project> projects = (List<Project>) SettingUtils.objectCopy(projectService.findAll());
+        for (int i = 0; i < projects.size(); i++) {
+            projects.get(i).setCooperate(null);
+            projects.get(i).setViews(null);
+            projectService.save(projects.get(i));
+            projectService.flush();
         }
     }
 }

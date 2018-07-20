@@ -43,6 +43,7 @@ public class TurnoverController {
             Date endDate = new Date(end);
             return MessageService.message(Message.Type.OK, turnoverService.getTurnoverListBetweenDate(beginDate, endDate));
         } catch (Exception e) {
+            e.printStackTrace();
             return MessageService.message(Message.Type.FAIL);
         }
     }

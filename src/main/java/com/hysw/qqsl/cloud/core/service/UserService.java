@@ -33,11 +33,7 @@ public class UserService extends BaseService<User, Long> {
 	@Autowired
 	private AccountService accountService;
 	@Autowired
-	private AccountMessageService accountMessageService;
-	@Autowired
 	private UserMessageService userMessageService;
-	@Autowired
-	private CooperateService cooperateService;
 	@Autowired
 	private PackageService packageService;
 	@Autowired
@@ -50,6 +46,10 @@ public class UserService extends BaseService<User, Long> {
 	private UserService userService;
 	@Autowired
 	private PollingService pollingService;
+	@Autowired
+	private NoteCache noteCache;
+	@Autowired
+	private AccountManager accountManager;
 	@Autowired
 	public void setBaseDao(UserDao userDao) {
 		super.setBaseDao(userDao);
@@ -68,7 +68,17 @@ public class UserService extends BaseService<User, Long> {
 
 	public User findByDao(Long id){
 		User user = userDao.find(id);
-		user.getAccounts();
+		user.getAccounts().size();
+		Certify certify = certifyService.findByUser(user);
+		user.setPersonalStatus(certify.getPersonalStatus());
+		user.setCompanyStatus(certify.getCompanyStatus());
+		if (certify.getPersonalStatus() == CommonEnum.CertifyStatus.PASS || certify.getPersonalStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+			user.setName(certify.getName());
+		}
+		if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS || certify.getCompanyStatus() == CommonEnum.CertifyStatus.EXPIRING) {
+			user.setCompanyName(certify.getCompanyName());
+		}
+		buildPackage(user);
 		return user;
 	}
 
@@ -511,33 +521,27 @@ public class UserService extends BaseService<User, Long> {
 	 * @param account
 	 * @return
 	 */
-	public boolean unbindAccount(Account account,User user) {
-		//收回权限
-		cooperateService.cooperateRevoke(user,account);
-		List<Account> accounts = getAccountsByUserId(user.getId());
-		List<User> users;
-		boolean flag = false;
-		for(int i=0;i<accounts.size();i++){
-			if(accounts.get(i).getId().equals(account.getId())){
-				users = accounts.get(i).getUsers();
-				for(int k=0;k<users.size();k++){
-					if(users.get(k).getId().equals(user.getId())){
-						users.remove(k);
-						flag = true;
-						break;
-					}
+	public boolean deleteAccount(Account account,User user) {
+        user = userService.find(user.getId());
+		List<Account> accounts = user.getAccounts();
+		for (Account account1 : accounts) {
+			if (account.getId().equals(account1.getId())) {
+				accounts.remove(account1);
+				if (account.getStatus() == Account.Status.CONFIRMED) {
+					String msg = "[" + userService.nickName(account.getUser().getId()) + "]企业已解除与您的子账号关系，相关权限已被收回，您的子账户已被移除。";
+					Note note = new Note(account.getPhone(), msg);
+					noteCache.add(account.getPhone(),note);
 				}
-				accounts.remove(i);
+				pollingService.changeAccountStatus(account.getUser(),true);
+				accountManager.delete(account);
+				accountService.remove(account);
 				break;
 			}
 		}
-		if(!flag){
-			return false;
-		}
-		user.setAccounts(accounts);
+		List<Account> accounts1 = new ArrayList<>();
+		accounts1.addAll(accounts);
+		user.setAccounts(accounts1);
 		save(user);
-		//记录企业解绑子账号的消息
-		accountMessageService.bindMsessage(user,account,false);
 		return true;
 	}
 
@@ -589,11 +593,10 @@ public class UserService extends BaseService<User, Long> {
 
 	/**
 	 * 是否允许创建子账号
-	 * @param user1
+	 * @param user
 	 * @return  false  允许创建 true  不允许创建
 	 */
-	public boolean isAllowCreateAccount(User user1) {
-		User user = find(user1.getId());
+	public boolean isAllowCreateAccount(User user) {
 		Package aPackage = packageService.findByUser(user);
 		if (aPackage == null) {
 			return true;

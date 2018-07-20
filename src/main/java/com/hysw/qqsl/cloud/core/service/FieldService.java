@@ -4,6 +4,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.build.AttribeGroup;
 import com.hysw.qqsl.cloud.core.entity.build.CoordinateBase;
+import com.hysw.qqsl.cloud.core.entity.build.GeoCoordinate;
 import com.hysw.qqsl.cloud.core.entity.build.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -19,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -40,14 +43,16 @@ public class FieldService implements Serializable {
     private CoordinateService coordinateService;
     @Autowired
     private TransFromService transFromService;
-    private Workbook workbook;
-
+    @Autowired
+    private ElementDBService elementDBService;
 
     public boolean saveField(Map<String, Object> objectMap) {
         Build build;
         Attribe attribe;
         CoordinateBase coordinateBase;
         List<CoordinateBase> coordinateBases;
+        GeoCoordinate geoCoordinate;
+        List<GeoCoordinate> geoCoordinates = new LinkedList<>() ;
         JSONObject jsonObject;
         Graph graph;
         Object code;
@@ -90,13 +95,14 @@ public class FieldService implements Serializable {
                 return false;
             }
             if (!SettingUtils.coordinateParameterCheck(longitude, latitude, elevation)) {
-                return false;
+                continue;
             }
             coordinateBase = new CoordinateBase();
             coordinateBases = new ArrayList<>();
             coordinateBase.setLongitude(longitude.toString());
             coordinateBase.setLatitude(latitude.toString());
             coordinateBase.setElevation(elevation.toString());
+            geoCoordinate = new GeoCoordinate(Double.valueOf(latitude.toString()), Double.valueOf(longitude.toString()));
             coordinateBases.add(coordinateBase);
             graph = new Graph();
             graph.setCoordinates(coordinateBases);
@@ -104,6 +110,7 @@ public class FieldService implements Serializable {
             graph.setDescription(description.toString());
             graph.setAlias(alias.toString());
             graphs.add(graph);
+            geoCoordinates.add(geoCoordinate);
             if (attribes != null) {
                 build = isSameBuild(builds1, longitude.toString(), latitude.toString());
                 if (delete != null && Boolean.valueOf(delete.toString())) {
@@ -171,6 +178,15 @@ public class FieldService implements Serializable {
         }
         JSONArray jsonArray = new JSONArray();
         listToString(graphs, jsonArray);
+        geoCoordinate = SettingUtils.getCenterPointFromListOfCoordinates(geoCoordinates);
+        List<ElementDB> elementDBs = elementDBService.findByProjectAndAlias(project);
+        if (elementDBs.size() == 0) {
+            ElementDB elementDB = new ElementDB();
+            elementDB.setAlias("21A1");
+            elementDB.setProject(project);
+            elementDB.setValue(""+geoCoordinate.getLongitude()+","+geoCoordinate.getLatitude()+",0");
+            elementDBService.save(elementDB);
+        }
         for (Coordinate coordinate1 : coordinates1) {
             if (coordinate1.getDeviceMac().equals(deviceMac.toString().trim())) {
                 coordinate2 = coordinate1;
@@ -496,9 +512,12 @@ public class FieldService implements Serializable {
         for (Object o : jsonArray2) {
             JSONObject jsonObject = JSONObject.fromObject(o);
             if (jsonObject.get("baseType") != null) {
-                for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                    if (CommonAttributes.BASETYPEE[i].equals(jsonObject.get("baseType").toString().trim())) {
-                        baseType = CommonAttributes.BASETYPEC[i];
+                for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                    if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                        continue;
+                    }
+                    if (commonType.name().equals(jsonObject.get("baseType").toString().trim())) {
+                        baseType = commonType.getTypeC();
                     }
                 }
             }
@@ -553,9 +572,12 @@ public class FieldService implements Serializable {
             JSONObject jsonObject1;
             Object longitude,latitude,elevation,baseType,description;
             WriteExecl we = new WriteExecl();
-            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                if (CommonAttributes.BASETYPEE[i].equals(entry.getKey().toString())) {
-                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
+                if (commonType.name().equals(entry.getKey().toString())) {
+                    sheet = wb.createSheet(commonType.getTypeC());
                     break;
                 }
             }
@@ -584,9 +606,12 @@ public class FieldService implements Serializable {
                         description1 = description.toString();
                     }
                     if (baseType != null) {
-                        for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                            if (baseType.toString().equals(CommonAttributes.BASETYPEE[i])) {
-                                baseType1=CommonAttributes.BASETYPEC[i];
+                        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                            if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                                continue;
+                            }
+                            if (baseType.toString().equals(commonType.name())) {
+                                baseType1=commonType.getTypeC();
                             }
                         }
                     }
@@ -742,17 +767,11 @@ public class FieldService implements Serializable {
 
     public JSONArray getModelType() {
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < CommonAttributes.TYPELINEC.length; i++) {
-            jsonArray.add("{\"baseType\":\"" + "line" + "\",\"type\":\"" + CommonAttributes.TYPELINEE[i] + "\",\"name\":\"" + CommonAttributes.TYPELINEC[i] + "\"}");
-        }
-        for (int i = 0; i < CommonAttributes.TYPEAREAC.length; i++) {
-            jsonArray.add("{\"baseType\":\"" + "area" + "\",\"type\":\"" + CommonAttributes.TYPEAREAE[i] + "\",\"name\":\"" + CommonAttributes.TYPEAREAC[i] + "\"}");
-        }
-        for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-            if (SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPELINEC))||SettingUtils.stringMatcher(CommonAttributes.BASETYPEC[i], Arrays.toString(CommonAttributes.TYPEAREAC))) {
+        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
                 continue;
             }
-            jsonArray.add("{\"baseType\":\"" + "builds" + "\",\"type\":\"" + CommonAttributes.BASETYPEE[i] + "\",\"name\":\"" + CommonAttributes.BASETYPEC[i] + "\"}");
+            jsonArray.add("{\"baseType\":\"" + commonType.getType() + "\",\"type\":\"" + commonType.name() + "\",\"name\":\"" + commonType.getTypeC() + "\",\"abbreviate\":\"" + commonType.getAbbreviate() + "\"}");
         }
         return jsonArray;
     }
@@ -768,12 +787,19 @@ public class FieldService implements Serializable {
         List<Build> builds1 = new LinkedList<>();
         List<String> lineAera = new LinkedList<>();
         for (String s : list) {
-            if (SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPELINEE)) || SettingUtils.stringMatcher(s, Arrays.toString(CommonAttributes.TYPEAREAE))) {
-                lineAera.add(s);
-            } else {
-                for (Build build : builds) {
-                    if (build.getType().toString().equals(s)) {
-                        builds1.add((Build) SettingUtils.objectCopy(build));
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
+                if (commonType.name().equals(s)) {
+                    if (commonType.getType().equals("line")||commonType.getType().equals("area")) {
+                        lineAera.add(s);
+                    } else {
+                        for (Build build : builds) {
+                            if (build.getType().toString().equals(s)) {
+                                builds1.add((Build) SettingUtils.objectCopy(build));
+                            }
+                        }
                     }
                 }
             }
@@ -795,9 +821,12 @@ public class FieldService implements Serializable {
             Row row = null;
             Cell cell = null;
             WriteExecl we = new WriteExecl();
-            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                if (CommonAttributes.BASETYPEE[i].equals(s)) {
-                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
+                if (commonType.name().equals(s)) {
+                    sheet = wb.createSheet(commonType.getTypeC());
                     break;
                 }
             }
@@ -821,9 +850,12 @@ public class FieldService implements Serializable {
         for (Map.Entry<CommonEnum.CommonType, List<Build>> entry : map.entrySet()) {
             Sheet sheet = null;
             WriteExecl we = new WriteExecl();
-            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                if (CommonAttributes.BASETYPEE[i].equals(entry.getKey().toString())) {
-                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
+                if (commonType.name().equals(entry.getKey().toString())) {
+                    sheet = wb.createSheet(commonType.getTypeC());
                     break;
                 }
             }
@@ -937,9 +969,12 @@ public class FieldService implements Serializable {
         for (Map.Entry<CommonEnum.CommonType, List<Build>> entry : map.entrySet()) {
             Sheet sheet = null;
             WriteExecl we = new WriteExecl();
-            for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-                if (CommonAttributes.BASETYPEE[i].equals(entry.getKey().toString())) {
-                    sheet = wb.createSheet(CommonAttributes.BASETYPEC[i]);
+            for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+                if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                    continue;
+                }
+                if (commonType.name().equals(entry.getKey().toString())) {
+                    sheet = wb.createSheet(commonType.getTypeC());
                     break;
                 }
             }
@@ -1326,7 +1361,7 @@ public class FieldService implements Serializable {
                 jsonObject.put("simpleFlag",true);
             }
             jsonObject.put("type", build.getType());
-            jsonObject.put("remark", build.getRemark());
+            jsonObject.put("remark", build.getRemark()==null?"":build.getRemark());
             jsonArray1.add(jsonObject);
         }
         return jsonArray1;

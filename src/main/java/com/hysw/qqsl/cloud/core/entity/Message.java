@@ -116,20 +116,20 @@ public class Message implements Serializable{
 		TRADE_HAS_NOPAY(4082),
 		/** 订单未支付，比如删除一个未支付的订单，返回这个错误。*/
 		TRADE_NOPAY(4083),
-		/** 子账号信息不全，比如子账号刚注册，没有完善昵称、真实姓名等信息，这时候对子账号在协同工作分配项目，返回这个错误。*/
-		ACCOUNT_NOINFO(4090);
+		/** 子账号未确认 */
+		ACCOUNT_NO_CONFIRMED(4090),
+		/** 子账号已被邀请 */
+		ACCOUNT_INVITED(4091),
+		/** 全景下没有场景，无法显示或编辑 */
+		PANORAMA_NO_SCENE(4101),
+		/** 新建全景时，图片下载失败 */
+		PANORAMA_IMAGE_NOT_EXIST(4102),
+		/** 切图失败 */
+		PANORAMA_SLICE_ERROE(4103);
 		//必须增加一个构造函数,变量,得到该变量的值
 		private int  status=0;
-		private Type(int status) {
+		Type(int status) {
 			this.status=status;
-		}
-		public static int getStatus(int index) {
-			for (Type c : Type.values()) {
-				if (c.ordinal() == index) {
-					return c.status;
-				}
-			}
-			return 0;
 		}
 
 		public int getStatus() {

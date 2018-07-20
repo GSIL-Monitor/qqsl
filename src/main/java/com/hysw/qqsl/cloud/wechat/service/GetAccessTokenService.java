@@ -23,6 +23,8 @@ public class GetAccessTokenService {
     private final String getUserMessage = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
     //    网页授权有效性检验
     private final String checkUrl = "https://api.weixin.qq.com/sns/auth?access_token=ACCESS_TOKEN&openid=OPENID";
+    //公众号用于调用微信JS接口的临时票据
+    private final String jsapiTicketUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi";
 
     /**
      * 获取token
@@ -35,7 +37,7 @@ public class GetAccessTokenService {
             accessToken = jsonObject.get("access_token");
         } while (accessToken==null);
         token = accessToken.toString();
-        System.out.println(token);
+//        System.out.println(token);
     }
 
     public String getToken(){
@@ -108,4 +110,22 @@ public class GetAccessTokenService {
         }
         return false;
     }
+
+    /**
+     * 获取ticket
+     * @return
+     */
+    public String getJsapiTicket() {
+        String chekUrl1 = jsapiTicketUrl.replace("ACCESS_TOKEN", getToken());
+        JSONObject jsonObject = WeChatHttpRequest.jsonObjectHttpRequest(chekUrl1, "GET", null);
+        return jsonObject.get("ticket").toString();
+    }
+
+    /**
+     * 加密ticket
+     */
+    public void getShi1JsapiTicket() {
+
+    }
+
 }

@@ -3,10 +3,12 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.StationDao;
 import com.hysw.qqsl.cloud.core.entity.*;
+import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.core.entity.station.Camera;
+import com.hysw.qqsl.cloud.core.entity.station.Cooperate;
 import com.hysw.qqsl.cloud.core.entity.station.Share;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
@@ -29,10 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 测站服务类
@@ -53,6 +52,8 @@ public class StationService extends BaseService<Station, Long> {
     private MonitorService monitorService;
     @Autowired
     private UserMessageService userMessageService;
+    @Autowired
+    private AccountMessageService accountMessageService;
 
     @Autowired
     public void setBaseDao(StationDao stationDao) {
@@ -138,10 +139,45 @@ public class StationService extends BaseService<Station, Long> {
     /**
      * 获取对于用户的水文测站
      *
+     * @param object
+     * @return
+     */
+    public List<JSONObject> getStations(Object object) {
+        if(object instanceof User)
+            return getStationsFromUser((User) object);
+        if(object instanceof Account)
+            return getStationsFromAccount((Account) object);
+        return new ArrayList<>();
+    }
+
+    /**
+     * 获取子账户可查看的测站
+     * @param account
+     * @return
+     */
+    private List<JSONObject> getStationsFromAccount(Account  account) {
+        List<Station> stations = findAll();
+        Cooperate cooperate;
+        List<JSONObject> jsonObjects = new ArrayList<>();
+        for (Station station : stations) {
+            cooperate = new Cooperate(station);
+            makeCooperateVisits(station, cooperate);
+            for (Account account1 : cooperate.getVisits()) {
+                if (account1.getId().toString().equals(account.getId().toString())) {
+                    jsonObjects.add(makeStationJson(station));
+                }
+            }
+        }
+        return jsonObjects;
+    }
+
+    /**
+     * 获取用户的水文测站
+     *
      * @param user
      * @return
      */
-    public List<JSONObject> getStations(User user) {
+    private List<JSONObject> getStationsFromUser(User user) {
         List<Station> stations = findAll();
         List<JSONObject> jsonObjects = new ArrayList<>();
         Station station;
@@ -179,6 +215,7 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("name", station.getName());
         jsonObject.put("type", station.getType());
         jsonObject.put("shares", station.getShares());
+        jsonObject.put("cooperate", station.getCooperate());
         Camera camera = getCameraFromStation(station);
         Sensor sensor = getSensorFromStation(station);
         JSONObject cameraJson = makeCameraJson(camera);
@@ -719,4 +756,113 @@ public class StationService extends BaseService<Station, Long> {
     }
 
 
+    /**
+     * 根据ids字符串获取station列表
+     * @param stationIds
+     * @return
+     */
+    public List<Station> findByIdList(Object stationIds) {
+        String[] split = stationIds.toString().split(",");
+        Station station;
+        List<Station> stations = new ArrayList<>();
+        for (String s : split) {
+            station = find(Long.valueOf(s));
+            stations.add(station);
+        }
+        return stations;
+    }
+
+    /**
+     * 测站用有不属于当前用户的测站，返回true
+     * @param stations
+     * @param user
+     * @return
+     */
+    public boolean stationIsBelongtoCurrentUser(List<Station> stations, User user) {
+        for (Station station : stations) {
+            if (!station.getUser().getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 注册访问权限
+     * @param stations
+     * @param accounts
+     */
+    public void cooperateMul(List<Station> stations, List<Account> accounts) {
+        Cooperate cooperate;
+        for (Station station : stations) {
+            cooperate = new Cooperate(station);
+            makeCooperateVisits(station,cooperate);
+            for (Account account : accounts) {
+                cooperate.register(account);
+                accountMessageService.cooperateStationMessage(station,account,true);
+            }
+            cooperate.addToStation();
+            save(station);
+        }
+    }
+
+    /**
+     * 注销测站查看权限
+     * @param station
+     * @param accounts
+     */
+    public void unCooperate(Station station, List<Account> accounts) {
+        Cooperate cooperate = new Cooperate(station);
+        makeCooperateVisits(station,cooperate);
+        for (Account account : accounts) {
+            Iterator<Account> iterator = cooperate.getVisits().iterator();
+            while (iterator.hasNext()) {
+                Account account1 = iterator.next();
+                if (account.getId().equals(account1.getId())) {
+                    cooperate.unRegister(account);
+                    accountMessageService.cooperateStationMessage(station, account, false);
+                    iterator = cooperate.getVisits().iterator();
+                }
+            }
+        }
+        cooperate.addToStation();
+        save(station);
+        flush();
+    }
+
+    /**
+     * 构建visits
+     * @param station
+     * @param cooperate
+     */
+    private void makeCooperateVisits(Station station, Cooperate cooperate) {
+        Account account1;
+        if (station.getCooperate() != null) {
+            JSONArray jsonArray = JSONArray.fromObject(station.getCooperate());
+            List<Account> visits = new ArrayList<>();
+            for (Object o : jsonArray) {
+                JSONObject jsonObject = JSONObject.fromObject(o);
+                account1 = new Account();
+                account1.setId(Long.valueOf(jsonObject.get("id").toString()));
+                account1.setName(jsonObject.get("name").toString());
+                account1.setPhone(jsonObject.get("phone").toString());
+                visits.add(account1);
+            }
+            cooperate.setVisits(visits);
+        }
+    }
+
+    /**
+     * 解绑子账号
+     * @param user
+     * @param account
+     */
+    public void unCooperate(User user, Account account) {
+        List<Station> stations = findByUser(user);
+        for (int i = 0; i < stations.size(); i++) {
+            List<Account> accounts = new ArrayList<>();
+            accounts.add(account);
+            unCooperate(stations.get(i),accounts);
+        }
+    }
 }

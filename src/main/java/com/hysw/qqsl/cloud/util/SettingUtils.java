@@ -2,9 +2,9 @@ package com.hysw.qqsl.cloud.util;
 
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
-import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Setting;
-import com.hysw.qqsl.cloud.core.service.MessageService;
+import com.hysw.qqsl.cloud.core.entity.build.GeoCoordinate;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
@@ -207,7 +208,7 @@ public class SettingUtils {
 		if(!StringUtils.hasText(phone)){
 			return false;
 		}
-		String regex = "^(13[0-9]|17[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}$";
+		String regex = "^(166|13[0-9]|17[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}$";
 		return regexResult(phone,regex);
 	}
 
@@ -417,11 +418,52 @@ public class SettingUtils {
 		return vcode;
 	}
 
-	public static void main(String[] args) {
-		String url = "rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd";
-		System.out.print(rtmpRegex(url));
-		Pattern pattern = Pattern.compile("[A-z0-9]+\\.(?!\\.)");
-		System.out.println(pattern.matcher("ba4b2fde89ab43739e3d3e74d8b08f4a.hd").find());
+	/**
+	 * 过滤枚举被废弃的值
+	 * @param enumm
+	 * @param name
+	 * @return
+	 */
+	public static boolean changeDeprecatedEnum(Object enumm,String name){
+		Field field = null;
+		try {
+			field = enumm.getClass().getField(name);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+		Deprecated support = field.getAnnotation(Deprecated.class);
+		if (support != null&&support.annotationType().getName().equalsIgnoreCase("java.lang.Deprecated")) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 根据输入的地点坐标计算中心点
+	 * @param geoCoordinateList
+	 * @return
+	 */
+	public static GeoCoordinate getCenterPointFromListOfCoordinates(List<GeoCoordinate> geoCoordinateList) {
+		int total = geoCoordinateList.size();
+		double X = 0, Y = 0, Z = 0;
+		for (GeoCoordinate g : geoCoordinateList) {
+			double lat, lon, x, y, z;
+			lat = g.getLatitude() * Math.PI / 180;
+			lon = g.getLongitude() * Math.PI / 180;
+			x = Math.cos(lat) * Math.cos(lon);
+			y = Math.cos(lat) * Math.sin(lon);
+			z = Math.sin(lat);
+			X += x;
+			Y += y;
+			Z += z;
+		}
+		X = X / total;
+		Y = Y / total;
+		Z = Z / total;
+		double Lon = Math.atan2(Y, X);
+		double Hyp = Math.sqrt(X * X + Y * Y);
+		double Lat = Math.atan2(Z, Hyp);
+		return new GeoCoordinate(Lat * 180 / Math.PI, Lon * 180 / Math.PI);
 	}
 
 }

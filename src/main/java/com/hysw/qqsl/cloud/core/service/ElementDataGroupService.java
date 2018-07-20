@@ -79,6 +79,7 @@ public class ElementDataGroupService extends BaseService<ElementDataGroup, Long>
             root = SettingUtils.getInstance().getRootElement(
                     elementData1XMLName);
         } catch (DocumentException e) {
+            e.printStackTrace();
             return elementDataGroups;
         }
         List<Element> xmlElementData1s = root.elements();

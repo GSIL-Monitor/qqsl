@@ -7,6 +7,7 @@ import com.hysw.qqsl.cloud.core.shiro.ShiroToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
  */
 @Service("authentService")
 public class AuthentService {
+    @Autowired
+    private UserService userService;
 
     /**
      * 从访问主体获取user
@@ -30,7 +33,7 @@ public class AuthentService {
             return null;
         }
         if (token.getType().equals(User.class.getName())) {
-            return  (User)token.getObj();
+            return  userService.find(((User)token.getObj()).getId());
         }
         return null;
     }

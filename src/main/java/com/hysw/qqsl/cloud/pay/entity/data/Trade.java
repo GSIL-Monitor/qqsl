@@ -55,21 +55,31 @@ public class Trade extends BaseEntity{
     }
 
     public enum BaseType{
-        TEST,
+        TEST("试用版"),
 //        EXPERIENCE,
-        YOUTH,
-        SUN,
-        SUNRISE,
+        YOUTH("青春版"),
+        SUN("朝阳版"),
+        SUNRISE("旭日版"),
         /** 水文站 */
-        HYDROLOGIC_STATION,
+        HYDROLOGIC_STATION("水文站"),
         /** 雨量站 */
-        RAINFALL_STATION,
+        RAINFALL_STATION("雨量站"),
         /** 水位站 */
-        WATER_LEVEL_STATION,
+        WATER_LEVEL_STATION("水位站"),
         /** 水质站 */
-        WATER_QUALITY_STATION,
-        PANORAMA,
-        AIRSURVEY
+        WATER_QUALITY_STATION("水质站"),
+        PANORAMA("全景效果图"),
+        AIRSURVEY("航测3D建模");
+        //必须增加一个构造函数,变量,得到该变量的值
+        private String  typeC;
+
+        BaseType(String typeC) {
+            this.typeC = typeC;
+        }
+
+        public String getTypeC() {
+            return typeC;
+        }
     }
 
     public enum PayType{
@@ -81,11 +91,21 @@ public class Trade extends BaseEntity{
 
     public enum BuyType{
         /** 购买 */
-        BUY,
+        BUY("购买"),
         /** 续费 */
-        RENEW,
+        RENEW("续费"),
         /** 升级 */
-        UPGRADE
+        UPGRADE("升级");
+        //必须增加一个构造函数,变量,得到该变量的值
+        private String  typeC;
+
+        BuyType(String typeC) {
+            this.typeC = typeC;
+        }
+
+        public String getTypeC() {
+            return typeC;
+        }
     }
 
     public enum Status{
@@ -105,11 +125,21 @@ public class Trade extends BaseEntity{
 
     public enum Type{
         /** 套餐 */
-        PACKAGE,
+        PACKAGE("套餐服务"),
         /** 测站 */
-        STATION,
+        STATION("测站服务"),
         /** 数据服务 */
-        GOODS
+        GOODS("数据服务");
+        //必须增加一个构造函数,变量,得到该变量的值
+        private String  typeC;
+
+        Type(String typeC) {
+            this.typeC = typeC;
+        }
+
+        public String getTypeC() {
+            return typeC;
+        }
     }
 
     public String getOutTradeNo() {

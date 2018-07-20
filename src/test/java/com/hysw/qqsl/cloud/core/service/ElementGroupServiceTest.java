@@ -143,6 +143,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		try {
 			elementGroupModels = getElementGroup(pathPrefix+"/"+XMLName[1]);
 		} catch (XMLFileException e) {
+			e.printStackTrace();
 			assertEquals(0, elementGroupModels.size());
 			logger.info(e.getMessage()+":"+XMLName[1]);
 			return;
@@ -155,6 +156,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		try {
 			elementGroupModels = getElementGroup(pathPrefix+"/"+XMLName[2]);
 		} catch (XMLFileException e) {
+			e.printStackTrace();
 			assertEquals(0, elementGroupModels.size());
 			logger.info(e.getMessage()+":"+XMLName[2]);
 			return;
@@ -167,6 +169,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		try {
 			elementGroupModels = getElementGroup(pathPrefix+"/"+XMLName[3]);
 		} catch (XMLFileException e) {
+			e.printStackTrace();
 			assertEquals(0, elementGroupModels.size());
 			logger.info(e.getMessage()+":"+XMLName[3]);
 			return;
@@ -179,6 +182,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		try {
 			elementGroupModels = getElementGroup(pathPrefix+"/"+XMLName[4]);
 		} catch (XMLFileException e) {
+			e.printStackTrace();
 			assertEquals(0, elementGroupModels.size());
 			logger.info(e.getMessage()+":"+XMLName[4]);
 			return;
@@ -191,6 +195,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		try {
 			elementGroupModels = getElementGroup(pathPrefix+"/"+XMLName[5]);
 		} catch (XMLFileException e) {
+			e.printStackTrace();
 			assertEquals(0, elementGroupModels.size());
 			logger.info(e.getMessage()+":"+XMLName[5]);
 			return;
@@ -203,6 +208,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		try {
 			elementGroupModels = getElementGroup(pathPrefix+"/"+XMLName[6]);
 		} catch (XMLFileException e) {
+			e.printStackTrace();
 			assertEquals(0, elementGroupModels.size());
 			logger.info(e.getMessage()+":"+XMLName[6]);
 			return;
@@ -215,6 +221,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		try {
 			elementGroupModels = getElementGroup(pathPrefix+"/"+XMLName[7]);
 		} catch (XMLFileException e) {
+			e.printStackTrace();
 			assertEquals(0, elementGroupModels.size());
 			logger.info(e.getMessage()+":"+XMLName[7]);
 			return;
@@ -228,6 +235,7 @@ public class ElementGroupServiceTest extends BaseTest {
 			try {
 				elementGroupModels = getElementGroup(pathPrefix+"/"+XMLName[8]);
 			} catch (XMLFileException e) {
+				e.printStackTrace();
 				assertEquals(0, elementGroupModels.size());
 				logger.info(e.getMessage()+":"+XMLName[8]);
 				return;
@@ -240,6 +248,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		try {
 			elementGroupModels = getElementGroup(watXMLs[8]);
 		} catch (XMLFileException e) {
+			e.printStackTrace();
 			assertEquals(0, elementGroupModels.size());
 			logger.info(e.getMessage()+":"+watXMLs[8]);
 			return;

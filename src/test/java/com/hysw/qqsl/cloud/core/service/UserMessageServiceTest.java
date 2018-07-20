@@ -29,15 +29,15 @@ public class UserMessageServiceTest extends BaseTest {
     @Autowired
     private CertifyService certifyService;
 
-    /**
-     * 测试企业解绑子账户
-     */
-    @Test
-    public void testUnbindMessage(){
-        userMessageService.unbindMessage(accountService.find(1l), userService.find(1l));
-        User user = userService.find(1l);
-        Assert.assertTrue(!user.getAccounts().contains(accountService.find(1l)));
-    }
+//    /**
+//     * 测试企业解绑子账户
+//     */
+//    @Test
+//    public void testUnbindMessage(){
+//        userMessageService.unbindMessage(accountService.find(1l), userService.find(1l));
+//        User user = userService.find(1l);
+//        Assert.assertTrue(!user.getAccounts().contains(accountService.find(1l)));
+//    }
 
     @Test
     public void testShareMessage(){

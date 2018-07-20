@@ -38,9 +38,7 @@ public class Build extends BaseEntity{
     /** 描述 */
     private String remark;
     /** 坐标id */
-    private String coordinateId;
-    /** 是否删除标记 */
-    private boolean isCut=false;
+    private Long coordinateId;
 
     public enum Source{
         /** 设计 */
@@ -145,20 +143,12 @@ public class Build extends BaseEntity{
         this.remark = remark;
     }
 
-    public String getCoordinateId() {
+    public Long getCoordinateId() {
         return coordinateId;
     }
 
-    public void setCoordinateId(String coordinateId) {
+    public void setCoordinateId(Long coordinateId) {
         this.coordinateId = coordinateId;
-    }
-
-    public boolean isCut() {
-        return isCut;
-    }
-
-    public void setCut(boolean cut) {
-        isCut = cut;
     }
 
     @Transient

@@ -13,6 +13,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
+import java.util.List;
+
 
 /**
  * Create by leinuo on 17-4-28 下午3:00
@@ -26,206 +29,74 @@ public class AccountServiceTest extends BaseTest{
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AccountManager accountManager;
 
     @Test
-    public void getSimpleAccount() throws Exception {
-
-    }
-
-    @Test
-    public void invite() throws Exception {
-
-    }
-
-    @Test
-    public void register() throws Exception {
-
-    }
-
-    @Test
-    public void update() throws Exception {
-
+    public void testRepeatCreate(){
+        User user = userService.find(89l);
+        JSONObject jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
+        accountService.flush();
+        Assert.assertTrue(!jsonObject.isEmpty());
+        jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
+        accountService.flush();
+        Assert.assertTrue(null == jsonObject || jsonObject.isEmpty());
+        Account account = accountService.findByPhone("13007781310");
+        Assert.assertTrue(account != null);
     }
 
     @Test
-    public void updateInfo() throws Exception {
-
+    public void testCreateAgree() {
+        User user = userService.find(89l);
+        JSONObject jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
+        accountService.flush();
+        Assert.assertTrue(!jsonObject.isEmpty());
+        Account account = accountService.findByPhone("13007781310");
+        Assert.assertTrue(account.getStatus()==Account.Status.AWAITING);
+        accountService.activateAccount(account);
+        accountService.flush();
+        account = accountService.findByPhoneConfirmed("13007781310");
+        Assert.assertTrue(account.getStatus()==Account.Status.CONFIRMED);
+        Assert.assertTrue(account.getName().equals("陈雷"));
+        accountService.accountUpdate(account.getId(), "刘建斌", null, "无");
+        accountService.flush();
+        account = accountService.findByPhoneConfirmed("13007781310");
+        Assert.assertTrue(account.getName().equals("刘建斌"));
+        Assert.assertTrue(account.getRemark().equals("无"));
     }
 
     @Test
-    public void updatePassword() throws Exception {
-
+    public void testCreateRefused() {
+        User user = userService.find(89l);
+        JSONObject jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
+        accountService.flush();
+        Assert.assertTrue(!jsonObject.isEmpty());
+        Account account = accountService.findByPhone("13007781310");
+        Assert.assertTrue(account.getStatus()==Account.Status.AWAITING);
+        accountService.refusedAccount(account);
+        accountService.flush();
+        account = accountService.findByPhone("13007781310");
+        Assert.assertTrue(account == null);
     }
 
     @Test
-    public void changePhone() throws Exception {
-
+    public void changeExpired() {
+        Account account = new Account();
+        account.setId(1l);
+        account.setPhone("13513997110");
+        User user = new User();
+        user.setId(1l);
+        account.setUser(user);
+        account.setCreateDate(new Date(12345678));
+        accountManager.add(account);
+        account = new Account();
+        account.setId(2l);
+        account.setPhone("13513997110");
+        user.setId(1l);
+        account.setUser(user);
+        account.setCreateDate(new Date(12345678));
+        accountManager.add(account);
+        accountManager.changeExpiredAndDelete();
     }
-
-    @Test
-    public void findByPhoneOrUserName() throws Exception {
-
-    }
-
-    @Test
-    public void findByPhone() throws Exception {
-
-    }
-
-    @Test
-    public void makeAccountJson() throws Exception {
-
-    }
-
-    @Test
-    public void makeSimpleAccountJson() throws Exception {
-
-    }
-
-    @Test
-    public void makeUserJsons() throws Exception {
-
-    }
-
-    @Test
-    public void getUsersByAccountId() throws Exception {
-
-    }
-
-    @Test
-    public void getAuthenticate() throws Exception {
-
-    }
-
-    @Test
-    public void unbindUser() throws Exception {
-
-    }
-
-    @Test
-    public void makeAccountJsons() throws Exception {
-
-    }
-
-//    @Test
-    public void testRegistAccount() throws Exception{
-        String phone = "18661925012";
-        String password = DigestUtils.md5Hex("111111");
-        User user = userService.findByUserName("qqsl");
-        accountService.invite(phone,user);
-        Account account = accountService.findByPhone(phone);
-        assertNotNull(account.getUsers());
-        assertTrue(account.getUsers().get(0).getUserName().equals("qqsl"));
-        assertNotNull(account);
-    }
-
-    /**
-     * 邀请已有子账号
-     */
-    @Test
-    public void testInvite(){
-        User user = userService.find(1l);
-        JSONObject invite = accountService.invite("18661925010", user);
-        Assert.assertTrue(invite == null);
-    }
-
-    /**
-     * 邀请新的子账号
-     */
-    @Test
-    public void testInvite1(){
-        User user = userService.find(1l);
-        JSONObject invite = accountService.invite("18661925011", user);
-        Assert.assertTrue(!invite.isEmpty());
-    }
-
-    /**
-     * 注册成功
-     */
-//    @Test
-//    public void testRegister() {
-//        String phone = "18661925012";
-//        String password = DigestUtils.md5Hex("111111");
-//        String name = "aaa";
-//        Message message = null;
-//        try {
-//            message = accountService.register(name, phone, password);
-//        } catch (QQSLException e) {
-//            e.printStackTrace();
-//        }
-//        Assert.assertTrue(message.getType()== Message.Type.OK);
-//        boolean flag = false;
-//        phone = "186619250121";
-//        password = DigestUtils.md5Hex("111111");
-//        name = "aaa";
-//        try {
-//            accountService.register(name, phone, password);
-//        } catch (QQSLException e) {
-//            flag = true;
-//        }
-//        Assert.assertTrue(flag);
-//        flag = false;
-//        phone = "18661925012";
-//        password = DigestUtils.md5Hex("111111")+"1";
-//        name = "aaa";
-//        try {
-//            accountService.register(name, phone, password);
-//        } catch (QQSLException e) {
-//            flag = true;
-//        }
-//        Assert.assertTrue(flag);
-//        phone = "18661925010";
-//        password = DigestUtils.md5Hex("111111");
-//        name = "aaa";
-//        try {
-//            message = accountService.register(name, phone, password);
-//        } catch (QQSLException e) {
-//        }
-//        Assert.assertTrue(message.getType()== Message.Type.DATA_EXIST);
-//
-//    }
-//
-////    /**
-////     * 更新信息
-////     */
-////    @Test
-////    public void testUpdate(){
-////        Map<String, Object> map = new LinkedHashMap<>();
-////        map.put("name","aaa");
-////        map.put("email","123456789@qq.com");
-////        map.put("password",DigestUtils.md5Hex("111111"));
-////        Message message = accountService.update(map, 1l);
-////        Assert.assertTrue(message.getType()== Message.Type.OK);
-////    }
-//
-//    /**
-//     * 修改name
-//     */
-//    @Test
-//    public void testUpdateInfo(){
-//        Message message = accountService.updateInfo("aaa", 1l);
-//        Assert.assertTrue(message.getType()== Message.Type.OK);
-//    }
-//
-//    /**
-//     * 修改密码
-//     */
-//    @Test
-//    public void testUpdatePassword(){
-//        Message message = accountService.updatePassword(DigestUtils.md5Hex("111111"), 1l);
-//        Assert.assertTrue(message.getType()== Message.Type.OK);
-//        message = accountService.updatePassword(DigestUtils.md5Hex("111111")+"1", 1l);
-//        Assert.assertTrue(message.getType()== Message.Type.PASSWORD_ERROR);
-//    }
-//
-//    /**
-//     * 构建子账号信息
-//     */
-//    @Test
-//    public void testGetAuthenticate() {
-//        Account account = accountService.find(1l);
-//        JSONObject jsonObject = accountService.getAuthenticate(account);
-//        Assert.assertNotNull(jsonObject);
-//    }
 
 }

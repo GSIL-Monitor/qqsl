@@ -52,28 +52,28 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		return userMessages;
 	}
 
-	/**
-	 * 记录子账号解绑企业消息
-	 * @param account
-	 * @param user
-	 */
-	public void unbindMessage(Account account, User user) {
-		UserMessage userMessage = new UserMessage();
-		JSONObject content = new JSONObject();
-		content.put("phone", account.getPhone());
-		content.put("name", account.getName());
-		content.put("isBind", false);
-//		String content = "尊敬的用户，您好！手机号为: "+account.getPhone()+" 的子账号已与企业解绑。";
-		userMessage.setUser(user);
-		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
-		userMessage.setContent(content.toString());
-		userMessage.setType(UserMessage.Type.UNBIND_USER);
-		save(userMessage);
-		pollingService.changeMessageStatus(user,true);
-	}
+//	/**
+//	 * 记录子账号解绑企业消息
+//	 * @param account
+//	 * @param user
+//	 */
+//	public void unbindMessage(Account account, User user) {
+//		UserMessage userMessage = new UserMessage();
+//		JSONObject content = new JSONObject();
+//		content.put("phone", account.getPhone());
+//		content.put("name", account.getName());
+//		content.put("isBind", false);
+////		String content = "尊敬的用户，您好！手机号为: "+account.getPhone()+" 的子账号已与企业解绑。";
+//		userMessage.setUser(user);
+//		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
+//		userMessage.setContent(content.toString());
+//		userMessage.setType(UserMessage.Type.UNBIND_USER);
+//		save(userMessage);
+//		pollingService.changeMessageStatus(user,true);
+//	}
 
 	/**
-	 * 记录分享和取消分享的消息
+	 * 记录项目分享和取消分享的消息
 	 * @param project
 	 * @param user
 	 */
@@ -99,7 +99,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_PROJECT);
 		save(userMessage);
-		pollingService.changeMessageStatus(user,true);
+//		pollingService.changeMessageStatus(user,true);
 		pollingService.changeShareStatus(user,true);
     }
 
@@ -131,7 +131,7 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
 		userMessage.setType(UserMessage.Type.SHARE_STATION);
 		save(userMessage);
-		pollingService.changeMessageStatus(user,true);
+//		pollingService.changeMessageStatus(user,true);
 		pollingService.changeStationStatus(user,true);
     }
 
@@ -218,5 +218,35 @@ public class UserMessageService extends BaseService<UserMessage, Long>{
 		userMessage.setUser(user);
 		save(userMessage);
 		pollingService.changeMessageStatus(user,true);
+	}
+
+	public void accountMessageExpired(Account account) {
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
+		userMessage.setContent("您邀请的子账号==>"+account.getPhone()+"<==长时间未确认，添加失败，您可以尝试重新添加。");
+		userMessage.setType(UserMessage.Type.ACCOUNT);
+		userMessage.setUser(account.getUser());
+		save(userMessage);
+		pollingService.changeMessageStatus(account.getUser(),true);
+	}
+
+	public void accountMessageRefused(Account account) {
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
+		userMessage.setContent("您邀请的子账号==>"+account.getPhone()+"<==拒绝成为您企业下的子账号，添加失败，您可以尝试重新添加。");
+		userMessage.setType(UserMessage.Type.ACCOUNT);
+		userMessage.setUser(account.getUser());
+		save(userMessage);
+		pollingService.changeMessageStatus(account.getUser(),true);
+	}
+
+	public void accountMessageAgree(Account account) {
+		UserMessage userMessage = new UserMessage();
+		userMessage.setStatus(CommonEnum.MessageStatus.UNREAD);
+		userMessage.setContent("您邀请的子账号==>"+account.getPhone()+"<==添加成功。");
+		userMessage.setType(UserMessage.Type.ACCOUNT);
+		userMessage.setUser(account.getUser());
+		save(userMessage);
+		pollingService.changeMessageStatus(account.getUser(),true);
 	}
 }

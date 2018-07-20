@@ -35,7 +35,6 @@ public class BuildService extends BaseService<Build,Long> {
     public List<Build> findByProject(Project project) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("project", project));
-        filters.add(Filter.eq("cut", false));
         List<Build> list = buildDao.findList(0, null, filters);
         for (Build build : list) {
             build.getId();
@@ -70,7 +69,6 @@ public class BuildService extends BaseService<Build,Long> {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("project", project));
 //        filters.add(Filter.eq("alias", alias));
-        filters.add(Filter.eq("cut", false));
         List<Build> list = buildDao.findList(0, null, filters);
         return list;
     }
@@ -80,7 +78,6 @@ public class BuildService extends BaseService<Build,Long> {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("project", project));
         filters.add(Filter.eq("source", source));
-        filters.add(Filter.eq("cut", false));
         List<Build> list = buildDao.findList(0, null, filters);
         for (Build build : list) {
             build.getId();
@@ -99,12 +96,10 @@ public class BuildService extends BaseService<Build,Long> {
         filters.add(Filter.eq("project", project));
         filters.add(Filter.eq("source", source));
         filters.add(Filter.eq("coordinateId", coordinateId));
-        filters.add(Filter.eq("cut", false));
         List<Filter> filters1 = new ArrayList<>();
         filters1.add(Filter.eq("project", project));
         filters1.add(Filter.eq("source", source));
         filters1.add(Filter.isNull("coordinateId"));
-        filters1.add(Filter.eq("cut", false));
         List<Build> list = buildDao.findList(0, null, filters,filters1);
         for (Build build : list) {
             build.getId();
@@ -232,7 +227,6 @@ public class BuildService extends BaseService<Build,Long> {
     public List<Build> findByCoordinateId(long id) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("coordinateId", id));
-        filters.add(Filter.eq("cut", false));
         return buildDao.findList(0, null, filters);
      }
 
@@ -242,27 +236,4 @@ public class BuildService extends BaseService<Build,Long> {
         }
     }
 
-    public List<Build> findByCoordinateIdNULL() {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.isNull("coordinateId"));
-        filters.add(Filter.eq("cut", false));
-        return buildDao.findList(0, null, filters);
-    }
-
-    public List<Build> findByCutIsTrue() {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("cut", true));
-        return buildDao.findList(0, null, filters);
-    }
-
-    public void deleteSimpleBuild(){
-        List<Build> builds = findByCutIsTrue();
-        for (Build build : builds) {
-            try {
-                remove(build);
-            }catch (Exception e){
-                continue;
-            }
-        }
-    }
 }

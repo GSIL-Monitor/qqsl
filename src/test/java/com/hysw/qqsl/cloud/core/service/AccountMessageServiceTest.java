@@ -28,7 +28,6 @@ public class AccountMessageServiceTest extends BaseTest {
     public void testBindMsessage(){
         User user = userService.findByDao(1l);
         Account account = user.getAccounts().get(0);
-        accountMessageService.bindMsessage(user,account,false);
         Assert.assertNotNull(accountMessageService.findByAccount(account));
     }
 

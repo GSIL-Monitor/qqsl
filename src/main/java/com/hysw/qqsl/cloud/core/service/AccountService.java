@@ -1,13 +1,16 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.google.gson.JsonObject;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.dao.AccountDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.Note;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
-import com.hysw.qqsl.cloud.core.entity.data.AccountMessage;
-import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.*;
+import com.hysw.qqsl.cloud.util.HttpRequestUtil;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import com.hysw.qqsl.cloud.wechat.util.WeChatHttpRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -17,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,7 +41,15 @@ public class AccountService extends BaseService<Account,Long> {
     @Autowired
     private UserMessageService userMessageService;
     @Autowired
+    private AccountManager accountManager;
+    @Autowired
+    private NoteService noteService;
+    @Autowired
     private PollingService pollingService;
+    @Autowired
+    private HttpRequestUtil httpRequestUtil;
+    @Autowired
+    private ApplicationTokenService applicationTokenService;
 
     @Autowired
     public void setBaseDao(AccountDao accountDao){
@@ -57,42 +69,51 @@ public class AccountService extends BaseService<Account,Long> {
      * @param phone
      * @param user
      */
-    public JSONObject invite(String phone,User user) {
+    public JSONObject create(String phone,User user,Object name,Object department,Object remark) {
         Account account = findByPhone(phone);
-        String inviteCode = SettingUtils.createRandomVcode();
-        String userName = user.getUserName();
-        if(user.getName()!=null){
-            userName = user.getName();
-        }
-        if(user.getCompanyName()!=null){
-            userName = user.getCompanyName();
-        }
-        String noteMessage = account==null? "恭喜你已经被邀请成为"+userName+"企业的子账号，初始密码为"+inviteCode+"。请打开www.qingqingshuili.com网页登录并完善个人信息。": "恭喜你已经被邀请成为"+userName+"企业的子账号。";
-        Note note = new Note(phone,noteMessage);
-        List<User> users;
-        if(account == null){
+//        Note note;
+
+        if (null == account) {
+            try {
+                SendSmsResponse sendSmsResponse = noteService.sendSms(phone, userService.nickName(user.getId()));
+//                QuerySendDetailsResponse querySendDetailsResponse = noteService.querySendDetails(sendSmsResponse.getBizId(), phone);
+//                note = new Note();
+//                note.setPhone(phone);
+//                note.setSendMsg(querySendDetailsResponse.getSmsSendDetailDTOs().get(0).getContent());
+            } catch (ClientException e) {
+                e.printStackTrace();
+                return null;
+            }
             account = new Account();
             account.setPhone(phone);
-            account.setPassword(DigestUtils.md5Hex(inviteCode));
+            account.setName(name.toString());
+            account.setDepartment(department != null?department.toString():null);
+            account.setRemark(remark != null ? remark.toString() : null);
             account.setRoles(CommonAttributes.ROLES[4]);
-            users = new ArrayList<>();
-            users.add(user);
+            account.setStatus(Account.Status.AWAITING);
+
+            //记录子账号邀请消息
+            account.setUser(user);
+            List<Account> accounts = user.getAccounts();
+            accounts.add(account);
+            user.setAccounts(accounts);
+            save(account);
+            userService.save(user);
+//            note.setAccountId(account.getId());
+//            noteService.save(note);
+            accountManager.add(account);
+            pollingService.addAccount(account);
+            pollingService.changeAccountStatus(account.getUser(),true);
+//        noteCache.add(phone,note);
+            return makeSimpleAccountJson(account);
         }else{
-            users = account.getUsers();
-            for(int i=0;i<users.size();i++){
-                if(users.get(i).getId().equals(user.getId())){
-                    return null;
-                }
+            if (account.getStatus() == Account.Status.CONFIRMED) {
+                return new JSONObject();
+            } else if (account.getStatus() == Account.Status.AWAITING) {
+                return null;
             }
-            users.add(user);
         }
-        //记录子账号邀请消息
-        account.setUsers(users);
-        save(account);
-        pollingService.addAccount(account);
-        accountMessageService.bindMsessage(user,account,true);
-        noteCache.add(phone,note);
-        return makeSimpleAccountJson(account);
+        return null;
     }
 
     /**
@@ -100,12 +121,37 @@ public class AccountService extends BaseService<Account,Long> {
      * @param phone
      * @return
      */
+    public Account findByPhoneConfirmed(String phone) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("phone",phone));
+        filters.add(Filter.eq("status", Account.Status.CONFIRMED));
+        List<Account> accounts = accountDao.findList(0,null,filters);
+        if(accounts.size()==1){
+            accounts.get(0).getUser();
+            return accounts.get(0);
+        }else{
+            return null;
+        }
+    }
+
     public Account findByPhone(String phone) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("phone",phone));
-        List<Account> accounts = accountDao.findList(0,null,filters);
+        List<Account> accounts = accountDao.findList(0, null, filters);
         if(accounts.size()==1){
-            accounts.get(0).getUsers();
+            accounts.get(0).getUser();
+            return accounts.get(0);
+        }else{
+            return null;
+        }
+    }
+
+    public Account findByEmail(String email) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("email",email));
+        List<Account> accounts = accountDao.findList(0, null, filters);
+        if(accounts.size()==1){
+            accounts.get(0).getUser();
             return accounts.get(0);
         }else{
             return null;
@@ -117,12 +163,13 @@ public class AccountService extends BaseService<Account,Long> {
      * @param email
      * @return
      */
-    public Account findByEmail(String email) {
+    public Account findByEmailConfirmed(String email) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("email",email));
+        filters.add(Filter.eq("status", Account.Status.CONFIRMED));
         List<Account> accounts = accountDao.findList(0,null,filters);
         if(accounts.size()==1){
-            accounts.get(0).getUsers();
+            accounts.get(0).getUser();
             return accounts.get(0);
         }else{
             return null;
@@ -145,23 +192,6 @@ public class AccountService extends BaseService<Account,Long> {
     }
 
     /**
-     * 根据手机号查询子账号
-     * @param userName
-     * @return
-     */
-    private Account findByUserName(String userName){
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("userName",userName));
-        List<Account> accounts = accountDao.findList(0,null,filters);
-        if(accounts.size()==1){
-            accounts.get(0).getUsers();
-            return accounts.get(0);
-        }else{
-            return null;
-        }
-
-    }
-    /**
      * 获取子账号json数据
      * @param account
      * @return
@@ -173,11 +203,15 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("email",account.getEmail());
         jsonObject.put("name",account.getName());
         jsonObject.put("phone",account.getPhone());
-        jsonObject.put("userName",account.getUserName());
+        jsonObject.put("remark",account.getRemark());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
-        List<User> users = getUsersByAccountId(account.getId());
-        List<JSONObject> userJsons = makeUserJsons(users);
+        jsonObject.put("status",account.getStatus().toString());
+        User user = getUserByAccountId(account.getId());
+        JSONObject userJson = new JSONObject();
+        if(user!=null){
+            userJson = makeUserJson(user);
+        }
         List<AccountMessage> accountMessages = accountMessageService.getMessage(account);
         JSONArray messageJsons = new JSONArray();
         JSONObject messageJson;
@@ -192,7 +226,7 @@ public class AccountService extends BaseService<Account,Long> {
             messageJsons.add(messageJson);
         }
         jsonObject.put("accountMessages",messageJsons);
-        jsonObject.put("users",userJsons);
+        jsonObject.put("user",userJson);
         return jsonObject;
     }
 
@@ -204,14 +238,20 @@ public class AccountService extends BaseService<Account,Long> {
      */
     public JSONObject makeSimpleAccountJson(Account account) {
         JSONObject jsonObject = new JSONObject();
+        if (account == null) {
+            jsonObject.put("name","子账号已删除");
+            return jsonObject;
+        }
         jsonObject.put("id",account.getId());
         jsonObject.put("department",account.getDepartment());
         jsonObject.put("email",account.getEmail());
         jsonObject.put("name",account.getName());
         jsonObject.put("phone",account.getPhone());
-        jsonObject.put("userName",account.getUserName());
+        jsonObject.put("remark",account.getRemark());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
+        jsonObject.put("status",account.getStatus().toString());
+        pollingService.changeAccountStatus(account.getUser(),false);
         return jsonObject;
     }
 
@@ -219,24 +259,17 @@ public class AccountService extends BaseService<Account,Long> {
 
     /**
      * 获取所属users的json数据
-     * @param users
+     * @param user
      * @return
      */
-    public List<JSONObject> makeUserJsons(List<User> users) {
-        List<JSONObject> userJsons = new ArrayList<JSONObject>();
-        JSONObject userJson;
-        User user ;
-        for(int i=0;i<users.size();i++){
-            userJson = new JSONObject();
-            user = users.get(i);
-            userJson.put("id", user.getId());
-            userJson.put("name", user.getName());
-            userJson.put("userName", user.getUserName());
-            userJson.put("email", user.getEmail());
-            userJson.put("phone", user.getPhone());
-            userJsons.add(userJson);
-        }
-        return userJsons;
+    public JSONObject makeUserJson(User user) {
+        JSONObject userJson = new JSONObject();
+        userJson.put("id", user.getId());
+        userJson.put("name", user.getName());
+        userJson.put("userName", user.getUserName());
+        userJson.put("email", user.getEmail());
+        userJson.put("phone", user.getPhone());
+        return userJson;
     }
 
     /**
@@ -244,10 +277,10 @@ public class AccountService extends BaseService<Account,Long> {
      * @param id
      * @return
      */
-    public List<User> getUsersByAccountId(Long id) {
+    public User getUserByAccountId(Long id) {
         Account account = accountDao.find(id);
-        List<User> users = account.getUsers();
-        return  users;
+        User user = account.getUser();
+        return  user;
     }
 
 
@@ -280,38 +313,41 @@ public class AccountService extends BaseService<Account,Long> {
         return subjectJson;
     }
 
-    /**
-     * 子账号解绑企业
-     * @param user
-     * @return
-     */
-    public boolean unbindUser(User user,Account account) {
-        List<User> users = getUsersByAccountId(account.getId());
-        List<Account> accounts;
-        boolean flag = false;
-        for(int i=0;i<users.size();i++){
-            if(users.get(i).getId().equals(user.getId())){
-                accounts = users.get(i).getAccounts();
-                for(int k=0;k<accounts.size();k++){
-                    if(accounts.get(k).getId().equals(account.getId())){
-                        accounts.remove(k);
-                        flag = true;
-                        break;
-                    }
-                }
-                users.get(i).setAccounts(accounts);
-                userService.save(users.get(i));
-                users.remove(i);
-                break;
-            }
-        }
-        if(!flag){
+//    /**
+//     * 子账号解绑企业
+//     * @param user
+//     * @return
+//     */
+//    public boolean unbindUser(User user,Account account) {
+//        List<Account> accounts = user.getAccounts();
+//        for (Account account1 : accounts) {
+//            if (account1.getId().equals(account.getId())) {
+//                accounts.remove(account1);
+//            }
+//        }
+//        user.setAccounts(accounts);
+//        userService.save(user);
+//        //记录子账号解绑企业的消息
+//        userMessageService.unbindMessage(account,user);
+//        return true;
+//    }
+
+    public List<Account> findAllAwaiting() {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("status", Account.Status.AWAITING));
+        return accountDao.findList(0,null,filters);
+    }
+
+    public boolean accountUpdate(Object id, Object name, Object department, Object remark) {
+        Account account = find(Long.valueOf(id.toString()));
+        if (account == null) {
             return false;
         }
-        account.setUsers(users);
-        accountDao.save(account);
-        //记录子账号解绑企业的消息
-        userMessageService.unbindMessage(account,user);
+        account.setName(name.toString());
+        account.setDepartment(department != null?department.toString():null);
+        account.setRemark(remark!=null?remark.toString():null);
+        save(account);
+        pollingService.changeAccountStatus(account.getUser(),true);
         return true;
     }
 
@@ -325,4 +361,112 @@ public class AccountService extends BaseService<Account,Long> {
 //        return jsonArray;
 //    }
 
+    /**
+     * 激活子账号
+     */
+    public void activateAccount(Account account) {
+        String msg = "";
+        if (account == null) {
+            return;
+        }
+        if (account.getStatus() == Account.Status.CONFIRMED) {
+            msg = "您已经成为[" + userService.nickName(account.getUser().getId()) + "]企业的子账户，该项不能重复操作，如需绑定到另一企业，请先解绑。";
+        }
+        if (account.getStatus()==Account.Status.AWAITING) {
+            accountManager.delete(account);
+            account.setStatus(Account.Status.CONFIRMED);
+            String inviteCode = SettingUtils.createRandomVcode();
+            account.setPassword(DigestUtils.md5Hex(inviteCode));
+            save(account);
+            User user = userService.find(account.getUser().getId());
+            List<Account> accounts = user.getAccounts();
+            for (Account account1 : accounts) {
+                if (account.getId().equals(account1.getId())) {
+                    accounts.remove(account1);
+                    break;
+                }
+            }
+            accounts.add(account);
+            user.setAccounts(accounts);
+            userService.save(user);
+            msg = "尊敬的用户您好，恭喜您已成为[" + userService.nickName(account.getUser().getId()) + "]企业的子账户,密码为："+inviteCode+"。";
+            userMessageService.accountMessageAgree(account);
+        }
+        Note note = new Note(account.getPhone(), msg);
+        noteCache.add(account.getPhone(),note);
+        flush();
+        pollingService.changeAccountStatus(account.getUser(),true);
+    }
+
+    /**
+     * 拒绝成为该企业子账号
+     */
+    public void refusedAccount(Account account) {
+        if (account == null) {
+            return;
+        }
+        if (account.getStatus() == Account.Status.CONFIRMED) {
+            return;
+        }
+        if (account.getStatus() == Account.Status.AWAITING) {
+            userMessageService.accountMessageRefused(account);
+            accountManager.delete(account);
+            remove(account);
+            User user = userService.find(account.getUser().getId());
+            List<Account> accounts = user.getAccounts();
+            for (Account account1 : accounts) {
+                if (account1.getId().equals(account.getId())) {
+                    accounts.remove(account1);
+                    break;
+                }
+            }
+            List<Account> accounts1 = new ArrayList<>();
+            accounts1.addAll(accounts);
+            user.setAccounts(accounts1);
+            userService.save(user);
+        }
+        flush();
+        pollingService.changeAccountStatus(account.getUser(),true);
+    }
+
+    /**
+     * 激活子账号
+     */
+    public void activeAccount() {
+        JSONObject jsonObject1 = WeChatHttpRequest.jsonObjectHttpRequest("http://"+SettingUtils.getInstance().getSetting().getAliPayIP() + ":8080/qqsl/user/getSmsUpList?token=" + applicationTokenService.getToken(), "GET", null);
+        if (jsonObject1 == null || jsonObject1.get("data") == null || JSONArray.fromObject(jsonObject1.get("data")).size() == 0) {
+            return;
+        }
+        for (Object o : JSONArray.fromObject(jsonObject1.get("data"))) {
+            JSONObject jsonObject = JSONObject.fromObject(o);
+            if (jsonObject.get("reply").toString().equalsIgnoreCase("y")) {
+                Account account = findByPhone(String.valueOf(jsonObject.get("phone")));
+                if (account != null && account.getStatus() == Account.Status.AWAITING) {
+                    activateAccount(account);
+                }
+            }
+            if (jsonObject.get("reply").toString().equalsIgnoreCase("n")) {
+                Account account = findByPhone(String.valueOf(jsonObject.get("phone")));
+                if (account != null && account.getStatus() == Account.Status.AWAITING) {
+                    refusedAccount(account);
+                }
+            }
+        }
+    }
+
+    /**
+     * 根据ids查询account列表
+     * @param accountIds
+     * @return
+     */
+    public List<Account> findByIdList(Object accountIds) {
+        String[] split = accountIds.toString().split(",");
+        Account account;
+        List<Account> accounts = new ArrayList<>();
+        for (String s : split) {
+            account = find(Long.valueOf(s));
+            accounts.add(account);
+        }
+        return accounts;
+    }
 }

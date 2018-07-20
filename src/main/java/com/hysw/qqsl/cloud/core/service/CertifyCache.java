@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.Note;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.data.Certify;
 import com.hysw.qqsl.cloud.core.entity.data.User;
 import com.hysw.qqsl.cloud.util.*;
@@ -54,6 +54,7 @@ public class CertifyCache {
         try{
             identity1 = certifyService.getAliImage(certify.getUser().getId(), "identity1.jpg");
         }catch (Exception e){
+            e.printStackTrace();
             identity1 = "";
         }
         if (identity1.equals("")) {
@@ -72,6 +73,7 @@ public class CertifyCache {
         try{
             identity2 = certifyService.getAliImage(certify.getUser().getId(), "identity2.jpg");
         }catch (Exception e){
+            e.printStackTrace();
             identity2 = "";
         }
         if (identity2.equals("")) {
@@ -94,6 +96,7 @@ public class CertifyCache {
         try {
             licence = certifyService.getAliImage(certify.getUser().getId(), "licence.jpg");
         } catch (Exception e) {
+            e.printStackTrace();
             licence = "";
         }
         if (licence.equals("")) {
@@ -228,6 +231,7 @@ public class CertifyCache {
             try {
                 date = sdf.parse(jsonObject.get("endDate").toString());
             } catch (ParseException e) {
+                e.printStackTrace();
                 certify.setIdentityAdvice("上传身份证反面模糊");
                 return true;
             }
@@ -250,6 +254,7 @@ public class CertifyCache {
             try {
                 date = sdf.parse(jsonObject.get("validPeriod").toString());
             } catch (ParseException e) {
+                e.printStackTrace();
                 certify.setCompanyAdvice("上传营业执照模糊");
                 return true;
             }
@@ -316,6 +321,7 @@ public class CertifyCache {
         try {
             resp1 = (JSONObject) jsonObject.get("resp");
         } catch (Exception e) {
+            e.printStackTrace();
             logger.info("身份证解析失败");
             return true;
         }
@@ -340,6 +346,7 @@ public class CertifyCache {
         try {
             resp1 = (JSONObject) jsonObject.get("resp");
         } catch (Exception e) {
+            e.printStackTrace();
             logger.info("营业执照解析失败");
             return true;
         }

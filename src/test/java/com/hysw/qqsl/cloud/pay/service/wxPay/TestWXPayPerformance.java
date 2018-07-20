@@ -245,7 +245,7 @@ public class TestWXPayPerformance {
                     testUnifiedOrderSpeed();
                 }
                 catch (Exception ex) {
-
+                    ex.printStackTrace();
                 }
             }
         };
@@ -270,7 +270,7 @@ public class TestWXPayPerformance {
                     testRefundSpeed();
                 }
                 catch (Exception ex) {
-
+                    ex.printStackTrace();
                 }
             }
         };

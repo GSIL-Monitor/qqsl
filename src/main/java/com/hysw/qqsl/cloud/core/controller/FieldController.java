@@ -63,9 +63,9 @@ public class FieldController {
     @PackageIsExpire(value = "request")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/coordinateFile", method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadCoordinate", method = RequestMethod.POST)
     public @ResponseBody
-    Message uploadCoordinate(HttpServletRequest request) {
+    Message uplaodCoordinate(HttpServletRequest request) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         String id = request.getParameter("projectId");
         String baseLevelType = request.getParameter("baseLevelType");
@@ -207,9 +207,9 @@ public class FieldController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/writeExcel", method = RequestMethod.GET)
+    @RequestMapping(value = "/downloadCoordinate", method = RequestMethod.GET)
     public @ResponseBody
-    Message writeExcel(@RequestParam long projectId, @RequestParam String type, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
+    Message downloadCoordinate(@RequestParam long projectId, @RequestParam String type, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
         Project project = projectService.find(projectId);
         Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
         Coordinate.WGS84Type wgs84Type = null;
@@ -231,7 +231,7 @@ public class FieldController {
             return MessageService.message(Message.Type.FAIL);
         }
         if (wb == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
         }
         ByteArrayOutputStream bos = null;
         InputStream is = null;
@@ -481,31 +481,25 @@ public class FieldController {
      * 获取所有建筑物类型
      * @return OK：请求成功
      */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/getModelType", method = RequestMethod.GET)
-    public @ResponseBody Message getModelType() {
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/templateInfo", method = RequestMethod.GET)
+    public @ResponseBody Message templateInfo() {
         return MessageService.message(Message.Type.OK,fieldService.getModelType());
     }
 
     /**
      * 根据类型下载对应模板
-     * @param object  List<Type>
+     * @param types  [a,b,c]
      * @param response 响应
      * @return OK:下载成功 Fail:下载失败
      */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/downloadModel", method = RequestMethod.GET)
-//    public @ResponseBody
-//    Message downloadModel(@RequestParam String[] object, HttpServletResponse response) {
-//    List<String> list = Arrays.asList(object);
-    @RequestMapping(value = "/downloadModel", method = RequestMethod.POST)
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/downloadTemplate", method = RequestMethod.GET)
     public @ResponseBody
-    Message downloadModel(@RequestBody  Object object, HttpServletResponse response) {
-        List<String> list = Arrays.asList((String)object);
-//        List<String> list = new LinkedList<>();
-//        list.add(object.toString());
+    Message downloadTemplete(@RequestParam String[] types, HttpServletResponse response) {
+        List<String> list = Arrays.asList(types);
         Workbook wb = fieldService.downloadModel(list);
         if (wb == null) {
             return MessageService.message(Message.Type.FAIL);
@@ -519,7 +513,7 @@ public class FieldController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildModel"+ ".xls" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xls" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {

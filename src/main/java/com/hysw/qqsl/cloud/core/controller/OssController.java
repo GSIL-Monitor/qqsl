@@ -1,15 +1,23 @@
 package com.hysw.qqsl.cloud.core.controller;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.common.utils.BinaryUtil;
+import com.aliyun.oss.model.MatchMode;
+import com.aliyun.oss.model.PolicyConditions;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
 import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -17,6 +25,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.hysw.qqsl.cloud.core.entity.ObjectFile;
 import com.hysw.qqsl.cloud.core.entity.data.User;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 阿里云ossController
@@ -52,7 +63,21 @@ public class OssController {
     Message getObjectFiles(
 			@RequestParam("id") String id) {
 		List<ObjectFile> objectFiles = ossService
-				.getFiles("project" + "/" + id,"qqsl");
+				.getFiles("project" + "/" + id,CommonAttributes.BUCKET_NAME);
+		return MessageService.message(Message.Type.OK,objectFiles);
+	}
+
+	/**
+	 * 根据treePath(阿里云路径)得到文件列表
+	 * @return message消息体,OK:获取成功
+	 */
+	@RequiresAuthentication
+	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequestMapping(value = "/objectFiles1", method = RequestMethod.GET)
+	public @ResponseBody
+	Message getObjectFiles1(@RequestParam String  dir, @RequestParam String bucket){
+		List<ObjectFile> objectFiles = ossService
+				.getFiles(dir.substring(0,dir.lastIndexOf("/")),bucket);
 		return MessageService.message(Message.Type.OK,objectFiles);
 	}
 
@@ -188,13 +213,13 @@ public class OssController {
 		}
 		String key = map.get("key");
 		// 删除project下的文件
-		ossService.deleteObject(key,"qqsl");
+		ossService.deleteObject(key,CommonAttributes.BUCKET_NAME);
 		if (extensiones.contains(key.substring(key.lastIndexOf(".") + 1)
 				.toLowerCase())) {
 			key = key.replaceAll("project", "pdf");
 			key = key.substring(0, key.lastIndexOf('.')) + ".pdf";
 			// 删除pdf
-			ossService.deleteObject(key,"qqsl");
+			ossService.deleteObject(key,CommonAttributes.BUCKET_NAME);
 		}
 		return MessageService.message(Message.Type.OK);
 	}
@@ -219,15 +244,49 @@ public class OssController {
 		for (int i = 0; i < key1.length; i++) {
 			key = key1[i];
 			// 删除project下的文件
-			ossService.deleteObject(key,"qqsl");
+			ossService.deleteObject(key,CommonAttributes.BUCKET_NAME);
 			if (extensiones.contains(key.substring(key.lastIndexOf(".") + 1)
 					.toLowerCase())) {
 				key = key.replaceAll("project", "pdf");
 				key = key.substring(0, key.lastIndexOf('.')) + ".pdf";
 				// 删除pdf
-				ossService.deleteObject(key,"qqsl");
+				ossService.deleteObject(key,CommonAttributes.BUCKET_NAME);
 			}
 		}
 		return MessageService.message(Message.Type.OK);
 	}
+
+
+	/**
+	 * 直传token
+	 * @return
+	 * <ul>
+	 *     <li>OK 获取成功</li>
+	 *     <li>FAIL 失败</li>
+	 * </ul>
+	 */
+	@RequiresAuthentication
+	@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+	@RequestMapping(value = "/directToken", method = RequestMethod.GET)
+	public @ResponseBody Message directToken(@RequestParam String bucketName){
+		Message message = CommonController.parametersCheck(bucketName);
+		if (message.getType() != Message.Type.OK) {
+			return message;
+		}
+		User user = authentService.getUserFromSubject();
+		if (user == null) {
+			Account account = authentService.getAccountFromSubject();
+			user = account.getUser();
+			if(user==null){
+				return MessageService.message(Message.Type.FAIL);
+			}
+		}
+		try {
+			return MessageService.message(Message.Type.OK, ossService.directToken(user,bucketName));
+		} catch (UnsupportedEncodingException e) {
+			return MessageService.message(Message.Type.FAIL);
+		}
+	}
+
+
 }

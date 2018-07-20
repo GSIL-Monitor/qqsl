@@ -14,6 +14,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 /**
  * spring容器已加载完成，就启动所有线程
  * @author leinuo  
@@ -42,8 +46,6 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	@Autowired
 	private BuildGroupService buildGroupService;
 	@Autowired
-	private BuildBelongService buildBelongService;
-	@Autowired
 	private SensorService sensorService;
 	@Autowired
 	private GoodsService goodsService;
@@ -69,6 +71,10 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	private MessageService messageService;
 	@Autowired
 	private FieldService fieldService;
+	@Autowired
+	private AccountManager accountManager;
+    @Autowired
+    private NoteService noteService;
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -78,8 +84,6 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			logger.info("获取sts凭证的线程已启动");
 			new Thread(noteManager).start();
 			logger.info("发送短信的线程已启动");
-			new Thread(buildBelongService).start();
-			logger.info("建筑物线面归属线程启动");
 			new Thread(emailManager).start();
 			logger.info("邮件服务线程启动");
 			messageService.init();
@@ -145,10 +149,28 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			}
 			pollingService.init();
 			logger.info("初始化轮询状态");
-			if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
+		/*	if (SettingUtils.getInstance().getSetting().getStatus().equals("test")) {
 				getAccessTokenService.getAccessToken();
-			}
-		}
+			}*/
+			accountManager.init();
+			logger.info("未确认子账户加入缓存");
+            try {
+                if (SettingUtils.getInstance().getSetting().getStatus().equals("run")||InetAddress.getLocalHost().getHostAddress().equals("10.161.162.34")) {
+                    if (System.getProperties().getProperty("os.name").toLowerCase().contains("linux")) {
+                        try {
+                            Runtime.getRuntime().exec("/home/qqsl/krpano/./krpanotools register FXsqTqaGNSZER5dSETEm+VzQEh9sWSa5DZMFsSmMxYV9GcXs8W3R8A/mWXrGNUceXvrihmh28hfRF1ivrW0HMzEychPvNiD8B/4/ZzDaUE9Rh6Ig22aKJGDbja1/kYIqmc/VKfItRE2RTSOIbIroxOtsz626NIpxWksAAifwhpNwuPXqDQpz2sRUMBzoPqZktpkItoSenN2mKd8Klfx7pOuB6CIK3e1CDXgyndqOt2mWybLZcU/wfJVAecfxk15ghiqrzaDsbqrdABDowg==");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        logger.info("激活全景切图插件");
+                    }
+                    noteService.receiveMsg();
+                    logger.info("启动短信回执接口");
+                }
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 }

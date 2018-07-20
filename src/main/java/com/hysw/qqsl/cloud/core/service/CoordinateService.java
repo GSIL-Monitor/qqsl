@@ -65,28 +65,28 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @return
 	 * @throws IOException
 	 */
-	public Map<List<Graph>, List<Build>> readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
-		Workbook wb = SettingUtils.readExcel(is,s);
-		if(wb==null){
-			return null;
+	public void readExcels(InputStream is, String central, String s, Project project, Coordinate.WGS84Type wgs84Type, String fileName, JSONObject jsonObject) throws Exception {
+		Workbook wb = SettingUtils.readExcel(is, s);
+		if (wb == null) {
+			jsonObject.put(fileName, Message.Type.COOR_FORMAT_ERROR.getStatus());
+			return;
 		}
-		return readExcel(central, wb, project,wgs84Type);
+		readExcel(central, wb, project, wgs84Type, fileName, jsonObject);
 	}
 
 	/**
 	 * Read the Excel 2010
 	 *
-	 * @param central the path of the excel file
+	 * @param central   the path of the excel file
 	 * @param wgs84Type
 	 * @return
 	 * @throws IOException
 	 */
 	@SuppressWarnings("resource")
-	public Map<List<Graph>, List<Build>> readExcel(String central, Workbook wb, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
+	public void readExcel(String central, Workbook wb, Project project, Coordinate.WGS84Type wgs84Type, String fileName, JSONObject jsonObject) throws Exception {
 		String code = transFromService.checkCode84(central);
-		List<Graph> graphs = new ArrayList<Graph>();
-		List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
-		List<Build> builds2 = new ArrayList<>();
+		List<Graph> graphs = new ArrayList<>();
+		List<Build> builds = new ArrayList<>();
 		// Read the Sheet
 		for (int numSheet = 0; numSheet < wb.getNumberOfSheets(); numSheet++) {
 			Sheet sheet = wb.getSheetAt(numSheet);
@@ -94,36 +94,98 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				continue;
 			}
 //			读取建筑物及其属性数据
-			boolean b = readBuild(sheet, code, builds, builds2, project,wgs84Type);
+			boolean b = readBuild(sheet, code, builds, project, wgs84Type);
 			if (b) {
 				continue;
 			}
-            try {
+			try {
 //				读取线面数据
 				if (!readLineOrAera(sheet, code, graphs, wb, numSheet, wgs84Type)) {
-					return null;
+					logger.info("数据格式与所选格式不一致");
+					jsonObject.put(fileName, Message.Type.COOR_TYPE_ERROR.getStatus());
+					return;
 				}
 			} catch (OfficeXmlFileException e) {
+				e.printStackTrace();
 				logger.info("坐标文件03-07相互拷贝异常");
-			}catch(NumberFormatException e){
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
 				logger.info("经纬度有多余小数");
 			}
 		}
-		Map<List<Graph>, List<Build>> map = new LinkedHashMap<>();
-		map.put(graphs, builds2);
-        return map;
-    }
+		if (graphs.size() != 0) {
+			saveCoordinate(graphs, builds, project);
+		}
+		flush();
+		if (builds.size() != 0) {
+			matchLineAndPoint(builds,project);
+			saveBuild(builds,project);
+		}
+		buildService.flush();
+		jsonObject.put(fileName, Message.Type.OK.getStatus());
+	}
+
+	/**
+	 * 匹配点坐标到线面
+	 * @param builds
+	 * @param project
+	 */
+	private void matchLineAndPoint(List<Build> builds, Project project) {
+		List<Coordinate> coordinates = findByProjectAndSource(project, Build.Source.DESIGN);
+		for (Coordinate coordinate : coordinates) {
+			JSONObject jsonObject = JSONObject.fromObject(coordinate.getCoordinateStr());
+			JSONArray coordinate1 = (JSONArray) jsonObject.get("coordinate");
+			for (Object o : coordinate1) {
+				JSONObject jsonObject1 = JSONObject.fromObject(o);
+				String longitude = jsonObject1.get("longitude").toString();
+				String latitude = jsonObject1.get("latitude").toString();
+				String elevation = jsonObject1.get("elevation").toString();
+				Build build = fieldService.allEqual(builds, longitude, latitude, elevation);
+				if (build != null && build.getCoordinateId() == null) {
+					build.setCoordinateId(coordinate.getId());
+				}
+			}
+		}
+	}
+
+	/**
+	 * 保存建筑物
+	 * @param builds
+	 * @param project
+	 */
+	private void saveBuild(List<Build> builds, Project project) {
+		List<Build> builds1 = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
+		for (Build build : builds) {
+			JSONObject centerCoor = JSONObject.fromObject(build.getCenterCoor());
+			String longitude = centerCoor.get("longitude").toString();
+			String latitude = centerCoor.get("latitude").toString();
+			String elevation = centerCoor.get("elevation").toString();
+			Build build1 = fieldService.allEqual(builds1, longitude, latitude, elevation);
+			if (build1 != null) {
+				if ((build.getAttribeList()==null||build.getAttribeList().size() == 0) && (build1.getAttribeList()==null||build1.getAttribeList().size() != 0)) {
+				} else {
+					buildService.remove(build1);
+					builds1.remove(build1);
+					buildService.save(build);
+					builds1.add(build);
+				}
+			} else {
+				buildService.save(build);
+				builds1.add(build);
+			}
+		}
+
+	}
 
 	/**
 	 * 读取建筑物及其属性数据
 	 * @param sheet
 	 * @param code
 	 * @param builds
-	 * @param builds2
 	 * @param project
 	 * @param wgs84Type
 	 */
-	private boolean readBuild(Sheet sheet, String code, List<Build> builds, List<Build> builds2, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
+	private boolean readBuild(Sheet sheet, String code, List<Build> builds, Project project, Coordinate.WGS84Type wgs84Type) throws Exception {
 		Build build;
 		build = pickBuildFromBuilds(sheet);
 		if (build == null) {
@@ -149,12 +211,12 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 						comment = cellComment.getString().getString();
 					}
 				}
-                if ((b == null || b.trim().equals("")) && rowNum != sheet.getLastRowNum()) {
+                if ((b == null || b.trim().equals("")) /*&& rowNum != sheet.getLastRowNum()*/) {
                     continue;
                 }
                 if (b.trim().equals("名称")) {
-					if (rowNum != 0 && build1 != null && build1.getCenterCoor() != null) {
-						setBuildPropertyAndAddCache(build1,attribes,builds2);
+					if (rowNum != 0 && build1.getCenterCoor() != null) {
+						setBuildPropertyAndAddCache(build1,attribes,builds);
 						build1 = new Build();
 						attribes = new ArrayList<>();
 					}
@@ -165,11 +227,11 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					build1.setSource(Build.Source.DESIGN);
 					continue;
 				}
-				if (!resolveExcelRow(d, comment, code, wgs84Type, builds, build1, attribes)) {
+				if (!resolveExcelRow(d, comment, code, wgs84Type, build1, attribes)) {
 					return false;
 				}
-				if (rowNum == sheet.getLastRowNum() && build1 != null && build1.getCenterCoor() != null) {
-					setBuildPropertyAndAddCache(build1,attribes,builds2);
+				if (rowNum == sheet.getLastRowNum() && build1.getCenterCoor() != null) {
+					setBuildPropertyAndAddCache(build1,attribes,builds);
 				}
 			}
 		}
@@ -183,14 +245,12 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param comment
 	 * @param code
 	 * @param wgs84Type
-	 * @param builds
 	 * @param build1
 	 * @param attribes
 	 */
-	private boolean resolveExcelRow(String d, String comment, String code, Coordinate.WGS84Type wgs84Type, List<Build> builds, Build build1, List<Attribe> attribes) throws Exception {
+	private boolean resolveExcelRow(String d, String comment, String code, Coordinate.WGS84Type wgs84Type, Build build1, List<Attribe> attribes) throws Exception {
 		JSONObject jsonObject,jsonObject1;
 		Attribe attribe;
-		Build build2;
 		if (d != null && !d.trim().equals("") && comment != null && !comment.trim().equals("")) {
 			if (comment.equals("coor1")) {
 				String[] split = d.split(",");
@@ -200,10 +260,6 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				jsonObject1 = coordinateXYZToBLH(split[0], split[1], code,wgs84Type);
 				if (jsonObject1 == null) {
 					return false;
-				}
-				build2 = fieldService.allEqual(builds, String.valueOf(jsonObject1.get("longitude")), String.valueOf(jsonObject1.get("latitude")),split[2]);
-				if (build2!= null) {
-					buildService.remove(build2);
 				}
 				jsonObject = new JSONObject();
 				jsonObject.put("longitude", String.valueOf(jsonObject1.get("longitude")));
@@ -246,9 +302,12 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	private void setBuildPropertyAndAddCache(Build build1, List<Attribe> attribes, List<Build> builds2) {
 		build1.setAttribeList(attribes);
 		if (build1.getRemark() == null) {
-			for (int i = 0; i < CommonAttributes.BASETYPEE.length; i++) {
-				if (CommonAttributes.BASETYPEE[i].equals(build1.getType().toString())) {
-					build1.setRemark(CommonAttributes.BASETYPEC[i]);
+			for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+				if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+					continue;
+				}
+				if (commonType.name().equals(build1.getType().toString())) {
+					build1.setRemark(commonType.getTypeC());
 					break;
 				}
 			}
@@ -263,15 +322,17 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 */
 	private Build pickBuildFromBuilds(Sheet sheet) {
 		Build build = null;
-		for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-			if (SettingUtils.stringMatcher(sheet.getSheetName().trim(), Arrays.toString(CommonAttributes.TYPELINEAREAC))) {
-				return null;
+		for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+			if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+				continue;
 			}
-			if (sheet.getSheetName().trim().equals(CommonAttributes.BASETYPEC[i])) {
-				String s = CommonAttributes.BASETYPEE[i];
+			if (sheet.getSheetName().trim().equals(commonType.getTypeC())) {
+				if (!commonType.getType().equals("build")) {
+					return null;
+				}
 				List<Build> builds1 = buildGroupService.getBuilds();
 				for (Build build1 : builds1) {
-					if (build1.getType().toString().equals(s)) {
+					if (build1.getType().toString().equals(commonType.name())) {
 						build = build1;
 						break;
 					}
@@ -337,7 +398,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 					continue;
 				}
 				if (longitude == null || latitude == null
-						|| elevation == null||longitude.trim().equals("经度")) {
+						|| elevation == null||longitude.trim().equals("经度")||longitude.equals("")||latitude.equals("")||elevation.equals("")) {
 					continue;
 				}
 				JSONObject jsonObject = coordinateXYZToBLH(longitude, latitude, code,wgs84Type);
@@ -353,14 +414,16 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				list.add(coordinateBase);
 				graph.setCoordinates(list);
 				if (type != null&&!type.trim().equals("")) {
-					for (int i = 0; i < CommonAttributes.BASETYPEC.length; i++) {
-						graph.setBaseType(CommonEnum.CommonType.TSD);
-						if (CommonAttributes.BASETYPEC[i]
-								.equals(type.trim())) {
-							graph.setBaseType(CommonEnum.CommonType.valueOf(CommonAttributes.BASETYPEE[i]));
-							break;
+					for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+						if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+							continue;
 						}
-					}
+                        graph.setBaseType(CommonEnum.CommonType.TSD);
+                        if (commonType.getTypeC().equals(type.trim())) {
+                            graph.setBaseType(commonType);
+                            break;
+                        }
+                    }
 				}
 				if (describtion != null) {
 					graph.setDescription(describtion);
@@ -400,9 +463,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	}
 
 	private JSONObject degreeMinuteSecond2(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String a = longitude.substring(0,longitude.indexOf("°"));
@@ -428,9 +489,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	}
 
 	private JSONObject degreeMinuteSecond1(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String[] str=longitude.split(":");
@@ -452,9 +511,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	}
 
 	private JSONObject degreeMinute2(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String a = longitude.substring(0,longitude.indexOf("°"));
@@ -478,9 +535,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	}
 
 	private JSONObject degreeMinute1(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String[] str=longitude.split(":");
@@ -511,21 +566,23 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	private JSONObject planeCoordinate(String longitude, String latitude, String code) throws Exception {
 		double lon = 0.0f;
 		double lat = 0.0f;
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		String str = longitude;
-		String str1 = str.substring(0, str.indexOf("."));
-		if (str1.length() == 6) {
+		if (str.contains(".")) {
+			str = str.substring(0, str.indexOf("."));
+		}
+		if (str.length() == 6) {
 			lon = Double.valueOf(str);
 		} else {
 			throw new Exception("");
 		}
 		str = latitude;
-		str1 = str.substring(0, str.indexOf("."));
-		if (str1.length() == 7) {
+		if (str.contains(".")) {
+			str = str.substring(0, str.indexOf("."));
+		}
+		if (str.length() == 7) {
 			lat = Double.valueOf(str);
 		} else {
 			throw new Exception("");
@@ -547,9 +604,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @return
 	 */
 	private JSONObject degree(String longitude, String latitude) {
-		if (longitude.length() == 0 || latitude.length() == 0
-				|| SettingUtils.parameterRegex(longitude)
-				|| SettingUtils.parameterRegex(latitude)) {
+		if (longitude.length() == 0 || latitude.length() == 0) {
 			return null;
 		}
 		if (Float.valueOf(longitude) > 180
@@ -576,13 +631,6 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		List<Filter> filters = new ArrayList<>();
 		filters.add(Filter.eq("project", project));
 		List<Coordinate> coordinates = coordinateDao.findList(0, null, filters);
-//		for (int i = 0; i < coordinates.size(); i++) {
-//			for (int j = 0; j < coordinates.get(i).getBuilds().size(); j++) {
-//				for (int k = 0; k < coordinates.get(i).getBuilds().get(j).getAttribeList().size(); k++) {
-//					System.out.println(coordinates.get(i).getBuilds().get(j).getAttribeList().get(k).getId());
-//				}
-//			}
-//		}
 		return coordinates;
 	}
 
@@ -598,13 +646,6 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		filters.add(Filter.eq("project", project));
 		filters.add(Filter.eq("source", source));
 		List<Coordinate> coordinates = coordinateDao.findList(0, null, filters);
-//		for (int i = 0; i < coordinates.size(); i++) {
-//			for (int j = 0; j < coordinates.get(i).getBuilds().size(); j++) {
-//				for (int k = 0; k < coordinates.get(i).getBuilds().get(j).getAttribeList().size(); k++) {
-//					System.out.println(coordinates.get(i).getBuilds().get(j).getAttribeList().get(k).getId());
-//				}
-//			}
-//		}
 		return coordinates;
 	}
 
@@ -628,22 +669,40 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			jsonObject.put("elevation",list.get(i).getCoordinates().get(0).getElevation());
 			if(list.get(i).getCoordinates().get(0).getLongitude().equals("0")){
 				type = Coordinate.Type.LINE;
-				for (int i1 = 0; i1 < CommonAttributes.TYPELINEC.length; i1++) {
-					if (CommonAttributes.TYPELINEC[i1].trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
+				for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+					if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+						continue;
+					}
+					if (!commonType.getType().equals("line")) {
+						continue;
+					}
+					if (commonType.getTypeC().trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
 						type = Coordinate.Type.LINE;
 						break;
 					}
 				}
-				for (int i1 = 0; i1 < CommonAttributes.TYPEAREAC.length; i1++) {
-					if (CommonAttributes.TYPEAREAC[i1].trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
+				for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+					if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+						continue;
+					}
+					if (!commonType.getType().equals("area")) {
+						continue;
+					}
+					if (commonType.getTypeC().trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
 						type = Coordinate.Type.AREA;
 						break;
 					}
 				}
 				baseType = CommonEnum.CommonType.GONGGXM;
-				for (int i1 = 0; i1 < CommonAttributes.TYPELINEAREAC.length; i1++) {
-					if (CommonAttributes.TYPELINEAREAC[i1].trim().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
-						baseType = CommonEnum.CommonType.valueOf(CommonAttributes.TYPELINEAREAE[i1]);
+				for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+					if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+						continue;
+					}
+					if (commonType.getType().equals("build")) {
+						continue;
+					}
+					if (commonType.getTypeC().equals(list.get(i).getCoordinates().get(0).getElevation().trim())) {
+						baseType = commonType;
 						break;
 					}
 				}
@@ -670,7 +729,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param builds
 	 * @param project  @return
 	 */
-	public boolean saveCoordinate(List<Graph> list, List<Build> builds, Project project) {
+	public void saveCoordinate(List<Graph> list, List<Build> builds, Project project) {
 		List<Graph> pointList = new ArrayList<>();
 		List<Graph> areaList = new ArrayList<>();
 		Coordinate coordinate = null;
@@ -710,90 +769,46 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 			coordinate.setProject(project);
 			coordinate.setCoordinateStr(jsonCoordinates.toString());
 			coordinate.setDescription(description);
-			if (description != null && !description.trim().equals("")) {
+			if (description != null && !description.trim().equals("")&&((JSONArray) JSONObject.fromObject(jsonCoordinates).get("coordinate")).size()!=0) {
 				save(coordinate);
 				//		保存筛选出的建筑简单数据
 				pointToBuild(entry.getValue(),builds,project,coordinate.getId());
 			}
 		}
-		return true;
 	}
 
 	/**
 	 * 保存建筑物简单数据
 	 * @param pointList
-	 * @param builds3
+	 * @param builds
 	 * @param project
 	 * @param coordinateId
 	 */
-	private void pointToBuild(List<Graph> pointList, List<Build> builds3, Project project, Long coordinateId) {
-		List<Build> builds = buildService.findByProjectAndSourceCoordinateId(project, Build.Source.DESIGN,coordinateId);
+	private void pointToBuild(List<Graph> pointList, List<Build> builds, Project project, Long coordinateId) {
 		List<Build> builds1 = buildGroupService.getBuilds();
-		List<Build> builds2 = new ArrayList<>();
-//		挑出上一次上传的同条线上的建筑物
-		for (Build build : builds) {
-			if (build.getAttribeList() == null || build.getAttribeList().size() == 0) {
-				build.setCut(true);
-				buildService.save(build);
-			} else {
-				builds2.add(build);
-			}
-		}
-//		将查询数据库的结果与新上传的建筑物进行合并，剔除id相同的建筑物
-		boolean flag;
-		for (Build build : builds3) {
-			flag = true;
-			for (Build build1 : builds2) {
-				if (build.getId().equals(build1.getId())) {
-					flag = false;
-					break;
-				}
-			}
-			if (flag) {
-				builds2.add(build);
-			}
-		}
 		Build build1 = null;
 		for (Graph graph : pointList) {
 			CoordinateBase coordinateBase = graph.getCoordinates().get(0);
-			String longitude = coordinateBase.getLongitude();
-			String latitude = coordinateBase.getLatitude();
-			String elevation = coordinateBase.getElevation();
-			flag = false;
-			for (Build build : builds2) {
-				JSONObject jsonObject = JSONObject.fromObject(build.getCenterCoor());
-				String longitude1 = jsonObject.get("longitude").toString();
-				String latitude1 = jsonObject.get("latitude").toString();
-				String elevation1 = jsonObject.get("elevation").toString();
-				if (longitude.equals(longitude1) && latitude.equals(latitude1) && elevation.equals(elevation1)) {
-					build1 = build;
-					builds2.remove(build);
-					flag = true;
+			for (Build build : builds1) {
+				if (build.getType().toString().equals(graph.getBaseType().toString())) {
+					build1 = (Build) SettingUtils.objectCopy(build);
 					break;
 				}
 			}
-			if (!flag) {
-				for (Build build : builds1) {
-					if (build.getType().toString().equals(graph.getBaseType().toString())) {
-						build1 = (Build) SettingUtils.objectCopy(build);
-						break;
-					}
-				}
-				if (graph.getDescription() != null) {
-					build1.setRemark(graph.getDescription());
-				}
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("longitude", longitude);
-				jsonObject.put("latitude", latitude);
-				jsonObject.put("elevation", elevation);
-				build1.setCenterCoor(jsonObject.toString());
-				build1.setProject(project);
-				build1.setSource(Build.Source.DESIGN);
-				build1.setCoordinateId(String.valueOf(coordinateId));
-				buildService.save(build1);
-			}else {
-				buildService.save(build1);
-			}
+			if (graph.getDescription() != null) {
+				build1.setRemark(graph.getDescription());
+			}else{
+			    build1.setRemark(build1.getType().getTypeC());
+            }
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("longitude", coordinateBase.getLongitude());
+			jsonObject.put("latitude", coordinateBase.getLatitude());
+			jsonObject.put("elevation", coordinateBase.getElevation());
+			build1.setCenterCoor(jsonObject.toString());
+			build1.setProject(project);
+			build1.setSource(Build.Source.DESIGN);
+			build1.setCoordinateId(coordinateId);
+			builds.add(build1);
 		}
 	}
 
@@ -838,18 +853,6 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 		return coordinates;
 	}
 
-	/**
-	 * 根据treePath删除坐标表单
-	 *
-	 * @param treePaths
-	 */
-	public void removeByTreePaths(List<String> treePaths) {
-		List<Coordinate> coordinates = findByTreePath(treePaths);
-		if (coordinates != null && coordinates.size() != 0) {
-			Coordinate coordinate = coordinates.get(0);
-			super.remove(coordinate);
-		}
-	}
 
 	/**
 	 * 保存设计的线面坐标数据
@@ -912,49 +915,29 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
         if (mFile.getSize() > CommonAttributes.CONVERT_MAX_SZIE) {
             // return "文件过大无法上传";
             logger.debug("文件过大");
-            jsonObject.put(entry.getKey(), 4003);
+            jsonObject.put(entry.getKey(), Message.Type.FILE_TOO_MAX.getStatus());
             return;
         }
         InputStream is;
         try {
             is = mFile.getInputStream();
         } catch (IOException e) {
+			e.printStackTrace();
             logger.info("坐标文件或格式异常");
-            jsonObject.put(entry.getKey(),4072);
+            jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR.getStatus());
             return;
         }
         String s = fileName.substring(fileName.lastIndexOf(".") + 1,
                 fileName.length());
-        Map<List<Graph>, List<Build>> map1;
         try {
-            map1 = readExcels(is, central, s, project, wgs84Type);
+			readExcels(is, central, s, project, wgs84Type, fileName, jsonObject);
         } catch (Exception e) {
+			e.printStackTrace();
             logger.info("坐标文件或格式异常");
-            jsonObject.put(entry.getKey(),4072);
+            jsonObject.put(entry.getKey(),Message.Type.COOR_FORMAT_ERROR.getStatus());
             return;
         }finally {
             IOUtils.safeClose(is);
-        }
-        if (map1 == null) {
-            logger.info("数据格式与所选格式不一致");
-            jsonObject.put(entry.getKey(),4073);
-            return;
-        }
-        List<Graph> list = null;
-        List<Build> builds = null;
-        for (Map.Entry<List<Graph>, List<Build>> entry1 : map1.entrySet()) {
-            list = entry1.getKey();
-            builds = entry1.getValue();
-            break;
-        }
-//        if (list == null || list.size() == 0) {
-//            jsonObject.put(entry.getKey(),Message.Type.OK.getStatus());
-//            return;
-//        }
-        if (saveCoordinate(list, builds, project)) {
-            jsonObject.put(entry.getKey(),2000);
-        } else {
-            jsonObject.put(entry.getKey(),4001);
         }
     }
 }

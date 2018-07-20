@@ -61,7 +61,6 @@ public class ShiroToken implements AuthenticationToken {
     // 设置子账号登录令牌
     public void setAccount(Account account) {
         this.name = account.getName();
-        this.userName = account.getUserName();
         this.phone = account.getPhone();
         this.email = account.getEmail();
         this.password = account.getPassword();

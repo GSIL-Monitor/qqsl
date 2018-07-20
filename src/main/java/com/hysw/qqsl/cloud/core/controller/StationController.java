@@ -4,6 +4,7 @@ import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.annotation.util.StationIsExpire;
 import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
@@ -56,6 +57,8 @@ public class StationController {
     private PollingService pollingService;
     @Autowired
     private MonitorService monitorService;
+    @Autowired
+    private AccountService accountService;
     /**
      * 获取token
      * @return message消息体,附带token令牌
@@ -603,6 +606,91 @@ public class StationController {
        }
         JSONArray paramters = stationService.getParameters();
         return MessageService.message(Message.Type.OK,paramters);
+    }
+
+    /**
+     * 将多个测站协同给多个子账号
+     * @param map <ul>
+     *            <li>stations:欲协同的多个测站,示例("12,34,24")</li>
+     *            <li>accountIds:欲协同的多个子账号,示例("12,34,24")</li>
+     * </ul>
+     * @return <ul>
+     *     <li>成功返回OK</li>
+     *     <li>如果不是自己的测站，返回DATA_REFUSE </li>
+     *     <li>失败返回FAIL</li>
+     * </ul>
+     */
+    @RequiresAuthentication
+    @RequiresRoles({"user:simple"})
+    @RequestMapping(value = "/cooperateMul", method = RequestMethod.POST)
+    public @ResponseBody Message cooperateMul(@RequestBody Map<String,Object> map) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object stationIds = map.get("stationIds");
+        Object accountIds = map.get("accountIds");
+        if (stationIds == null || accountIds == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        List<Station> stations=stationService.findByIdList(stationIds);
+        User user = authentService.getUserFromSubject();
+        if (stationService.stationIsBelongtoCurrentUser(stations, user)) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        List<Account> accounts = accountService.findByIdList(accountIds);
+        stationService.cooperateMul(stations, accounts);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 取消测站查看协同
+     * @param map <ul>
+     *            <li>stationId，欲取消协同的测站</li>
+     *            <li>accountIds，欲取消查看协同的多个子账号,示例("12,34,24")</li>
+     * </ul>
+     * @return <ul>
+     *     <li>成功返回OK</li>
+     *     <li>如果不是自己的测站，返回DATA_REFUSE </li>
+     *     <li>失败返回FAIL</li>
+     * </ul>
+     */
+    @RequiresAuthentication
+    @RequiresRoles({"user:simple"})
+    @RequestMapping(value = "/unCooperate", method = RequestMethod.POST)
+    public @ResponseBody Message unCooperate(@RequestBody Map<String,Object> map) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object stationId = map.get("stationId");
+        Object accountIds = map.get("accountIds");
+        if (stationId == null || accountIds == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Station station=stationService.find(Long.valueOf(stationId.toString()));
+        User user = authentService.getUserFromSubject();
+        if (!station.getUser().getId().equals(user.getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        List<Account> accounts = accountService.findByIdList(accountIds);
+        stationService.unCooperate(station, accounts);
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+    /**
+     * 子账户可查看测站列表
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/account/list", method = RequestMethod.GET)
+    public @ResponseBody Message stationsList(){
+        Account account = authentService.getAccountFromSubject();
+        List<JSONObject> stations = stationService.getStations(account);
+        pollingService.changeStationStatus(account, false);
+        return MessageService.message(Message.Type.OK, stations);
     }
 
 }

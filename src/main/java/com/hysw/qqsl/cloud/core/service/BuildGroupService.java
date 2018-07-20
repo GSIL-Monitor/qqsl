@@ -41,9 +41,6 @@ public class BuildGroupService {
 
     Setting setting = SettingUtils.getInstance().getSetting();
 
-    List<String> names = Arrays.asList(CommonAttributes.BASETYPEC);
-    List<String> types = Arrays.asList(CommonAttributes.BASETYPEE);
-
     /**
      * xml文件中读取到的建筑物结构
      */
@@ -222,14 +219,18 @@ public class BuildGroupService {
         return buildGroups;
     }
 
-    private void setType(Build build) throws XMLFileException{
+    private void setType(Build build) {
         String name = build.getName();
-        if(names.contains(name)){
-            String type = types.get(names.indexOf(name));
-            build.setType(CommonEnum.CommonType.valueOf(type));
-            build.setPy(type.substring(0,1));
-        }else throw new XMLFileException("建筑物出现未知类型！" + name);
-
+        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
+                continue;
+            }
+            if (commonType.getTypeC().equals(name)) {
+                build.setType(commonType);
+                build.setPy(commonType.name().substring(0,1));
+                break;
+            }
+        }
     }
 
     private void buildAliasCheck(String buildAlias,List<String> buildAliass) throws XMLFileException{

@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.aliyun.oss.OSSException;
 import com.aliyun.oss.common.utils.IOUtils;
+import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.dao.CertifyDao;
@@ -218,8 +219,9 @@ public class CertifyService extends BaseService<Certify, Long> {
         InputStream is = null;
         String face = "";
         try {
-            is = ossService.downloadFile("qqsl", "user/" + id + "/" + image);
+            is = ossService.downloadFile(CommonAttributes.BUCKET_NAME, "user/" + id + "/" + image);
         } catch (OSSException e) {
+            e.printStackTrace();
             return face;
         }
         ByteArrayOutputStream outputStream = null;
@@ -235,6 +237,7 @@ public class CertifyService extends BaseService<Certify, Long> {
             Base64 base64 = new Base64();
             face = base64.encodeAsString(outputStream.toByteArray());
         } catch (IOException e) {
+            e.printStackTrace();
             return face;
         }finally {
             IOUtils.safeClose(outputStream);

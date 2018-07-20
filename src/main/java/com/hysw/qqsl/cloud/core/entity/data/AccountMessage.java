@@ -32,12 +32,12 @@ public class AccountMessage extends BaseEntity{
      * 类型
      */
     public enum Type {
-        /** 邀请子账号 */
-        INVITE_ACCOUNT,
         /** 项目协同 */
         COOPERATE_PROJECT,
         /** 反馈回复 */
-        FEEDBACK
+        FEEDBACK,
+        /** 测站查看 */
+        COOPERATE_STATION
     }
 
     @ManyToOne(fetch=FetchType.EAGER)

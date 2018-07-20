@@ -3,6 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Setting;
+import com.hysw.qqsl.cloud.core.entity.data.Note;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.util.HttpRequestUtil;
@@ -31,6 +32,9 @@ public class MonitorService {
     private SensorService sensorService;
     @Autowired
     private HttpRequestUtil httpRequestUtil;
+    @Autowired
+    private NoteCache noteCache;
+    private long sendTime=0;
 
     Setting setting = SettingUtils.getInstance().getSetting();
 
@@ -62,8 +66,17 @@ public class MonitorService {
         String url = "http://" + setting.getWaterIP() + ":8080/";
         String method = "sensors";
         String token = applicationTokenService.getToken();
-        JSONArray applicationList = httpRequestUtil.jsonArrayHttpRequest(url + method + "?token=" + token, "GET", null);
-        return applicationList;
+        try {
+            return httpRequestUtil.jsonArrayHttpRequest(url + method + "?token=" + token, "GET", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (sendTime+3600*1000l < System.currentTimeMillis()) {
+                Note note = new Note(SettingUtils.getInstance().getSetting().getNotice(), "异常：监测子系统");
+                noteCache.add(SettingUtils.getInstance().getSetting().getNotice(),note);
+                sendTime = System.currentTimeMillis();
+            }
+        }
+        return null;
     }
 
 
