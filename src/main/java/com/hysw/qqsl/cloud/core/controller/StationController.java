@@ -700,6 +700,13 @@ public class StationController {
         return MessageService.message(Message.Type.OK, stations);
     }
 
+    /**
+     * 验证token
+     * @param token token
+     * @param noticeStr 随机串
+     * @param code 仪表唯一编码
+     * @return ok 成功 UNAUTHORIZED 无权限
+     */
     @RequestMapping(value = "/intendedEffectToken", method = RequestMethod.GET)
     public @ResponseBody
     Message intendedEffectToken(@RequestParam String token, @RequestParam String noticeStr, @RequestParam String code) {
