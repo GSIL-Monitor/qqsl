@@ -206,7 +206,7 @@ public class AccountService extends BaseService<Account,Long> {
         jsonObject.put("remark",account.getRemark());
         jsonObject.put("createDate",account.getCreateDate());
         jsonObject.put("modifyDate",account.getModifyDate());
-        jsonObject.put("status",account.getStatus().toString());
+        jsonObject.put("status",account.getStatus()==null? Account.Status.AWAITING.toString():account.getStatus().toString());
         User user = getUserByAccountId(account.getId());
         JSONObject userJson = new JSONObject();
         if(user!=null){
