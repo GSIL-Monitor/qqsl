@@ -147,7 +147,7 @@ public class OssController {
 	 * @return message消息体,FAIL:获取失败,OK:获取成功,包含所有要转换的记录
 	 * http://localhost:8080/qqsl/oss/list?token=9F590A681F4248F09CB2DD51E45CF5A9
 	 */
-	@RequestMapping(value = "/list",method = RequestMethod.GET,produces = "application/json")
+	@RequestMapping(value = "/transform/lists",method = RequestMethod.GET,produces = "application/json")
 	public @ResponseBody
 	Message getOss(@RequestParam String token){
 		if(!applicationTokenService.decrypt(token)){
@@ -165,7 +165,7 @@ public class OssController {
 	 * @param data 为JSONObject字符串,包含oss文件路径实体id,以及token令牌
 	 * @return message消息体,FAIL:参数不全,OK:记录删除成功
 	 */
-	@RequestMapping(value = "/remove",method = RequestMethod.POST)
+	@RequestMapping(value = "/transform/remove",method = RequestMethod.POST)
 	public @ResponseBody Message deleteOss(@RequestBody String data){
 		Message message = CommonController.parametersCheck(data);
 		if (message.getType() != Message.Type.OK) {
