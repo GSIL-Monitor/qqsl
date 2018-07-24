@@ -438,6 +438,8 @@ public class StationService extends BaseService<Station, Long> {
             }
             paramter.put("sensors",sensorsJson);
             paramters.add(paramter);
+            station.setTransform(false);
+            save(station);
         }
         return paramters;
     }
