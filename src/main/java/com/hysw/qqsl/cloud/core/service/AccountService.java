@@ -370,7 +370,7 @@ public class AccountService extends BaseService<Account,Long> {
             return;
         }
         if (account.getStatus() == Account.Status.CONFIRMED) {
-            msg = "您已经成为[" + userService.nickName(account.getUser().getId()) + "]企业的子账户，该项不能重复操作，如需绑定到另一企业，请先解绑。";
+            return;
         }
         if (account.getStatus()==Account.Status.AWAITING) {
             accountManager.delete(account);
@@ -441,13 +441,13 @@ public class AccountService extends BaseService<Account,Long> {
             JSONObject jsonObject = JSONObject.fromObject(o);
             if (jsonObject.get("reply").toString().equalsIgnoreCase("y")) {
                 Account account = findByPhone(String.valueOf(jsonObject.get("phone")));
-                if (account != null && account.getStatus() == Account.Status.AWAITING) {
+                if (account != null) {
                     activateAccount(account);
                 }
             }
             if (jsonObject.get("reply").toString().equalsIgnoreCase("n")) {
                 Account account = findByPhone(String.valueOf(jsonObject.get("phone")));
-                if (account != null && account.getStatus() == Account.Status.AWAITING) {
+                if (account != null) {
                     refusedAccount(account);
                 }
             }
