@@ -54,8 +54,9 @@ dependencies {
     compile "org.jdom:jdom:1.1"
     compile "log4j:log4j:1.2.17"
     compile "commons-fileupload:commons-fileupload:1.3"
-    compile "com.aliyun.oss:aliyun-sdk-oss:2.8.3"
+    compile('javax.el:javax.el-api:3.0.0')
     // 阿里云STS
+    compile "com.aliyun.oss:aliyun-sdk-oss:2.8.3"
     compile "com.aliyun:aliyun-java-sdk-sts:2.1.6"
     compile "com.aliyun:aliyun-java-sdk-core:2.1.7"
     compile 'net.sf.json-lib:json-lib:2.4:jdk15'
