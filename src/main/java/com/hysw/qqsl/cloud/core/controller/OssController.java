@@ -288,5 +288,17 @@ public class OssController {
 		}
 	}
 
+	/**
+	 * 获取bucket
+	 * @return
+	 */
+	@RequestMapping(value = "/bucket/info", method = RequestMethod.GET)
+	public @ResponseBody Message getbucketInfo(){
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("qqslBucket",CommonAttributes.BUCKET_NAME);
+		jsonObject.put("qqslImageBucket",CommonAttributes.BUCKET_IMAGE);
+		return MessageService.message(Message.Type.OK, jsonObject);
+	}
+
 
 }

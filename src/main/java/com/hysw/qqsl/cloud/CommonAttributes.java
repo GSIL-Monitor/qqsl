@@ -53,6 +53,19 @@ public final class CommonAttributes {
     //	public static final String[] OSSIMAGE= {"http://localhost:8080/qqsl//","http://localhost:8080/qqsl/","http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
     public static final String[] OSSIMAGE = {"http://localhost:8080/qqsl//", "http://localhost:8080/qqsl/", "http://qqslimage.oss-cn-hangzhou.aliyuncs.com/"};
     /**
+     * 监测系统
+     */
+    public static final String WATER_IP= "121.40.82.11";
+    /**
+     * nat123
+     */
+    public static final String NAT_123 = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"http://4008ad35.nat123.cc": "http://5007c0d2.nat123.cc";
+
+    /**
+     * 服务器ip
+     */
+    public static final String PRIMARY_IP= "218.244.134.139";
+    /**
      * 支付宝相关参数
      */
     public static final String OPEN_API = "https://openapi.alipay.com/gateway.do";
@@ -60,6 +73,7 @@ public final class CommonAttributes {
     public static final String RESULT_TYPE = "json";
     public static final String CHARSET = "UTF-8";
     public static final String SIGN_TYPE = "RSA2";
+    public static final String ALPAY_IP = SettingUtils.getInstance().getSetting().getStatus().equals("run")?"218.244.134.139": "112.124.104.190";
     //支付宝密钥
     public static final String ALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwjm4O865ntBwxVbrOBuXEBSogH5VynB9blwHlbsJ+1H0WeqrDvNZXeqBIE19SQau0ReSkMTKbZwTtIFF23ialwncECMRn7c2FmJkmkRAVD0Xok0XKqxAu++hnBVsXjfTSNuBJmRphWzZzOH0AbiGnXmw/5Gt5OBXSoV3FO1itV4MQDJAIxQnZ1mzWHcR7E7od35FxHFKVQ142nGeQohQy4EGa3BgDui/gvZzWMK0MGEBvYTL/z3av50Bq7V8zTTVfKWwiHjEQzVjQBOg7TwyUfEd0f2l3RHM5i0g4cF9XWe+6G8GQI4ZCLYVLZ4RwOzHX4tNZ1zao5Wk7jrSlwMsfQIDAQAB";
     public static final String APP_PRIVATE_KEY = "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDKp90Gi7270FFl7FydBWrKyhh0XLV2G0HJ/STd7nZH2HZMlvkuyIrwuDtt3NKMuuk82Ym50ttVpwNVcqEmtlj+1w8Cm6Tvs6B7MPTQrHYps99NZnSo0EvSi6JXrlnAHdCZE03gDV7kSMjdeO/3nIEdiMbnB4ZNDwX9+bDhvN0lG/yccM9phzVgkas9V4ZMOmeHzx6GPC6t1MjylPuNjtG1sSm9OVbIWEcbWZdlF2oZyLXZR596aHm+D4mb/GAOCJCpFCJpBGO6Si5O+FlGGLp7ZrF0V8Q7CJICi8AXwQ+JhjTQIr0XbEWtE0xxcYCHueY2/noAuooQWpFNe28UnybvAgMBAAECggEAP/pyyug/BBYmPHk8W84kAtV+lu3V0+2S/YPPqcjoypHJ9zAKhvyE8K4ZBPwb9JXloHJFCsdIu2e4o7dGrQQQYJPgh0A/9/TLi1jPUTnBLDU/IB5iYhEwfs3aeLfwWbiP7GOtyDgwZv2bfF/70j40fPB7auBzQ8ykZaP4dau8XURCp87NPRricSSLKMnHN3NLNRMve4aRQLmneCAOFQFtImo8mo4SxYjFoFhWDluvGncXHeJ3uw5EjJM24Beyrdb33Bm5O1cVnEUtM99vR0bt/CVov5/mB7CLvCM4A9EMLso+OBSzMEDKYpD6G5Pus294Z9kvk9hdZ5IpMVxNOepW0QKBgQDuw9kj6n/Eh2rEO2m6fTVqdfStG9ljfMSHlda76KmYyynMxTsi1wbe6kiQS8OWQ3M+tdgnSM3wfIxqwmJTYgKoOOBegUr99qGwfDSoy6OHrDxzL9Nk+aVJhi0KAps/79e5PrB72UBOObJlUks7sLSn7EfEm/CMjtkhmf9K0iI/dQKBgQDZSL/LnjUzxi8jno+i9k9qykHsyqXyBvvQAJ5lyitZ+qV3fKY2q2pckmTc8o2kMug9l2B0CtOIG2490O74Fru479+P4Bk0CEURTEkOtAouGBmHR/LkpJBNv5Gpcv9Bm7rxO4pqjqvr7UlWBwvPzEdLBRUyZiaZmyXqTMtSiFPEUwKBgCZZMmEAYvEPxugpmrunLJMiyt+a33mJKo+UU17u6X5u8xG+g9b+rk3TV0BFyu4xeysRTdxRZzI+7taezegSj9aw++hx37eWizWrXVHXEzbRRQxDHDLVneSHNmirLoBAZ2eLWBEsPZXS0oJPi2HU6c8mtggv+5y3vMwWzdgYlAOZAoGAbwz+cXvnZxG4T/UfJkPK7SJ4NSSRUbR+CJ34Vr/QDknLPdloPfK4Bp4PjNkuySf3iFsQwd4ypJKYcmGRcRx1TxzR3v/DAdPkMOYTRL+BoHNSwNBl9LOiyQnK0ZbjnM2R6u7qXHGUrpz06VHqmIaoPVBYuAx7V/BynWAoXoMshN8CgYA0a4iHa7M2tvkE7JBH6tYCDmk9ZbU1ChOMg5YgEJ5fDTNhkMJml+uvjOtl7286OXoRvMnyoGa8GrBUIu205OXaNymGfYC7ec2MO1B0Nf89CHvvo8x1ctxr4PbXVpD9waeoptdoVSUpErcuHHSVye35Cz51T0oGG04D140cxXQ4PQ==";

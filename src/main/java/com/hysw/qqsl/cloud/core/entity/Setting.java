@@ -36,22 +36,6 @@ public class Setting implements Serializable {
  	/**elementData模版*/
 	private String elementDataSimpleModel;
 
-	/**
-	 * 实时数据采集端IP
-	 */
-	private String waterIP;
-
-	/**
-	 * 支付宝接口的ip地址
-	 */
-	private String aliPayIP;
-
-	/**
-	 * 短信上行接口的ip地址
-	 */
-	private String primaryIP;
-
-
 	/** 建筑物 */
 	private String buildsModel;
 	private String buildsMater;
@@ -66,7 +50,6 @@ public class Setting implements Serializable {
 	private String goods;
 	private String station;
 
-	private String nat123;
 	/** 异常通知人电话 */
 	private String notice;
  	
@@ -163,22 +146,6 @@ public class Setting implements Serializable {
 		this.elementDataSimpleModel = elementDataSimpleModel;
 	}
 
-	public String getWaterIP() {
-		return waterIP;
-	}
-
-	public void setWaterIP(String waterIP) {
-		this.waterIP = waterIP;
-	}
-
-	public String getAliPayIP() {
-		return aliPayIP;
-	}
-
-	public void setAliPayIP(String aliPayIP) {
-		this.aliPayIP = aliPayIP;
-	}
-
 	public String getBuildsModel() {
 		return buildsModel;
 	}
@@ -259,14 +226,6 @@ public class Setting implements Serializable {
 		this.station = station;
 	}
 
-	public String getNat123() {
-		return nat123;
-	}
-
-	public void setNat123(String nat123) {
-		this.nat123 = nat123;
-	}
-
 	public String getNotice() {
 		return notice;
 	}
@@ -275,11 +234,4 @@ public class Setting implements Serializable {
 		this.notice = notice;
 	}
 
-	public String getPrimaryIP() {
-		return primaryIP;
-	}
-
-	public void setPrimaryIP(String primaryIP) {
-		this.primaryIP = primaryIP;
-	}
 }

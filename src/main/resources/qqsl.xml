@@ -3,11 +3,6 @@
 <qqsl>
 	<!-- run:正式运行状态 dev:开发状态 -->
 	<setting name="status" value="dev" />
-	<setting name="waterIP" value="121.40.82.11" />
-	<setting name="aliPayIP" value="112.124.104.190" />
-	<setting name="nat123" value="http://5007c0d2.nat123.cc" />
-	<setting name="primaryIP" value="218.244.134.139" />
-
 	<!-- 要素地址配置 -->
 	<setting name="agrProjectModel" value="agrProjectModel.xml" />
 	<setting name="watProjectModel" value="watProjectModel.xml" />
