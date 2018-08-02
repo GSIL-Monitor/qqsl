@@ -37,6 +37,8 @@ public class ProjectLog extends BaseEntity {
         FILE_DELETE
     }
 
+    @Basic(fetch = FetchType.EAGER)
+    @Column(columnDefinition = "text")
     public String getContent() {
         return content;
     }
