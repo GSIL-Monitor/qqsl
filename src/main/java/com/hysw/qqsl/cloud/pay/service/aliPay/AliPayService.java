@@ -47,7 +47,7 @@ public class AliPayService {
      * @return
      */
     public String getReturnUrl(){
-        String returnUrl =  "http://"+setting.getAliPayIP()+"/tpls/productModule/aliPaySuccess.html";
+        String returnUrl =  "http://"+CommonAttributes.ALPAY_IP+"/tpls/productModule/aliPaySuccess.html";
         return returnUrl;
     }
 
@@ -56,7 +56,7 @@ public class AliPayService {
      * @return
      */
     public String getNotifyUrl(){
-        String notifyUrl = "http://"+setting.getAliPayIP()+":8080/qqsl/aliPay/notify";
+        String notifyUrl = "http://"+CommonAttributes.ALPAY_IP+":8080/qqsl/aliPay/notify";
         return notifyUrl;
     }
     /**

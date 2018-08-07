@@ -433,7 +433,7 @@ public class AccountService extends BaseService<Account,Long> {
      * 激活子账号
      */
     public void activeAccount() {
-        JSONObject jsonObject1 = WeChatHttpRequest.jsonObjectHttpRequest("http://"+SettingUtils.getInstance().getSetting().getPrimaryIP() + ":8080/qqsl/user/getSmsUpList?token=" + applicationTokenService.getToken(), "GET", null);
+        JSONObject jsonObject1 = WeChatHttpRequest.jsonObjectHttpRequest("http://"+CommonAttributes.PRIMARY_IP + ":8080/qqsl/user/getSmsUpList?token=" + applicationTokenService.getToken(), "GET", null);
         if (jsonObject1 == null || jsonObject1.get("data") == null || JSONArray.fromObject(jsonObject1.get("data")).size() == 0) {
             return;
         }
