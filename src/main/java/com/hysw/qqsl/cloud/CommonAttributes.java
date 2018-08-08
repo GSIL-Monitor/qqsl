@@ -55,7 +55,7 @@ public final class CommonAttributes {
     /**
      * 监测系统
      */
-    public static final String WATER_IP= "121.40.82.11";
+    public static final String WATER_IP= "121.40.82.11:8888";
     /**
      * nat123
      */

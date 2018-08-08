@@ -79,7 +79,8 @@ public class HttpRequestUtil {
             inputStream.close();
             inputStream = null;
             httpUrlConn.disconnect();
-            jsonArray = JSONArray.fromObject(buffer.toString());
+            JSONObject jsonObject = JSONObject.fromObject(buffer.toString());
+            jsonArray = JSONArray.fromObject(jsonObject.get("data"));
         } catch (ConnectException ce) {
             ce.printStackTrace();
             if (sendTime+3600*1000l < System.currentTimeMillis()) {

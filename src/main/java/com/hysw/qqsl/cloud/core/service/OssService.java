@@ -601,6 +601,7 @@ public class OssService extends BaseService<Oss,Long>{
 		for(int i=0;i<ossList.size();i++){
 			jsonObject = new JSONObject();
 			jsonObject.put("id",ossList.get(i).getId());
+			jsonObject.put("createDate",ossList.get(i).getCreateDate());
 			jsonObject.put("treePath",ossList.get(i).getTreePath());
 			jsonArray.add(jsonObject);
 		}
