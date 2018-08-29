@@ -1,0 +1,23 @@
+<!--控制尺寸-->
+<controlSize>
+    <!--底流式消力池-->
+    <attribeGroup name="控制尺寸" buildAlias="b0001" alias="cs">
+        <attribe name="池深d" unit="m" type="number" alias="cs0001" locked="true" formula="wr0003*wr0001-wr0002-wr0004"/>
+        <attribe name="池长Lk" unit="m" type="number" alias="cs0002" locked="true" formula="wr0005*0.75"/>
+        <attribe name="尾坎高c" unit="m" type="number" alias="cs0003" locked="true" formula="wr0003*wr0001-wr0006"/>
+    </attribeGroup>
+    <!--谷坊-->
+    <attribeGroup name="控制尺寸" buildAlias="b0002" alias="cs">
+        <attribe name="溢流口底宽a" unit="m" type="number" alias="cs0004" locked="true" formula=""/>
+        <attribe name="溢流口高度h1" unit="m" type="number" alias="cs0005" locked="true" formula=""/>
+        <attribe name="堰口边坡系数" unit="1：0.5～1：1.5" type="number" alias="cs0006" locked="true" formula=""/>
+    </attribeGroup>
+    <!--开敞式水闸-->
+    <attribeGroup name="控制尺寸" buildAlias="b0054" alias="cs">
+        <attribe name="闸孔数" unit="" type="number" alias="cs0007" locked="true" formula=""/>
+        <attribe name="每孔净宽B" unit="m" type="number" alias="cs0008" locked="true" formula=""/>
+        <attribe name="堰前水头H" unit="m" type="number" alias="cs0009" locked="true" formula=""/>
+        <attribe name="行近流速水头Hv" unit="m" type="number" alias="cs0010" locked="true" formula=""/>
+        <attribe name="堰前总水头H0" unit="m" type="number" alias="cs0011" locked="true" formula=""/>
+    </attribeGroup>
+</controlSize>

@@ -16,9 +16,9 @@ import java.util.*;
 /**
  * Created by chenl on 17-4-21.
  */
-public class FieldServiceTest extends BaseTest {
+public class FieldWorkServiceTest extends BaseTest {
     @Autowired
-    private FieldService fieldService;
+    private FieldWorkService fieldWorkService;
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -57,13 +57,13 @@ public class FieldServiceTest extends BaseTest {
         List<Object> coordinates = new LinkedList<>();
         coordinates.add(coordinate);
         map.put("coordinates",coordinates);
-        boolean flag = fieldService.saveField(map);
+        boolean flag = fieldWorkService.saveField(map);
         Assert.assertTrue(flag);
     }
 
     @Test
     public void testWriteExcel(){
-        Workbook workbook = fieldService.writeExcel(projectService.find(848l), Build.Source.FIELD, Coordinate.WGS84Type.DEGREE);
+        Workbook workbook = fieldWorkService.writeExcelByFieldWork(projectService.find(848l), Coordinate.WGS84Type.DEGREE);
         Assert.assertTrue(workbook.getNumberOfSheets()!=0);
     }
 
@@ -72,14 +72,14 @@ public class FieldServiceTest extends BaseTest {
         String s = "{\"type\":\"QS\", \"centerCoor\":{\"longitude\":\"101.49382902737608\", \"latitude\":\"36.72807717821667\", \"elevation\":\"0\"}, \"projectId\":\"848\", \"remark\":\"qw\"}";
         JSONObject jsonObject = JSONObject.fromObject(s);
         Map<String, Object> map = (Map<String, Object>) jsonObject;
-        boolean flag = fieldService.newBuild(map.get("type"), map.get("centerCoor"), map.get("remark"), map.get("projectId"));
+        boolean flag = fieldWorkService.newBuild(map.get("type"), map.get("centerCoor"), map.get("remark"), map.get("projectId"));
         Assert.assertTrue(flag);
         buildService.flush();
         s = "{\"type\":\"QS\", \"centerCoor\":{\"longitude\":\"101.49382902737608\", \"latitude\":\"36.72807717821667\", \"elevation\":\"0\"}, \"id\":\"6106\", \"projectId\":\"848\", \"remark\":\"qw1\"}";
         jsonObject = JSONObject.fromObject(s);
         map = (Map<String, Object>) jsonObject;
         Build build = buildService.find(Long.valueOf(map.get("id").toString()));
-        flag = fieldService.editBuild(build,map.get("id"),map.get("remark"),map.get("type"),map.get("attribes"));
+        flag = fieldWorkService.editBuild(build,map.get("id"),map.get("remark"),map.get("type"),map.get("attribes"));
         Assert.assertTrue(flag);
     }
 

@@ -108,6 +108,10 @@ public class Message implements Serializable{
 		COOR_FORMAT_ERROR(4072),
 		/** 上传时选择的坐标类型和excel数据不一致，比如选择的是WGS84的度类型，上传的是WGS84的度分秒格    式，返回这个错误。*/
 		COOR_TYPE_ERROR(4073),
+		/** sheet类型不能对应到枚举 */
+		COOR_UNKONW_SHEET_TYPE(4074),
+		/** 上传时返回相应提示信息 */
+		COOR_RETURN_PROMPT(4075),
 		/** 订单过期，比如对过期订单进行支付，返回这个错误。*/
 		TRADE_EXPIRED(4080),
 		/** 订单已支付，比如关闭一个已完成支付的订单，返回这个错误。*/

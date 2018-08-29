@@ -1,0 +1,24 @@
+<!--水力要素-->
+<waterResources>
+    <!--底流式消力池-->
+    <attribeGroup name="水力要素" buildAlias="b0001" alias="wr" >
+        <attribe name='跃后水深h"c' unit="m" type="number" alias="wr0001"/>
+        <attribe name="下游水深ht" unit="m" type="number" alias="wr0002"/>
+        <attribe name="水跃淹没系数σ" unit="1.05～1.1" type="number" alias="wr0003"/>
+        <attribe name="池出口水面落差△z" unit="m" type="number" alias="wr0004"/>
+        <attribe name="水跃长度Lj" unit="m" type="number" alias="wr0005"/>
+        <attribe name="尾坎顶水头" unit="m" type="number" alias="wr0006"/>
+    </attribeGroup>
+    <!--谷坊-->
+    <attribeGroup name="水力要素" buildAlias="b0002" alias="wr" >
+        <attribe name="设计洪水流量Q" unit="m3/s" type="number" alias="wr0007"/>
+        <attribe name="堰上临界水深hc" unit="m" type="number" alias="wr0008"/>
+    </attribeGroup>
+    <!--开敞式水闸-->
+    <attribeGroup name="水力要素" buildAlias="b0054" alias="wr" >
+        <attribe name="过闸总流量Q" unit="m3/s" type="number" alias="wr0009"/>
+        <attribe name="堰流流量系数m" unit="" type="number" alias="wr0010"/>
+        <attribe name="侧收缩系数ε" unit="" type="number" alias="wr0011"/>
+        <attribe name="淹没系数σs" unit="" type="number" alias="wr0012"/>
+    </attribeGroup>
+</waterResources>

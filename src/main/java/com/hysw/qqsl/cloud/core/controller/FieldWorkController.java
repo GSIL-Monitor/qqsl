@@ -2,8 +2,9 @@ package com.hysw.qqsl.cloud.core.controller;
 
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Message;
-import com.hysw.qqsl.cloud.core.entity.build.Graph;
+import com.hysw.qqsl.cloud.core.entity.builds.SheetObject;
 import com.hysw.qqsl.cloud.core.entity.data.Build;
 import com.hysw.qqsl.cloud.core.entity.data.Coordinate;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
@@ -29,11 +30,9 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 外业测量控制层
@@ -41,11 +40,9 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/field")
-public class FieldController {
+public class FieldWorkController {
     @Autowired
-    private FieldService fieldService;
-    @Autowired
-    private BuildGroupService buildGroupService;
+    private FieldWorkService fieldWorkService;
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -65,7 +62,7 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/uploadCoordinate", method = RequestMethod.POST)
     public @ResponseBody
-    Message uplaodCoordinate(HttpServletRequest request) {
+    Message uplaodCoordinate(HttpServletRequest request, HttpSession session) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         String id = request.getParameter("projectId");
         String baseLevelType = request.getParameter("baseLevelType");
@@ -101,16 +98,55 @@ public class FieldController {
         if (central == null) {
             return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
         }
+        Map<String, Workbook> wbs = new HashMap<>();
         if(multipartResolver.isMultipart(request)) {
             //转换成多部分request
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
             Map<String, MultipartFile> map = multiRequest.getFileMap();
             for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-                coordinateService.uploadCoordinate(entry,jsonObject,project,central,wgs84Type);
+                coordinateService.uploadCoordinate(entry,jsonObject,wbs);
             }
         }
-        return MessageService.message(Message.Type.OK,jsonObject);
+        if (!jsonObject.isEmpty()) {
+            return MessageService.message(Message.Type.COOR_FORMAT_ERROR, jsonObject);
+        }
+        SheetObject sheetObject = new SheetObject();
+        coordinateService.getAllSheet(wbs,sheetObject);
+//		进入错误处理环节
+        if (sheetObject.getUnknowWBs().size() != 0) {
+            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,coordinateService.errorMsg(sheetObject.getUnknowWBs()));
+        }
+        JSONObject reslove = coordinateService.reslove(sheetObject, central, wgs84Type, project);
+        if (reslove == null) {
+            return MessageService.message(Message.Type.OK);
+        }
+        session.setAttribute("upload",reslove);
+        JSONArray jsonArray = coordinateService.removeNoticeStr(reslove.get("msg"));
+        return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
     }
+
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/uploadCoordinateConfirm", method = RequestMethod.GET)
+    public @ResponseBody
+    Message uploadCoordinateConfirm(HttpSession session) {
+        JSONObject reslove = (JSONObject) session.getAttribute("upload");
+        if (reslove == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        session.removeAttribute("upload");
+        Long projectId = Long.valueOf(reslove.get("projectId").toString());
+        Project project = projectService.find(projectId);
+        List<Coordinate> coordinates = coordinateService.findByProject(project);
+        List<Build> builds = buildService.findByProject(project);
+        JSONObject jsonObject;
+        for (Object o : JSONArray.fromObject(reslove.get("msg"))) {
+            jsonObject = JSONObject.fromObject(o);
+            coordinateService.saveObject(jsonObject.get("noticeStr").toString(),builds,coordinates);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
 
 
     /**
@@ -127,7 +163,7 @@ public class FieldController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        if (fieldService.saveField(objectMap)) {
+        if (fieldWorkService.saveField(objectMap)) {
             return MessageService.message(Message.Type.OK);
         } else {
             return MessageService.message(Message.Type.FAIL);
@@ -149,10 +185,10 @@ public class FieldController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (Build.Source.DESIGN.toString().toLowerCase().equals(type.trim().toLowerCase())) {
-            JSONObject desgin = fieldService.field(project, Build.Source.DESIGN);
+            JSONObject desgin = fieldWorkService.field(project, Build.Source.DESIGN);
             return MessageService.message(Message.Type.OK, desgin);
         } else if (Build.Source.FIELD.toString().toLowerCase().equals(type.trim().toLowerCase())) {
-            JSONObject field = fieldService.field(project, Build.Source.FIELD);
+            JSONObject field = fieldWorkService.field(project, Build.Source.FIELD);
             return MessageService.message(Message.Type.OK, field);
         }else {
             return MessageService.message(Message.Type.FAIL);
@@ -173,43 +209,43 @@ public class FieldController {
      */
     @RequestMapping(value = "/getSimpleBuildJsons", method = RequestMethod.GET)
     public @ResponseBody Message getSimpleBuildJsons(){
-        JSONArray jsonArray = buildGroupService.getBuildJson(true);
-        return MessageService.message(Message.Type.OK,jsonArray);
-    }
-    /**
-     * 获取带有属性的建筑物结构（地质属性除外）
-     * @return 地质属性以外的建筑物列表
-     */
-    @RequestMapping(value = "/getBuildJsons", method = RequestMethod.GET)
-    public @ResponseBody Message getBuildJsons(){
-        JSONArray jsonArray = buildGroupService.getBuildJson(false);
+        JSONArray jsonArray = buildService.getBuildJson();
         return MessageService.message(Message.Type.OK,jsonArray);
     }
 
-    /**
-     * 获取地质属性的json结构
-     * @return 地质属性列表
-     */
-    @RequestMapping(value = "/getGeologyJson", method = RequestMethod.GET)
-//    @RequiresRoles(value = {"web"},logical = Logical.OR)
-    public @ResponseBody Message getGeologyJson(){
-        JSONObject jsonObject = buildGroupService.getGeologyJson();
-        return MessageService.message(Message.Type.OK,jsonObject);
-    }
+//    /**
+//     * 获取带有属性的建筑物结构（地质属性除外）
+//     * @return 地质属性以外的建筑物列表
+//     */
+//    @RequestMapping(value = "/getBuildJsons", method = RequestMethod.GET)
+//    public @ResponseBody Message getBuildJsons(){
+//        JSONArray jsonArray = buildGroupService.getBuildJson(false);
+//        return MessageService.message(Message.Type.OK,jsonArray);
+//    }
+
+//    /**
+//     * 获取地质属性的json结构
+//     * @return 地质属性列表
+//     */
+//    @RequestMapping(value = "/getGeologyJson", method = RequestMethod.GET)
+////    @RequiresRoles(value = {"web"},logical = Logical.OR)
+//    public @ResponseBody Message getGeologyJson(){
+//        JSONObject jsonObject = buildGroupService.getGeologyJson();
+//        return MessageService.message(Message.Type.OK,jsonObject);
+//    }
 
     /**
-     * 将外业内业坐标数据及建筑物写入excel
+     * 将内业坐标数据及建筑物写入excel
      * @param projectId 项目id
-     * @param type 来源 DESIGN设计，FIELD外业
      * @param baseLevelType 坐标转换基准面类型
      * @param WGS84Type WGS84坐标格式
      * @return excel格式数据
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadCoordinate", method = RequestMethod.GET)
+    @RequestMapping(value = "/downloadDesignCoordinate", method = RequestMethod.GET)
     public @ResponseBody
-    Message downloadCoordinate(@RequestParam long projectId, @RequestParam String type, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
+    Message downloadDesignCoordinate(@RequestParam long projectId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
         Project project = projectService.find(projectId);
         Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
         Coordinate.WGS84Type wgs84Type = null;
@@ -222,14 +258,7 @@ public class FieldController {
         if (wgs84Type == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        Workbook wb;
-        if (Build.Source.DESIGN.toString().toLowerCase().equals(type.trim().toLowerCase())) {
-            wb = fieldService.writeExcel(project, Build.Source.DESIGN,wgs84Type);
-        } else if (Build.Source.FIELD.toString().toLowerCase().equals(type.trim().toLowerCase())) {
-            wb = fieldService.writeExcel(project, Build.Source.FIELD,wgs84Type);
-        } else {
-            return MessageService.message(Message.Type.FAIL);
-        }
+        Workbook wb = fieldWorkService.writeExcelByDesign(project,wgs84Type);
         if (wb == null) {
             return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
         }
@@ -242,7 +271,65 @@ public class FieldController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + "--" + type.trim() + ".xls" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + "--" + "design" + ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 将外业内业坐标数据及建筑物写入excel
+     * @param projectId 项目id
+     * @param baseLevelType 坐标转换基准面类型
+     * @param WGS84Type WGS84坐标格式
+     * @return excel格式数据
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/downloadFieldWorkCoordinate", method = RequestMethod.GET)
+    public @ResponseBody
+    Message downloadFieldWorkCoordinate(@RequestParam long projectId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
+        Project project = projectService.find(projectId);
+        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+        Coordinate.WGS84Type wgs84Type = null;
+        if (!WGS84Type.equals("")) {
+            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+        }
+        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
+            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+        }
+        if (wgs84Type == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Workbook wb = fieldWorkService.writeExcelByFieldWork(project,wgs84Type);
+        if (wb == null) {
+            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + "--" + "fieldWork" + ".xlsx" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {
@@ -305,7 +392,7 @@ public class FieldController {
         if (projectId == null || type == null || centerCoor == null || remark == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        if (fieldService.newBuild(type, centerCoor, remark, projectId)) {
+        if (fieldWorkService.newBuild(type, centerCoor, remark, projectId)) {
             return MessageService.message(Message.Type.OK);
         } else {
             return MessageService.message(Message.Type.FAIL);
@@ -337,7 +424,7 @@ public class FieldController {
         if (build == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        if (fieldService.editBuild(build,id,remark,type,attribes)) {
+        if (fieldWorkService.editBuild(build,id,remark,type,attribes)) {
             return MessageService.message(Message.Type.OK);
         } else {
             return MessageService.message(Message.Type.FAIL);
@@ -381,7 +468,7 @@ public class FieldController {
             return message;
         }
         Object line = objectMap.get("line");
-        Object builds = objectMap.get("build");
+        Object builds = objectMap.get("builds");
         Object description = objectMap.get("description");
         if (line == null && description == null) {
             return MessageService.message(Message.Type.FAIL);
@@ -396,9 +483,13 @@ public class FieldController {
             return MessageService.message(Message.Type.FAIL);
         }
         jsonObject.remove("id");
+        String baseType = jsonObject.get("baseType").toString();
+        jsonObject.remove("type");
+        jsonObject.remove("baseType");
         Coordinate coordinate = coordinateService.find(Long.valueOf(id.toString()));
         coordinate.setCoordinateStr(jsonObject.toString());
         coordinate.setDescription(description.toString());
+        coordinate.setCommonType(CommonEnum.CommonType.valueOf(baseType));
         coordinateService.save(coordinate);
         if (builds != null) {
             List<Integer> list = (List<Integer>) builds;
@@ -485,7 +576,7 @@ public class FieldController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/templateInfo", method = RequestMethod.GET)
     public @ResponseBody Message templateInfo() {
-        return MessageService.message(Message.Type.OK,fieldService.getModelType());
+        return MessageService.message(Message.Type.OK,fieldWorkService.getModelType());
     }
 
     /**
@@ -500,7 +591,7 @@ public class FieldController {
     public @ResponseBody
     Message downloadTemplete(@RequestParam String[] types, HttpServletResponse response) {
         List<String> list = Arrays.asList(types);
-        Workbook wb = fieldService.downloadModel(list);
+        Workbook wb = fieldWorkService.downloadModel(list);
         if (wb == null) {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -513,7 +604,7 @@ public class FieldController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xls" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {

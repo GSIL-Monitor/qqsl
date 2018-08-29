@@ -25,7 +25,7 @@ public class AttribeService extends BaseService<Attribe,Long> {
     public List<Attribe> findByBuilds(List<Build> builds) {
         List<Filter> filters = new ArrayList<>();
         for (Build build : builds) {
-            filters.add(Filter.eq("build", build));
+            filters.add(Filter.eq("builds", build));
         }
         return attribeDao.findList(0, null, filters);
     }

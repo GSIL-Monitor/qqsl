@@ -32,16 +32,18 @@ public class Attribe extends BaseEntity{
     private Type type;
     /** 属性值 */
     private String value;
-    /** 动态组序号 */
-    private int code;
     /** 属性单位 */
     private String unit;
-    /**属性类别 */
-    private CommonEnum.Status status;
     /**所属建筑物*/
     private Build build;
-    /**属性类型(status)*/
-    private String genre;
+    /** 单元格解除锁定 */
+    private Boolean locked = false;
+    /** excel计算公式 */
+    private String fx;
+    /** 模拟公式 */
+    private String formula;
+    /** excel行数 */
+    private int row;
     /**属性值类型*/
     public enum Type{
         /**
@@ -83,7 +85,6 @@ public class Attribe extends BaseEntity{
     }
 
     public Attribe() {
-        this.code = 0;
     }
 
     @Transient
@@ -157,14 +158,6 @@ public class Attribe extends BaseEntity{
         this.value = value;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
     @Transient
     public String getUnit() {
         return unit;
@@ -175,33 +168,38 @@ public class Attribe extends BaseEntity{
     }
 
     @Transient
-    public CommonEnum.Status getStatus() {
-        return status;
+    public Boolean getLocked() {
+        return locked;
     }
 
-    public void setStatus(CommonEnum.Status status) {
-        this.status = status;
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
     }
 
     @Transient
-    public String getGenre() {
-        return genre;
+    public String getFx() {
+        return fx;
     }
 
-    public void setGenre(String genre) {
-        if(genre!=null){
-            if(genre.equals("dynamic")){
-                this.setStatus(CommonEnum.Status.DYNAMIC);
-            }else if(genre.equals("normal")){
-                this.setStatus(CommonEnum.Status.NORMAL);
-            }else if(genre.equals("hide")){
-                this.setStatus(CommonEnum.Status.HIDE);
-            }else{
-                this.setStatus(CommonEnum.Status.NORMAL);
-            }
-        }else{
-            this.setStatus(CommonEnum.Status.NORMAL);
-        }
-        this.genre = genre;
+    public void setFx(String fx) {
+        this.fx = fx;
+    }
+
+    @Transient
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    @Transient
+    public String getFormula() {
+        return formula;
+    }
+
+    public void setFormula(String formula) {
+        this.formula = formula;
     }
 }

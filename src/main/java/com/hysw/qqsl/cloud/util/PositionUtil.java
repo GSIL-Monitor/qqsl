@@ -1,6 +1,6 @@
 package com.hysw.qqsl.cloud.util;
 
-import com.hysw.qqsl.cloud.core.entity.build.Gps;
+import com.hysw.qqsl.cloud.core.entity.builds.Gps;
 
 /**
  * 各地图API坐标系统比较与转换;

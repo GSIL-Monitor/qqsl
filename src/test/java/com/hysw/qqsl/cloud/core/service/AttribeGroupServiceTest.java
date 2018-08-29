@@ -1,8 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.entity.build.AttribeGroup;
-import com.hysw.qqsl.cloud.core.service.AttribeGroupService;
+import com.hysw.qqsl.cloud.core.entity.builds.AttribeGroup;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -22,42 +21,6 @@ public class AttribeGroupServiceTest extends BaseTest {
     private CacheManager cacheManager;
     @Autowired
     private AttribeGroupService attribeGroupService;
-
-    @Test
-    public void getMaterGroup() throws Exception {
-        AttribeGroup attribeGroup = attribeGroupService.getMaterGroup("1");
-        assertNotNull(attribeGroup);
-    }
-
-    @Test
-    public void getDimensionsGroup() throws Exception {
-        AttribeGroup attribeGroup = attribeGroupService.getDimensionsGroup("1");
-        assertNotNull(attribeGroup);
-    }
-
-    @Test
-    public void getHydraulicsGroup() throws Exception {
-        AttribeGroup attribeGroup = attribeGroupService.getHydraulicsGroup("1");
-        assertNotNull(attribeGroup);
-    }
-
-    @Test
-    public void getGeologyGroup() throws Exception {
-        AttribeGroup attribeGroup = attribeGroupService.getGeologyGroup("1");
-        assertNotNull(attribeGroup);
-    }
-
-    @Test
-    public void getGeologyDynamicGroups() throws Exception {
-        AttribeGroup attribeGroup = attribeGroupService.getGeologyDynamicGroups("1");
-        assertNotNull(attribeGroup);
-    }
-
-    @Test
-    public void getStructureGroup() throws Exception {
-        AttribeGroup attribeGroup = attribeGroupService.getStructureGroup("1");
-        assertNotNull(attribeGroup);
-    }
 
 
     @Test
@@ -108,4 +71,5 @@ public class AttribeGroupServiceTest extends BaseTest {
         assertNotNull(attribeGroups);
         assertEquals(4,attribeGroups.size());
     }
+
 }

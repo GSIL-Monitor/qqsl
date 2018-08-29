@@ -44,6 +44,15 @@ public class Setting implements Serializable {
 	private String buildsGeology;
 	private String buildsStructure;
 
+	/**
+	 * newBuild
+	 */
+	private String build;
+	private String coordinate;
+	private String waterResources;
+	private String controlSize;
+	private String groundStress;
+	private String component;
 	/** 服务 */
 	private String serveItem;
 	private String packageModel;
@@ -234,4 +243,51 @@ public class Setting implements Serializable {
 		this.notice = notice;
 	}
 
+	public String getBuild() {
+		return build;
+	}
+
+	public void setBuild(String build) {
+		this.build = build;
+	}
+
+	public String getCoordinate() {
+		return coordinate;
+	}
+
+	public void setCoordinate(String coordinate) {
+		this.coordinate = coordinate;
+	}
+
+	public String getWaterResources() {
+		return waterResources;
+	}
+
+	public void setWaterResources(String waterResources) {
+		this.waterResources = waterResources;
+	}
+
+	public String getControlSize() {
+		return controlSize;
+	}
+
+	public void setControlSize(String controlSize) {
+		this.controlSize = controlSize;
+	}
+
+	public String getGroundStress() {
+		return groundStress;
+	}
+
+	public void setGroundStress(String groundStress) {
+		this.groundStress = groundStress;
+	}
+
+	public String getComponent() {
+		return component;
+	}
+
+	public void setComponent(String component) {
+		this.component = component;
+	}
 }

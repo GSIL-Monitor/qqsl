@@ -70,7 +70,7 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 	@Autowired
 	private MessageService messageService;
 	@Autowired
-	private FieldService fieldService;
+	private FieldWorkService fieldWorkService;
 	@Autowired
 	private AccountManager accountManager;
     @Autowired
@@ -113,8 +113,6 @@ public class MyListener implements ApplicationListener<ContextRefreshedEvent>{
 			objectJsonConvertUtils.getFloJsonTree();
 			objectJsonConvertUtils.getWatJsonTree();
 			objectJsonConvertUtils.getHydJsonTree();
-			buildGroupService.getCompleteBuildGroups();
-			buildGroupService.getBuildsDynamic();
 			certifyService.certifyCache();
 			logger.info("加载认证缓存");
 			userService.userCache();

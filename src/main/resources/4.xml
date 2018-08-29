@@ -1,0 +1,18 @@
+<!--地基应力-->
+<groundStress>
+    <!--底流式消力池-->
+    <attribeGroup name="地基处理" buildAlias="b0001" alias="gs">
+        <attribe name="地基应力" unit="Mpa" type="number" alias="gs0001"/>
+    </attribeGroup>
+    <!--谷坊-->
+    <attribeGroup name="地基处理" buildAlias="b0002" alias="gs">
+        <attribe name="地基应力" unit="Mpa" type="number" alias="gs0002"/>
+    </attribeGroup>
+    <!--开敞式水闸-->
+    <attribeGroup name="地基处理" buildAlias="b0054" alias="gs">
+        <attribe name="地基应力" unit="Mpa" type="number" alias="gs0003"/>
+        <attribe name="固结灌浆孔径φ1/深度h1" unit="mm/m" type="number" alias="gs0004"/>
+        <attribe name="固结灌浆孔距b1" unit="m" type="number" alias="gs0005"/>
+        <attribe name="换基材料/厚度c" unit="" type="text" alias="gs0006"/>
+    </attribeGroup>
+</groundStress>

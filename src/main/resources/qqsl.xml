@@ -33,6 +33,13 @@
 	<setting name="station" value="station.xml"/>
 	<setting name="notice" value="13028710937"/>
 
+	<setting name="build" value="0.xml" />
+	<setting name="coordinate" value="1.xml" />
+	<setting name="waterResources" value="2.xml" />
+	<setting name="controlSize" value="3.xml" />
+	<setting name="groundStress" value="4.xml" />
+	<setting name="component" value="5.xml" />
+
 </qqsl>
 
 

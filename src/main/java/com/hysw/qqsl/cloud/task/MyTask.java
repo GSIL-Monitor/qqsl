@@ -54,6 +54,8 @@ public class MyTask {
     private NoteService noteService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private CoordinateService coordinateService;
 
 //    @Autowired
 //    private CustomRealm customRealm;
@@ -174,5 +176,11 @@ public class MyTask {
     public void expiredIntendedEffectToken(){
         applicationTokenService.expiredIntendedEffectToken();
         logger.info("效验token过期");
+    }
+
+    @Scheduled(fixedDelay = 60000*5 )
+    public void deletePLACache(){
+        coordinateService.deteteCache();
+        logger.info("删除PAL缓存");
     }
 }

@@ -70,7 +70,7 @@ public class ProjectService extends BaseService<Project, Long> {
     @Autowired
     private ObjectJsonConvertUtils objectJsonConvertUtils;
     @Autowired
-    private FieldService fieldService;
+    private FieldWorkService fieldWorkService;
     @Autowired
     private ShareService shareService;
     @Autowired
@@ -727,11 +727,11 @@ public class ProjectService extends BaseService<Project, Long> {
         introduceJson = introduceService.buildIntroduceJson(project);
         projectJson.put("introduce", introduceJson);
         //构建坐标数据
-        JSONObject design = fieldService.field(project, Build.Source.DESIGN);
+        JSONObject design = fieldWorkService.field(project, Build.Source.DESIGN);
         if (!design.isEmpty()) {
             projectJson.put("coordinates", design);
         }
-        JSONObject field = fieldService.field(project, Build.Source.FIELD);
+        JSONObject field = fieldWorkService.field(project, Build.Source.FIELD);
         if (!field.isEmpty()) {
             projectJson.put("measures", field);
         }

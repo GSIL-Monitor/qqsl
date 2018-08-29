@@ -98,6 +98,10 @@ public class Project extends BaseEntity {
     private IconType iconType;
 
     /**
+     * 外业
+     */
+    private List<FieldWork> fieldWorks = new ArrayList<>();
+    /**
      * 项目类型
      */
     public enum Type {
@@ -307,5 +311,15 @@ public class Project extends BaseEntity {
 
     public void setIconType(IconType iconType) {
         this.iconType = iconType;
+    }
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy = "project")
+    @JsonIgnore
+    public List<FieldWork> getFields() {
+        return fieldWorks;
+    }
+
+    public void setFields(List<FieldWork> fieldWorks) {
+        this.fieldWorks = fieldWorks;
     }
 }

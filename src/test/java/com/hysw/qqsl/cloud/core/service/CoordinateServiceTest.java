@@ -5,11 +5,10 @@ import java.util.*;
 
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Message;
-import com.hysw.qqsl.cloud.core.entity.build.*;
+import com.hysw.qqsl.cloud.core.entity.builds.*;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.logging.Log;
@@ -17,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
 
 public class CoordinateServiceTest extends BaseTest {
@@ -43,7 +40,7 @@ public class CoordinateServiceTest extends BaseTest {
 	@Autowired
 	private BuildService buildService;
 	@Autowired
-	private FieldService fieldService;
+	private FieldWorkService fieldWorkService;
 	String str = "泉室,QS,截水廊道,JSLD,大口井,DKJ,土井,TJ,机井,JJ,涝池,LC,闸,FSZ,倒虹吸,DHX,跌水,DS,消力池,XIAOLC,护坦,HUT,海漫,HAIM,渡槽,DC,涵洞,HD,隧洞,SD,农口,NK,斗门,DM,公路桥,GLQ,车便桥,CBQ,各级渠道,GJQD,检查井,JCJ,分水井,FSJ,供水井,GSJ,减压井,JYJ,减压池,JYC,排气井,PAIQJ,放水井,FANGSJ,蓄水池,XSC,各级管道,GJGD,防洪堤,FHD,排洪渠,PHQ,挡墙,DANGQ,淤地坝,YDB,谷坊,GF,滴灌,DG,喷头,PT,给水栓,JSS,施肥设施,SFSS,过滤系统,GLXT,林地,LD,耕地,GD,草地,CD,居民区,JMQ,工矿区,GKQ,电力,DL,次级交通,CJJT,河床,HEC,水面,SHUIM,水位,SHUIW,水文,SHUIWEN,雨量,YUL,水质,SHUIZ,泵站,BZ,电站厂房,DZCF,地质点,DIZD,其他,TSD,普通点,POINT,供水干管,GSGG,供水支管,GSZG,供水斗管,GSDG,供水干渠,GSGQ,供水支渠,GSZQ,供水斗渠,GSDQ,排水干管,PSGG,排水支管,PSZG,排水斗管,PSDG,排水干渠,PSGQ,排水支渠,PSZQ,排水斗渠,PSDQ,灌溉范围,GGFW,保护范围,BHFW,供水区域,GSQY,治理范围,ZLFW,库区淹没范围,KQYMFW,水域,SHUIY,公共线面,GONGGXM";
 
 	/**
@@ -100,8 +97,8 @@ public class CoordinateServiceTest extends BaseTest {
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
-		coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE,fileName,jsonObject);
-		Assert.assertTrue(jsonObject.get(fileName).equals(Message.Type.OK.getStatus()));
+//		coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE,fileName,jsonObject);
+//		Assert.assertTrue(jsonObject.get(fileName).equals(Message.Type.OK.getStatus()));
 	}
 
 	/**
@@ -125,7 +122,7 @@ public class CoordinateServiceTest extends BaseTest {
 			String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 					fileName.length());
 			JSONObject jsonObject = new JSONObject();
-			coordinateService.readExcels(testFile.getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -153,7 +150,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
         try {
-        	coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//        	coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
         } catch (Exception e) {
             flag = true;
         }
@@ -181,7 +178,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -209,7 +206,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -237,7 +234,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -264,7 +261,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -291,7 +288,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -318,7 +315,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -345,7 +342,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -372,7 +369,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE, fileName, jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE, fileName, jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -399,7 +396,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -426,7 +423,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -453,7 +450,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -480,7 +477,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -507,7 +504,7 @@ public class CoordinateServiceTest extends BaseTest {
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
 		try {
-			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		} catch (Exception e) {
 			flag = true;
 		}
@@ -532,7 +529,7 @@ public class CoordinateServiceTest extends BaseTest {
 		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
 				fileName.length());
 		JSONObject jsonObject = new JSONObject();
-		coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
 		Assert.assertTrue(jsonObject.get(fileName).equals(Message.Type.COOR_FORMAT_ERROR.getStatus()));
 	}
 
@@ -559,31 +556,6 @@ public class CoordinateServiceTest extends BaseTest {
 		Assert.assertTrue(coordinateBase == null);
 	}*/
 
-	/**
-	 * 测试点数据转化为字符串
-	 */
-	@Test
-	public void testListToStringPoing() {
-		JSONObject jsonObject = new JSONObject();
-		List<Graph> list = new ArrayList<Graph>();
-		Graph graph;
-		CoordinateBase coordinateBase;
-		List<CoordinateBase> coordinates;
-		for (int i = 0; i <= 87; i++) {
-			coordinateBase = new CoordinateBase();
-			coordinateBase.setElevation(String.valueOf(i));
-			coordinateBase.setLatitude(String.valueOf(i + 1));
-			coordinateBase.setLongitude(String.valueOf(i + 2));
-			coordinates = new ArrayList<>();
-			coordinates.add(coordinateBase);
-			graph = new Graph();
-			graph.setCoordinates(coordinates);
-			graph.setBaseType(CommonEnum.CommonType.SD);
-			list.add(graph);
-		}
-		String str2 = coordinateService.listToString(list,jsonObject);
-		Assert.assertTrue(jsonObject.size() > 0);
-	}
 
 	/**
 	 * 测试写入数据库service
@@ -630,292 +602,8 @@ public class CoordinateServiceTest extends BaseTest {
 //				fileName);
 //		Assert.assertTrue(me==null);
 	}
-	
-	/**
-	 * 根据treePath查询坐标表
-	 */
-	@Test
-	public void testFindByTreePath(){
-		String newcode="hyswxian34";
-		List<Project> projects=projectService.findByCode(newcode,1l);
-		String treePath=""+projects.get(0).getTreePath()+"/2/2A/8.xlsx";
-		List<String> treePaths=new ArrayList<String>();
-		treePaths.add(treePath);
-		List<Coordinate> coordinates=coordinateService.findByTreePath(treePaths);
-		Assert.assertTrue(coordinates.size()==0);
-	}
 
 
-	/**
-	 * 写excel文件类
-	 */
-	class WriteExecl{
-		private int index;
-		private int max;
-
-		WriteExecl(){
-			this.index = 0;
-		}
-
-		public int getIndexAdd() {
-			if (max < index) {
-				max = index;
-			}
-			return index++;
-		}
-
-		public int getIndex() {
-			return index;
-		}
-
-		public int getIndexMinus(){
-			return index--;
-		}
-
-		public int getMax() {
-			return max;
-		}
-	}
-
-	/**
-	 * 输出建筑物模板
-	 * @throws IOException
-	 */
-	@Test
-	public void testOutputAllModel() throws IOException {
-		Workbook wb = new HSSFWorkbook();
-		List<Build> buildsDynamic = buildGroupService.getBuildsDynamic();
-		Map<CommonEnum.CommonType,List<Build>>map=fieldService.groupBuild(buildsDynamic);
-		Row row = null;
-		Cell cell = null;
-		boolean flag;
-		final String[] num = {"一","二","三","四","五","六","七"};
-		for (Map.Entry<CommonEnum.CommonType, List<Build>> entry : map.entrySet()) {
-			Sheet sheet = null;
-			WriteExecl we = new WriteExecl();
-			for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
-				if (SettingUtils.changeDeprecatedEnum(commonType,commonType.name())) {
-					continue;
-				}
-				if (commonType.name().equals(entry.getKey().toString())) {
-					sheet = wb.createSheet(commonType.getTypeC());
-					break;
-				}
-			}
-			List<Build>  builds= entry.getValue();
-			flag = true;
-			for (int i = 0; i < builds.size(); i++) {
-//				if (builds.get(i).getAttribeList() == null || builds.get(i).getAttribeList().size() == 0) {
-//					continue;
-//				}
-				flag = false;
-				CellStyle style1 = wb.createCellStyle();
-				style1.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-				Font font1 = wb.createFont();
-				font1.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-				font1.setFontName("宋体");//设置字体名称
-				style1.setFont(font1);
-				style1.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
-				style1.setBorderBottom(HSSFCellStyle.BORDER_THIN);//下边框
-				style1.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
-				style1.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
-				writeToCell(sheet,row,cell,style1,we,"编号","名称","单位","值",null,true);
-
-				CellStyle style = wb.createCellStyle();
-				style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-				Font font = wb.createFont();
-				font.setFontName("宋体");//设置字体名称
-				style.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
-				style.setBorderBottom(HSSFCellStyle.BORDER_THIN);//下边框
-				style.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
-				style.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
-				style.setFont(font);
-				//坐标头
-				writeToCell(sheet,row,cell,style,we,num[0],"坐标",null,null,null,true);
-
-				writeToCell(sheet,row,cell,style,we,"1","中心点","经度,纬度,高程",null,"coor1",true);
-
-				writeToCell(sheet,row,cell,style,we,"2","定位点","经度,纬度,高程",null,"coor2",true);
-
-				int n = 1;
-				writeToCell(sheet,row,cell,style,we,num[n++],"描述",null,null,"remark",true);
-				int aa = we.getIndex();
-				writeToExcel(style, sheet, row, cell, we, builds.get(i).getMaterAttribeGroup(),num[n],false,true);
-				if (aa != we.getIndex()) {
-					n++;
-					aa = we.getIndex();
-				}
-				writeToExcel(style, sheet, row, cell, we, builds.get(i).getHydraulicsAttribeGroup(),num[n],false,true);
-				if (aa != we.getIndex()) {
-					n++;
-					aa = we.getIndex();
-				}
-				writeToExcel(style, sheet, row, cell, we, builds.get(i).getDimensionsAttribeGroup(),num[n],false,true);
-				if (aa != we.getIndex()) {
-					n++;
-					aa = we.getIndex();
-				}
-				writeToExcel(style, sheet, row, cell, we, builds.get(i).getStructureAttribeGroup(),num[n],false,true);
-				if (aa != we.getIndex()) {
-					n++;
-					aa = we.getIndex();
-				}
-
-//				writeToExcel(style, sheet, row, cell, we, builds.get(i).getGeologyAttribeGroup(),num[n],false,false);
-
-//                a++;
-//                CellStyle style2 = wb.createCellStyle();
-//                style2.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-//                Font font2 = wb.createFont();
-//                font2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-//                font2.setFontName("宋体");//设置字体名称
-//                style2.setFont(font2);
-//                style2.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
-//                writeToCell(sheet,row,cell,style2,we,null,null,null,null,null,false);
-			}
-			int max = we.getMax();
-			while (we.getIndex() <= max) {
-				sheet.removeRow(sheet.createRow(we.getIndexAdd()));
-			}
-			if (flag) {
-				wb.removeSheetAt(wb.getSheetIndex(sheet.getSheetName()));
-			}
-		}
-		//        InputStream is = new ByteArrayInputStream(bos.toByteArray());
-		OutputStream os = new FileOutputStream(new File("123.xls"));
-		wb.write(os);
-		os.close();
-	}
-
-	boolean writeToExcel(CellStyle style, Sheet sheet, Row row, Cell cell, WriteExecl we, AttribeGroup attribeGroup, String sign, boolean flag, boolean isComment) {
-		if (attribeGroup == null) {
-			return false;
-		}
-		writeToCell(sheet, row, cell,style, we, sign, attribeGroup.getName(), null, null, null, true);
-		Drawing patriarch = sheet.createDrawingPatriarch();
-		boolean flag1 = false;
-		boolean flag2 = false;
-		int s=1;
-		String ss = "";
-		String sss = "";
-		if (attribeGroup.getAttribes() != null) {
-			for (int j = 0; j < attribeGroup.getAttribes().size(); j++) {
-//				if (attribeGroup.getAttribes().get(j).getValue() != null && !attribeGroup.getAttribes().get(j).getValue().equals("")) {
-					flag = true;
-					if (attribeGroup.getName().equals(attribeGroup.getAttribes().get(j).getName())) {
-						flag = true;
-						we.getIndexMinus();
-						writeToCell(sheet, row, cell,style, we, sign, attribeGroup.getName(), null, attribeGroup.getAttribes().get(j).getValue(), null, true);
-						if (flag) {
-							flag2 = true;
-						}
-						continue;
-					}else{
-						row = sheet.createRow(we.getIndexAdd());
-						cell = row.createCell(0);
-						int e = j + 1;
-						if (sign.equals("一") || sign.equals("二") || sign.equals("三") || sign.equals("四") || sign.equals("五") || sign.equals("六") || sign.equals("七")) {
-							cell.setCellValue(e);
-						} else {
-							cell.setCellValue(sign + "." + e);
-						}
-						if (j == attribeGroup.getAttribes().size() - 1) {
-							s = s + e;
-						}
-						cell.setCellStyle(style);
-						cell = row.createCell(1);
-						cell.setCellValue(attribeGroup.getAttribes().get(j).getName());
-						cell.setCellStyle(style);
-						cell = row.createCell(2);
-						cell.setCellValue(attribeGroup.getAttribes().get(j).getUnit());
-						cell.setCellStyle(style);
-						cell = row.createCell(3);
-						if (isComment) {
-							Comment comment = patriarch.createCellComment(new HSSFClientAnchor(0, 0, 0, 0, (short) 4, 2, (short) 6, 5));
-							comment.setString(new HSSFRichTextString(attribeGroup.getAttribes().get(j).getAlias()));
-							row.getCell(3).setCellComment(comment);
-						}
-						cell.setCellValue(attribeGroup.getAttribes().get(j).getValue());
-						cell.setCellStyle(style);
-					}
-					if (flag) {
-						flag2 = true;
-					}
-//				}
-			}
-		}
-		if (attribeGroup.getChilds() != null) {
-			for (int i = 0; i < attribeGroup.getChilds().size(); i++) {
-				if (i == 0) {
-					ss = ss + s;
-					if (sign.equals("一") || sign.equals("二") || sign.equals("三") || sign.equals("四") || sign.equals("五") || sign.equals("六") || sign.equals("七")) {
-						sss = ss;
-					} else {
-						sss = sign + "." + ss;
-
-					}
-				}else{
-					s++;
-					ss = "";
-					ss = ss + s;
-					if (sign.equals("一") || sign.equals("二") || sign.equals("三") || sign.equals("四") || sign.equals("五") || sign.equals("六") || sign.equals("七")) {
-						sss = ss;
-					} else {
-						sss = sign + "." + ss;
-
-					}
-				}
-				flag1=writeToExcel(style, sheet, row, cell, we, attribeGroup.getChilds().get(i),sss,false,isComment);
-//                flag = true;
-				if (flag1) {
-					flag2 = true;
-				}else{
-					s--;
-				}
-			}
-		}
-		if (!(flag||flag2)) {
-			we.getIndexMinus();
-		}
-		if (flag2) {
-			s++;
-		}
-		return flag2;
-	}
-
-	void writeToCell(Sheet sheet, Row row, Cell cell, CellStyle style, WriteExecl we, String a, String b, String c, String d, String e, boolean isAdd) {
-		if (isAdd) {
-			row = sheet.createRow(we.getIndexAdd());
-		}else{
-			row = sheet.createRow(we.getIndex());
-		}
-		cell = row.createCell(0);
-		if (a != null) {
-			cell.setCellValue(a);
-		}
-		cell.setCellStyle(style);
-		cell = row.createCell(1);
-		if (b != null) {
-			cell.setCellValue(b);
-		}
-		cell.setCellStyle(style);
-		cell = row.createCell(2);
-		if (c != null) {
-			cell.setCellValue(c);
-		}
-		cell.setCellStyle(style);
-		cell = row.createCell(3);
-		if (e != null) {
-			Drawing patriarch = sheet.createDrawingPatriarch();
-			Comment comment1 = patriarch.createCellComment(new HSSFClientAnchor(0, 0, 0, 0, (short) 4, 2, (short) 6, 5));
-			comment1.setString(new HSSFRichTextString(e));
-			row.getCell(3).setCellComment(comment1);
-		}
-		if (d != null) {
-			cell.setCellValue(d);
-		}
-		cell.setCellStyle(style);
-	}
 
 	/**
 	 * 修改获取中央子午线方法

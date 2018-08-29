@@ -42,6 +42,8 @@
 	<!--部分日志缓存===>一周内-->
 	<cache name="projectLogPartCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
+	<cache name="buildModelCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
 
 	<!--name:缓存名称。-->
 	<!--maxElementsInMemory：缓存最大个数。-->

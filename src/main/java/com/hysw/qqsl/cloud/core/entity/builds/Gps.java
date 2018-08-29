@@ -1,4 +1,4 @@
-package com.hysw.qqsl.cloud.core.entity.build;
+package com.hysw.qqsl.cloud.core.entity.builds;
 
 public class Gps {
 	private double wgLat;

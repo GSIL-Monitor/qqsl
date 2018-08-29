@@ -2,11 +2,13 @@ package com.hysw.qqsl.cloud.core.entity.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.hysw.qqsl.cloud.core.entity.build.AttribeGroup;
+import com.hysw.qqsl.cloud.core.entity.builds.AttribeGroup;
 import com.hysw.qqsl.cloud.CommonEnum;
 
 import javax.persistence.*;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by leinuo on 17-3-27.
@@ -23,22 +25,95 @@ public class Build extends BaseEntity{
     private String name;
     /**建筑物别名*/
     private String alias;
-    /**建筑物类型*/
+    /**
+     * 建筑物类型
+     */
     private CommonEnum.CommonType type;
+    /**
+     * 建筑物子类型
+     */
+    private ChildType childType;
     /**建筑物属性*/
     private List<Attribe> attribeList;
     /** 所属项目 */
     private Project project;
     /** 中心坐标 */
     private String centerCoor;
+    /** 中心坐标行号 */
+    private Integer centerCoorNum;
     /** 定位坐标 */
     private String positionCoor;
+    /** 定位坐标行号 */
+    private Integer positionCoorNum;
+    /** 设计标高 */
+    private String designElevation;
+    /** 设计标高行高 */
+    private Integer designElevationNum;
     /** 来源 */
     private Source source;
     /** 描述 */
     private String remark;
+    /** 描述行号 */
+    private Integer remarkNum;
     /** 坐标id */
     private Long coordinateId;
+    /** 错误标记 */
+    private boolean errorMsg=false;
+    /** 随机字符串 */
+    private String noticeStr;
+    /** 生成模板个数 */
+    private int number;
+    /** 错误信息 */
+    private Map<Integer, String> errorMsgInfo = new LinkedHashMap<>();
+
+    public enum ChildType {
+        /**
+         * 底流式消力池
+         */
+        DILSXLC(CommonEnum.CommonType.XIAOLC, "builds", "底流式消力池", "dlsxlc"),
+        KAICSSZ(CommonEnum.CommonType.FSZ,"builds","开敞式水闸","kcssz"),
+        ZHONGLSDQ(CommonEnum.CommonType.DANGQ, "builds", "重力式挡墙", "zlsdq"),
+        FUBSDQ(CommonEnum.CommonType.DANGQ, "builds", "扶臂式挡墙", "fbsdq"),
+        ANPSDQ(CommonEnum.CommonType.DANGQ, "builds", "岸坡式挡墙", "apsdq"),
+        ;
+        //必须增加一个构造函数,变量,得到该变量的值\
+        private CommonEnum.CommonType commonType;
+        private String type;
+        private String typeC;
+        private String abbreviate;
+
+
+        ChildType(CommonEnum.CommonType commonType, String type, String typeC, String abbreviate) {
+            this.commonType = commonType;
+            this.type = type;
+            this.typeC = typeC;
+            this.abbreviate = abbreviate;
+        }
+
+        public CommonEnum.CommonType getCommonType() {
+            return commonType;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getTypeC() {
+            return typeC;
+        }
+
+        public String getAbbreviate() {
+            return abbreviate;
+        }
+
+        public static ChildType valueOf(int ordinal) {
+            if (ordinal < 0 || ordinal >= values().length) {
+                throw new IndexOutOfBoundsException("Invalid ordinal");
+            }
+            return values()[ordinal];
+        }
+
+    }
 
     public enum Source{
         /** 设计 */
@@ -47,24 +122,11 @@ public class Build extends BaseEntity{
         FIELD;
     }
 
-     //非数据库对应
-     private String mater;
-     private String dimensions;
-     private String hydraulics;
-     private String geology;
-     private String structure;
-     /** 用于检索 */
-    private String py;
-    /**建筑物材质属性*/
-    private AttribeGroup materAttribeGroup;
-    /**建筑物控制尺寸属性*/
-    private AttribeGroup dimensionsAttribeGroup;
-    /**建筑物水利属性*/
-    private AttribeGroup hydraulicsAttribeGroup;
-    /**建筑物地址属性*/
-    private AttribeGroup geologyAttribeGroup;
-    /**建筑物结构属性*/
-    private AttribeGroup structureAttribeGroup;
+    private AttribeGroup coordinate;
+    private AttribeGroup waterResources;
+    private AttribeGroup controlSize;
+    private AttribeGroup groundStress;
+    private AttribeGroup component;
 
     @Transient
     public String getName() {
@@ -151,94 +213,139 @@ public class Build extends BaseEntity{
         this.coordinateId = coordinateId;
     }
 
-    @Transient
-    public String getMater() {
-        return mater;
+    public ChildType getChildType() {
+        return childType;
     }
 
-    public void setMater(String mater) {
-        this.mater = mater;
-    }
-    @Transient
-    public String getDimensions() {
-        return dimensions;
+    public void setChildType(ChildType childType) {
+        this.childType = childType;
     }
 
-    public void setDimensions(String dimensions) {
-        this.dimensions = dimensions;
-    }
-    @Transient
-    public String getHydraulics() {
-        return hydraulics;
+    public String getDesignElevation() {
+        return designElevation;
     }
 
-    public void setHydraulics(String hydraulics) {
-        this.hydraulics = hydraulics;
-    }
-    @Transient
-    public String getGeology() {
-        return geology;
-    }
-
-    public void setGeology(String geology) {
-        this.geology = geology;
-    }
-    @Transient
-    public String getStructure() {
-        return structure;
-    }
-
-    public void setStructure(String structure) {
-        this.structure = structure;
-    }
-    @Transient
-    public String getPy() {
-        return py;
-    }
-
-    public void setPy(String py) {
-        this.py = py;
+    public void setDesignElevation(String designElevation) {
+        this.designElevation = designElevation;
     }
 
     @Transient
-    public AttribeGroup getMaterAttribeGroup() {
-        return materAttribeGroup;
+    public AttribeGroup getCoordinate() {
+        return coordinate;
     }
 
-    public void setMaterAttribeGroup(AttribeGroup materAttribeGroup) {
-        this.materAttribeGroup = materAttribeGroup;
+    public void setCoordinate(AttribeGroup coordinate) {
+        this.coordinate = coordinate;
     }
+
     @Transient
-    public AttribeGroup getDimensionsAttribeGroup() {
-        return dimensionsAttribeGroup;
+    public AttribeGroup getWaterResources() {
+        return waterResources;
     }
 
-    public void setDimensionsAttribeGroup(AttribeGroup dimensionsAttribeGroup) {
-        this.dimensionsAttribeGroup = dimensionsAttribeGroup;
+    public void setWaterResources(AttribeGroup waterResources) {
+        this.waterResources = waterResources;
     }
+
     @Transient
-    public AttribeGroup getHydraulicsAttribeGroup() {
-        return hydraulicsAttribeGroup;
+    public AttribeGroup getControlSize() {
+        return controlSize;
     }
 
-    public void setHydraulicsAttribeGroup(AttribeGroup hydraulicsAttribeGroup) {
-        this.hydraulicsAttribeGroup = hydraulicsAttribeGroup;
+    public void setControlSize(AttribeGroup controlSize) {
+        this.controlSize = controlSize;
     }
+
     @Transient
-    public AttribeGroup getGeologyAttribeGroup() {
-        return geologyAttribeGroup;
+    public AttribeGroup getGroundStress() {
+        return groundStress;
     }
 
-    public void setGeologyAttribeGroup(AttribeGroup geologyAttribeGroup) {
-        this.geologyAttribeGroup = geologyAttribeGroup;
+    public void setGroundStress(AttribeGroup groundStress) {
+        this.groundStress = groundStress;
     }
+
     @Transient
-    public AttribeGroup getStructureAttribeGroup() {
-        return structureAttribeGroup;
+    public AttribeGroup getComponent() {
+        return component;
     }
 
-    public void setStructureAttribeGroup(AttribeGroup structureAttribeGroup) {
-        this.structureAttribeGroup = structureAttribeGroup;
+    public void setComponent(AttribeGroup component) {
+        this.component = component;
     }
 
+    @Transient
+    public boolean isErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(boolean errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+    public void setErrorMsgTrue() {
+        this.errorMsg = true;
+    }
+
+    @Transient
+    public String getNoticeStr() {
+        return noticeStr;
+    }
+
+    public void setNoticeStr(String noticeStr) {
+        this.noticeStr = noticeStr;
+    }
+
+    @Transient
+    public Map<Integer, String> getErrorMsgInfo() {
+        return errorMsgInfo;
+    }
+
+    public void setErrorMsgInfo(Integer key,String value) {
+        this.errorMsgInfo.put(key, value);
+    }
+
+    @Transient
+    public Integer getCenterCoorNum() {
+        return centerCoorNum;
+    }
+
+    public void setCenterCoorNum(Integer centerCoorNum) {
+        this.centerCoorNum = centerCoorNum;
+    }
+
+    @Transient
+    public Integer getPositionCoorNum() {
+        return positionCoorNum;
+    }
+
+    public void setPositionCoorNum(Integer positionCoorNum) {
+        this.positionCoorNum = positionCoorNum;
+    }
+
+    @Transient
+    public Integer getDesignElevationNum() {
+        return designElevationNum;
+    }
+
+    public void setDesignElevationNum(Integer designElevationNum) {
+        this.designElevationNum = designElevationNum;
+    }
+
+    @Transient
+    public Integer getRemarkNum() {
+        return remarkNum;
+    }
+
+    public void setRemarkNum(Integer remarkNum) {
+        this.remarkNum = remarkNum;
+    }
+
+    @Transient
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
 }
