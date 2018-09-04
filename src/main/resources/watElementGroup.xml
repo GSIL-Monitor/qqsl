@@ -507,4 +507,7 @@
 	<elementGroup name="工程布置" alias="21C">
 		<element name="工程布置" type="design" alias="21C1"/>
 	</elementGroup>
+	<elementGroup name="水文模型数据" alias="21D">
+		<element name="水文模型数据" type="file_upload" alias="21D1"/>
+	</elementGroup>
 </elementGroups>

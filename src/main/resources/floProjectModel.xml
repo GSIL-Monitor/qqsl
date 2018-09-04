@@ -35,7 +35,7 @@
 		</unit>
 	</unit>
 	<unit name="项目前期" alias="2" aliases="2">
-		<unit name="地理信息" alias="21" aliases="21A,21B,21C"></unit>
+		<unit name="地理信息" alias="21" aliases="21A,21B,21C,21D"></unit>
 		<unit name="项目建议书" alias="22" aliases="22,22A">
 		</unit>
 		<unit name="可研" alias="23" aliases="23A,23B,23C">
