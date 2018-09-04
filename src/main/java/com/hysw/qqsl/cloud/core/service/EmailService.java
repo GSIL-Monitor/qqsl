@@ -58,7 +58,7 @@ public class EmailService {
         props.put("mail.smtp.ssl.socketFactory", sf);
         //
         //获取Session对象
-        Session session = Session.getDefaultInstance(props,new Authenticator() {
+        Session session = Session.getInstance(props,new Authenticator() {
             //此访求返回用户和密码的对象
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
