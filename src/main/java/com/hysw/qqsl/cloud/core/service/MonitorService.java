@@ -61,8 +61,8 @@ public class MonitorService {
      * @return
      */
     public JSONArray getApplicationList() {
-        String url = "http://" + CommonAttributes.WATER_IP + ":8080/";
-        String method = "sensors";
+        String url = "http://" + CommonAttributes.WATER_IP;
+        String method = "/qqsl.monitor2/sensor/lists";
         String token = applicationTokenService.getToken();
         return httpRequestUtil.jsonArrayHttpRequest(url + method + "?token=" + token, "GET", null);
     }

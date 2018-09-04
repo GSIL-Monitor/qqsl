@@ -75,13 +75,13 @@ public class ApplicationTokenService {
     /**
      * 生成效验token
      * @return
-     * @param user
+//     * @param user
      */
-    public JSONObject makeIntendedEffectToken(User user) {
+    public JSONObject makeIntendedEffectToken() {
         JSONObject jsonObject = new JSONObject(), jsonObject1 = new JSONObject();
-        jsonObject.put("id", user.getId());
-        jsonObject.put("phone", user.getPhone());
-        jsonObject.put("password", user.getPassword());
+//        jsonObject.put("id", user.getId());
+//        jsonObject.put("phone", user.getPhone());
+//        jsonObject.put("password", user.getPassword());
         jsonObject.put("slat", "hyswqqsl");
         String s1 = UUID.randomUUID().toString().replaceAll("-","");
         jsonObject.put("uuid", s1);
@@ -104,9 +104,9 @@ public class ApplicationTokenService {
             return false;
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", sensor.getStation().getUser().getId());
-        jsonObject.put("phone", sensor.getStation().getUser().getPhone());
-        jsonObject.put("password", sensor.getStation().getUser().getPassword());
+//        jsonObject.put("id", sensor.getStation().getUser().getId());
+//        jsonObject.put("phone", sensor.getStation().getUser().getPhone());
+//        jsonObject.put("password", sensor.getStation().getUser().getPassword());
         jsonObject.put("slat", "hyswqqsl");
         jsonObject.put("uuid", noticeStr);
         if (!DigestUtils.md5Hex(jsonObject.toString()).equals(token)) {

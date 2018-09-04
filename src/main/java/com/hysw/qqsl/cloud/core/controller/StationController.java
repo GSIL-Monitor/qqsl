@@ -70,15 +70,15 @@ public class StationController {
     @RequestMapping(value = "/token", method = RequestMethod.GET)
     public @ResponseBody
     Message getToken() {
-        User user = authentService.getUserFromSubject();
-        if (user == null) {
-            user = authentService.getAccountFromSubject()==null?null:authentService.getAccountFromSubject().getUser();
-        }
-        if (user == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
+//        User user = authentService.getUserFromSubject();
+//        if (user == null) {
+//            user = authentService.getAccountFromSubject()==null?null:authentService.getAccountFromSubject().getUser();
+//        }
+//        if (user == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
 //        user = userService.find(16l);
-        return MessageService.message(Message.Type.OK, applicationTokenService.makeIntendedEffectToken(user));
+        return MessageService.message(Message.Type.OK, applicationTokenService.makeIntendedEffectToken());
     }
 
 

@@ -406,8 +406,9 @@ public class CommonEnum {
         /** 水位站 */
         WATER_LEVEL_STATION,
         /** 水质站 */
-        WATER_QUALITY_STATION
-
+        WATER_QUALITY_STATION,
+        /** 施工现场 */
+        CONSTRUCTION
     }
 
     /**
