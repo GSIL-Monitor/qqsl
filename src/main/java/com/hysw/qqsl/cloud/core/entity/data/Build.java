@@ -2,8 +2,8 @@ package com.hysw.qqsl.cloud.core.entity.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.hysw.qqsl.cloud.core.entity.builds.AttribeGroup;
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
 
 import javax.persistence.*;
 import java.util.LinkedHashMap;
@@ -34,7 +34,7 @@ public class Build extends BaseEntity{
      */
     private ChildType childType;
     /**建筑物属性*/
-    private List<Attribe> attribeList;
+    private List<BuildAttribute> buildAttributes;
     /** 所属项目 */
     private Project project;
     /** 中心坐标 */
@@ -55,8 +55,8 @@ public class Build extends BaseEntity{
     private String remark;
     /** 描述行号 */
     private Integer remarkNum;
-    /** 坐标id */
-    private Long coordinateId;
+    /** 外业fieldWork或内业coordinate坐标id */
+    private Long commonId;
     /** 错误标记 */
     private boolean errorMsg=false;
     /** 随机字符串 */
@@ -71,10 +71,11 @@ public class Build extends BaseEntity{
          * 底流式消力池
          */
         DILSXLC(CommonEnum.CommonType.XIAOLC, "builds", "底流式消力池", "dlsxlc"),
-        KAICSSZ(CommonEnum.CommonType.FSZ,"builds","开敞式水闸","kcssz"),
+        KAICSSZ(CommonEnum.CommonType.FSZ, "builds", "开敞式水闸", "kcssz"),
         ZHONGLSDQ(CommonEnum.CommonType.DANGQ, "builds", "重力式挡墙", "zlsdq"),
         FUBSDQ(CommonEnum.CommonType.DANGQ, "builds", "扶臂式挡墙", "fbsdq"),
         ANPSDQ(CommonEnum.CommonType.DANGQ, "builds", "岸坡式挡墙", "apsdq"),
+        YUANXXSC(CommonEnum.CommonType.XSC, "builds", "圆形蓄水池", "yxxsc"),
         ;
         //必须增加一个构造函数,变量,得到该变量的值\
         private CommonEnum.CommonType commonType;
@@ -122,11 +123,11 @@ public class Build extends BaseEntity{
         FIELD;
     }
 
-    private AttribeGroup coordinate;
-    private AttribeGroup waterResources;
-    private AttribeGroup controlSize;
-    private AttribeGroup groundStress;
-    private AttribeGroup component;
+    private AttributeGroup coordinate;
+    private AttributeGroup waterResources;
+    private AttributeGroup controlSize;
+    private AttributeGroup groundStress;
+    private AttributeGroup component;
 
     @Transient
     public String getName() {
@@ -156,11 +157,12 @@ public class Build extends BaseEntity{
 
     @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE, CascadeType.MERGE},  fetch=FetchType.LAZY, mappedBy="build")
     @JsonIgnore
-    public List<Attribe> getAttribeList() {
-        return attribeList;
+    public List<BuildAttribute> getBuildAttributes() {
+        return buildAttributes;
     }
-    public void setAttribeList(List<Attribe> attribeList) {
-        this.attribeList = attribeList;
+
+    public void setBuildAttributes(List<BuildAttribute> buildAttributes) {
+        this.buildAttributes = buildAttributes;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -205,14 +207,6 @@ public class Build extends BaseEntity{
         this.remark = remark;
     }
 
-    public Long getCoordinateId() {
-        return coordinateId;
-    }
-
-    public void setCoordinateId(Long coordinateId) {
-        this.coordinateId = coordinateId;
-    }
-
     public ChildType getChildType() {
         return childType;
     }
@@ -230,47 +224,47 @@ public class Build extends BaseEntity{
     }
 
     @Transient
-    public AttribeGroup getCoordinate() {
+    public AttributeGroup getCoordinate() {
         return coordinate;
     }
 
-    public void setCoordinate(AttribeGroup coordinate) {
+    public void setCoordinate(AttributeGroup coordinate) {
         this.coordinate = coordinate;
     }
 
     @Transient
-    public AttribeGroup getWaterResources() {
+    public AttributeGroup getWaterResources() {
         return waterResources;
     }
 
-    public void setWaterResources(AttribeGroup waterResources) {
+    public void setWaterResources(AttributeGroup waterResources) {
         this.waterResources = waterResources;
     }
 
     @Transient
-    public AttribeGroup getControlSize() {
+    public AttributeGroup getControlSize() {
         return controlSize;
     }
 
-    public void setControlSize(AttribeGroup controlSize) {
+    public void setControlSize(AttributeGroup controlSize) {
         this.controlSize = controlSize;
     }
 
     @Transient
-    public AttribeGroup getGroundStress() {
+    public AttributeGroup getGroundStress() {
         return groundStress;
     }
 
-    public void setGroundStress(AttribeGroup groundStress) {
+    public void setGroundStress(AttributeGroup groundStress) {
         this.groundStress = groundStress;
     }
 
     @Transient
-    public AttribeGroup getComponent() {
+    public AttributeGroup getComponent() {
         return component;
     }
 
-    public void setComponent(AttribeGroup component) {
+    public void setComponent(AttributeGroup component) {
         this.component = component;
     }
 
@@ -347,5 +341,13 @@ public class Build extends BaseEntity{
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public Long getCommonId() {
+        return commonId;
+    }
+
+    public void setCommonId(Long commonId) {
+        this.commonId = commonId;
     }
 }

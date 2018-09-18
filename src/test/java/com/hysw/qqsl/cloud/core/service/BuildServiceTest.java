@@ -3,12 +3,10 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
-import com.hysw.qqsl.cloud.core.entity.builds.AttribeGroup;
-import com.hysw.qqsl.cloud.core.entity.builds.BuildGroup;
-import com.hysw.qqsl.cloud.core.entity.builds.CoordinateMap;
+import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
 import com.hysw.qqsl.cloud.core.entity.builds.SheetObject;
 import com.hysw.qqsl.cloud.core.entity.data.Build;
-import com.hysw.qqsl.cloud.core.entity.data.Attribe;
+import com.hysw.qqsl.cloud.core.entity.data.BuildAttribute;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONObject;
@@ -33,8 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by leinuo on 17-4-13.
  */
@@ -45,11 +41,13 @@ public class BuildServiceTest extends BaseTest {
     @Autowired
     private BuildGroupService buildGroupService;
     @Autowired
-    private AttribeService attribeService;
+    private AttributeGroupService attributeGroupService;
     @Autowired
     private ProjectService projectService;
     @Autowired
     private CoordinateService coordinateService;
+    @Autowired
+    private BuildAttributeService buildAttributeService;
     @Test
     public void save(){
         Build build = new Build();
@@ -63,48 +61,31 @@ public class BuildServiceTest extends BaseTest {
 
 
 
-    private void add(List<Attribe> attribes,List<Attribe> attribeList){
-        for(int i=0;i<attribeList.size();i++){
-            attribes.add(attribeList.get(i));
+    private void add(List<BuildAttribute> attributes, List<BuildAttribute> attributeList){
+        for(int i=0;i<attributeList.size();i++){
+            attributes.add(attributeList.get(i));
         }
     }
-  private void save(List<Attribe> attribes,Build build){
-        for (int i=0;i<attribes.size();i++){
-            attribes.get(i).setBuild(build);
-            if(attribes.get(i).getType().equals(Attribe.Type.SELECT)){
-                String value = attribes.get(i).getSelects().get(0);
-                attribes.get(i).setValue(value);
+  private void save(List<BuildAttribute> attributes,Build build){
+        for (int i=0;i<attributes.size();i++){
+            attributes.get(i).setBuild(build);
+            if(attributes.get(i).getType().equals(BuildAttribute.Type.SELECT)){
+                String value = attributes.get(i).getSelects().get(0);
+                attributes.get(i).setValue(value);
             }else{
-                attribes.get(i).setValue("test");
+                attributes.get(i).setValue("test");
             }
-            attribeService.save(attribes.get(i));
+            buildAttributeService.save(attributes.get(i));
         }
     }
 
 
-    private void getAttribeGroup(List<Attribe> attribes,Attribe attribe){
-        for(int j=0;j<attribes.size();j++){
-            if(attribes.get(j).getAlias().equals(attribe.getAlias())){
-                attribes.get(j).setValue(attribe.getValue());
+    private void getAttributeGroup(List<BuildAttribute> attributes,BuildAttribute attribute){
+        for(int j=0;j<attributes.size();j++){
+            if(attributes.get(j).getAlias().equals(attribute.getAlias())){
+                attributes.get(j).setValue(attribute.getValue());
                 break;
             }
-        }
-    }
-
-    public void saveDucao(){
-        Project project = projectService.find(531l);
-
-        List<Build> builds = buildService.findByProjectAndAlias(project);
-        if(builds.size()>0){
-            Build build1 = builds.get(0);
-        }else{
-            Build build = new Build();
-            build.setAlias("27");
-
-            build.setProject(project);
-            build.setType(CommonEnum.CommonType.DC);
-            build.setName("渡槽");
-            buildService.save(build);
         }
     }
 
@@ -121,7 +102,9 @@ public class BuildServiceTest extends BaseTest {
         Workbook wb = new XSSFWorkbook();
         List<Build> builds = buildService.initBuildModel(SettingUtils.getInstance().getSetting().getBuild());
         buildService.outBuildModel(wb, builds);
-        System.out.println();
+        OutputStream outputStream = new FileOutputStream(new File("783.xlsx"));
+        wb.write(outputStream);
+        outputStream.flush();
     }
 
     @Test
@@ -129,16 +112,16 @@ public class BuildServiceTest extends BaseTest {
         Project project = projectService.find(868l);
         Map<String, Workbook> wbs = new HashMap<>();
         SheetObject sheetObject = new SheetObject();
-        CoordinateMap coordinateMap = new CoordinateMap();
         File file = new ClassPathResource("model.xls").getFile();
         InputStream is = new FileInputStream(file);
         coordinateService.readExcels(is,file.getName().substring(file.getName().lastIndexOf(".")+1),file.getName(),new JSONObject(),wbs);
         coordinateService.getAllSheet(wbs,sheetObject);
-        buildService.inputBuilds(sheetObject.getBuildWBs(),project);
+        Map<String, List<Build>> stringListMap = buildService.inputBuilds(sheetObject.getBuildWBs(), project);
+        System.out.println();
     }
 
     @Test
-    public void outputBuilds() throws IOException {
+    public void outputBuilds(){
         Build build = buildService.find(20168l);
         Build build1 = buildService.find(20167l);
         List<Build> builds = new ArrayList<>();
@@ -174,15 +157,15 @@ public class BuildServiceTest extends BaseTest {
         List<Element> elements = SettingUtils.getInstance().getElementList(root);
         int i = 1;
         for (Element element : elements) {
-            i = addAttribe(element.elements(), i);
+            i = addAttribute(element.elements(), i);
         }
     }
 
-    private int addAttribe(List<Element> elements, int i) {
+    private int addAttribute(List<Element> elements, int i) {
         String a = null;
         for (Element element : elements) {
-            if (element.getName().equals("attribeGroup")) {
-                i = addAttribe(element.elements(), i);
+            if (element.getName().equals("attributeGroup")) {
+                i = addAttribute(element.elements(), i);
             }
             if (i < 10) {
                 a = "ct000" + i;

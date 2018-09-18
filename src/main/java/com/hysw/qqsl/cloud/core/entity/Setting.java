@@ -36,14 +36,6 @@ public class Setting implements Serializable {
  	/**elementData模版*/
 	private String elementDataSimpleModel;
 
-	/** 建筑物 */
-	private String buildsModel;
-	private String buildsMater;
-	private String buildsDimension;
-	private String buildsHydraulics;
-	private String buildsGeology;
-	private String buildsStructure;
-
 	/**
 	 * newBuild
 	 */
@@ -53,6 +45,11 @@ public class Setting implements Serializable {
 	private String controlSize;
 	private String groundStress;
 	private String component;
+	/**
+	 * 线及线的剖面
+	 */
+	private String line;
+	private String lineSectionPlane;
 	/** 服务 */
 	private String serveItem;
 	private String packageModel;
@@ -153,54 +150,6 @@ public class Setting implements Serializable {
 
 	public void setElementDataSimpleModel(String elementDataSimpleModel) {
 		this.elementDataSimpleModel = elementDataSimpleModel;
-	}
-
-	public String getBuildsModel() {
-		return buildsModel;
-	}
-
-	public void setBuildsModel(String buildsModel) {
-		this.buildsModel = buildsModel;
-	}
-
-	public String getBuildsMater() {
-		return buildsMater;
-	}
-
-	public void setBuildsMater(String buildsMater) {
-		this.buildsMater = buildsMater;
-	}
-
-	public String getBuildsDimension() {
-		return buildsDimension;
-	}
-
-	public void setBuildsDimension(String buildsDimension) {
-		this.buildsDimension = buildsDimension;
-	}
-
-	public String getBuildsHydraulics() {
-		return buildsHydraulics;
-	}
-
-	public void setBuildsHydraulics(String buildsHydraulics) {
-		this.buildsHydraulics = buildsHydraulics;
-	}
-
-	public String getBuildsGeology() {
-		return buildsGeology;
-	}
-
-	public void setBuildsGeology(String buildsGeology) {
-		this.buildsGeology = buildsGeology;
-	}
-
-	public String getBuildsStructure() {
-		return buildsStructure;
-	}
-
-	public void setBuildsStructure(String buildsStructure) {
-		this.buildsStructure = buildsStructure;
 	}
 
 	public String getServeItem() {

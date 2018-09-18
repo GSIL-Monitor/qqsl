@@ -18,7 +18,6 @@ import javax.persistence.*;
 public class FieldWork extends BaseEntity {
     private String coordinateStr;
     private Project project;
-    private CommonEnum.CommonType commonType;
     // 采集用户
     private long accountId;
     private String name;
@@ -44,14 +43,6 @@ public class FieldWork extends BaseEntity {
 
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public CommonEnum.CommonType getCommonType() {
-        return commonType;
-    }
-
-    public void setCommonType(CommonEnum.CommonType commonType) {
-        this.commonType = commonType;
     }
 
     public long getAccountId() {

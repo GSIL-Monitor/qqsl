@@ -3,7 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.FieldWorkDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.builds.AttribeGroup;
+import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
 import com.hysw.qqsl.cloud.core.entity.builds.CoordinateBase;
 import com.hysw.qqsl.cloud.core.entity.builds.GeoCoordinate;
 import com.hysw.qqsl.cloud.core.entity.builds.Graph;
@@ -46,163 +46,6 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
     @Autowired
     public void setBaseDao(FieldWorkDao fieldWorkDao) {
         super.setBaseDao(fieldWorkDao);
-    }
-
-    public boolean saveField(Map<String, Object> objectMap) {
-        Build build;
-        Attribe attribe;
-        CoordinateBase coordinateBase;
-        List<CoordinateBase> coordinateBases;
-        GeoCoordinate geoCoordinate;
-        List<GeoCoordinate> geoCoordinates = new LinkedList<>();
-        JSONObject jsonObject;
-        Graph graph;
-        Object code;
-        List<Graph> graphs = new ArrayList<>();
-        Coordinate coordinate2 = null;
-        Object projectId = objectMap.get("projectId");
-        Object userId = objectMap.get("userId");
-        Object name = objectMap.get("name");
-        Object deviceMac = objectMap.get("deviceMac");
-        List<Object> coordinates = (List<Object>) objectMap.get("coordinates");
-        if (projectId == null || userId == null || name == null || deviceMac == null) {
-            return false;
-        }
-        Project project = projectService.find(Long.valueOf(projectId.toString()));
-        List<Build> builds1 = buildService.findByProjectAndSource(project, Build.Source.FIELD);
-//        List<Attribe> attribes1=attribeService.findByBuilds(builds1);
-        List<Coordinate> coordinates1 = coordinateService.findByProject(project);
-        for (int i = 0; i < coordinates.size(); i++) {
-            Map<String, Object> coordinate = (Map<String, Object>) coordinates.get(i);
-            Object type = coordinate.get("type");
-            if (type == null) {
-                return false;
-            }
-            Object center = coordinate.get("center");
-            Object remark = coordinate.get("description");
-            Object delete = coordinate.get("delete");
-            if (remark == null) {
-                return false;
-            }
-            if (center == null) {
-                return false;
-            }
-            Object longitude = ((Map<String, String>) center).get("longitude");
-            Object latitude = ((Map<String, String>) center).get("latitude");
-            Object elevation = ((Map<String, String>) center).get("elevation");
-            Object attribes = coordinate.get("attribes");
-            Object description = coordinate.get("description");
-            Object alias = coordinate.get("alias");
-            if (longitude == null || latitude == null || elevation == null || description == null || alias == null) {
-                return false;
-            }
-            if (!SettingUtils.coordinateParameterCheck(longitude, latitude, elevation)) {
-                continue;
-            }
-            coordinateBase = new CoordinateBase();
-            coordinateBases = new ArrayList<>();
-            coordinateBase.setLongitude(longitude.toString());
-            coordinateBase.setLatitude(latitude.toString());
-            coordinateBase.setElevation(elevation.toString());
-            geoCoordinate = new GeoCoordinate(Double.valueOf(latitude.toString()), Double.valueOf(longitude.toString()));
-            coordinateBases.add(coordinateBase);
-            graph = new Graph();
-            graph.setCoordinates(coordinateBases);
-            graph.setBaseType(CommonEnum.CommonType.valueOf(type.toString()));
-            graph.setDescription(description.toString());
-            graph.setAlias(alias.toString());
-            graphs.add(graph);
-            geoCoordinates.add(geoCoordinate);
-            if (attribes != null) {
-                build = isSameBuild(builds1, longitude.toString(), latitude.toString());
-                if (delete != null && Boolean.valueOf(delete.toString()) && build != null) {
-                    buildService.remove(build);
-                    continue;
-                }
-                if (build == null) {
-                    build = new Build();
-                    build.setProject(project);
-                    build.setType(CommonEnum.CommonType.valueOf(type.toString()));
-                    build.setSource(Build.Source.FIELD);
-                    build.setRemark(remark.toString());
-                } else {
-                    buildService.remove(build);
-                    build.setAttribeList(null);
-                    build.setId(null);
-                }
-                Object position = coordinate.get("position");
-                if (position != null) {
-                    jsonObject = new JSONObject();
-                    Object longitude1 = ((Map<String, String>) position).get("longitude");
-                    Object latitude1 = ((Map<String, String>) position).get("latitude");
-                    Object elevation1 = ((Map<String, String>) position).get("elevation");
-                    jsonObject.put("longitude", longitude1.toString());
-                    jsonObject.put("latitude", latitude1.toString());
-                    jsonObject.put("elevation", elevation1.toString());
-                    build.setPositionCoor(jsonObject.toString());
-                }
-                jsonObject = new JSONObject();
-                jsonObject.put("longitude", longitude.toString());
-                jsonObject.put("latitude", latitude.toString());
-                jsonObject.put("elevation", elevation.toString());
-                build.setCenterCoor(jsonObject.toString());
-//                for (int j = 0; j < CommonAttributes.BASETYPEE.length; j++) {
-//                    if (CommonAttributes.BASETYPEE[j].equals(type.toString().trim())) {
-//                        builds.setName(CommonAttributes.BASETYPEC[j]);
-//                        break;
-//                    }
-//                }
-                List<Attribe> attribeList1 = new ArrayList<>();
-                for (Map<String, Object> map : ((List<Map<String, Object>>) attribes)) {
-                    attribe = new Attribe();
-                    code = map.get("code");
-                    if (map.get("alias") == null || map.get("value") == null) {
-                        continue;
-                    }
-                    attribe.setAlias(map.get("alias").toString());
-                    attribe.setValue(map.get("value").toString());
-                    attribe.setBuild(build);
-                    attribeList1.add(attribe);
-                }
-//                List<Attribe> list;
-//                if (!flag) {
-//                    list = contrastEditAttribe(builds.getAttribeList(), attribeList1);
-//                }else{
-//                    list = new ArrayList<>();
-//                    list.addAll(attribeList1);
-//                }
-                build.setAttribeList(attribeList1);
-                buildService.save(build);
-            }
-        }
-        JSONArray jsonArray = new JSONArray();
-        listToString(graphs, jsonArray);
-        geoCoordinate = SettingUtils.getCenterPointFromListOfCoordinates(geoCoordinates);
-        List<ElementDB> elementDBs = elementDBService.findByProjectAndAlias(project);
-        if (elementDBs.size() == 0) {
-            ElementDB elementDB = new ElementDB();
-            elementDB.setAlias("21A1");
-            elementDB.setProject(project);
-            elementDB.setValue("" + geoCoordinate.getLongitude() + "," + geoCoordinate.getLatitude() + ",0");
-            elementDBService.save(elementDB);
-        }
-        for (Coordinate coordinate1 : coordinates1) {
-            if (coordinate1.getDeviceMac().equals(deviceMac.toString().trim())) {
-                coordinate2 = coordinate1;
-                break;
-            }
-        }
-        if (coordinate2 == null) {
-            coordinate2 = new Coordinate();
-            coordinate2.setProject(project);
-            coordinate2.setName(name.toString());
-            coordinate2.setDeviceMac(deviceMac.toString());
-            coordinate2.setUserId(Long.valueOf(userId.toString()));
-        }
-        coordinate2.setDescription(deviceMac.toString() + ":" + project.getId());
-        coordinate2.setCoordinateStr(jsonArray.toString());
-        coordinateService.save(coordinate2);
-        return true;
     }
 
     /**
@@ -342,98 +185,97 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         if (!sign) {
             return;
         }
-        build.setAttribeList((List<Attribe>) SettingUtils.objectCopy(build1.getAttribeList()));
-//        attribeGroupNotNuLL(build.getCoordinate(), build1.getAttribeList());
+        build.setBuildAttributes((List<BuildAttribute>) SettingUtils.objectCopy(build1.getBuildAttributes()));
+//        attributeGroupNotNuLL(build.getCoordinate(), build1.getAttribeList());
 
-        attribeGroupNotNuLL(build.getWaterResources(), build1.getAttribeList());
+        attributeGroupNotNuLL(build.getWaterResources(), build1.getBuildAttributes());
 
-        attribeGroupNotNuLL(build.getControlSize(), build1.getAttribeList());
+        attributeGroupNotNuLL(build.getControlSize(), build1.getBuildAttributes());
 
-        attribeGroupNotNuLL(build.getGroundStress(), build1.getAttribeList());
+        attributeGroupNotNuLL(build.getGroundStress(), build1.getBuildAttributes());
 
-        attribeGroupNotNuLL(build.getComponent(), build1.getAttribeList());
+        attributeGroupNotNuLL(build.getComponent(), build1.getBuildAttributes());
     }
 
-    private void attribeGroupNotNuLL(AttribeGroup attribeGroup, List<Attribe> attribeList) {
-        if (attribeGroup == null) {
+    private void attributeGroupNotNuLL(AttributeGroup attributeGroup, List<BuildAttribute> attributeList) {
+        if (attributeGroup == null) {
             return;
         }
-        setAttribe(attribeGroup.getAttribes(), attribeList);
-        setChild(attribeGroup.getChilds(), attribeList);
+        setAttribute(attributeGroup.getBuildAttributes(), attributeList);
+        setChild(attributeGroup.getChilds(), attributeList);
     }
 
     /**
      * 匹配属性
      *
-     * @param attribes    输出的
-     * @param attribeList 数据库中的
+     * @param buildAttributes    输出的
+     * @param attributeList 数据库中的
      */
-    private void setAttribe(List<Attribe> attribes, List<Attribe> attribeList) {
-        if (attribes == null) {
+    private void setAttribute(List<BuildAttribute> buildAttributes, List<BuildAttribute> attributeList) {
+        if (buildAttributes == null) {
             return;
         }
-        for (Attribe attribe : attribes) {
-            for (Attribe attribe1 : attribeList) {
-                if (attribe.getAlias().equals(attribe1.getAlias())) {
-                    attribe.setValue(attribe1.getValue());
-                    attribe.setId(attribe1.getId());
-                    attribe.setCreateDate(attribe1.getCreateDate());
-                    attribeList.remove(attribe1);
+        for (BuildAttribute buildAttribute : buildAttributes) {
+            for (BuildAttribute buildAttribute1 : attributeList) {
+                if (buildAttribute.getAlias().equals(buildAttribute1.getAlias())) {
+                    buildAttribute.setValue(buildAttribute1.getValue());
+                    buildAttribute.setId(buildAttribute1.getId());
+                    buildAttribute.setCreateDate(buildAttribute1.getCreateDate());
+                    attributeList.remove(buildAttribute1);
                     break;
                 }
             }
-//            if(attribe.get)
         }
     }
 
     /**
      * 子节点匹配属性
      *
-     * @param attribeGroups
-     * @param attribeList
+     * @param attributeGroups
+     * @param attributeList
      */
-    private void setChild(List<AttribeGroup> attribeGroups, List<Attribe> attribeList) {
-        if (attribeGroups == null) {
+    private void setChild(List<AttributeGroup> attributeGroups, List<BuildAttribute> attributeList) {
+        if (attributeGroups == null) {
             return;
         }
-        for (AttribeGroup attribeGroup : attribeGroups) {
-            setAttribe(attribeGroup.getAttribes(), attribeList);
-            setChild(attribeGroup.getChilds(), attribeList);
+        for (AttributeGroup attributeGroup : attributeGroups) {
+            setAttribute(attributeGroup.getBuildAttributes(), attributeList);
+            setChild(attributeGroup.getChilds(), attributeList);
         }
     }
 
     /**
      * 对比差异数据并挑选未改变的数据组成新的list
      *
-     * @param attribeList
-     * @param attribes
+     * @param attributeList
+     * @param attributes
      * @return
      */
-    public List<Attribe> contrastEditAttribe(List<Attribe> attribeList, List<Attribe> attribes) {
-        List<Attribe> list = new ArrayList<>();
-        if (attribeList == null || attribeList.size() == 0) {
-            list.addAll(attribes);
+    public List<BuildAttribute> contrastEditAttribute(List<BuildAttribute> attributeList, List<BuildAttribute> attributes) {
+        List<BuildAttribute> list = new ArrayList<>();
+        if (attributeList == null || attributeList.size() == 0) {
+            list.addAll(attributes);
             return list;
         }
-        if (attribes.size() == 0) {
+        if (attributes.size() == 0) {
             return null;
         }
         boolean flag;
-        Attribe attribe1 = null;
-        for (Attribe attribe : attribeList) {
+        BuildAttribute attribute1 = null;
+        for (BuildAttribute attribute : attributeList) {
             flag = false;
-            for (int i = 0; i < attribes.size(); i++) {
-                attribe1 = attribes.get(i);
-                if (attribe.getAlias().equals(attribe1.getAlias())) {
-                    attribe.setValue(attribe1.getValue());
-                    list.add(attribe);
+            for (int i = 0; i < attributes.size(); i++) {
+                attribute1 = attributes.get(i);
+                if (attribute.getAlias().equals(attribute1.getAlias())) {
+                    attribute.setValue(attribute1.getValue());
+                    list.add(attribute);
                     flag = true;
                     break;
                 }
             }
 
             if (!flag) {
-                list.add(attribe1);
+                list.add(attribute1);
             }
         }
         return list;
@@ -783,30 +625,6 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         }
     }
 
-
-    /**
-     * 对建筑物进行归类
-     *
-     * @param list
-     * @return
-     */
-    protected Map<CommonEnum.CommonType, List<Build>> groupBuild(List<Build> list) {
-        Map<CommonEnum.CommonType, List<Build>> map = new LinkedHashMap<>();
-        List<Build> builds;
-        for (Build build : list) {
-            builds = map.get(build.getType());
-            if (builds == null) {
-                builds = new ArrayList<>();
-                builds.add(build);
-            } else {
-                builds.add(build);
-            }
-            map.put(build.getType(), builds);
-        }
-        return map;
-    }
-
-
     /**
      * 新建建筑物
      *
@@ -815,7 +633,7 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
      * @param remark
      * @param projectId
      */
-    public boolean newBuild(Object type, Object centerCoor, Object remark, Object projectId) {
+    public boolean newBuild(Object type, Object centerCoor, Object remark, Object projectId,Object commonId) {
         Build build1 = null;
         List<Build> builds = buildService.getBuilds();
         for (Build build : builds) {
@@ -829,25 +647,14 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         }
         build1.setSource(Build.Source.DESIGN);
         JSONObject jsonObject = JSONObject.fromObject(centerCoor);
-        if (jsonObject.get("lon") == null || jsonObject.get("lat") == null || jsonObject.get("ele") == null) {
-            return false;
-        }
+//        if (jsonObject.get("lon") == null || jsonObject.get("lat") == null || jsonObject.get("ele") == null) {
+//            return false;
+//        }
         build1.setCenterCoor(String.valueOf(jsonObject));
         build1.setRemark(remark.toString());
         Project project = projectService.find(Long.valueOf(projectId.toString()));
         build1.setProject(project);
-//        Object attribes = objectMap.get("attribes");
-//        Attribe attribe;
-//        List<Attribe> attribes1 = new ArrayList<>();
-//        if (attribes != null) {
-//            for (Map<String, String> map : (List<Map<String, String>>) attribes) {
-//                attribe = new Attribe();
-//                attribe.setAlias(map.get("alias"));
-//                attribe.setValue(map.get("value"));
-//                attribes1.add(attribe);
-//            }
-//        }
-//        build1.setAttribeList(attribes1);
+        build1.setCommonId(Long.valueOf(commonId.toString()));
         buildService.save(build1);
         return true;
     }
@@ -857,31 +664,30 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
      * 编辑建筑物
      *
      * @param build
-     * @param id
      * @param remark
      * @param type
-     * @param attribes
+     * @param attributes
      * @return
      */
-    public boolean editBuild(Build build, Object id, Object remark, Object type, Object attribes) {
-        if ((build.getAttribeList() == null || build.getAttribeList().size() == 0) && type != null) {
+    public boolean editBuild(Build build, Object remark, Object type, Object attributes) {
+        if ((build.getBuildAttributes() == null || build.getBuildAttributes().size() == 0) && type != null) {
             build.setType(CommonEnum.CommonType.valueOf(type.toString()));
         }
-        Attribe attribe;
-        List<Attribe> attribes1 = new ArrayList<>();
-        if (attribes != null) {
-            for (Map<String, Object> map : (List<Map<String, Object>>) attribes) {
+        BuildAttribute buildAttribute;
+        List<BuildAttribute> buildAttributes = new ArrayList<>();
+        if (attributes != null) {
+            for (Map<String, Object> map : (List<Map<String, Object>>) attributes) {
                 if (map.get("alias") == null || map.get("value") == null) {
                     return false;
                 }
-                attribe = new Attribe();
-                attribe.setAlias(map.get("alias").toString());
-                attribe.setValue(map.get("value").toString());
-                attribes1.add(attribe);
+                buildAttribute = new BuildAttribute();
+                buildAttribute.setAlias(map.get("alias").toString());
+                buildAttribute.setValue(map.get("value").toString());
+                buildAttributes.add(buildAttribute);
             }
         }
-        List<Attribe> list = contrastEditAttribe(build.getAttribeList(), attribes1);
-        build.setAttribeList(list);
+        List<BuildAttribute> list = contrastEditAttribute(build.getBuildAttributes(), buildAttributes);
+        build.setBuildAttributes(list);
         if (remark != null) {
             build.setRemark(remark.toString());
         }
@@ -903,13 +709,13 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
             jsonObject = new JSONObject();
             jsonObject.put("id", build.getId());
             jsonObject.put("centerCoor", build.getCenterCoor());
-            if (build.getCoordinateId() != null) {
-                jsonObject.put("coordinateId", build.getCoordinateId());
+            if (build.getCommonId() != null) {
+                jsonObject.put("commonId", build.getCommonId());
             }
             if (build.getPositionCoor() != null) {
                 jsonObject.put("positionCoor", build.getPositionCoor());
             }
-            if (build.getAttribeList().size() > 0) {
+            if (build.getBuildAttributes().size() > 0) {
                 jsonObject.put("simpleFlag", false);
             } else {
                 jsonObject.put("simpleFlag", true);

@@ -469,7 +469,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 
 	private void saveCoordinateMap(CoordinateMap coordinateMap, Project project) {
 		List<Coordinate> coordinates = findByProject(project);
-		List<Build> builds = buildService.findByProject(project);
+		List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
 		List<Build> builds1;
 		List<Coordinate> coordinates1;
 		for (Map.Entry<String, List<CoordinateObject>> entry : coordinateMap.getLineMap().entrySet()) {

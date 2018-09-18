@@ -1,24 +1,46 @@
 <!--水力要素-->
 <waterResources>
     <!--底流式消力池-->
-    <attribeGroup name="水力要素" buildAlias="b0001" alias="wr" >
-        <attribe name='跃后水深h"c' unit="m" type="number" alias="wr0001"/>
-        <attribe name="下游水深ht" unit="m" type="number" alias="wr0002"/>
-        <attribe name="水跃淹没系数σ" unit="1.05～1.1" type="number" alias="wr0003"/>
-        <attribe name="池出口水面落差△z" unit="m" type="number" alias="wr0004"/>
-        <attribe name="水跃长度Lj" unit="m" type="number" alias="wr0005"/>
-        <attribe name="尾坎顶水头" unit="m" type="number" alias="wr0006"/>
-    </attribeGroup>
+    <attributeGroup name="水力要素" buildAlias="b0001" alias="wr" >
+        <attribute name='跃后水深h"c' unit="m" type="number" alias="wr0001"/>
+        <attribute name="下游水深ht" unit="m" type="number" alias="wr0002"/>
+        <attribute name="水跃淹没系数σ" unit="1.05～1.1" type="number" alias="wr0003"/>
+        <attribute name="池出口水面落差△z" unit="m" type="number" alias="wr0004"/>
+        <attribute name="水跃长度Lj" unit="m" type="number" alias="wr0005"/>
+        <attribute name="尾坎顶水头" unit="m" type="number" alias="wr0006"/>
+    </attributeGroup>
     <!--谷坊-->
-    <attribeGroup name="水力要素" buildAlias="b0002" alias="wr" >
-        <attribe name="设计洪水流量Q" unit="m3/s" type="number" alias="wr0007"/>
-        <attribe name="堰上临界水深hc" unit="m" type="number" alias="wr0008"/>
-    </attribeGroup>
+    <attributeGroup name="水力要素" buildAlias="b0002" alias="wr" >
+        <attribute name="设计洪水流量Q" unit="m3/s" type="number" alias="wr0007"/>
+        <attribute name="堰上临界水深hc" unit="m" type="number" alias="wr0008"/>
+    </attributeGroup>
     <!--开敞式水闸-->
-    <attribeGroup name="水力要素" buildAlias="b0054" alias="wr" >
-        <attribe name="过闸总流量Q" unit="m3/s" type="number" alias="wr0009"/>
-        <attribe name="堰流流量系数m" unit="" type="number" alias="wr0010"/>
-        <attribe name="侧收缩系数ε" unit="" type="number" alias="wr0011"/>
-        <attribe name="淹没系数σs" unit="" type="number" alias="wr0012"/>
-    </attribeGroup>
+    <attributeGroup name="水力要素" buildAlias="b0056" alias="wr" >
+        <attribute name="过闸总流量Q" unit="m3/s" type="number" alias="wr0009"/>
+        <attribute name="堰流流量系数m" unit="" type="number" alias="wr0010"/>
+        <attribute name="侧收缩系数ε" unit="" type="number" alias="wr0011"/>
+        <attribute name="淹没系数σs" unit="" type="number" alias="wr0012"/>
+    </attributeGroup>
+    <!--圆形蓄水池-->
+    <attributeGroup name="水力要素" buildAlias="b0060" alias="wr" >
+        <attribute name="容积" unit="m3" type="number" alias="wr00013"/>
+    </attributeGroup>
+    <!--泉室-->
+    <attributeGroup name="水力要素" buildAlias="b0003" alias="wr" >
+        <attribute name="容积" unit="m3" type="number" alias="wr00014"/>
+    </attributeGroup>
+    <!--渡槽-->
+    <attributeGroup name="水力要素" buildAlias="b0061" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr00015"/>
+    </attributeGroup>
+    <!--大口井-->
+    <attributeGroup name="水力要素" buildAlias="b0005" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/h" type="number" alias="wr00016"/>
+        <attribute name="最低动水位" unit="m" type="number" alias="wr00017"/>
+    </attributeGroup>
+    <!--管井-->
+    <attributeGroup name="水力要素" buildAlias="b0062" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/h" type="number" alias="wr00018"/>
+        <attribute name="最低动水位" unit="m" type="number" alias="wr00019"/>
+    </attributeGroup>
 </waterResources>

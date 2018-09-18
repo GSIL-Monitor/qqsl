@@ -2,7 +2,6 @@ package com.hysw.qqsl.cloud.core.entity.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.hysw.qqsl.cloud.CommonEnum;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,16 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by leinuo on 17-3-28.
- * 建筑物的属性，包括材质属性、水利属性、结构尺寸属性、控制属性
+ * @author Administrator
+ * @since 2018/9/13
  */
 @Entity
-@Table(name="attribe")
-@SequenceGenerator(name="sequenceGenerator", sequenceName="attribe_sequence")
+@Table(name="buildAttribute")
+@SequenceGenerator(name="sequenceGenerator", sequenceName="buildAttribute_sequence")
 @JsonIgnoreProperties(value={"hibernateLazyInitializer"})
-public class Attribe extends BaseEntity{
-
-    private static final long serialVersionUID = -1469933766244270561L;
+public class BuildAttribute extends BaseEntity {
     /**属性名称*/
     private String name;
     /**属性别名*/
@@ -84,7 +81,7 @@ public class Attribe extends BaseEntity{
         TEXT_AREA,
     }
 
-    public Attribe() {
+    public BuildAttribute() {
     }
 
     @Transient

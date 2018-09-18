@@ -61,7 +61,7 @@ public class UpdateTest {
     @Autowired
     private FieldWorkService fieldWorkService;
     //coordinate 删除username,type,treePath,baseType,device_mac,source,userId,name
-    //builds 删除alias,name
+    //builds 删除alias,name，coordinateId
     //删除attribe表 删除属性code,status,genre,
     //修改索引/field为fieldWork/
     //新建线面时传入的坐标格式为lon，lat，ele
@@ -145,7 +145,6 @@ public class UpdateTest {
             }
             fieldWork = new FieldWork();
             fieldWork.setProject(coordinate.getProject());
-            fieldWork.setCommonType(coordinate.getCommonType());
             fieldWork.setCoordinateStr(coordinate.getCoordinateStr());
             fieldWork.setDeviceMac(coordinate.getDeviceMac());
             fieldWork.setName(coordinate.getName());
@@ -176,6 +175,18 @@ public class UpdateTest {
             }
             fieldWork.setCoordinateStr(jsonArray.toString());
             fieldWorkService.save(fieldWork);
+        }
+    }
+
+    /**
+     * 将build中coordinateId转存到commonId
+     */
+    @Test
+    public void test0005() {
+        List<Build> builds = buildService.findAll();
+        for (Build build : builds) {
+            build.setCommonId(build.getCommonId());
+            buildService.save(build);
         }
     }
 }

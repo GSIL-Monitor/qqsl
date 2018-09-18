@@ -1,18 +1,44 @@
 <!--地基应力-->
 <groundStress>
     <!--底流式消力池-->
-    <attribeGroup name="地基处理" buildAlias="b0001" alias="gs">
-        <attribe name="地基应力" unit="Mpa" type="number" alias="gs0001"/>
-    </attribeGroup>
+    <attributeGroup name="地基处理" buildAlias="b0001" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0001"/>
+    </attributeGroup>
     <!--谷坊-->
-    <attribeGroup name="地基处理" buildAlias="b0002" alias="gs">
-        <attribe name="地基应力" unit="Mpa" type="number" alias="gs0002"/>
-    </attribeGroup>
+    <attributeGroup name="地基处理" buildAlias="b0002" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0002"/>
+    </attributeGroup>
     <!--开敞式水闸-->
-    <attribeGroup name="地基处理" buildAlias="b0054" alias="gs">
-        <attribe name="地基应力" unit="Mpa" type="number" alias="gs0003"/>
-        <attribe name="固结灌浆孔径φ1/深度h1" unit="mm/m" type="number" alias="gs0004"/>
-        <attribe name="固结灌浆孔距b1" unit="m" type="number" alias="gs0005"/>
-        <attribe name="换基材料/厚度c" unit="" type="text" alias="gs0006"/>
-    </attribeGroup>
+    <attributeGroup name="地基处理" buildAlias="b0056" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0003"/>
+        <attribute name="固结灌浆孔径φ1/深度h1" unit="mm/m" type="number" alias="gs0004"/>
+        <attribute name="固结灌浆孔距b1" unit="m" type="number" alias="gs0005"/>
+        <attribute name="换基材料/厚度c" unit="" type="text" alias="gs0006"/>
+    </attributeGroup>
+    <!--圆形蓄水池-->
+    <attributeGroup name="地基处理" buildAlias="b0060" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0007"/>
+        <attribute name="固结灌浆孔径φ1/深度h1" unit="mm/m" type="number" alias="gs0008"/>
+        <attribute name="固结灌浆孔距b1" unit="m" type="number" alias="gs0009"/>
+        <attribute name="换基材料/厚度c" unit="" type="text" alias="gs0010"/>
+    </attributeGroup>
+    <!--泉室-->
+    <attributeGroup name="地基处理" buildAlias="b0003" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0011"/>
+    </attributeGroup>
+    <!--渡槽-->
+    <attributeGroup name="地基处理" buildAlias="b0061" alias="gs">
+        <attribute name="地基应力（排架基础）" unit="Mpa" type="number" alias="gs0012"/>
+        <attribute name="地基应力（挡土墙）" unit="Mpa" type="number" alias="gs0013"/>
+    </attributeGroup>
+    <!--大口井-->
+    <attributeGroup name="地基处理" buildAlias="b0005" alias="gs">
+        <attribute name="渗透系数" unit="" type="number" alias="gs0014"/>
+        <attribute name="影响半径" unit="m" type="number" alias="gs0015"/>
+    </attributeGroup>
+    <!--管井-->
+    <attributeGroup name="地基处理" buildAlias="b0062" alias="gs">
+        <attribute name="渗透系数" unit="" type="number" alias="gs0016"/>
+        <attribute name="影响半径" unit="m" type="number" alias="gs0017"/>
+    </attributeGroup>
 </groundStress>

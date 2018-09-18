@@ -348,7 +348,11 @@ public class CommonEnum {
         /** 水域 */
         SHUIY("area","水域","sy","面"),
         /** 公共线面 */
-        GONGGXM("line","公共线面","ggxm","线");
+        GONGGXM("line","公共线面","ggxm","线"),
+        /**
+         * 管井
+         */
+        GUANJ("builds","管井","gj","水源建筑物"),;
         //必须增加一个构造函数,变量,得到该变量的值
         private String  type="";
         private String typeC = "";

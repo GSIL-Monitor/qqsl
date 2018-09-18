@@ -1,7 +1,6 @@
 package com.hysw.qqsl.cloud.core.entity.builds;
 
-import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.data.Attribe;
+import com.hysw.qqsl.cloud.core.entity.data.BuildAttribute;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
  * Created by leinuo on 17-3-28.
  * 属性组，读取建筑物相关的xml文件
  */
-public class AttribeGroup implements Serializable{
+public class AttributeGroup implements Serializable{
 
     private static final long serialVersionUID = -8550562251497482127L;
     /**属性组名称*/
@@ -18,11 +17,11 @@ public class AttribeGroup implements Serializable{
     /**属性组别名*/
     private String alias;
     /**所包含的属性*/
-    private List<Attribe> attribes;
+    private List<BuildAttribute> buildAttributes;
     /**属性组父级*/
-    private AttribeGroup parent;
+    private AttributeGroup parent;
     /**属性组子级*/
-    private List<AttribeGroup> childs;
+    private List<AttributeGroup> childs;
 
     public String getName() {
         return name;
@@ -40,27 +39,27 @@ public class AttribeGroup implements Serializable{
         this.alias = alias;
     }
 
-    public List<Attribe> getAttribes() {
-        return attribes;
+    public List<BuildAttribute> getBuildAttributes() {
+        return buildAttributes;
     }
 
-    public void setAttribes(List<Attribe> attribes) {
-        this.attribes = attribes;
+    public void setBuildAttributes(List<BuildAttribute> buildAttributes) {
+        this.buildAttributes = buildAttributes;
     }
 
-    public AttribeGroup getParent() {
+    public AttributeGroup getParent() {
         return parent;
     }
 
-    public void setParent(AttribeGroup parent) {
+    public void setParent(AttributeGroup parent) {
         this.parent = parent;
     }
 
-    public List<AttribeGroup> getChilds() {
+    public List<AttributeGroup> getChilds() {
         return childs;
     }
 
-    public void setChilds(List<AttribeGroup> childs) {
+    public void setChilds(List<AttributeGroup> childs) {
         this.childs = childs;
     }
 

@@ -1,10 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.entity.builds.BuildGroup;
-import com.hysw.qqsl.cloud.core.entity.data.Build;
-import net.sf.json.JSONArray;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

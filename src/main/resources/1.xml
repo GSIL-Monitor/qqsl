@@ -1,30 +1,58 @@
 <!--坐标-->
 <coordinate>
     <!--底流式消力池-->
-    <attribeGroup name="坐标" buildAlias="b0001" alias="coor">
-        <attribe name="中心点" unit="经度,纬度,高程" type="text" alias="center"/>
-        <attribe name="定位点" unit="经度,纬度,高程" type="text" alias="position"/>
-        <attribe name="设计标高" unit="消力池底板顶（m）" type="number" alias="designElevation"/>
-        <attribe name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
-    </attribeGroup>
+    <attributeGroup name="坐标" buildAlias="b0001" alias="coor">
+        <attribute name="中心点" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="定位点" unit="经度,纬度,高程" type="text" alias="position"/>
+        <attribute name="设计标高" unit="消力池底板顶（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
     <!--谷坊-->
-    <attribeGroup name="坐标" buildAlias="b0002" alias="coor">
-        <attribe name="中心点" unit="经度,纬度,高程" type="text" alias="center"/>
-        <attribe name="定位点" unit="经度,纬度,高程" type="text" alias="position"/>
-        <attribe name="设计标高" unit="(坝顶）m" type="number" alias="designElevation"/>
-        <attribe name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
-    </attribeGroup>
+    <attributeGroup name="坐标" buildAlias="b0002" alias="coor">
+        <attribute name="中心点" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="定位点" unit="经度,纬度,高程" type="text" alias="position"/>
+        <attribute name="设计标高" unit="(坝顶）m" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
     <!--开敞式水闸-->
-    <attribeGroup name="坐标" buildAlias="b0054" alias="coor">
-        <attribe name="中心点（闸底板上游顶边中心点）" unit="经度,纬度,高程" type="text" alias="center"/>
-        <attribe name="定位点（闸底板下游顶边中心点）" unit="经度,纬度,高程" type="text" alias="position"/>
-        <attribe name="设计标高" unit="闸室堰顶（m）" type="number" alias="designElevation"/>
-        <attribe name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
-    </attribeGroup>
-    <!--<attribeGroup name="坐标" buildAlias="b0055" alias="coor">-->
-        <!--<attribe name="设计堤线－－直线段起点" unit="经度,纬度,高程" type="text" alias="center"/>-->
-        <!--<attribe name="设计堤线－－直线段终点" unit="经度,纬度,高程" type="text" alias="position"/>-->
-        <!--<attribe name="设计标高" unit="闸室堰顶（m）" type="number" alias="designElevation"/>-->
-        <!--<attribe name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>-->
-    <!--</attribeGroup>-->
+    <attributeGroup name="坐标" buildAlias="b0056" alias="coor">
+        <attribute name="中心点（闸底板上游顶边中心点）" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="定位点（闸底板下游顶边中心点）" unit="经度,纬度,高程" type="text" alias="position"/>
+        <attribute name="设计标高" unit="闸室堰顶（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--圆形蓄水池-->
+    <attributeGroup name="坐标" buildAlias="b0060" alias="coor">
+        <attribute name="中心点坐标（圆心）" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="定向点坐标（进水管口）" unit="经度,纬度,高程" type="text" alias="position"/>
+        <attribute name="设计标高" unit="池底板顶（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--泉室-->
+    <attributeGroup name="坐标" buildAlias="b0003" alias="coor">
+        <attribute name="中心点坐标（圆心）" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="定向点坐标（进水管口）" unit="经度,纬度,高程" type="text" alias="position"/>
+        <attribute name="设计标高" unit="池底板顶（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--渡槽-->
+    <attributeGroup name="坐标" buildAlias="b0061" alias="coor">
+        <attribute name="中心点（进口底板顶中心点）" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="定位点（出口底板顶中心点）" unit="经度,纬度,高程" type="text" alias="position"/>
+        <attribute name="设计标高" unit="进口堰顶（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--大口井-->
+    <attributeGroup name="坐标" buildAlias="b0005" alias="coor">
+        <attribute name="中心点（顶板圆心）" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="定位点（出水管轴线）" unit="经度,纬度,高程" type="text" alias="position"/>
+        <attribute name="设计标高" unit="井口顶板（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--管井-->
+    <attributeGroup name="坐标" buildAlias="b0062" alias="coor">
+        <attribute name="中心点（顶板圆心）" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="设计标高" unit="井口（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
 </coordinate>

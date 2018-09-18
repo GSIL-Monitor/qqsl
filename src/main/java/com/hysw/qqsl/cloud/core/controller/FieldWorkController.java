@@ -138,7 +138,7 @@ public class FieldWorkController {
         Long projectId = Long.valueOf(reslove.get("projectId").toString());
         Project project = projectService.find(projectId);
         List<Coordinate> coordinates = coordinateService.findByProject(project);
-        List<Build> builds = buildService.findByProject(project);
+        List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
         JSONObject jsonObject;
         for (Object o : JSONArray.fromObject(reslove.get("msg"))) {
             jsonObject = JSONObject.fromObject(o);
@@ -148,27 +148,27 @@ public class FieldWorkController {
     }
 
 
-
-    /**
-     * 移动端外业保存
-     * @param objectMap <ol><li>projectId项目id</li>，<li>userId用户id</li>，<li>name采集人</li>，<li>deviceMac手机mac</li>，<li>coordinates点集合（type点线面类型，center中心点[longitude经度,latitude纬度,elevation高程]，description描述，?delete删除标记，?attribes属性[code组级，alias别名，value值]，alias别名，?position定位点[longitude经度,latitude纬度,elevation高程]）</li></ol>?可以不传
-     * @return FAIL参数验证失败，OK保存成功
-     */
-    @PackageIsExpire
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/saveField", method = RequestMethod.POST)
-    public @ResponseBody Message saveField(@RequestBody  Map<String,Object> objectMap) {
-        Message message = CommonController.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        if (fieldWorkService.saveField(objectMap)) {
-            return MessageService.message(Message.Type.OK);
-        } else {
-            return MessageService.message(Message.Type.FAIL);
-        }
-    }
+//
+//    /**
+//     * 移动端外业保存
+//     * @param objectMap <ol><li>projectId项目id</li>，<li>userId用户id</li>，<li>name采集人</li>，<li>deviceMac手机mac</li>，<li>coordinates点集合（type点线面类型，center中心点[longitude经度,latitude纬度,elevation高程]，description描述，?delete删除标记，?attribes属性[code组级，alias别名，value值]，alias别名，?position定位点[longitude经度,latitude纬度,elevation高程]）</li></ol>?可以不传
+//     * @return FAIL参数验证失败，OK保存成功
+//     */
+//    @PackageIsExpire
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/saveField", method = RequestMethod.POST)
+//    public @ResponseBody Message saveField(@RequestBody  Map<String,Object> objectMap) {
+//        Message message = CommonController.parameterCheck(objectMap);
+//        if (message.getType() != Message.Type.OK) {
+//            return message;
+//        }
+//        if (fieldWorkService.saveField(objectMap)) {
+//            return MessageService.message(Message.Type.OK);
+//        } else {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//    }
 
     /**
      * 返回外业线面数据
@@ -209,19 +209,19 @@ public class FieldWorkController {
      */
     @RequestMapping(value = "/getSimpleBuildJsons", method = RequestMethod.GET)
     public @ResponseBody Message getSimpleBuildJsons(){
-        JSONArray jsonArray = buildService.getBuildJson();
+        JSONArray jsonArray = buildService.getBuildJson(false);
         return MessageService.message(Message.Type.OK,jsonArray);
     }
 
-//    /**
-//     * 获取带有属性的建筑物结构（地质属性除外）
-//     * @return 地质属性以外的建筑物列表
-//     */
-//    @RequestMapping(value = "/getBuildJsons", method = RequestMethod.GET)
-//    public @ResponseBody Message getBuildJsons(){
-//        JSONArray jsonArray = buildGroupService.getBuildJson(false);
-//        return MessageService.message(Message.Type.OK,jsonArray);
-//    }
+    /**
+     * 获取带有属性的建筑物结构（地质属性除外）
+     * @return 地质属性以外的建筑物列表
+     */
+    @RequestMapping(value = "/getBuildJsons", method = RequestMethod.GET)
+    public @ResponseBody Message getBuildJsons(){
+        JSONArray jsonArray = buildService.getBuildJson(true);
+        return MessageService.message(Message.Type.OK,jsonArray);
+    }
 
 //    /**
 //     * 获取地质属性的json结构
@@ -389,10 +389,12 @@ public class FieldWorkController {
         Object centerCoor = objectMap.get("centerCoor");
         Object remark = objectMap.get("remark");
         Object projectId = objectMap.get("projectId");
-        if (projectId == null || type == null || centerCoor == null || remark == null) {
+        Object commonId = objectMap.get("coordinateId");
+        commonId = 6443;
+        if (projectId == null || type == null || centerCoor == null || remark == null || commonId == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        if (fieldWorkService.newBuild(type, centerCoor, remark, projectId)) {
+        if (fieldWorkService.newBuild(type, centerCoor, remark, projectId,commonId)) {
             return MessageService.message(Message.Type.OK);
         } else {
             return MessageService.message(Message.Type.FAIL);
@@ -416,7 +418,7 @@ public class FieldWorkController {
         Object id = objectMap.get("id");
         Object remark = objectMap.get("remark");
         Object type = objectMap.get("type");
-        Object attribes = objectMap.get("attribes");
+        Object attributes = objectMap.get("attributes");
         if (id == null) {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -424,7 +426,7 @@ public class FieldWorkController {
         if (build == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        if (fieldWorkService.editBuild(build,id,remark,type,attribes)) {
+        if (fieldWorkService.editBuild(build,remark,type,attributes)) {
             return MessageService.message(Message.Type.OK);
         } else {
             return MessageService.message(Message.Type.FAIL);
@@ -468,7 +470,7 @@ public class FieldWorkController {
             return message;
         }
         Object line = objectMap.get("line");
-        Object builds = objectMap.get("builds");
+        Object builds = objectMap.get("build");
         Object description = objectMap.get("description");
         if (line == null && description == null) {
             return MessageService.message(Message.Type.FAIL);
@@ -522,7 +524,7 @@ public class FieldWorkController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         coordinateService.remove(coordinate);
-        List<Build> builds = buildService.findByCoordinateId(id);
+        List<Build> builds = buildService.findByCommonId(id, Build.Source.DESIGN);
         buildService.removes(builds);
         return MessageService.message(Message.Type.OK);
     }

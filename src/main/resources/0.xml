@@ -59,4 +59,7 @@
     <build name="重力式挡墙" childType="ZHONGLSDQ" alias="b0057" number="5"/>
     <build name="扶臂式挡墙" childType="FUBSDQ" alias="b0058" number="5"/>
     <build name="岸坡式挡墙" childType="ANPSDQ" alias="b0059" number="5"/>
+    <build name="圆形蓄水池" childType="YUANXXSC" alias="b0060" number="5"/>
+    <build name="渡槽" type="DC" alias="b0061" number="5"/>
+    <build name="管井" type="GUANJ" alias="b0062" number="5"/>
 </builds>

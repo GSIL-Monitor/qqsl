@@ -4,9 +4,9 @@ import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.BuildDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
-import com.hysw.qqsl.cloud.core.entity.builds.AttribeGroup;
-import com.hysw.qqsl.cloud.core.entity.data.Attribe;
+import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
 import com.hysw.qqsl.cloud.core.entity.data.Build;
+import com.hysw.qqsl.cloud.core.entity.data.BuildAttribute;
 import com.hysw.qqsl.cloud.core.entity.data.Coordinate;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -23,7 +23,6 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
 import java.util.*;
 
 /**
@@ -35,32 +34,14 @@ public class BuildService extends BaseService<Build,Long> {
     @Autowired
     private BuildDao buildDao;
     @Autowired
-    private BuildGroupService buildGroupService;
-    @Autowired
     private FieldWorkService fieldWorkService;
     @Autowired
-    private AttribeGroupService attribeGroupService;
+    private AttributeGroupService attributeGroupService;
     @Autowired
     private CacheManager cacheManager;
     @Autowired
     public void setBaseDao(BuildDao buildDao) {
         super.setBaseDao( buildDao);
-    }
-
-    public List<Build> findByProject(Project project) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("project", project));
-        List<Build> list = buildDao.findList(0, null, filters);
-        for (Build build : list) {
-            build.getId();
-            if (build.getAttribeList() == null) {
-                continue;
-            }
-            for (Attribe attribe : build.getAttribeList()) {
-                attribe.getId();
-            }
-        }
-        return list;
     }
 
     @Override
@@ -70,24 +51,11 @@ public class BuildService extends BaseService<Build,Long> {
             return null;
         }
         build.getId();
-        for (Attribe attribe : build.getAttribeList()) {
-            attribe.getId();
+        for (BuildAttribute buildAttribute : build.getBuildAttributes()) {
+            buildAttribute.getId();
         }
         return build;
     }
-    //      public void findByProject() {
-//        List<Filter> filters = new ArrayList<>();
-//        filters.add(Filter.eq(""))
-//    }
-
-    public List<Build> findByProjectAndAlias(Project project) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("project", project));
-//        filters.add(Filter.eq("alias", alias));
-        List<Build> list = buildDao.findList(0, null, filters);
-        return list;
-    }
-
 
     public List<Build> findByProjectAndSource(Project project, Build.Source source) {
         List<Filter> filters = new ArrayList<>();
@@ -96,33 +64,11 @@ public class BuildService extends BaseService<Build,Long> {
         List<Build> list = buildDao.findList(0, null, filters);
         for (Build build : list) {
             build.getId();
-            if (build.getAttribeList() == null) {
+            if (build.getBuildAttributes() == null) {
                 continue;
             }
-            for (Attribe attribe : build.getAttribeList()) {
-                attribe.getId();
-            }
-        }
-        return list;
-    }
-
-    public List<Build> findByProjectAndSourceCoordinateId(Project project, Build.Source source,Long coordinateId) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("project", project));
-        filters.add(Filter.eq("source", source));
-        filters.add(Filter.eq("coordinateId", coordinateId));
-        List<Filter> filters1 = new ArrayList<>();
-        filters1.add(Filter.eq("project", project));
-        filters1.add(Filter.eq("source", source));
-        filters1.add(Filter.isNull("coordinateId"));
-        List<Build> list = buildDao.findList(0, null, filters,filters1);
-        for (Build build : list) {
-            build.getId();
-            if (build.getAttribeList() == null) {
-                continue;
-            }
-            for (Attribe attribe : build.getAttribeList()) {
-                attribe.getId();
+            for (BuildAttribute buildAttribute : build.getBuildAttributes()) {
+                buildAttribute.getId();
             }
         }
         return list;
@@ -148,97 +94,100 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("centerCoor", build.getCenterCoor());
         jsonObject.put("positionCoor", build.getPositionCoor());
         jsonObject.put("remark", build.getRemark());
+        jsonObject.put("childType", build.getChildType()==null?null:build.getChildType().name());
         jsonObject1 = new JSONObject();
-        writeAttribeGroup(build.getCoordinate(),jsonObject1);
+        writeAttributeGroup(build.getCoordinate(),jsonObject1);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("coordinate", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttribeGroup(build.getWaterResources(),jsonObject1);
+        writeAttributeGroup(build.getWaterResources(),jsonObject1);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("waterResources", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttribeGroup(build.getControlSize(),jsonObject1);
+        writeAttributeGroup(build.getControlSize(),jsonObject1);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("controlSize", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttribeGroup(build.getGroundStress(),jsonObject1);
+        writeAttributeGroup(build.getGroundStress(),jsonObject1);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("groundStress", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttribeGroup(build.getComponent(),jsonObject1);
+        writeAttributeGroup(build.getComponent(),jsonObject1);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("component", jsonObject1);
         }
         return jsonObject;
     }
 
-    private void writeAttribeGroup(AttribeGroup attribeGroup, JSONObject jsonObject) {
-        if (attribeGroup == null) {
+    private void writeAttributeGroup(AttributeGroup attributeGroup, JSONObject jsonObject) {
+        if (attributeGroup == null) {
             return;
         }
         JSONArray jsonArray;
         jsonArray = new JSONArray();
-        writeAttribe(attribeGroup.getAttribes(),jsonArray);
+        writeAttribute(attributeGroup.getBuildAttributes(),jsonArray);
         if (!jsonArray.isEmpty()) {
-            jsonObject.put("name", attribeGroup.getName());
-            jsonObject.put("alias", attribeGroup.getAlias());
-            jsonObject.put("attribes", jsonArray);
+            jsonObject.put("name", attributeGroup.getName());
+            jsonObject.put("alias", attributeGroup.getAlias());
+            jsonObject.put("attributes", jsonArray);
         }
         jsonArray = new JSONArray();
-        writeChild(attribeGroup.getChilds(), jsonArray);
+        writeChild(attributeGroup.getChilds(), jsonArray);
         if (!jsonArray.isEmpty()) {
-            jsonObject.put("name", attribeGroup.getName());
-            jsonObject.put("alias", attribeGroup.getAlias());
+            jsonObject.put("name", attributeGroup.getName());
+            jsonObject.put("alias", attributeGroup.getAlias());
             jsonObject.put("child", jsonArray);
         }
     }
 
-    private void writeChild(List<AttribeGroup> attribeGroups, JSONArray jsonArray) {
+    private void writeChild(List<AttributeGroup> attributeGroups, JSONArray jsonArray) {
         JSONObject jsonObject;
-        if (attribeGroups == null) {
+        if (attributeGroups == null) {
             return;
         }
-        for (AttribeGroup attribeGroup : attribeGroups) {
+        for (AttributeGroup attributeGroup : attributeGroups) {
             jsonObject = new JSONObject();
-            writeAttribeGroup(attribeGroup, jsonObject);
+            writeAttributeGroup(attributeGroup, jsonObject);
             if (!jsonObject.isEmpty()) {
                 jsonArray.add(jsonObject);
             }
         }
     }
 
-    private void writeAttribe(List<Attribe> attribes, JSONArray jsonArray) {
-        if (attribes == null) {
+    private void writeAttribute(List<BuildAttribute> attributes, JSONArray jsonArray) {
+        if (attributes == null) {
             return;
         }
         JSONObject jsonObject;
-        for (Attribe attribe : attribes) {
-            if (attribe.getValue() == null) {
+        for (BuildAttribute attribute : attributes) {
+            if (attribute.getValue() == null) {
                 continue;
             }
             jsonObject = new JSONObject();
-            jsonObject.put("id", attribe.getId());
-            jsonObject.put("name", attribe.getName());
-            jsonObject.put("alias", attribe.getAlias());
-            jsonObject.put("type", attribe.getType());
-            jsonObject.put("value", attribe.getValue());
-            if (attribe.getSelects() != null && attribe.getSelects().size() != 0) {
-                jsonObject.put("selects", attribe.getSelects());
+            jsonObject.put("id", attribute.getId());
+            jsonObject.put("name", attribute.getName());
+            jsonObject.put("alias", attribute.getAlias());
+            jsonObject.put("type", attribute.getType());
+            jsonObject.put("value", attribute.getValue());
+            jsonObject.put("formula", attribute.getFormula());
+            if (attribute.getSelects() != null && attribute.getSelects().size() != 0) {
+                jsonObject.put("selects", attribute.getSelects());
             }
-            if (attribe.getUnit() != null && !attribe.getUnit().equals("")) {
-                jsonObject.put("unit", attribe.getUnit());
+            if (attribute.getUnit() != null && !attribute.getUnit().equals("")) {
+                jsonObject.put("unit", attribute.getUnit());
             }
             jsonArray.add(jsonObject);
         }
     }
 
-    public List<Build> findByCoordinateId(long id) {
+    public List<Build> findByCommonId(long id, Build.Source source) {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("coordinateId", id));
+        filters.add(Filter.eq("commonId", id));
+        filters.add(Filter.eq("source", source));
         return buildDao.findList(0, null, filters);
      }
 
@@ -287,11 +236,11 @@ public class BuildService extends BaseService<Build,Long> {
             }
             buildMap.put(build.getAlias(),build);
         }
-        attribeGroupService.initAttribeGroup(buildMap,SettingUtils.getInstance().getSetting().getCoordinate(),stringAlias);
-        attribeGroupService.initAttribeGroup(buildMap,SettingUtils.getInstance().getSetting().getWaterResources(),stringAlias);
-        attribeGroupService.initAttribeGroup(buildMap,SettingUtils.getInstance().getSetting().getControlSize(),stringAlias);
-        attribeGroupService.initAttribeGroup(buildMap,SettingUtils.getInstance().getSetting().getGroundStress(),stringAlias);
-        attribeGroupService.initAttribeGroup(buildMap, SettingUtils.getInstance().getSetting().getComponent(), stringAlias);
+        attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getCoordinate(),stringAlias);
+        attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getWaterResources(),stringAlias);
+        attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getControlSize(),stringAlias);
+        attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getGroundStress(),stringAlias);
+        attributeGroupService.initAttributeGroup(buildMap, SettingUtils.getInstance().getSetting().getComponent(), stringAlias);
         List<Build> builds = new ArrayList<>();
         for (Map.Entry<String, Build> entry : buildMap.entrySet()) {
             builds.add(entry.getValue());
@@ -316,6 +265,7 @@ public class BuildService extends BaseService<Build,Long> {
     }
 
     public void outBuildModel(Workbook wb, List<Build> builds) {
+        String[] s={"一","二","三","四","五"};
         Sheet sheet = null;
         Row row = null;
         Cell cell = null;
@@ -326,15 +276,29 @@ public class BuildService extends BaseService<Build,Long> {
             int i = 0/*, n = 0*/;
             sheet = wb.createSheet(build.getName());
             for (int l = 0; l < build.getNumber(); l++) {
-                int j = 0, k = 0;
+                int j = 0, k = 0,m = 0;
                 preBuildModel(build, i);
 //                n = i;
                 writeToCell(i, sheet, row, cell, bold(wb), "编号", "名称", "单位", "值", null, null, null, wb, true, null);
-                i = writeAttribeGroup1(i, sheet, row, cell, wb, build.getCoordinate(), "一", j, k);
-                i = writeAttribeGroup1(i, sheet, row, cell, wb, build.getWaterResources(), "二", j, k);
-                i = writeAttribeGroup1(i, sheet, row, cell, wb, build.getControlSize(), "三", j, k);
-                i = writeAttribeGroup1(i, sheet, row, cell, wb, build.getGroundStress(), "四", j, k);
-                i = writeAttribeGroup1(i, sheet, row, cell, wb, build.getComponent(), "五", j, k);
+                if (build.getCoordinate() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getCoordinate(), s[m], j, k);
+                    m++;
+                }
+                if (build.getWaterResources() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getWaterResources(), s[m], j, k);
+                    m++;
+                }
+                if (build.getControlSize() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getControlSize(), s[m], j, k);
+                    m++;
+                }
+                if (build.getGroundStress() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getGroundStress(), s[m], j, k);
+                    m++;
+                }
+                if (build.getComponent() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getComponent(), s[m], j, k);
+                }
                 i++;
 //                sheet.groupRow(n+1,i-1);
             }
@@ -348,121 +312,118 @@ public class BuildService extends BaseService<Build,Long> {
      */
     private void preBuildModel(Build build,int i) {
         writeToCell3(i, null);
-        i = writeAttribeGroup3(i, build.getCoordinate());
-        i = writeAttribeGroup3(i, build.getWaterResources());
-        i = writeAttribeGroup3(i, build.getControlSize());
-        i = writeAttribeGroup3(i, build.getGroundStress());
-        i = writeAttribeGroup3(i, build.getComponent());
+        i = writeAttributeGroup3(i, build.getCoordinate());
+        i = writeAttributeGroup3(i, build.getWaterResources());
+        i = writeAttributeGroup3(i, build.getControlSize());
+        i = writeAttributeGroup3(i, build.getGroundStress());
+        i = writeAttributeGroup3(i, build.getComponent());
         i++;
-        List<Attribe> attribes = new ArrayList<>();
-        pickedAttribe(build.getCoordinate(),attribes);
-        pickedAttribe(build.getWaterResources(),attribes);
-        pickedAttribe(build.getControlSize(),attribes);
-        pickedAttribe(build.getGroundStress(),attribes);
-        pickedAttribe(build.getComponent(),attribes);
-        replaceFx(build.getCoordinate(),attribes);
-        replaceFx(build.getWaterResources(),attribes);
-        replaceFx(build.getControlSize(),attribes);
-        replaceFx(build.getGroundStress(),attribes);
-        replaceFx(build.getComponent(),attribes);
+        List<BuildAttribute> buildAttributes = new ArrayList<>();
+        pickedAttribute(build.getCoordinate(),buildAttributes);
+        pickedAttribute(build.getWaterResources(),buildAttributes);
+        pickedAttribute(build.getControlSize(),buildAttributes);
+        pickedAttribute(build.getGroundStress(),buildAttributes);
+        pickedAttribute(build.getComponent(),buildAttributes);
+        replaceFx(build.getCoordinate(),buildAttributes);
+        replaceFx(build.getWaterResources(),buildAttributes);
+        replaceFx(build.getControlSize(),buildAttributes);
+        replaceFx(build.getGroundStress(),buildAttributes);
+        replaceFx(build.getComponent(),buildAttributes);
     }
 
-    private void pickedAttribe(AttribeGroup attribeGroup, List<Attribe> attribes) {
-        if (attribeGroup == null) {
+    private void pickedAttribute(AttributeGroup attributeGroup, List<BuildAttribute> buildAttributes) {
+        if (attributeGroup == null) {
             return;
         }
-        if (attribeGroup.getChilds() == null) {
-            attribes.addAll(attribeGroup.getAttribes());
+        if (attributeGroup.getChilds() == null) {
+            buildAttributes.addAll(attributeGroup.getBuildAttributes());
         } else {
-            for (AttribeGroup child : attribeGroup.getChilds()) {
-                pickedAttribe(child, attribes);
+            for (AttributeGroup child : attributeGroup.getChilds()) {
+                pickedAttribute(child, buildAttributes);
             }
         }
     }
 
-    private void replaceFx(AttribeGroup attribeGroup,List<Attribe> attribes) {
-        if (attribeGroup == null) {
+    private void replaceFx(AttributeGroup attributeGroup,List<BuildAttribute> buildAttributes) {
+        if (attributeGroup == null) {
             return;
         }
-        if (attribeGroup.getChilds() == null) {
-            for (Attribe attribe : attribeGroup.getAttribes()) {
-                if (attribe.getFormula() == null) {
+        if (attributeGroup.getChilds() == null) {
+            for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                if (buildAttribute.getFormula() == null) {
                     continue;
                 }
-                attribe.setFx(attribe.getFormula());
-                for (Attribe attribe1 : attribes) {
-                    attribe.setFx(attribe.getFx().replaceAll(attribe1.getAlias(), "D" + attribe1.getRow()));
+                buildAttribute.setFx(buildAttribute.getFormula());
+                for (BuildAttribute attribute1 : buildAttributes) {
+                    buildAttribute.setFx(buildAttribute.getFx().replaceAll(attribute1.getAlias(), "D" + attribute1.getRow()));
                 }
             }
         } else {
-            for (AttribeGroup child : attribeGroup.getChilds()) {
-                replaceFx(child, attribes);
+            for (AttributeGroup child : attributeGroup.getChilds()) {
+                replaceFx(child, buildAttributes);
             }
         }
     }
 
-    private int writeAttribeGroup3(int i, AttribeGroup attribeGroup) {
-        if (attribeGroup == null) {
+    private int writeAttributeGroup3(int i, AttributeGroup attributeGroup) {
+        if (attributeGroup == null) {
             return i;
         }
         writeToCell3(++i, null);
-        if (attribeGroup.getChilds() == null) {
-            for (Attribe attribe : attribeGroup.getAttribes()) {
-                writeToCell3(++i, attribe);
+        if (attributeGroup.getChilds() == null) {
+            for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                writeToCell3(++i, buildAttribute);
             }
         }else{
-            for (AttribeGroup child : attribeGroup.getChilds()) {
-                i = writeAttribeGroup3(i, child);
+            for (AttributeGroup child : attributeGroup.getChilds()) {
+                i = writeAttributeGroup3(i, child);
             }
         }
         return i;
     }
 
-    private void writeToCell3(int i, Attribe attribe) {
-        if (attribe == null) {
+    private void writeToCell3(int i, BuildAttribute buildAttribute) {
+        if (buildAttribute == null) {
             return;
         }
-        attribe.setRow(i + 1);
+        buildAttribute.setRow(i + 1);
     }
 
-    private int writeAttribeGroup1(int i, Sheet sheet, Row row, Cell cell, Workbook wb, AttribeGroup attribeGroup, String numC,int j,int k) {
-        if (attribeGroup == null) {
-            return i;
-        }
+    private int writeAttributeGroup1(int i, Sheet sheet, Row row, Cell cell, Workbook wb, AttributeGroup attributeGroup, String numC,int j,int k) {
         if (k == 0) {
-            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundYellow(wb), numC, attribeGroup.getName(), null, null, null, null, null, wb, true, null);
+            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundYellow(wb), numC, attributeGroup.getName(), null, null, null, null, null, wb, true, null);
         }else {
-            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundSkyBlue(wb), numC, attribeGroup.getName(), null, null, null, null, null, wb, true, null);
+            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundSkyBlue(wb), numC, attributeGroup.getName(), null, null, null, null, null, wb, true, null);
         }
-        if (attribeGroup.getChilds() == null) {
+        if (attributeGroup.getChilds() == null) {
             if (k == 0) {
                 j = 0;
-                for (Attribe attribe : attribeGroup.getAttribes()) {
-                    if (attribe.getFx() != null) {
-                        writeToCell(++i, sheet, row, cell, noBoldAndUnlocked(wb), String.valueOf(++j), attribe.getName(), attribe.getUnit(), null, attribe.getAlias(), attribe.getType(), attribe.getSelects(), wb, attribe.getLocked(), attribe.getFx());
+                for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                    if (buildAttribute.getFx() != null) {
+                        writeToCell(++i, sheet, row, cell, noBoldAndUnlocked(wb), String.valueOf(++j), buildAttribute.getName(), buildAttribute.getUnit(), null, buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
                         continue;
                     }
-                    writeToCell(++i, sheet, row, cell, noBold(wb), String.valueOf(++j), attribe.getName(), attribe.getUnit(), null, attribe.getAlias(), attribe.getType(), attribe.getSelects(), wb, attribe.getLocked(), attribe.getFx());
+                    writeToCell(++i, sheet, row, cell, noBold(wb), String.valueOf(++j), buildAttribute.getName(), buildAttribute.getUnit(), null, buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
                 }
             }else{
                 j = 0;
-                for (Attribe attribe : attribeGroup.getAttribes()) {
-                    if (attribe.getFx() != null) {
-                        writeToCell(++i, sheet, row, cell, noBoldAndUnlocked(wb), "" + k + "." + (++j), attribe.getName(), attribe.getUnit(), null, attribe.getAlias(), attribe.getType(), attribe.getSelects(), wb, attribe.getLocked(), attribe.getFx());
+                for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                    if (buildAttribute.getFx() != null) {
+                        writeToCell(++i, sheet, row, cell, noBoldAndUnlocked(wb), "" + k + "." + (++j), buildAttribute.getName(), buildAttribute.getUnit(), null, buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
                         continue;
                     }
-                    writeToCell(++i, sheet, row, cell, noBold(wb), "" + k + "." + (++j), attribe.getName(), attribe.getUnit(), null, attribe.getAlias(), attribe.getType(), attribe.getSelects(), wb, attribe.getLocked(), attribe.getFx());
+                    writeToCell(++i, sheet, row, cell, noBold(wb), "" + k + "." + (++j), buildAttribute.getName(), buildAttribute.getUnit(), null, buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
                 }
             }
         }else{
-            for (AttribeGroup child : attribeGroup.getChilds()) {
-                i = writeAttribeGroup1(i, sheet, row, cell, wb, child, String.valueOf(++k),j,k);
+            for (AttributeGroup child : attributeGroup.getChilds()) {
+                i = writeAttributeGroup1(i, sheet, row, cell, wb, child, String.valueOf(++k),j,k);
             }
         }
         return i;
     }
 
-    private void writeToCell(int i, Sheet sheet, Row row, Cell cell, CellStyle style, String a, String b, String c, String d, String e, Attribe.Type type, List<String> selects, Workbook wb, boolean locked, String fx) {
+    private void writeToCell(int i, Sheet sheet, Row row, Cell cell, CellStyle style, String a, String b, String c, String d, String e, BuildAttribute.Type type, List<String> selects, Workbook wb, boolean locked, String fx) {
         row = sheet.createRow(i);
         cell = row.createCell(0);
         if (a != null) {
@@ -503,7 +464,7 @@ public class BuildService extends BaseService<Build,Long> {
         sheet.autoSizeColumn(1);
         sheet.autoSizeColumn(2);
 //        sheet.autoSizeColumn(3);
-        if (type == Attribe.Type.SELECT) {
+        if (type == BuildAttribute.Type.SELECT) {
             setXSSFValidation1((XSSFSheet) sheet, selects.toArray(new String[selects.size()]), i, i, 3, 3);
         }
     }
@@ -662,8 +623,8 @@ public class BuildService extends BaseService<Build,Long> {
         Build build = null;
         Map<String, List<Build>> buildMap = new HashMap<>();
         List<Build> builds;
-        Attribe attribe;
-        List<Attribe> attribes = null;
+        BuildAttribute buildAttribute;
+        List<BuildAttribute> buildAttributes = null;
         for (Map.Entry<String, List<Sheet>> entry : buildWBs.entrySet()) {
             for (Sheet sheet : entry.getValue()) {
                 if (sheet == null) {
@@ -692,12 +653,12 @@ public class BuildService extends BaseService<Build,Long> {
                     if (a.trim().equals("编号")) {
                         if (j == 0) {
                             build = pickedBuild(sheet.getSheetName());
-                            attribes = new ArrayList<>();
+                            buildAttributes = new ArrayList<>();
                             comment = null;
                             continue;
                         }else{
                             build.setProject(project);
-                            build.setAttribeList(attribes);
+                            build.setBuildAttributes(buildAttributes);
                             if (buildMap.get(entry.getKey()) == null) {
                                 builds = new ArrayList<>();
                                 builds.add(build);
@@ -708,7 +669,7 @@ public class BuildService extends BaseService<Build,Long> {
                                 buildMap.put(entry.getKey(), builds);
                             }
                             build = pickedBuild(sheet.getSheetName());
-                            attribes = new ArrayList<>();
+                            buildAttributes = new ArrayList<>();
                             continue;
                         }
                     }
@@ -739,15 +700,15 @@ public class BuildService extends BaseService<Build,Long> {
                         comment = null;
                         continue;
                     }
-                    attribe = new Attribe();
-                    attribe.setAlias(comment);
+                    buildAttribute = new BuildAttribute();
+                    buildAttribute.setAlias(comment);
                     comment = null;
-                    attribe.setValue(b);
-                    attribe.setBuild(build);
-                    attribes.add(attribe);
+                    buildAttribute.setValue(b);
+                    buildAttribute.setBuild(build);
+                    buildAttributes.add(buildAttribute);
                     if (j == sheet.getLastRowNum()) {
                         build.setProject(project);
-                        build.setAttribeList(attribes);
+                        build.setBuildAttributes(buildAttributes);
                         if (buildMap.get(entry.getKey()) == null) {
                             builds = new ArrayList<>();
                             builds.add(build);
@@ -791,11 +752,11 @@ public class BuildService extends BaseService<Build,Long> {
     ////////////////////////////////////////////////////新真实建筑物导出/////////////////////////////////////////////////////////////
     public void outputBuilds(List<Build> builds, Workbook wb, String code, Coordinate.WGS84Type wgs84Type) {
 //        将建筑物中心坐标，定位坐标，标高，描述手动构建到attribeList中
-        makeAttribeToAttribeList(builds, code, wgs84Type);
+        makeAttributeToAttributeList(builds, code, wgs84Type);
 //        将模板内容写入真实建筑物
         writeModelToRealBuild(builds);
 //        将属性构建进attribeGroup
-        makeAttribeToAttribeGroup(builds);
+        makeAttributeToAttributeGroup(builds);
 //        对建筑物分类
         Map<String, List<Build>> map = pickedTheSameBuild(builds);
 //        输出excel
@@ -839,18 +800,18 @@ public class BuildService extends BaseService<Build,Long> {
         for (Map.Entry<String, List<Build>> entry : map.entrySet()) {
             int i = 0, j = 0, k = 0;
             for (Build build : entry.getValue()) {
-                if (build.getAttribeList().size() == 3) {
+                if (build.getBuildAttributes().size() == 3) {
                     continue;
                 }
                 if (wb.getSheet(entry.getKey()) == null) {
                     sheet = wb.createSheet(entry.getKey());
                 }
                 writeToCell(i, sheet, row, cell, bold(wb), "编号", "名称", "单位", "值", null, null, null, wb, true, null);
-                i = writeAttribeGroup2(i, sheet, row, cell, wb, build.getCoordinate(), "一", j, k);
-                i = writeAttribeGroup2(i, sheet, row, cell, wb, build.getWaterResources(), "二", j, k);
-                i = writeAttribeGroup2(i, sheet, row, cell, wb, build.getControlSize(), "三", j, k);
-                i = writeAttribeGroup2(i, sheet, row, cell, wb, build.getGroundStress(), "四", j, k);
-                i = writeAttribeGroup2(i, sheet, row, cell, wb, build.getComponent(), "五", j, k);
+                i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getCoordinate(), "一", j, k);
+                i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getWaterResources(), "二", j, k);
+                i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getControlSize(), "三", j, k);
+                i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getGroundStress(), "四", j, k);
+                i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getComponent(), "五", j, k);
                 i++;
             }
             if (wb.getSheet(entry.getKey()) != null) {
@@ -859,64 +820,64 @@ public class BuildService extends BaseService<Build,Long> {
         }
     }
 
-    private int writeAttribeGroup2(int i, Sheet sheet, Row row, Cell cell, Workbook wb, AttribeGroup attribeGroup, String numC,int j,int k) {
-        if (attribeGroup == null) {
+    private int writeAttributeGroup2(int i, Sheet sheet, Row row, Cell cell, Workbook wb, AttributeGroup attributeGroup, String numC,int j,int k) {
+        if (attributeGroup == null) {
             return i;
         }
         if (k == 0) {
-            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundYellow(wb), numC, attribeGroup.getName(), null, null, null, null, null, wb, true, null);
+            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundYellow(wb), numC, attributeGroup.getName(), null, null, null, null, null, wb, true, null);
         }else {
-            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundSkyBlue(wb), numC, attribeGroup.getName(), null, null, null, null, null, wb, true, null);
+            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundSkyBlue(wb), numC, attributeGroup.getName(), null, null, null, null, null, wb, true, null);
         }
-        if (attribeGroup.getChilds() == null) {
+        if (attributeGroup.getChilds() == null) {
             if (k == 0) {
                 j = 0;
-                for (Attribe attribe : attribeGroup.getAttribes()) {
-                    writeToCell(++i, sheet, row, cell, noBold(wb), String.valueOf(++j), attribe.getName(), attribe.getUnit(), attribe.getValue(), attribe.getAlias(), attribe.getType(), attribe.getSelects(), wb, attribe.getLocked(), attribe.getFx());
+                for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                    writeToCell(++i, sheet, row, cell, noBold(wb), String.valueOf(++j), buildAttribute.getName(), buildAttribute.getUnit(), buildAttribute.getValue(), buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
                 }
             }else{
                 j = 0;
-                for (Attribe attribe : attribeGroup.getAttribes()) {
-                    writeToCell(++i, sheet, row, cell, noBold(wb), "" + k + "." + (++j), attribe.getName(), attribe.getUnit(), attribe.getValue(), attribe.getAlias(), attribe.getType(), attribe.getSelects(), wb, attribe.getLocked(), attribe.getFx());
+                for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                    writeToCell(++i, sheet, row, cell, noBold(wb), "" + k + "." + (++j), buildAttribute.getName(), buildAttribute.getUnit(), buildAttribute.getValue(), buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
                 }
             }
         }else{
-            for (AttribeGroup child : attribeGroup.getChilds()) {
-                i = writeAttribeGroup2(i, sheet, row, cell, wb, child, String.valueOf(++k),j,k);
+            for (AttributeGroup child : attributeGroup.getChilds()) {
+                i = writeAttributeGroup2(i, sheet, row, cell, wb, child, String.valueOf(++k),j,k);
             }
         }
         return i;
     }
 
-    private void makeAttribeToAttribeGroup(List<Build> builds) {
+    private void makeAttributeToAttributeGroup(List<Build> builds) {
         for (Build build : builds) {
 //            将属性写入attribeGroup
-            attribeToAttribeGroup(build.getAttribeList(), build.getCoordinate());
-            attribeToAttribeGroup(build.getAttribeList(), build.getWaterResources());
-            attribeToAttribeGroup(build.getAttribeList(), build.getControlSize());
-            attribeToAttribeGroup(build.getAttribeList(), build.getGroundStress());
-            attribeToAttribeGroup(build.getAttribeList(), build.getComponent());
+            attributeToAttributeGroup(build.getBuildAttributes(), build.getCoordinate());
+            attributeToAttributeGroup(build.getBuildAttributes(), build.getWaterResources());
+            attributeToAttributeGroup(build.getBuildAttributes(), build.getControlSize());
+            attributeToAttributeGroup(build.getBuildAttributes(), build.getGroundStress());
+            attributeToAttributeGroup(build.getBuildAttributes(), build.getComponent());
         }
     }
 
-    private void attribeToAttribeGroup(List<Attribe> attribeList, AttribeGroup attribeGroup) {
-        if (attribeGroup == null) {
+    private void attributeToAttributeGroup(List<BuildAttribute> buildAttributes, AttributeGroup attributeGroup) {
+        if (attributeGroup == null) {
             return;
         }
-        if (attribeGroup.getChilds() == null) {
-            buildAttribeGroup(attribeList,attribeGroup);
+        if (attributeGroup.getChilds() == null) {
+            buildAttributeGroup(buildAttributes,attributeGroup);
         }else{
-            for (AttribeGroup child : attribeGroup.getChilds()) {
-                attribeToAttribeGroup(attribeList, child);
+            for (AttributeGroup child : attributeGroup.getChilds()) {
+                attributeToAttributeGroup(buildAttributes, child);
             }
         }
     }
 
-    private void buildAttribeGroup(List<Attribe> attribeList, AttribeGroup attribeGroup) {
-        for (Attribe attribe : attribeList) {
-            for (Attribe groupAttribe : attribeGroup.getAttribes()) {
-                if (groupAttribe.getAlias().equals(attribe.getAlias())) {
-                    groupAttribe.setValue(attribe.getValue());
+    private void buildAttributeGroup(List<BuildAttribute> buildAttributes, AttributeGroup attributeGroup) {
+        for (BuildAttribute buildAttribute : buildAttributes) {
+            for (BuildAttribute groupAttribute : attributeGroup.getBuildAttributes()) {
+                if (groupAttribute.getAlias().equals(buildAttribute.getAlias())) {
+                    groupAttribute.setValue(buildAttribute.getValue());
                     break;
                 }
             }
@@ -941,30 +902,30 @@ public class BuildService extends BaseService<Build,Long> {
         }
     }
 
-    private void makeAttribeToAttribeList(List<Build> builds, String code, Coordinate.WGS84Type wgs84Type) {
-        Attribe attribe;
-        List<Attribe> attribes;
+    private void makeAttributeToAttributeList(List<Build> builds, String code, Coordinate.WGS84Type wgs84Type) {
+        BuildAttribute buildAttribute;
+        List<BuildAttribute> buildAttributes;
         for (Build build : builds) {
-            attribes = build.getAttribeList();
-            attribe = new Attribe();
-            attribe.setValue(jsonToCoordinate(build.getCenterCoor(), code, wgs84Type));
-            attribe.setAlias("center");
-            attribes.add(attribe);
+            buildAttributes = build.getBuildAttributes();
+            buildAttribute = new BuildAttribute();
+            buildAttribute.setValue(jsonToCoordinate(build.getCenterCoor(), code, wgs84Type));
+            buildAttribute.setAlias("center");
+            buildAttributes.add(buildAttribute);
             if (build.getPositionCoor() != null) {
-                attribe = new Attribe();
-                attribe.setValue(jsonToCoordinate(build.getPositionCoor(), code, wgs84Type));
-                attribe.setAlias("position");
-                attribes.add(attribe);
+                buildAttribute = new BuildAttribute();
+                buildAttribute.setValue(jsonToCoordinate(build.getPositionCoor(), code, wgs84Type));
+                buildAttribute.setAlias("position");
+                buildAttributes.add(buildAttribute);
             }
-            attribe = new Attribe();
-            attribe.setValue(build.getDesignElevation());
-            attribe.setAlias("designElevation");
-            attribes.add(attribe);
-            attribe = new Attribe();
-            attribe.setValue(build.getRemark());
-            attribe.setAlias("remark");
-            attribes.add(attribe);
-            build.setAttribeList(attribes);
+            buildAttribute = new BuildAttribute();
+            buildAttribute.setValue(build.getDesignElevation());
+            buildAttribute.setAlias("designElevation");
+            buildAttributes.add(buildAttribute);
+            buildAttribute = new BuildAttribute();
+            buildAttribute.setValue(build.getRemark());
+            buildAttribute.setAlias("remark");
+            buildAttributes.add(buildAttribute);
+            build.setBuildAttributes(buildAttributes);
         }
     }
 
@@ -983,9 +944,9 @@ public class BuildService extends BaseService<Build,Long> {
         if (builds.size() == 0) {
             build.setSource(Build.Source.DESIGN);
             if (coordinate != null) {
-                build.setCoordinateId(coordinate.getId());
+                build.setCommonId(coordinate.getId());
             } else {
-                build.setCoordinateId(null);
+                build.setCommonId(null);
             }
             save(build);
             builds1.add(build);
@@ -996,40 +957,40 @@ public class BuildService extends BaseService<Build,Long> {
         while (iterator.hasNext()) {
             build1 = iterator.next();
             if (checkCenterCoordinateIsSame(build1.getCenterCoor(), build.getCenterCoor())) {
-                if (build1.getAttribeList().size() == 0 && (build.getAttribeList() == null || build.getAttribeList().size() == 0)) {
+                if (build1.getBuildAttributes().size() == 0 && (build.getBuildAttributes() == null || build.getBuildAttributes().size() == 0)) {
                     build1.setPositionCoor(build.getPositionCoor());
                     build1.setDesignElevation(build.getDesignElevation());
                     build1.setRemark(build.getRemark());
                     build1.setChildType(build.getChildType());
                     build1.setType(build.getType());
                     if (coordinate != null) {
-                        build1.setCoordinateId(coordinate.getId());
+                        build1.setCommonId(coordinate.getId());
                     } else {
-                        build1.setCoordinateId(null);
+                        build1.setCommonId(null);
                     }
                     build1.setSource(Build.Source.DESIGN);
                     save(build1);
-                } else if (build1.getAttribeList().size() == 0) {
+                } else if (build1.getBuildAttributes().size() == 0) {
                     remove(build1);
                     builds.remove(build1);
                     build.setSource(Build.Source.DESIGN);
                     if (coordinate != null) {
-                        build.setCoordinateId(coordinate.getId());
+                        build.setCommonId(coordinate.getId());
                     } else {
-                        build.setCoordinateId(null);
+                        build.setCommonId(null);
                     }
                     save(build);
                     builds1.add(build);
-                } else if (build.getAttribeList().size() == 0) {
+                } else if (build.getBuildAttributes().size() == 0) {
 
                 } else {
                     remove(build1);
                     builds.remove(build1);
                     build.setSource(Build.Source.DESIGN);
                     if (coordinate != null) {
-                        build.setCoordinateId(coordinate.getId());
+                        build.setCommonId(coordinate.getId());
                     } else {
-                        build.setCoordinateId(null);
+                        build.setCommonId(null);
                     }
                     save(build);
                     builds1.add(build);
@@ -1041,9 +1002,9 @@ public class BuildService extends BaseService<Build,Long> {
         if (flag) {
             build.setSource(Build.Source.DESIGN);
             if (coordinate != null) {
-                build.setCoordinateId(coordinate.getId());
+                build.setCommonId(coordinate.getId());
             } else {
-                build.setCoordinateId(null);
+                build.setCommonId(null);
             }
             save(build);
             builds1.add(build);
@@ -1077,9 +1038,9 @@ public class BuildService extends BaseService<Build,Long> {
         return false;
     }
 
-    public JSONArray getBuildJson() {
+    public JSONArray getBuildJson(boolean flag1) {
         List<Build> builds = getBuilds();
-        JSONObject jsonObject,jsonObject1;
+        JSONObject jsonObject,jsonObject1,jsonObject2;
         JSONArray jsonArray = new JSONArray(), jsonArray1 = null;
         for (Build build : builds) {
             jsonObject1 = new JSONObject();
@@ -1088,9 +1049,16 @@ public class BuildService extends BaseService<Build,Long> {
             jsonObject1.put("py", build.getType().getAbbreviate());
             jsonObject1.put("type", build.getType().name());
             jsonObject1.put("childType", build.getChildType() == null ? null : build.getChildType().name());
+            if (flag1) {
+                jsonObject1.put("coordinate", "cooddinate");
+                jsonObject1.put("waterResources", "waterResources");
+                jsonObject1.put("controlSize", "controlSize");
+                jsonObject1.put("groundStress", "groundStress");
+                jsonObject1.put("component", "component");
+            }
             boolean flag = true;
             for (int i = 0; i < jsonArray.size(); i++) {
-                JSONObject jsonObject2 = (JSONObject) jsonArray.get(i);
+                jsonObject2 = (JSONObject) jsonArray.get(i);
                 if (jsonObject2.get("name").toString().equals(build.getType().getBuildType())) {
                     jsonArray1 = (JSONArray) jsonObject2.get("builds");
                     flag = false;
