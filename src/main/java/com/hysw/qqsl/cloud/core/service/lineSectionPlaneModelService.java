@@ -165,5 +165,4 @@ public class LineSectionPlaneModelService {
         }
         shapeAttributes.add(shapeAttribute);
     }
-
 }
