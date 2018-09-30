@@ -194,7 +194,7 @@ public class CommonEnum {
         /**
          * 挡墙
          */
-        DANGQ("builds","挡墙","dq","挡水建筑物"),
+        DANGQ("line","挡墙","dq","挡水建筑物"),
         /**
          * 淤地坝
          */

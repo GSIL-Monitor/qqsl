@@ -39,7 +39,7 @@ import java.util.*;
  * Created by chenl on 17-4-7.
  */
 @Controller
-@RequestMapping("/field")
+@RequestMapping("/fieldWork")
 public class FieldWorkController {
     @Autowired
     private FieldWorkService fieldWorkService;
@@ -51,79 +51,6 @@ public class FieldWorkController {
     private CoordinateService coordinateService;
 
     Log logger = LogFactory.getLog(getClass());
-
-    /**
-     * 坐标文件上传
-     * @param request projectId项目Id，baseLevelType坐标转换基准面类型，WGS84Type-WGS84坐标格式
-     * @return FAIL参数验证失败，EXIST项目不存在或者中心点为空，OTHER已达到最大限制数量，OK上传成功
-     */
-    @PackageIsExpire(value = "request")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/uploadCoordinate", method = RequestMethod.POST)
-    public @ResponseBody
-    Message uplaodCoordinate(HttpServletRequest request, HttpSession session) {
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-        String id = request.getParameter("projectId");
-        String baseLevelType = request.getParameter("baseLevelType");
-        String WGS84Type = request.getParameter("WGS84Type");
-        Message message;
-        JSONObject jsonObject = new JSONObject();
-        if (id == null || baseLevelType == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Project project;
-        Coordinate.WGS84Type wgs84Type = null;
-        Coordinate.BaseLevelType levelType;
-        try {
-            message=isAllowUploadCoordinateFile(Long.valueOf(id));
-            levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
-            if (!WGS84Type.equals("")) {
-                wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
-            }
-            project = projectService.find(Long.valueOf(id));
-        } catch (Exception e) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        if (project == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
-            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
-        }
-        String central = coordinateService.getCoordinateBasedatum(project);
-        if (central == null) {
-            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
-        }
-        Map<String, Workbook> wbs = new HashMap<>();
-        if(multipartResolver.isMultipart(request)) {
-            //转换成多部分request
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-            Map<String, MultipartFile> map = multiRequest.getFileMap();
-            for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-                coordinateService.uploadCoordinate(entry,jsonObject,wbs);
-            }
-        }
-        if (!jsonObject.isEmpty()) {
-            return MessageService.message(Message.Type.COOR_FORMAT_ERROR, jsonObject);
-        }
-        SheetObject sheetObject = new SheetObject();
-        coordinateService.getAllSheet(wbs,sheetObject);
-//		进入错误处理环节
-        if (sheetObject.getUnknowWBs().size() != 0) {
-            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,coordinateService.errorMsg(sheetObject.getUnknowWBs()));
-        }
-        JSONObject reslove = coordinateService.reslove(sheetObject, central, wgs84Type, project);
-        if (reslove == null) {
-            return MessageService.message(Message.Type.OK);
-        }
-        session.setAttribute("upload",reslove);
-        JSONArray jsonArray = coordinateService.removeNoticeStr(reslove.get("msg"));
-        return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
-    }
 
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
@@ -557,18 +484,6 @@ public class FieldWorkController {
         return MessageService.message(Message.Type.OK);
     }
 
-    private Message isAllowUploadCoordinateFile(Long id) {
-        Project project = projectService.find(Long.valueOf(id));
-        if (project == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        List<Coordinate> coordinates = coordinateService.findByProject(project);
-        if (coordinates.size()< CommonAttributes.COORDINATELIMIT) {
-            return MessageService.message(Message.Type.OK);
-        }
-//        超过限制数量，返回已达到最大限制数量
-        return MessageService.message(Message.Type.PACKAGE_LIMIT);
-    }
 
     /**
      * 获取所有建筑物类型

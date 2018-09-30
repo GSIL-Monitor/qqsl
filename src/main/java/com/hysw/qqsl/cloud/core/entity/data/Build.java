@@ -39,22 +39,18 @@ public class Build extends BaseEntity{
     private Project project;
     /** 中心坐标 */
     private String centerCoor;
-    /** 中心坐标行号 */
-    private Integer centerCoorNum;
+    private int centerCoorNum;
     /** 定位坐标 */
     private String positionCoor;
-    /** 定位坐标行号 */
-    private Integer positionCoorNum;
+    private int positionCoorNum;
     /** 设计标高 */
     private String designElevation;
-    /** 设计标高行高 */
-    private Integer designElevationNum;
+    private int designElevationNum;
     /** 来源 */
     private Source source;
     /** 描述 */
     private String remark;
-    /** 描述行号 */
-    private Integer remarkNum;
+    private int remarkNum;
     /** 外业fieldWork或内业coordinate坐标id */
     private Long commonId;
     /** 错误标记 */
@@ -63,8 +59,8 @@ public class Build extends BaseEntity{
     private String noticeStr;
     /** 生成模板个数 */
     private int number;
-    /** 错误信息 */
-    private Map<Integer, String> errorMsgInfo = new LinkedHashMap<>();
+
+    private ShapeCoordinate shapeCoordinate;
 
     public enum ChildType {
         /**
@@ -155,7 +151,7 @@ public class Build extends BaseEntity{
         this.type = type;
     }
 
-    @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE, CascadeType.MERGE},  fetch=FetchType.LAZY, mappedBy="build")
+    @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE},  fetch=FetchType.LAZY, mappedBy="build")
     @JsonIgnore
     public List<BuildAttribute> getBuildAttributes() {
         return buildAttributes;
@@ -165,7 +161,7 @@ public class Build extends BaseEntity{
         this.buildAttributes = buildAttributes;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     public Project getProject() {
         return project;
@@ -290,51 +286,6 @@ public class Build extends BaseEntity{
     }
 
     @Transient
-    public Map<Integer, String> getErrorMsgInfo() {
-        return errorMsgInfo;
-    }
-
-    public void setErrorMsgInfo(Integer key,String value) {
-        this.errorMsgInfo.put(key, value);
-    }
-
-    @Transient
-    public Integer getCenterCoorNum() {
-        return centerCoorNum;
-    }
-
-    public void setCenterCoorNum(Integer centerCoorNum) {
-        this.centerCoorNum = centerCoorNum;
-    }
-
-    @Transient
-    public Integer getPositionCoorNum() {
-        return positionCoorNum;
-    }
-
-    public void setPositionCoorNum(Integer positionCoorNum) {
-        this.positionCoorNum = positionCoorNum;
-    }
-
-    @Transient
-    public Integer getDesignElevationNum() {
-        return designElevationNum;
-    }
-
-    public void setDesignElevationNum(Integer designElevationNum) {
-        this.designElevationNum = designElevationNum;
-    }
-
-    @Transient
-    public Integer getRemarkNum() {
-        return remarkNum;
-    }
-
-    public void setRemarkNum(Integer remarkNum) {
-        this.remarkNum = remarkNum;
-    }
-
-    @Transient
     public int getNumber() {
         return number;
     }
@@ -349,5 +300,51 @@ public class Build extends BaseEntity{
 
     public void setCommonId(Long commonId) {
         this.commonId = commonId;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    public ShapeCoordinate getShapeCoordinate() {
+        return shapeCoordinate;
+    }
+
+    public void setShapeCoordinate(ShapeCoordinate shapeCoordinate) {
+        this.shapeCoordinate = shapeCoordinate;
+    }
+
+    @Transient
+    public int getCenterCoorNum() {
+        return centerCoorNum;
+    }
+
+    public void setCenterCoorNum(int centerCoorNum) {
+        this.centerCoorNum = centerCoorNum;
+    }
+
+    @Transient
+    public int getPositionCoorNum() {
+        return positionCoorNum;
+    }
+
+    public void setPositionCoorNum(int positionCoorNum) {
+        this.positionCoorNum = positionCoorNum;
+    }
+
+    @Transient
+    public int getDesignElevationNum() {
+        return designElevationNum;
+    }
+
+    public void setDesignElevationNum(int designElevationNum) {
+        this.designElevationNum = designElevationNum;
+    }
+
+    @Transient
+    public int getRemarkNum() {
+        return remarkNum;
+    }
+
+    public void setRemarkNum(int remarkNum) {
+        this.remarkNum = remarkNum;
     }
 }

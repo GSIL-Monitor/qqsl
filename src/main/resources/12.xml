@@ -1,0 +1,5 @@
+<!--线模板-->
+<lines>
+    <line name="挡墙" type="DANGQ" cellProperty="经度:lon,纬度:lat,墙顶高程:top-ele,设计高程:desgin-ele,齿墙顶高程:key-wall-ele:,基础底高程:bottom-ele,类型:type,描述:description"/>
+    <line name="灌溉范围" type="GGFW" cellProperty="经度:lon,纬度:lat,高程:ele" />
+</lines>

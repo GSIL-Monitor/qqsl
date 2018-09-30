@@ -1,0 +1,27 @@
+<!--线面模板水力要素-->
+<waterResources>
+    <!--仰斜式挡墙-->
+    <attributeGroup name="水力要素" lineAlias="l0001" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0001"/>
+    </attributeGroup>
+    <!--宾格网箱式挡墙-->
+    <attributeGroup name="水力要素" lineAlias="l0002" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0002"/>
+    </attributeGroup>
+    <!--衡重式挡墙-->
+    <attributeGroup name="水力要素" lineAlias="l0003" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0003"/>
+    </attributeGroup>
+    <!--俯斜式挡墙-->
+    <attributeGroup name="水力要素" lineAlias="l0004" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0004"/>
+    </attributeGroup>
+    <!--扶臂式挡墙-->
+    <attributeGroup name="水力要素" lineAlias="l0005" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0005"/>
+    </attributeGroup>
+    <!--岸坡式挡墙-->
+    <attributeGroup name="水力要素" lineAlias="l0006" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0006"/>
+    </attributeGroup>
+</waterResources>

@@ -12,14 +12,11 @@ import java.util.Map;
  * @since 2018/8/17
  */
 public class SheetObject {
-    private Map<String, List<Sheet>> buildWBs = new HashMap<>();
+    private Map<String, List<Sheet>> scetionPlaneModelWBs = new HashMap<>();
     private Map<String, List<Sheet>> lineWBs = new HashMap<>();
+    private Map<String, List<Sheet>> buildWBs = new HashMap<>();
     private Map<String, List<Sheet>> areaWBs = new HashMap<>();
     private Map<String, List<Sheet>> unknowWBs = new HashMap<>();
-
-    public void setBuildSheetList(String key,Sheet sheet){
-        addSheet(buildWBs,key,sheet);
-    }
 
     public void setLineSheetList(String key,Sheet sheet){
         addSheet(lineWBs,key,sheet);
@@ -32,6 +29,9 @@ public class SheetObject {
     public void setUnknowSheetList(String key,Sheet sheet){
         addSheet(unknowWBs,key,sheet);
     }
+    public void setBuildSheetList(String key,Sheet sheet){
+        addSheet(buildWBs,key,sheet);
+    }
 
     public Map<String, List<Sheet>> getBuildWBs() {
         return buildWBs;
@@ -39,6 +39,18 @@ public class SheetObject {
 
     public void setBuildWBs(Map<String, List<Sheet>> buildWBs) {
         this.buildWBs = buildWBs;
+    }
+
+    public void setScetionPlaneModelList(String key, Sheet sheet){
+        addSheet(scetionPlaneModelWBs,key,sheet);
+    }
+
+    public Map<String, List<Sheet>> getScetionPlaneModelWBs() {
+        return scetionPlaneModelWBs;
+    }
+
+    public void setScetionPlaneModelWBs(Map<String, List<Sheet>> scetionPlaneModelWBs) {
+        this.scetionPlaneModelWBs = scetionPlaneModelWBs;
     }
 
     public Map<String, List<Sheet>> getLineWBs() {

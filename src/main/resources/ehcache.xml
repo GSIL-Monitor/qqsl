@@ -44,6 +44,10 @@
 
 	<cache name="buildModelCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
+	<cache name="lineSectionPlaneModelCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
+	<cache name="linesCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
 
 	<!--name:缓存名称。-->
 	<!--maxElementsInMemory：缓存最大个数。-->

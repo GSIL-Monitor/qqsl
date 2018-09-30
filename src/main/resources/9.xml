@@ -1,0 +1,27 @@
+<!--线面模板控制尺寸-->
+<controlSize>
+    <!--仰斜式挡墙-->
+    <attributeGroup name="控制尺寸" lineAlias="l0001" alias="cs" >
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0001"/>
+    </attributeGroup>
+    <!--宾格网箱式挡墙-->
+    <attributeGroup name="控制尺寸" lineAlias="l0002" alias="cs" >
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0002"/>
+    </attributeGroup>
+    <!--衡重式挡墙-->
+    <attributeGroup name="控制尺寸" lineAlias="l0003" alias="cs" >
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0003"/>
+    </attributeGroup>
+    <!--俯斜式挡墙-->
+    <attributeGroup name="控制尺寸" lineAlias="l0004" alias="cs" >
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0004"/>
+    </attributeGroup>
+    <!--扶臂式挡墙-->
+    <attributeGroup name="控制尺寸" lineAlias="l0005" alias="cs" >
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0005"/>
+    </attributeGroup>
+    <!--岸坡式挡墙-->
+    <attributeGroup name="控制尺寸" lineAlias="l0006" alias="cs" >
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0006"/>
+    </attributeGroup>
+</controlSize>

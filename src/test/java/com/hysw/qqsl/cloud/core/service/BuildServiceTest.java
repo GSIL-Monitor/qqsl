@@ -116,7 +116,7 @@ public class BuildServiceTest extends BaseTest {
         InputStream is = new FileInputStream(file);
         coordinateService.readExcels(is,file.getName().substring(file.getName().lastIndexOf(".")+1),file.getName(),new JSONObject(),wbs);
         coordinateService.getAllSheet(wbs,sheetObject);
-        Map<String, List<Build>> stringListMap = buildService.inputBuilds(sheetObject.getBuildWBs(), project);
+//        Map<String, List<Build>> stringListMap = buildService.inputBuilds(sheetObject.getBuildWBs(), project);
         System.out.println();
     }
 

@@ -5,10 +5,8 @@ import com.hysw.qqsl.cloud.core.dao.BuildDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
 import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
-import com.hysw.qqsl.cloud.core.entity.data.Build;
-import com.hysw.qqsl.cloud.core.entity.data.BuildAttribute;
-import com.hysw.qqsl.cloud.core.entity.data.Coordinate;
-import com.hysw.qqsl.cloud.core.entity.data.Project;
+import com.hysw.qqsl.cloud.core.entity.builds.Line;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -678,25 +676,21 @@ public class BuildService extends BaseService<Build,Long> {
                     }
                     if (comment.trim().equals("center")) {
                         build.setCenterCoor(b);
-                        build.setCenterCoorNum(j+1);
                         comment = null;
                         continue;
                     }
                     if (comment.trim().equals("position")) {
                         build.setPositionCoor(b);
-                        build.setPositionCoorNum(j+1);
                         comment = null;
                         continue;
                     }
                     if (comment.trim().equals("designElevation")) {
                         build.setDesignElevation(b);
-                        build.setDesignElevationNum(j+1);
                         comment = null;
                         continue;
                     }
                     if (comment.trim().equals("remark")) {
                         build.setRemark(b);
-                        build.setRemarkNum(j+1);
                         comment = null;
                         continue;
                     }
@@ -1077,5 +1071,66 @@ public class BuildService extends BaseService<Build,Long> {
             }
         }
         return jsonArray;
+    }
+
+    public void setbuilds(List<String> list, Line line, int j, Map<String, List<Build>> buildMap, Map.Entry<String, List<Sheet>> entry) {
+        if (list.size() != line.getCellProperty().split(",").length) {
+            return;
+        }
+        List<Build> builds = getBuilds();
+        Build build1 = null;
+        for (Build build : builds) {
+            if (build.getType().getTypeC().equals(list.get(list.size() - 2))) {
+                build1 = (Build) SettingUtils.objectCopy(build);
+                break;
+            }
+        }
+        if (build1 == null) {
+            build1 = new Build();
+        } else {
+            build1.setRemark(list.get(list.size()-1));
+        }
+//        build1.setCellNum(j+1);
+        List<Build> builds1;
+        if (buildMap.get(entry.getKey()) == null) {
+            builds1 = new ArrayList<>();
+            builds1.add(build1);
+            buildMap.put(entry.getKey(), builds1);
+        } else {
+            builds1 = buildMap.get(entry.getKey());
+            builds1.add(build1);
+            buildMap.put(entry.getKey(), builds1);
+        }
+    }
+
+    public Build findByProjectAndRemark(Project project, String remark) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("project", project));
+        filters.add(Filter.eq("remark", remark));
+        List<Build> list = buildDao.findList(0, null, filters);
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    public Workbook downloadBuildModel(List<String> list) {
+        Workbook wb = new XSSFWorkbook();
+        List<Build> builds = new ArrayList<>();
+        for (Build build : getBuilds()) {
+            for (String s : list) {
+                if (build.getType().name().equals(s)) {
+                    builds.add((Build) SettingUtils.objectCopy(build));
+                }
+                if (build.getChildType() == null) {
+                    continue;
+                }
+                if (build.getChildType().name().equals(s)) {
+                    builds.add((Build) SettingUtils.objectCopy(build));
+                }
+            }
+        }
+        outBuildModel(wb, builds);
+        return wb;
     }
 }

@@ -1,6 +1,9 @@
 <!--线面模板-->
-<line>
-    <attributeGroup>
-        <attribute/>
-    </attributeGroup>
-</line>
+<lineBuilds>
+    <line name="仰斜式挡墙" type="YANGXSDQ" alias="l0001" number="1"/>
+    <line name="宾格网箱式挡墙" type="BINGWXSDQ" alias="l0002" number="1"/>
+    <line name="衡重式挡墙" type="HENGZSDQ" alias="l0003" number="1"/>
+    <line name="俯斜式挡墙" type="FUXSDQ" alias="l0004" number="1"/>
+    <line name="扶臂式挡墙" type="FUBSDQ" alias="l0005" number="1"/>
+    <line name="岸坡式挡墙" type="ANPSDQ" alias="l0006" number="1"/>
+</lineBuilds>

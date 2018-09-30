@@ -1,0 +1,27 @@
+<!--线面模板描述-->
+<remark>
+    <!--仰斜式挡墙-->
+    <attributeGroup name="描述" lineAlias="l0001" alias="remark">
+        <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--宾格网箱式挡墙-->
+    <attributeGroup name="描述" lineAlias="l0002" alias="remark">
+        <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--衡重式挡墙-->
+    <attributeGroup name="描述" lineAlias="l0003" alias="remark">
+        <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--俯斜式挡墙-->
+    <attributeGroup name="描述" lineAlias="l0004" alias="remark">
+        <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--扶臂式挡墙-->
+    <attributeGroup name="描述" lineAlias="l0005" alias="remark">
+        <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--岸坡式挡墙-->
+    <attributeGroup name="描述" lineAlias="l0006" alias="remark">
+        <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
+    </attributeGroup>
+</remark>

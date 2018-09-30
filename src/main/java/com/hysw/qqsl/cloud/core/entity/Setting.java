@@ -49,7 +49,12 @@ public class Setting implements Serializable {
 	 * 线及线的剖面
 	 */
 	private String line;
-	private String lineSectionPlane;
+	private String lineSectionPlaneModel;
+	private String remark;
+	private String lineWaterResources;
+	private String lineControlSize;
+	private String lineGroundStress;
+	private String lineComponent;
 	/** 服务 */
 	private String serveItem;
 	private String packageModel;
@@ -238,5 +243,61 @@ public class Setting implements Serializable {
 
 	public void setComponent(String component) {
 		this.component = component;
+	}
+
+	public String getLine() {
+		return line;
+	}
+
+	public void setLine(String line) {
+		this.line = line;
+	}
+
+	public String getLineSectionPlaneModel() {
+		return lineSectionPlaneModel;
+	}
+
+	public void setLineSectionPlaneModel(String lineSectionPlaneModel) {
+		this.lineSectionPlaneModel = lineSectionPlaneModel;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getLineWaterResources() {
+		return lineWaterResources;
+	}
+
+	public void setLineWaterResources(String lineWaterResources) {
+		this.lineWaterResources = lineWaterResources;
+	}
+
+	public String getLineControlSize() {
+		return lineControlSize;
+	}
+
+	public void setLineControlSize(String lineControlSize) {
+		this.lineControlSize = lineControlSize;
+	}
+
+	public String getLineGroundStress() {
+		return lineGroundStress;
+	}
+
+	public void setLineGroundStress(String lineGroundStress) {
+		this.lineGroundStress = lineGroundStress;
+	}
+
+	public String getLineComponent() {
+		return lineComponent;
+	}
+
+	public void setLineComponent(String lineComponent) {
+		this.lineComponent = lineComponent;
 	}
 }

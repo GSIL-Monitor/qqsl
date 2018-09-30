@@ -1,6 +1,8 @@
 package com.hysw.qqsl.cloud.core.entity.builds;
 
 import com.hysw.qqsl.cloud.core.entity.data.Build;
+import com.hysw.qqsl.cloud.core.entity.data.Shape;
+import com.hysw.qqsl.cloud.core.entity.data.ShapeAttribute;
 
 import java.util.List;
 import java.util.Map;
@@ -10,40 +12,31 @@ import java.util.Map;
  * @since 2018/8/16
  */
 public class CoordinateMap {
-    private Map<String, List<Build>> buildMap;
-    private Map<String, List<CoordinateObject>> lineMap;
-    private Map<String, List<CoordinateObject>> areaMap;
-    private Map<String, List<Build>> simpleBuildMap;
+    private Map<String, List<ShapeCache>> lineMap;
+    private Map<String, List<ShapeCache>> areaMap;
+    private Map<String,List<ShapeCache>> sectionPlaneModelMap;
 
-    public Map<String, List<Build>> getBuildMap() {
-        return buildMap;
-    }
-
-    public void setBuildMap(Map<String, List<Build>> buildMap) {
-        this.buildMap = buildMap;
-    }
-
-    public Map<String, List<CoordinateObject>> getLineMap() {
+    public Map<String, List<ShapeCache>> getLineMap() {
         return lineMap;
     }
 
-    public void setLineMap(Map<String, List<CoordinateObject>> lineMap) {
+    public void setLineMap(Map<String, List<ShapeCache>> lineMap) {
         this.lineMap = lineMap;
     }
 
-    public Map<String, List<CoordinateObject>> getAreaMap() {
+    public Map<String, List<ShapeCache>> getAreaMap() {
         return areaMap;
     }
 
-    public void setAreaMap(Map<String, List<CoordinateObject>> areaMap) {
+    public void setAreaMap(Map<String, List<ShapeCache>> areaMap) {
         this.areaMap = areaMap;
     }
 
-    public Map<String, List<Build>> getSimpleBuildMap() {
-        return simpleBuildMap;
+    public Map<String, List<ShapeCache>> getSectionPlaneModelMap() {
+        return sectionPlaneModelMap;
     }
 
-    public void setSimpleBuildMap(Map<String, List<Build>> simpleBuildMap) {
-        this.simpleBuildMap = simpleBuildMap;
+    public void setSectionPlaneModelMap(Map<String, List<ShapeCache>> sectionPlaneModelMap) {
+        this.sectionPlaneModelMap = sectionPlaneModelMap;
     }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.*;
@@ -101,6 +102,7 @@ public class Project extends BaseEntity {
      * 外业
      */
     private List<FieldWork> fieldWorks = new ArrayList<>();
+    private List<Shape> shapes = new ArrayList<>();
     /**
      * 项目类型
      */
@@ -321,5 +323,15 @@ public class Project extends BaseEntity {
 
     public void setFields(List<FieldWork> fieldWorks) {
         this.fieldWorks = fieldWorks;
+    }
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy = "project")
+    @JsonIgnore
+    public List<Shape> getShapes() {
+        return shapes;
+    }
+
+    public void setShapes(List<Shape> shapes) {
+        this.shapes = shapes;
     }
 }

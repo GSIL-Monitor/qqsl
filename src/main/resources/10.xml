@@ -1,0 +1,39 @@
+<!--线面模板地基应力-->
+<groundStress>
+    <!--仰斜式挡墙-->
+    <attributeGroup name="地基处理" lineAlias="l0001" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0001"/>
+        <attribute name="防渗材料/厚度c1" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0002"/>
+        <attribute name="换基材料/厚度c2" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0003"/>
+    </attributeGroup>
+    <!--宾格网箱式挡墙-->
+    <attributeGroup name="地基处理" lineAlias="l0002" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0004"/>
+        <attribute name="防渗材料/厚度c1" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0005"/>
+        <attribute name="换基材料/厚度c2" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0006"/>
+    </attributeGroup>
+    <!--衡重式挡墙-->
+    <attributeGroup name="地基处理" lineAlias="l0003" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0007"/>
+        <attribute name="防渗材料/厚度c1" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0008"/>
+        <attribute name="换基材料/厚度c2" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0009"/>
+    </attributeGroup>
+    <!--俯斜式挡墙-->
+    <attributeGroup name="地基处理" lineAlias="l0004" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0010"/>
+        <attribute name="防渗材料/厚度c1" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0011"/>
+        <attribute name="换基材料/厚度c2" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0012"/>
+    </attributeGroup>
+    <!--扶臂式挡墙-->
+    <attributeGroup name="地基处理" lineAlias="l0005" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0013"/>
+        <attribute name="防渗材料/厚度c1" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0014"/>
+        <attribute name="换基材料/厚度c2" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0015"/>
+    </attributeGroup>
+    <!--岸坡式挡墙-->
+    <attributeGroup name="地基处理" lineAlias="l0006" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0016"/>
+        <attribute name="防渗材料/厚度c1" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0017"/>
+        <attribute name="换基材料/厚度c2" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0018"/>
+    </attributeGroup>
+</groundStress>

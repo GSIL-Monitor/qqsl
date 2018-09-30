@@ -1,0 +1,151 @@
+<!--线面模板构件-->
+<component>
+    <!--仰斜式挡墙-->
+    <attributeGroup name="构件" lineAlias="l0001" alias="ct">
+        <attributeGroup name="墙身">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0001"/>
+            <attribute name="墙顶宽" unit="m" type="number"  alias="ct0002"/>
+            <attribute name="迎水坡比" unit="" type="text"  alias="ct0003"/>
+            <attribute name="背水坡比" unit="" type="text"  alias="ct0004"/>
+        </attributeGroup>
+        <attributeGroup name="基础">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0005"/>
+            <attribute name="前趾宽" unit="m" type="number"  alias="ct0006"/>
+            <attribute name="后踵宽" unit="m" type="number"  alias="ct0007"/>
+        </attributeGroup>
+        <attributeGroup name="伸缩缝">
+            <attribute name="横向伸缩缝间距b4" unit="选型/m" type="select" select="a,b,c,d" alias="ct0008"/>
+        </attributeGroup>
+        <attributeGroup name="排水设施（选填）">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0009"/>
+            <attribute name="排水管间距" unit="规格/m" type="text"  alias="ct0010"/>
+            <attribute name="排水管层数" unit="mm" type="number"  alias="ct0011"/>
+            <attribute name="排水管距墙顶距离" unit="m" type="number"  alias="ct0012"/>
+        </attributeGroup>
+        <attributeGroup name="齿墙">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0013"/>
+            <attribute name="宽b2" unit="m" type="number"  alias="ct0014"/>
+            <attribute name="反坡比" unit="" type="text"  alias="ct0015"/>
+        </attributeGroup>
+    </attributeGroup>
+    <!--宾格网箱式挡墙-->
+    <attributeGroup name="构件" lineAlias="l0002" alias="ct">
+        <attributeGroup name="墙身">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0016"/>
+            <attribute name="墙顶宽" unit="m" type="number"  alias="ct0017"/>
+            <attribute name="层高" unit="m" type="number"  alias="ct0018"/>
+            <attribute name="层数" unit="" type="number"  alias="ct0019"/>
+            <attribute name="墙趾宽" unit="m" type="number"  alias="ct0020"/>
+        </attributeGroup>
+        <attributeGroup name="基础">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0021"/>
+            <attribute name="宽" unit="m" type="number"  alias="ct0022"/>
+            <attribute name="高" unit="m" type="number"  alias="ct0023"/>
+        </attributeGroup>
+    </attributeGroup>
+    <!--衡重式挡墙-->
+    <attributeGroup name="构件" lineAlias="l0003" alias="ct">
+        <attributeGroup name="墙身">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0024"/>
+            <attribute name="墙顶宽" unit="m" type="number"  alias="ct0025"/>
+            <attribute name="迎水坡比" unit="" type="number"  alias="ct0026"/>
+            <attribute name="背水上墙坡比" unit="" type="number"  alias="ct0027"/>
+            <attribute name="背水下墙坡比" unit="" type="number"  alias="ct0028"/>
+            <attribute name="衡重台距墙顶距离" unit="m" type="number"  alias="ct0029"/>
+            <attribute name="衡重台宽" unit="m" type="number"  alias="ct0030"/>
+        </attributeGroup>
+        <attributeGroup name="基础">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0031"/>
+            <attribute name="前趾宽" unit="m" type="number"  alias="ct0032"/>
+            <attribute name="后踵宽" unit="m" type="number"  alias="ct0033"/>
+        </attributeGroup>
+        <attributeGroup name="伸缩缝">
+            <attribute name="横向伸缩缝间距b4" unit="选型/m" type="select" select="a,b,c,d" alias="ct0034"/>
+        </attributeGroup>
+        <attributeGroup name="排水设施（选填）">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0035"/>
+            <attribute name="排水管间距" unit="规格/m" type="text"  alias="ct0036"/>
+            <attribute name="排水管层数" unit="mm" type="number"  alias="ct0037"/>
+            <attribute name="排水管距墙顶距离" unit="m" type="number"  alias="ct0038"/>
+        </attributeGroup>
+        <attributeGroup name="齿墙">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0039"/>
+            <attribute name="宽b2" unit="m" type="number"  alias="ct0040"/>
+            <attribute name="反坡比" unit="" type="text"  alias="ct0041"/>
+        </attributeGroup>
+    </attributeGroup>
+    <!--俯斜式挡墙-->
+    <attributeGroup name="构件" lineAlias="l0004" alias="ct">
+        <attributeGroup name="墙身">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0042"/>
+            <attribute name="墙顶宽" unit="m" type="number"  alias="ct0043"/>
+            <attribute name="背水坡比" unit="" type="text"  alias="ct0044"/>
+        </attributeGroup>
+        <attributeGroup name="基础">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0045"/>
+            <attribute name="前趾宽" unit="m" type="number"  alias="ct0046"/>
+            <attribute name="后踵宽" unit="m" type="number"  alias="ct0047"/>
+        </attributeGroup>
+        <attributeGroup name="伸缩缝">
+            <attribute name="横向伸缩缝间距b4" unit="选型/m" type="select" select="a,b,c,d" alias="ct0048"/>
+        </attributeGroup>
+        <attributeGroup name="排水设施（选填）">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0049"/>
+            <attribute name="排水管间距" unit="规格/m" type="text"  alias="ct0050"/>
+            <attribute name="排水管层数" unit="mm" type="number"  alias="ct0051"/>
+            <attribute name="排水管距墙顶距离" unit="m" type="number"  alias="ct0052"/>
+        </attributeGroup>
+        <attributeGroup name="齿墙">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0053"/>
+            <attribute name="宽b2" unit="m" type="number"  alias="ct0054"/>
+            <attribute name="反坡比" unit="" type="text"  alias="ct0055"/>
+        </attributeGroup>
+    </attributeGroup>
+    <!--扶臂式挡墙-->
+    <attributeGroup name="构件" lineAlias="l0005" alias="ct">
+        <attributeGroup name="墙身">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0056"/>
+            <attribute name="墙顶宽" unit="m" type="number"  alias="ct0057"/>
+            <attribute name="背水坡比" unit="" type="text"  alias="ct0058"/>
+        </attributeGroup>
+        <attributeGroup name="基础">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0059"/>
+            <attribute name="前趾宽" unit="m" type="number"  alias="ct0060"/>
+            <attribute name="后踵宽" unit="m" type="number"  alias="ct0061"/>
+        </attributeGroup>
+        <attributeGroup name="伸缩缝">
+            <attribute name="横向伸缩缝间距b4" unit="选型/m" type="select" select="a,b,c,d" alias="ct0062"/>
+        </attributeGroup>
+        <attributeGroup name="扶臂（选填）">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0063"/>
+            <attribute name="扶臂间距" unit="m" type="number"  alias="ct0064"/>
+            <attribute name="扶臂顶宽" unit="mm" type="number"  alias="ct0065"/>
+            <attribute name="扶臂厚" unit="m" type="number"  alias="ct0066"/>
+        </attributeGroup>
+        <attributeGroup name="齿墙">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0067"/>
+            <attribute name="宽b2" unit="m" type="number"  alias="ct0068"/>
+            <attribute name="反坡比" unit="" type="text"  alias="ct0069"/>
+        </attributeGroup>
+    </attributeGroup>
+    <!--岸坡式挡墙-->
+    <attributeGroup name="构件" lineAlias="l0006" alias="ct">
+        <attributeGroup name="边坡">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0070"/>
+            <attribute name="坡比" unit="" type="text"  alias="ct0071"/>
+            <attribute name="厚度" unit="m =" type="number"  alias="ct0072"/>
+        </attributeGroup>
+        <attributeGroup name="基础">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0073"/>
+            <attribute name="宽" unit="m" type="number"  alias="ct0074"/>
+        </attributeGroup>
+        <attributeGroup name="伸缩缝">
+            <attribute name="横向伸缩缝间距b4" unit="选型/m" type="select" select="a,b,c,d" alias="ct0075"/>
+        </attributeGroup>
+        <attributeGroup name="压顶">
+            <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0076"/>
+            <attribute name="高" unit="m" type="number"  alias="ct0077"/>
+            <attribute name="宽" unit="m" type="number"  alias="ct0078"/>
+        </attributeGroup>
+    </attributeGroup>
+</component>
