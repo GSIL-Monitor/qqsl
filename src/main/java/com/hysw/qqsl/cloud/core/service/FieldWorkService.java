@@ -3,23 +3,18 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.FieldWorkDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
-import com.hysw.qqsl.cloud.core.entity.builds.CoordinateBase;
-import com.hysw.qqsl.cloud.core.entity.builds.GeoCoordinate;
-import com.hysw.qqsl.cloud.core.entity.builds.Graph;
+import com.hysw.qqsl.cloud.core.entity.buildModel.AttributeGroup;
+import com.hysw.qqsl.cloud.core.entity.buildModel.Graph;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -148,7 +143,7 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
             jsonObject1.put("coordinates", jsonArray);
         }
         if (!jsonArray1.isEmpty()) {
-            jsonObject1.put("builds", jsonArray1);
+            jsonObject1.put("buildModel", jsonArray1);
         }
         return jsonObject1;
     }
@@ -612,7 +607,7 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
                 if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
                     continue;
                 }
-                if (commonType.getType().equals("builds")) {
+                if (commonType.getType().equals("buildModel")) {
                     selects.add(commonType.getTypeC());
                 }
             }

@@ -1,8 +1,8 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
-import com.hysw.qqsl.cloud.core.entity.builds.Line;
-import com.hysw.qqsl.cloud.core.entity.builds.LineSectionPlaneModel;
+import com.hysw.qqsl.cloud.core.entity.buildModel.Line;
+import com.hysw.qqsl.cloud.core.entity.buildModel.LineSectionPlaneModel;
 import org.dom4j.DocumentException;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

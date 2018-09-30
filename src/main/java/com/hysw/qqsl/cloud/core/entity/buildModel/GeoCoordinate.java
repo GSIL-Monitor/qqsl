@@ -1,4 +1,4 @@
-package com.hysw.qqsl.cloud.core.entity.builds;
+package com.hysw.qqsl.cloud.core.entity.buildModel;
 
 /**
  * 地点坐标类

@@ -2,7 +2,7 @@ package com.hysw.qqsl.cloud.core.entity.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.hysw.qqsl.cloud.core.entity.builds.Elevation;
+import com.hysw.qqsl.cloud.core.entity.buildModel.Elevation;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 

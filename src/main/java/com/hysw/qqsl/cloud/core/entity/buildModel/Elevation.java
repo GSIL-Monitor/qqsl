@@ -1,8 +1,7 @@
-package com.hysw.qqsl.cloud.core.entity.builds;
+package com.hysw.qqsl.cloud.core.entity.buildModel;
 
 import com.hysw.qqsl.cloud.core.entity.data.Shape;
 import com.hysw.qqsl.cloud.core.entity.data.ShapeCoordinate;
-import net.sf.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.List;

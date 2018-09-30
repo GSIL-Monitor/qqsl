@@ -1,9 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
-import com.hysw.qqsl.cloud.core.entity.Setting;
-import com.hysw.qqsl.cloud.core.entity.XMLFileException;
-import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
+import com.hysw.qqsl.cloud.core.entity.buildModel.AttributeGroup;
 import com.hysw.qqsl.cloud.core.entity.data.Build;
 import com.hysw.qqsl.cloud.core.entity.data.BuildAttribute;
 import com.hysw.qqsl.cloud.util.SettingUtils;

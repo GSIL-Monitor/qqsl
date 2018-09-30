@@ -1,8 +1,4 @@
-package com.hysw.qqsl.cloud.core.entity.builds;
-
-import com.hysw.qqsl.cloud.core.entity.data.Build;
-import com.hysw.qqsl.cloud.core.entity.data.Shape;
-import com.hysw.qqsl.cloud.core.entity.data.ShapeAttribute;
+package com.hysw.qqsl.cloud.core.entity.buildModel;
 
 import java.util.List;
 import java.util.Map;

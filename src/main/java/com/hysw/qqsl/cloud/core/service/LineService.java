@@ -1,8 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.builds.Line;
-import com.hysw.qqsl.cloud.core.entity.builds.LineSectionPlaneModel;
+import com.hysw.qqsl.cloud.core.entity.buildModel.Line;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;

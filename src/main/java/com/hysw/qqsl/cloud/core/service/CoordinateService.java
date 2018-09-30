@@ -5,7 +5,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.CoordinateDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.builds.*;
+import com.hysw.qqsl.cloud.core.entity.buildModel.*;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -229,7 +228,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 						continue;
 					}
 					if (sheet.getSheetName().trim().equals(commonType.getTypeC())) {
-						if (commonType.getType().equals("builds")) {
+						if (commonType.getType().equals("buildModel")) {
 //							sheetObject.setBuildSheetList(entry.getKey(), sheet);
 							flag = false;
 						}
@@ -245,7 +244,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 				}
 				for (Build.ChildType childType : Build.ChildType.values()) {
 					if (sheet.getSheetName().trim().equals(childType.getTypeC())) {
-						if (childType.getType().equals("builds")) {
+						if (childType.getType().equals("buildModel")) {
 //							sheetObject.setBuildSheetList(entry.getKey(), sheet);
 							flag = false;
 						}
@@ -281,7 +280,7 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 
 //	private void saveCoordinateMap(CoordinateMap coordinateMap, Project project) {
 //		List<Coordinate> coordinates = findByProject(project);
-//		List<Build> builds = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
+//		List<Build> buildModel = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
 //		List<Build> builds1;
 //		List<Coordinate> coordinates1;
 //		for (Map.Entry<String, List<CoordinateObject>> entry : coordinateMap.getLineMap().entrySet()) {
@@ -307,8 +306,8 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 //				Object object = cache.get(build.getNoticeStr()).getObject();
 //				cache.remove(build.getNoticeStr());
 //				builds1 = new ArrayList<>();
-//				buildService.saveBuild((Build)object,builds,coordinates,builds1);
-//				builds.addAll(builds1);
+//				buildService.saveBuild((Build)object,buildModel,coordinates,builds1);
+//				buildModel.addAll(builds1);
 //			}
 //		}
 //		for (Map.Entry<String, List<Build>> entry : coordinateMap.getSimpleBuildMap().entrySet()) {
@@ -316,8 +315,8 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 //				Object object = cache.get(build.getNoticeStr()).getObject();
 //				cache.remove(build.getNoticeStr());
 //				builds1 = new ArrayList<>();
-//				buildService.saveBuild((Build)object,builds,coordinates,builds1);
-//				builds.addAll(builds1);
+//				buildService.saveBuild((Build)object,buildModel,coordinates,builds1);
+//				buildModel.addAll(builds1);
 //			}
 //		}
 //	}
@@ -695,8 +694,8 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 */
 	private void dataValidityCheckBuild(CoordinateMap coordinateMap, String code, Coordinate.WGS84Type wgs84Type) {
 //		for (Map.Entry<String, List<Build>> entry : coordinateMap.getBuildMap().entrySet()) {
-//			List<Build> builds = entry.getValue();
-//			Iterator<Build> it = builds.iterator();
+//			List<Build> buildModel = entry.getValue();
+//			Iterator<Build> it = buildModel.iterator();
 			Build build;
 //			while (it.hasNext()) {
 //				build = it.next();
@@ -931,8 +930,8 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 //				return;
 //			}
 //			builds1 = new ArrayList<>();
-//			buildService.saveBuild((Build)object,builds,coordinates,builds1);
-//			builds.addAll(builds1);
+//			buildService.saveBuild((Build)object,buildModel,coordinates,builds1);
+//			buildModel.addAll(builds1);
 //		}
 	}
 

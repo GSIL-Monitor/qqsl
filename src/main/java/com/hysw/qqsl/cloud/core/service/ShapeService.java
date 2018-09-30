@@ -5,7 +5,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.ShapeDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
-import com.hysw.qqsl.cloud.core.entity.builds.*;
+import com.hysw.qqsl.cloud.core.entity.buildModel.*;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
@@ -145,7 +145,7 @@ public class ShapeService extends BaseService<Shape, Long> {
                             sheetObject.setAreaSheetList(entry.getKey(), sheet);
                             flag = false;
                         }
-                        if (commonType.getType().equals("builds")) {
+                        if (commonType.getType().equals("buildModel")) {
                             sheetObject.setBuildSheetList(entry.getKey(), sheet);
                             flag = false;
                         }
@@ -161,7 +161,7 @@ public class ShapeService extends BaseService<Shape, Long> {
                 }
                 for (Build.ChildType childType : Build.ChildType.values()) {
                     if (sheet.getSheetName().trim().equals(childType.getTypeC())) {
-                        if (childType.getType().equals("builds")) {
+                        if (childType.getType().equals("buildModel")) {
 							sheetObject.setBuildSheetList(entry.getKey(), sheet);
                             flag = false;
                         }

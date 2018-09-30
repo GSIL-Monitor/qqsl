@@ -73,115 +73,115 @@ public class CommonEnum {
         /**
          * 泉室
          */
-        QS("builds","泉室","qs","水源建筑物"),
+        QS("buildModel","泉室","qs","水源建筑物"),
         /**
          * 截水廊道
          */
-        JSLD("builds","截水廊道","jsld","水源建筑物"),
+        JSLD("buildModel","截水廊道","jsld","水源建筑物"),
         /**
          * 大口井
          */
-        DKJ("builds","大口井","dkj","水源建筑物"),
+        DKJ("buildModel","大口井","dkj","水源建筑物"),
         /**
          * 土井
          */
-        TJ("builds","土井","tj","水源建筑物"),
+        TJ("buildModel","土井","tj","水源建筑物"),
         /**
          * 机井
          */
-        JJ("builds","机井","jj","水源建筑物"),
+        JJ("buildModel","机井","jj","水源建筑物"),
         /**
          * 涝池
          */
-        LC("builds","涝池","lc","水源建筑物"),
+        LC("buildModel","涝池","lc","水源建筑物"),
         /** 渠系建筑物 */
         /**
          * 闸
          */
-        FSZ("builds","闸","z","渠系建筑物"),
+        FSZ("buildModel","闸","z","渠系建筑物"),
         /**
          * 倒虹吸
          */
-        DHX("builds","倒虹吸","dhx","渠系建筑物"),
+        DHX("buildModel","倒虹吸","dhx","渠系建筑物"),
         /**
          * 跌水
          */
-        DS("builds","跌水","ds","渠系建筑物"),
+        DS("buildModel","跌水","ds","渠系建筑物"),
         /** 消力池 */
-        XIAOLC("builds","消力池","xlc","渠系建筑物"),
+        XIAOLC("buildModel","消力池","xlc","渠系建筑物"),
         /** 护坦 */
-        HUT("builds","护坦","ht","渠系建筑物"),
+        HUT("buildModel","护坦","ht","渠系建筑物"),
         /** 海漫 */
-        HAIM("builds","海漫","hm","渠系建筑物"),
+        HAIM("buildModel","海漫","hm","渠系建筑物"),
         /**
          * 渡槽
          */
-        DC("builds","渡槽","dc","渠系建筑物"),
+        DC("buildModel","渡槽","dc","渠系建筑物"),
         /**
          * 涵洞
          */
-        HD("builds","涵洞","hd","渠系建筑物"),
+        HD("buildModel","涵洞","hd","渠系建筑物"),
         /**
          * 隧洞
          */
-        SD("builds","隧洞","sd","渠系建筑物"),
+        SD("buildModel","隧洞","sd","渠系建筑物"),
         /**
          * 农口
          */
-        NK("builds","农口","nk","渠系建筑物"),
+        NK("buildModel","农口","nk","渠系建筑物"),
         /**
          * 斗门
          */
-        DM("builds","斗门","dm","渠系建筑物"),
+        DM("buildModel","斗门","dm","渠系建筑物"),
         /**
          * 公路桥
          */
-        GLQ("builds","公路桥","glq","渠系建筑物"),
+        GLQ("buildModel","公路桥","glq","渠系建筑物"),
         /**
          * 车便桥
          */
-        CBQ("builds","车便桥","cbq","渠系建筑物"),
+        CBQ("buildModel","车便桥","cbq","渠系建筑物"),
         /**
          * 各级渠道
          */
-        GJQD("builds","各级渠道","gjqd","渠系建筑物"),
+        GJQD("buildModel","各级渠道","gjqd","渠系建筑物"),
         /** 管道建筑物 */
         /**
          * 检查井
          */
-        JCJ("builds","检查井","jcj","管道建筑物"),
+        JCJ("buildModel","检查井","jcj","管道建筑物"),
         /**
          * 分水井
          */
-        FSJ("builds","分水井","fsj","管道建筑物"),
+        FSJ("buildModel","分水井","fsj","管道建筑物"),
         /**
          * 供水井
          */
-        GSJ("builds","供水井","gsj","管道建筑物"),
+        GSJ("buildModel","供水井","gsj","管道建筑物"),
         /**
          * 减压井
          */
-        JYJ("builds","减压井","jyj","管道建筑物"),
+        JYJ("buildModel","减压井","jyj","管道建筑物"),
         /**
          * 减压池
          */
-        JYC("builds","减压池","jyc","管道建筑物"),
+        JYC("buildModel","减压池","jyc","管道建筑物"),
         /**
          * 排气井
          */
-        PAIQJ("builds","排气井","pqj","管道建筑物"),
+        PAIQJ("buildModel","排气井","pqj","管道建筑物"),
         /**
          * 放水井
          */
-        FANGSJ("builds","放水井","fsj","管道建筑物"),
+        FANGSJ("buildModel","放水井","fsj","管道建筑物"),
         /**
          * 蓄水池
          */
-        XSC("builds","蓄水池","xsc","管道建筑物"),
+        XSC("buildModel","蓄水池","xsc","管道建筑物"),
         /**
          * 各级管道
          */
-        GJGD("builds","各级管道","gjgd","管道建筑物"),
+        GJGD("buildModel","各级管道","gjgd","管道建筑物"),
         /** 挡水建筑物 */
         /**
          * 防洪堤
@@ -198,80 +198,80 @@ public class CommonEnum {
         /**
          * 淤地坝
          */
-        YDB("builds","淤地坝","ydb","挡水建筑物"),
+        YDB("buildModel","淤地坝","ydb","挡水建筑物"),
         /**
          * 谷坊
          */
-        GF("builds","谷坊","gf","挡水建筑物"),
+        GF("buildModel","谷坊","gf","挡水建筑物"),
         /**
          * 溢洪道
          */
         @Deprecated
-        YHD("builds","溢洪道","yhd","挡水建筑物"),
+        YHD("buildModel","溢洪道","yhd","挡水建筑物"),
         /** 节水建筑物 */
         /**
          * 滴灌
          */
-        DG("builds","滴灌","dg","节水建筑物"),
+        DG("buildModel","滴灌","dg","节水建筑物"),
         /**
          * 喷头
          */
-        PT("builds","喷头","pt","节水建筑物"),
+        PT("buildModel","喷头","pt","节水建筑物"),
         /**
          * 给水栓
          */
-        JSS("builds","给水栓","gss","节水建筑物"),
+        JSS("buildModel","给水栓","gss","节水建筑物"),
         /**
          * 施肥设施
          */
-        SFSS("builds","施肥设施","sfss","节水建筑物"),
+        SFSS("buildModel","施肥设施","sfss","节水建筑物"),
         /**
          * 过滤系统
          */
-        GLXT("builds","过滤系统","glxt","节水建筑物"),
+        GLXT("buildModel","过滤系统","glxt","节水建筑物"),
         /** 地籍 */
         /** 林地 */
-        LD("builds","林地","ld","地籍"),
+        LD("buildModel","林地","ld","地籍"),
         /** 耕地 */
-        GD("builds","耕地","gd","地籍"),
+        GD("buildModel","耕地","gd","地籍"),
         /** 草地 */
-        CD("builds","草地","cd","地籍"),
+        CD("buildModel","草地","cd","地籍"),
         /** 居民区 */
-        JMQ("builds","居民区","jmq","地籍"),
+        JMQ("buildModel","居民区","jmq","地籍"),
         /** 工矿区 */
-        GKQ("builds","工矿区","gkq","地籍"),
+        GKQ("buildModel","工矿区","gkq","地籍"),
         /** 电力 */
-        DL("builds","电力","dl","地籍"),
+        DL("buildModel","电力","dl","地籍"),
         /** 次级交通 */
-        CJJT("builds","次级交通","cjjt","地籍"),
+        CJJT("buildModel","次级交通","cjjt","地籍"),
         /** 河床 */
-        HEC("builds","河床","hc","地籍"),
+        HEC("buildModel","河床","hc","地籍"),
         /** 水面 */
-        SHUIM("builds","水面","sm","地籍"),
+        SHUIM("buildModel","水面","sm","地籍"),
         /** 水文测点 */
         /** 水位 */
-        SHUIW("builds","水位","sw","水文测点"),
+        SHUIW("buildModel","水位","sw","水文测点"),
         /** 水文 */
-        SHUIWEN("builds","水文","sw","水文测点"),
+        SHUIWEN("buildModel","水文","sw","水文测点"),
         /** 雨量 */
-        YUL("builds","雨量","yl","水文测点"),
+        YUL("buildModel","雨量","yl","水文测点"),
         /** 水质 */
-        SHUIZ("builds","水质","sz","水文测点"),
+        SHUIZ("buildModel","水质","sz","水文测点"),
         /** 其他 */
         /**
          * 泵站
          */
-        BZ("builds","泵站","bz","其他"),
+        BZ("buildModel","泵站","bz","其他"),
         /**
          * 电站厂房
          */
-        DZCF("builds","电站厂房","dzcf","其他"),
+        DZCF("buildModel","电站厂房","dzcf","其他"),
         /**
          * 地质点
          */
-        DIZD("builds","地质点","dzd","其他"),
+        DIZD("buildModel","地质点","dzd","其他"),
         /** 其他 */
-        TSD("builds","其他","qt","其他"),
+        TSD("buildModel","其他","qt","其他"),
         /** 线面 */
         /**
          * 普通点
@@ -352,7 +352,7 @@ public class CommonEnum {
         /**
          * 管井
          */
-        GUANJ("builds","管井","gj","水源建筑物"),;
+        GUANJ("buildModel","管井","gj","水源建筑物"),;
         //必须增加一个构造函数,变量,得到该变量的值
         private String  type="";
         private String typeC = "";

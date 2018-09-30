@@ -3,8 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
-import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
-import com.hysw.qqsl.cloud.core.entity.builds.SheetObject;
+import com.hysw.qqsl.cloud.core.entity.buildModel.SheetObject;
 import com.hysw.qqsl.cloud.core.entity.data.Build;
 import com.hysw.qqsl.cloud.core.entity.data.BuildAttribute;
 import com.hysw.qqsl.cloud.core.entity.data.Project;
@@ -128,7 +127,7 @@ public class BuildServiceTest extends BaseTest {
         builds.add(build);
         builds.add((Build) SettingUtils.objectCopy(build));
         builds.add(build1);
-//        buildService.outputBuilds(builds);
+//        buildService.outputBuilds(buildModel);
     }
 
     @Test

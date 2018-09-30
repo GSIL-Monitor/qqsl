@@ -3,7 +3,7 @@ package com.hysw.qqsl.cloud.core.entity.data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.builds.LineSectionPlaneModel;
+import com.hysw.qqsl.cloud.core.entity.buildModel.LineSectionPlaneModel;
 
 import javax.persistence.*;
 import java.util.List;

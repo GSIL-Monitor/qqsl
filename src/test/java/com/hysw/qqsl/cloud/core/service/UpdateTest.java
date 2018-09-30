@@ -61,7 +61,7 @@ public class UpdateTest {
     @Autowired
     private FieldWorkService fieldWorkService;
     //coordinate 删除username,type,treePath,baseType,device_mac,source,userId,name
-    //builds 删除alias,name，coordinateId
+    //buildModel 删除alias,name，coordinateId
     //删除attribe表 删除属性code,status,genre,
     //修改索引/field为fieldWork/
     //新建线面时传入的坐标格式为lon，lat，ele

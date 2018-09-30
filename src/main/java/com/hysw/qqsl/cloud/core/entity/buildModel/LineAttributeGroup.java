@@ -1,6 +1,5 @@
-package com.hysw.qqsl.cloud.core.entity.builds;
+package com.hysw.qqsl.cloud.core.entity.buildModel;
 
-import com.hysw.qqsl.cloud.core.entity.data.BuildAttribute;
 import com.hysw.qqsl.cloud.core.entity.data.ShapeAttribute;
 
 import java.io.Serializable;

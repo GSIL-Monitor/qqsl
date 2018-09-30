@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
-import com.hysw.qqsl.cloud.core.entity.builds.LineAttributeGroup;
-import com.hysw.qqsl.cloud.core.entity.builds.LineSectionPlaneModel;
+import com.hysw.qqsl.cloud.core.entity.buildModel.LineAttributeGroup;
+import com.hysw.qqsl.cloud.core.entity.buildModel.LineSectionPlaneModel;
 import com.hysw.qqsl.cloud.core.entity.data.ShapeAttribute;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.ehcache.Cache;

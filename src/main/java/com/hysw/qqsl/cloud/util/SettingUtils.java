@@ -3,7 +3,7 @@ package com.hysw.qqsl.cloud.util;
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Setting;
-import com.hysw.qqsl.cloud.core.entity.builds.GeoCoordinate;
+import com.hysw.qqsl.cloud.core.entity.buildModel.GeoCoordinate;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

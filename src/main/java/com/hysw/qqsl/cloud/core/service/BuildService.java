@@ -4,8 +4,8 @@ import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.BuildDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.QQSLException;
-import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
-import com.hysw.qqsl.cloud.core.entity.builds.Line;
+import com.hysw.qqsl.cloud.core.entity.buildModel.AttributeGroup;
+import com.hysw.qqsl.cloud.core.entity.buildModel.Line;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.ehcache.Cache;
@@ -248,10 +248,10 @@ public class BuildService extends BaseService<Build,Long> {
 
     public List<Build> getBuilds(){
         Cache cache = cacheManager.getCache("buildModelCache");
-        net.sf.ehcache.Element element = cache.get("builds");
+        net.sf.ehcache.Element element = cache.get("buildModel");
         if (element == null) {
             try {
-                element = new net.sf.ehcache.Element("builds", initBuildModel(SettingUtils.getInstance().getSetting().getBuild()));
+                element = new net.sf.ehcache.Element("buildModel", initBuildModel(SettingUtils.getInstance().getSetting().getBuild()));
                 cache.put(element);
                 return (List<Build>) element.getValue();
             } catch (QQSLException e) {
@@ -1054,7 +1054,7 @@ public class BuildService extends BaseService<Build,Long> {
             for (int i = 0; i < jsonArray.size(); i++) {
                 jsonObject2 = (JSONObject) jsonArray.get(i);
                 if (jsonObject2.get("name").toString().equals(build.getType().getBuildType())) {
-                    jsonArray1 = (JSONArray) jsonObject2.get("builds");
+                    jsonArray1 = (JSONArray) jsonObject2.get("buildModel");
                     flag = false;
                     break;
                 }
@@ -1064,7 +1064,7 @@ public class BuildService extends BaseService<Build,Long> {
                 jsonObject.put("name", build.getType().getBuildType());
                 jsonArray1 = new JSONArray();
                 jsonArray1.add(jsonObject1);
-                jsonObject.put("builds", jsonArray1);
+                jsonObject.put("buildModel", jsonArray1);
                 jsonArray.add(jsonObject);
             } else {
                 jsonArray1.add(jsonObject1);

@@ -3,12 +3,10 @@ package com.hysw.qqsl.cloud.core.entity.data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.builds.AttributeGroup;
+import com.hysw.qqsl.cloud.core.entity.buildModel.AttributeGroup;
 
 import javax.persistence.*;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by leinuo on 17-3-27.
@@ -66,12 +64,12 @@ public class Build extends BaseEntity{
         /**
          * 底流式消力池
          */
-        DILSXLC(CommonEnum.CommonType.XIAOLC, "builds", "底流式消力池", "dlsxlc"),
-        KAICSSZ(CommonEnum.CommonType.FSZ, "builds", "开敞式水闸", "kcssz"),
-        ZHONGLSDQ(CommonEnum.CommonType.DANGQ, "builds", "重力式挡墙", "zlsdq"),
-        FUBSDQ(CommonEnum.CommonType.DANGQ, "builds", "扶臂式挡墙", "fbsdq"),
-        ANPSDQ(CommonEnum.CommonType.DANGQ, "builds", "岸坡式挡墙", "apsdq"),
-        YUANXXSC(CommonEnum.CommonType.XSC, "builds", "圆形蓄水池", "yxxsc"),
+        DILSXLC(CommonEnum.CommonType.XIAOLC, "buildModel", "底流式消力池", "dlsxlc"),
+        KAICSSZ(CommonEnum.CommonType.FSZ, "buildModel", "开敞式水闸", "kcssz"),
+        ZHONGLSDQ(CommonEnum.CommonType.DANGQ, "buildModel", "重力式挡墙", "zlsdq"),
+        FUBSDQ(CommonEnum.CommonType.DANGQ, "buildModel", "扶臂式挡墙", "fbsdq"),
+        ANPSDQ(CommonEnum.CommonType.DANGQ, "buildModel", "岸坡式挡墙", "apsdq"),
+        YUANXXSC(CommonEnum.CommonType.XSC, "buildModel", "圆形蓄水池", "yxxsc"),
         ;
         //必须增加一个构造函数,变量,得到该变量的值\
         private CommonEnum.CommonType commonType;
