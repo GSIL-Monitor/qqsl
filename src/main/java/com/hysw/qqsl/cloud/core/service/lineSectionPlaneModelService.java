@@ -17,7 +17,7 @@ import java.util.*;
  * @author Administrator
  * @since 2018/9/17
  */
-@Service("lineBuildModelService")
+@Service("lineSectionPlaneModelService")
 public class LineSectionPlaneModelService {
     @Autowired
     private CacheManager cacheManager;
