@@ -1129,11 +1129,11 @@ public class ShapeService extends BaseService<Shape, Long> {
             buildService.remove(build1);
             buildService.flush();
         }
-//        for (Map.Entry<String, List<Build>> entry : plaCache.getBuildsMap().entrySet()) {
-//            for (Build build : entry.getValue()) {
-//                buildService.save(build);
-//            }
-//        }
+        for (Map.Entry<String, List<Build>> entry : plaCache.getBuildsMap().entrySet()) {
+            for (Build build : entry.getValue()) {
+                buildService.save(build);
+            }
+        }
     }
 
     private Map<PLACache, List<Build>> saveBuildAttribute(Map<String, List<ShapeCache>> map, String code, Coordinate.WGS84Type wgs84Type, Project project, Shape shape) {
@@ -1191,9 +1191,9 @@ public class ShapeService extends BaseService<Shape, Long> {
                 for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
                     jsonObject = JSONObject.fromObject(build1.getCenterCoor());
                     if (shapeCoordinate.getLon().equals(jsonObject.get("lon").toString()) && shapeCoordinate.getLat().equals(jsonObject.get("lat").toString())) {
-                        if (shapeCoordinate.getBuilds() != null && shapeCoordinate.getBuilds().size() != 0) {
-                            if (!deleteBuilds.contains(shapeCoordinate.getBuilds().get(0))) {
-                                deleteBuilds.add(shapeCoordinate.getBuilds().get(0));
+                        if (shapeCoordinate.getBuild() != null) {
+                            if (!deleteBuilds.contains(shapeCoordinate.getBuild())) {
+                                deleteBuilds.add(shapeCoordinate.getBuild());
                             }
                         }
                         build1.setShapeCoordinate(shapeCoordinate);
@@ -1282,5 +1282,63 @@ public class ShapeService extends BaseService<Shape, Long> {
             }
         }
         return jsonArray;
+    }
+
+    public Workbook downloadShapeModel(List<String> list) {
+        Workbook wb = new XSSFWorkbook();
+        List<Line> lines1 = new ArrayList<>();
+        List<Line> lines = lineService.getLines();
+        for (Line line : lines) {
+            for (String s : list) {
+                if (line.getCommonType().name().equals(s)) {
+                    lines1.add(line);
+                    break;
+                }
+            }
+        }
+        List<String> selects = new ArrayList<>();
+        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
+                continue;
+            }
+            if (commonType.getType().equals("buildModel")) {
+                selects.add(commonType.getTypeC());
+            }
+        }
+        outputShapeModel(wb, lines1,selects);
+        return wb;
+    }
+
+    private void outputShapeModel(Workbook wb, List<Line> lines, List<String> selects) {
+        for (Line line : lines) {
+            int i = 0;
+            Row row = null;
+            Cell cell = null;
+            Sheet sheet = wb.createSheet(line.getCommonType().getTypeC());
+            List<String> list = new ArrayList<>();
+            list.add("描述");
+            writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundSkyBlue(wb), list, null, null, wb, true);
+            list = new ArrayList<>();
+            String[] split = line.getCellProperty().split(",");
+            for (String s : split) {
+                list.add(s.split(":")[0]);
+            }
+            writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundYellow(wb), list, "select", selects, wb, true);
+        }
+    }
+
+    void writeToCell(int i, Sheet sheet, Row row, Cell cell, CellStyle style, List<String> list, String type, List<String> selects, Workbook wb, boolean locked) {
+        row = sheet.createRow(i);
+        for (int i1 = 0; i1 < list.size(); i1++) {
+            cell = row.createCell(i1);
+            if (list.get(i1) != null) {
+                cell.setCellValue(list.get(i1));
+            }
+            cell.setCellStyle(style);
+            sheet.autoSizeColumn(i1);
+        }
+        if (type != null) {
+            buildService.setXSSFValidation1((XSSFSheet) sheet, selects.toArray(new String[selects.size()]), i, i, list.size()-2, list.size()-2);
+        }
     }
 }

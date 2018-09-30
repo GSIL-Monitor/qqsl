@@ -51,6 +51,52 @@ public class ShapeController {
     Log logger = LogFactory.getLog(getClass());
 
     /**
+     * 建筑物属性模板下载
+     * @param types  [a,b,c]
+     * @param response 响应
+     * @return OK:下载成功 Fail:下载失败
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/downloadShapeModel", method = RequestMethod.GET)
+    public @ResponseBody
+    Message downloadShapeModel(@RequestParam String[] types, HttpServletResponse response) {
+        List<String> list = Arrays.asList(types);
+        Workbook wb = shapeService.downloadShapeModel(list);
+        if (wb == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
      * 线面坐标文件上传
      * @param request projectId项目Id，baseLevelType坐标转换基准面类型，WGS84Type-WGS84坐标格式
      * @return FAIL参数验证失败，EXIST项目不存在或者中心点为空，OTHER已达到最大限制数量，OK上传成功
@@ -353,6 +399,8 @@ public class ShapeController {
 //        超过限制数量，返回已达到最大限制数量
         return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
+
+
 
 
 }

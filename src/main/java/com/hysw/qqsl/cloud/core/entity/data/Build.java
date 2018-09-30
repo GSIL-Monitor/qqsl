@@ -300,7 +300,7 @@ public class Build extends BaseEntity{
         this.commonId = commonId;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne
     @JsonIgnore
     public ShapeCoordinate getShapeCoordinate() {
         return shapeCoordinate;
