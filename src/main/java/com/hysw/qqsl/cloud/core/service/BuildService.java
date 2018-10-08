@@ -38,6 +38,10 @@ public class BuildService extends BaseService<Build,Long> {
     @Autowired
     private CacheManager cacheManager;
     @Autowired
+    private CoordinateService coordinateService;
+    @Autowired
+    private TransFromService transFromService;
+    @Autowired
     public void setBaseDao(BuildDao buildDao) {
         super.setBaseDao( buildDao);
     }
@@ -69,6 +73,13 @@ public class BuildService extends BaseService<Build,Long> {
                 buildAttribute.getId();
             }
         }
+        return list;
+    }
+
+    public List<Build> findByProject(Project project) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("project", project));
+        List<Build> list = buildDao.findList(0, null, filters);
         return list;
     }
 
@@ -234,6 +245,7 @@ public class BuildService extends BaseService<Build,Long> {
             }
             buildMap.put(build.getAlias(),build);
         }
+        System.out.println();
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getCoordinate(),stringAlias);
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getWaterResources(),stringAlias);
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getControlSize(),stringAlias);
@@ -794,6 +806,9 @@ public class BuildService extends BaseService<Build,Long> {
         for (Map.Entry<String, List<Build>> entry : map.entrySet()) {
             int i = 0, j = 0, k = 0;
             for (Build build : entry.getValue()) {
+                if (build.getCenterCoor() == null) {
+                    continue;
+                }
                 if (build.getBuildAttributes().size() == 3) {
                     continue;
                 }
@@ -900,6 +915,9 @@ public class BuildService extends BaseService<Build,Long> {
         BuildAttribute buildAttribute;
         List<BuildAttribute> buildAttributes;
         for (Build build : builds) {
+            if (build.getCenterCoor() == null) {
+                continue;
+            }
             buildAttributes = build.getBuildAttributes();
             buildAttribute = new BuildAttribute();
             buildAttribute.setValue(jsonToCoordinate(build.getCenterCoor(), code, wgs84Type));
@@ -926,7 +944,7 @@ public class BuildService extends BaseService<Build,Long> {
     private String jsonToCoordinate(String coor, String code, Coordinate.WGS84Type wgs84Type) {
         JSONObject jsonObject = JSONObject.fromObject(coor);
         JSONObject jsonObject1 = fieldWorkService.coordinateBLHToXYZ(jsonObject.get("lon").toString(), jsonObject.get("lat").toString(), code, wgs84Type);
-        return jsonObject1.get("lon") + "," + jsonObject1.get("lat") + "," + jsonObject.get("ele");
+        return jsonObject1.get("lon") + "," + jsonObject1.get("lat");
     }
 
     public void saveBuild(Build build, List<Build> builds, List<Coordinate> coordinates,List<Build> builds1) {
@@ -1120,17 +1138,37 @@ public class BuildService extends BaseService<Build,Long> {
         for (Build build : getBuilds()) {
             for (String s : list) {
                 if (build.getType().name().equals(s)) {
-                    builds.add((Build) SettingUtils.objectCopy(build));
+                    if (build.getCoordinate() != null) {
+                        builds.add((Build) SettingUtils.objectCopy(build));
+                    }
                 }
                 if (build.getChildType() == null) {
                     continue;
                 }
                 if (build.getChildType().name().equals(s)) {
-                    builds.add((Build) SettingUtils.objectCopy(build));
+                    if (build.getCoordinate() != null) {
+                        builds.add((Build) SettingUtils.objectCopy(build));
+                    }
                 }
             }
         }
-        outBuildModel(wb, builds);
+        if (builds.size() != 0) {
+            outBuildModel(wb, builds);
+        } else {
+            wb = null;
+        }
+        return wb;
+    }
+
+    public Workbook downloadBuild( Project project, Coordinate.WGS84Type wgs84Type) {
+        List<Build> builds = findByProject(project);
+        Workbook wb = new XSSFWorkbook();
+        String central = coordinateService.getCoordinateBasedatum(project);
+        if (central == null || central.equals("null") || central.equals("")) {
+            return null;
+        }
+        String code = transFromService.checkCode84(central);
+        outputBuilds(builds, wb, code, wgs84Type);
         return wb;
     }
 }

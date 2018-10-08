@@ -5,9 +5,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.buildModel.PLACache;
 import com.hysw.qqsl.cloud.core.entity.buildModel.SheetObject;
-import com.hysw.qqsl.cloud.core.entity.data.Coordinate;
-import com.hysw.qqsl.cloud.core.entity.data.Project;
-import com.hysw.qqsl.cloud.core.entity.data.Shape;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -47,6 +45,8 @@ public class ShapeController {
     private BuildService buildService;
     @Autowired
     private CoordinateService coordinateService;
+    @Autowired
+    private ShapeAttributeService shapeAttributeService;
 
     Log logger = LogFactory.getLog(getClass());
 
@@ -75,7 +75,7 @@ public class ShapeController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "shapeTemplate"+ ".xlsx" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {
@@ -193,7 +193,7 @@ public class ShapeController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "lineSectionPlaneTemplate"+ ".xlsx" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {
@@ -384,6 +384,158 @@ public class ShapeController {
         JSONArray jsonArray = shapeService.pickedErrorMsg1(plaCache);
         return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
     }
+
+    /**
+     * 图形下载
+     * @param projectId  projectId
+     * @param response 响应
+     * @return OK:下载成功 Fail:下载失败
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/downloadShape", method = RequestMethod.GET)
+    public @ResponseBody
+    Message downloadShape(@RequestParam Long projectId, HttpServletResponse response) {
+        Project project = projectService.find(projectId);
+        List<Shape> shapes = shapeService.findByProject(project);
+        Workbook wb = shapeService.downloadShape(shapes);
+        if (wb == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "shape"+ ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 图形剖面下载
+     * @param shapeId  shapeId
+     * @param response 响应
+     * @return OK:下载成功 Fail:下载失败
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/downloadSectionPlane", method = RequestMethod.GET)
+    public @ResponseBody
+    Message downloadSectionPlan(@RequestParam Long projectId, HttpServletResponse response) {
+        Project project = projectService.find(projectId);
+        List<Shape> shapes = shapeService.findByProject(project);
+        Workbook wb = shapeService.downloadSectionPlane(shapes);
+        if (wb == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "lineSectionPlaneTemplate"+ ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 建筑物属性下载
+     * @param projectId  projectId
+     * @param response 响应
+     * @return OK:下载成功 Fail:下载失败
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/downloadBuild", method = RequestMethod.GET)
+    public @ResponseBody
+    Message downloadBuild(@RequestParam Long projectId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
+        Project project = projectService.find(projectId);
+        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+        Coordinate.WGS84Type wgs84Type = null;
+        if (!WGS84Type.equals("")) {
+            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+        }
+        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
+            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+        }
+        if (wgs84Type == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Workbook wb = buildService.downloadBuild(project,wgs84Type);
+        if (wb == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
 
 
 
