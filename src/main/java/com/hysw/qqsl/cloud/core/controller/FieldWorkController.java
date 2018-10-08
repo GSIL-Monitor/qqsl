@@ -272,27 +272,6 @@ public class FieldWorkController {
     }
 
     /**
-     * 获取建筑物
-     * @param id 建筑物id
-     * @return 建筑物对象
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build", method = RequestMethod.GET)
-    public @ResponseBody Message uploadBuild(@RequestParam long id) {
-        Message message = CommonController.parametersCheck(id);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Build build = buildService.find(id);
-        if (build == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        JSONObject jsonObject = buildService.buildJson(build);
-        return MessageService.message(Message.Type.OK,jsonObject);
-    }
-
-    /**
      * 新建建筑物
      * @param objectMap <ol><li>type建筑物类型</li><li>centerCoor中心坐标</li><li>remark注释</li><li>projectId项目id</li></ol>
      * @return FAIL参数验证失败，OK新建成功

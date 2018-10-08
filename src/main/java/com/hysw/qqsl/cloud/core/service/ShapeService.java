@@ -1459,33 +1459,42 @@ public class ShapeService extends BaseService<Shape, Long> {
             if (!shape.getCommonType().getType().equals("line")) {
                 continue;
             }
-            List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
-            LineSectionPlaneModel lineSectionPlaneModel1 = null;
-            List<LineSectionPlaneModel> lineSectionPlaneModels = lineSectionPlaneModelService.getLineSectionPlaneModel();
-            for (LineSectionPlaneModel lineSectionPlaneModel : lineSectionPlaneModels) {
-                if (shape.getChildType() != null) {
-                    if (lineSectionPlaneModel.getType() == shape.getChildType()) {
-                        lineSectionPlaneModel1 = (LineSectionPlaneModel) SettingUtils.objectCopy(lineSectionPlaneModel);
-                        break;
-                    }
-                } else {
-                    if (lineSectionPlaneModel.getType().getCommonType() == shape.getCommonType()) {
-                        lineSectionPlaneModel1 = (LineSectionPlaneModel) SettingUtils.objectCopy(lineSectionPlaneModel);
-                        break;
-                    }
-                }
-            }
-            if (lineSectionPlaneModel1 == null) {
-                return null;
-            }
-            lineSectionPlaneModel1.setShapeAttribute(shapeAttributes);
-            setProperty(lineSectionPlaneModel1);
-            if (lineSectionPlaneModel1.getShapeAttribute().size() != 0) {
-                lineSectionPlaneModels1.add(lineSectionPlaneModel1);
+            LineSectionPlaneModel lineSectionPlaneModel = pickedShapeAndSetProperty(shape);
+            if (lineSectionPlaneModel.getShapeAttribute().size() != 0) {
+                lineSectionPlaneModels1.add(lineSectionPlaneModel);
             }
         }
-        outLineSectionPlaneModel(wb,lineSectionPlaneModels1);
+        if (lineSectionPlaneModels1.size() != 0) {
+            outLineSectionPlaneModel(wb, lineSectionPlaneModels1);
+        } else {
+            wb = null;
+        }
         return wb;
+    }
+
+    public LineSectionPlaneModel pickedShapeAndSetProperty(Shape shape) {
+        List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
+        LineSectionPlaneModel lineSectionPlaneModel1 = null;
+        List<LineSectionPlaneModel> lineSectionPlaneModels = lineSectionPlaneModelService.getLineSectionPlaneModel();
+        for (LineSectionPlaneModel lineSectionPlaneModel : lineSectionPlaneModels) {
+            if (shape.getChildType() != null) {
+                if (lineSectionPlaneModel.getType() == shape.getChildType()) {
+                    lineSectionPlaneModel1 = (LineSectionPlaneModel) SettingUtils.objectCopy(lineSectionPlaneModel);
+                    break;
+                }
+            } else {
+                if (lineSectionPlaneModel.getType().getCommonType() == shape.getCommonType()) {
+                    lineSectionPlaneModel1 = (LineSectionPlaneModel) SettingUtils.objectCopy(lineSectionPlaneModel);
+                    break;
+                }
+            }
+        }
+        if (lineSectionPlaneModel1 == null) {
+            return null;
+        }
+        lineSectionPlaneModel1.setShapeAttribute(shapeAttributes);
+        setProperty(lineSectionPlaneModel1);
+        return lineSectionPlaneModel1;
     }
 
     /**
@@ -1544,5 +1553,24 @@ public class ShapeService extends BaseService<Shape, Long> {
             setAttribute(attributeGroup.getShapeAttributes(), attributeList);
             setChild(attributeGroup.getChilds(), attributeList);
         }
+    }
+
+    public JSONObject buildJson(Shape shape) {
+        JSONObject jsonObject = new JSONObject(),jsonObject1;
+        jsonObject.put("remark", shape.getRemark());
+        jsonObject.put("childType", shape.getChildType().getTypeC());
+        jsonObject.put("commonType", shape.getCommonType().getTypeC());
+        jsonObject.put("id", shape.getId());
+        List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
+        JSONArray jsonArray = new JSONArray();
+        for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
+            jsonObject1 = new JSONObject();
+            jsonObject1.put("lon", shapeCoordinate.getLat());
+            jsonObject1.put("lat", shapeCoordinate.getLat());
+            jsonObject1.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
+            jsonArray.add(jsonObject1);
+        }
+        jsonObject.put("shapeCoordinate", jsonArray);
+        return jsonObject;
     }
 }

@@ -12,6 +12,9 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -176,9 +179,9 @@ public class ShapeController {
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadSectionPlanModel", method = RequestMethod.GET)
+    @RequestMapping(value = "/downloadShapeAttributeModel", method = RequestMethod.GET)
     public @ResponseBody
-    Message downloadSectionPlanModel(@RequestParam String[] types, HttpServletResponse response) {
+    Message downloadShapeAttribute(@RequestParam String[] types, HttpServletResponse response) {
         List<String> list = Arrays.asList(types);
         Workbook wb = shapeService.downloadModel(list);
         if (wb == null) {
@@ -321,7 +324,7 @@ public class ShapeController {
 //    @PackageIsExpire(value = "request")
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/uploadBuildAttribute", method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadBuild", method = RequestMethod.POST)
     public @ResponseBody
     Message uploadBuildAttribute(HttpServletRequest request) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
@@ -434,15 +437,15 @@ public class ShapeController {
 
     /**
      * 图形剖面下载
-     * @param shapeId  shapeId
+     * @param projectId  projectId
      * @param response 响应
      * @return OK:下载成功 Fail:下载失败
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadSectionPlane", method = RequestMethod.GET)
+    @RequestMapping(value = "/downloadShapeAttribute", method = RequestMethod.GET)
     public @ResponseBody
-    Message downloadSectionPlan(@RequestParam Long projectId, HttpServletResponse response) {
+    Message downloadSectionPlane(@RequestParam Long projectId, HttpServletResponse response) {
         Project project = projectService.find(projectId);
         List<Shape> shapes = shapeService.findByProject(project);
         Workbook wb = shapeService.downloadSectionPlane(shapes);
@@ -553,6 +556,68 @@ public class ShapeController {
     }
 
 
+    /**
+     * 获取建筑物
+     * @param id 建筑物id
+     * @return 建筑物对象
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/build", method = RequestMethod.GET)
+    public @ResponseBody Message getBuild(@RequestParam long id) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Build build = buildService.find(id);
+        if (build == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        JSONObject jsonObject = buildService.buildJson(build);
+        return MessageService.message(Message.Type.OK,jsonObject);
+    }
+
+    /**
+     * 获取图形线面
+     * @param id 建筑物id
+     * @return 建筑物对象
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shape", method = RequestMethod.GET)
+    public @ResponseBody Message getShape(@RequestParam long id) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Shape shape = shapeService.find(id);
+        if (shape == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        JSONObject jsonObject = shapeService.buildJson(shape);
+        return MessageService.message(Message.Type.OK,jsonObject);
+    }
+
+    /**
+     * 获取图形属性
+     * @param shapeId 图形id
+     * @return 建筑物对象
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shapeAttribute", method = RequestMethod.GET)
+    public @ResponseBody Message getShapeAttribute(@RequestParam long shapeId) {
+        Message message = CommonController.parametersCheck(shapeId);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Shape shape = shapeService.find(shapeId);
+        if (shape == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        JSONArray jsonArray = shapeAttributeService.buildJson(shape);
+        return MessageService.message(Message.Type.OK,jsonArray);
+    }
 
 
 }
