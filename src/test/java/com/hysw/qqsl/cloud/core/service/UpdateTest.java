@@ -155,6 +155,10 @@ public class UpdateTest {
         }
     }
 
+
+    /**
+     * 调整外业格式
+     */
     @Test
     public void test0004(){
         List<FieldWork> fieldWorks = fieldWorkService.findAll();
