@@ -1565,6 +1565,7 @@ public class ShapeService extends BaseService<Shape, Long> {
         JSONArray jsonArray = new JSONArray();
         for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
             jsonObject1 = new JSONObject();
+            jsonObject1.put("id", shapeCoordinate.getId());
             jsonObject1.put("lon", shapeCoordinate.getLat());
             jsonObject1.put("lat", shapeCoordinate.getLat());
             jsonObject1.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
@@ -1572,5 +1573,26 @@ public class ShapeService extends BaseService<Shape, Long> {
         }
         jsonObject.put("shapeCoordinate", jsonArray);
         return jsonObject;
+    }
+
+    public JSONArray getModelType() {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject;
+        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
+                continue;
+            }
+            if (commonType.getType().equals("buildModel")) {
+                continue;
+            }
+            jsonObject = new JSONObject();
+            jsonObject.put("typeC", commonType.getTypeC());
+            jsonObject.put("commonType", commonType.name());
+            jsonObject.put("type", commonType.getType());
+            jsonObject.put("buildType", commonType.getBuildType());
+            jsonObject.put("abbreviate", commonType.getAbbreviate());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
     }
 }

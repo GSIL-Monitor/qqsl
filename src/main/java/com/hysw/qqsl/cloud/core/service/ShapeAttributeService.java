@@ -79,4 +79,18 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
         return jsonObject;
     }
 
+    public JSONArray getModelType() {
+        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        for (LineSectionPlaneModel.Type value : LineSectionPlaneModel.Type.values()) {
+            jsonObject = new JSONObject();
+            jsonObject.put("typeC", value.getTypeC());
+            jsonObject.put("lineSectionPlaneModelType", value.name());
+            jsonObject.put("abbreviate", value.getAbbreviate());
+            jsonObject.put("type", value.getType());
+            jsonObject.put("commonType", value.getCommonType());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
 }

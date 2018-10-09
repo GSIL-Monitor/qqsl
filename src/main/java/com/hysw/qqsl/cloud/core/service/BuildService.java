@@ -1171,4 +1171,39 @@ public class BuildService extends BaseService<Build,Long> {
         outputBuilds(builds, wb, code, wgs84Type);
         return wb;
     }
+
+    public JSONArray getModelType() {
+        JSONObject jsonObject,jsonObject1;
+        JSONArray jsonArray = new JSONArray(),jsonArray1;
+        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
+                continue;
+            }
+            if (!commonType.getType().equals("buildModel")) {
+                continue;
+            }
+            jsonObject = new JSONObject();
+            jsonObject.put("typeC", commonType.getTypeC());
+            jsonObject.put("commonType", commonType.name());
+            jsonObject.put("type", commonType.getType());
+            jsonObject.put("buildType", commonType.getBuildType());
+            jsonObject.put("abbreviate", commonType.getAbbreviate());
+            jsonArray1 = new JSONArray();
+            for (Build.ChildType childType : Build.ChildType.values()) {
+                if (childType.getCommonType() == commonType) {
+                    jsonObject1 = new JSONObject();
+                    jsonObject1.put("typeC", childType.getTypeC());
+                    jsonObject1.put("childType", childType.name());
+                    jsonObject1.put("type", childType.getType());
+                    jsonObject1.put("abbreviate", childType.getAbbreviate());
+                    jsonArray1.add(jsonObject1);
+                }
+            }
+            if (!jsonArray1.isEmpty()) {
+                jsonObject.put("child", jsonArray1);
+            }
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
 }

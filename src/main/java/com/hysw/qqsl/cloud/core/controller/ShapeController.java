@@ -50,6 +50,10 @@ public class ShapeController {
     private CoordinateService coordinateService;
     @Autowired
     private ShapeAttributeService shapeAttributeService;
+    @Autowired
+    private ShapeCoordinateService shapeCoordinateService;
+    @Autowired
+    private BuildAttributeService buildAttributeService;
 
     Log logger = LogFactory.getLog(getClass());
 
@@ -618,6 +622,189 @@ public class ShapeController {
         JSONArray jsonArray = shapeAttributeService.buildJson(shape);
         return MessageService.message(Message.Type.OK,jsonArray);
     }
+
+    /**
+     * 获取所有图形线面类型
+     * @return OK：请求成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shapeTemplateInfo", method = RequestMethod.GET)
+    public @ResponseBody Message shapeTemplateInfo() {
+        return MessageService.message(Message.Type.OK,shapeService.getModelType());
+    }
+
+    /**
+     * 获取所有图形线面属性类型
+     * @return OK：请求成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shapeAttributeTemplateInfo", method = RequestMethod.GET)
+    public @ResponseBody Message shapeAttributeTemplateInfo() {
+        return MessageService.message(Message.Type.OK,shapeAttributeService.getModelType());
+    }
+
+    /**
+     * 获取所有建筑物类型
+     * @return OK：请求成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/buildTemplateInfo", method = RequestMethod.GET)
+    public @ResponseBody Message buildTemplateInfo() {
+        return MessageService.message(Message.Type.OK,buildService.getModelType());
+    }
+
+    /**
+     * 删除图形线面
+     * @param id 线面id
+     * @return FAIL参数验证失败，OK删除成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteShape/{id}", method = RequestMethod.DELETE)
+    public @ResponseBody Message deleteShape(@PathVariable("id") Long id) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Shape shape = shapeService.find(id);
+        if (shape == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
+        for (ShapeAttribute shapeAttribute : shapeAttributes) {
+            shapeAttributeService.remove(shapeAttribute);
+        }
+        List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
+        for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
+            if (shapeCoordinate.getBuild() != null) {
+                buildService.remove(shapeCoordinate.getBuild());
+            }
+            shapeCoordinateService.remove(shapeCoordinate);
+        }
+        shapeService.remove(shape);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 删除图形线面某点
+     * @param shaprCoordinateId 线面坐标id
+     * @return FAIL参数验证失败，OK删除成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteShapeCoordinate/{shaprCoordinateId}", method = RequestMethod.DELETE)
+    public @ResponseBody Message deleteShapeCoordinate(@PathVariable("shaprCoordinateId") Long shaprCoordinateId) {
+        Message message = CommonController.parametersCheck(shaprCoordinateId);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(shaprCoordinateId);
+        if (shapeCoordinate == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (shapeCoordinate.getBuild() != null) {
+            buildService.remove(shapeCoordinate.getBuild());
+        }
+        shapeCoordinateService.remove(shapeCoordinate);
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+    /**
+     * 编辑图形
+     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
+     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
+     */
+//    @SuppressWarnings("unchecked")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/editShape", method = RequestMethod.POST)
+//    public @ResponseBody Message deletePoint(@RequestBody  Map<String,Object> objectMap) {
+//        Message message = CommonController.parameterCheck(objectMap);
+//        if (message.getType() != Message.Type.OK) {
+//            return message;
+//        }
+//        objectMap.get("");
+//        return MessageService.message(Message.Type.OK);
+//    }
+
+    /**
+     * 编辑图形属性
+     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
+     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
+     */
+//    @SuppressWarnings("unchecked")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/editShapeAttribute", method = RequestMethod.POST)
+    public @ResponseBody Message editShapeAttribute(@RequestBody  Map<String,Object> objectMap) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object shapeId = objectMap.get("shapeId");
+        Object shapeAttributes = objectMap.get("shapeAttributes");
+        if (shapeId == null || shapeAttributes == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Shape shape = shapeService.find(Long.valueOf(shapeId.toString()));
+        ShapeAttribute shapeAttribute1;
+        for (Map<String, Object> shapeAttribute : (List<Map<String, Object>>) shapeAttributes) {
+            if (shapeAttribute.get("id") != null) {
+                shapeAttribute1 = shapeAttributeService.find(Long.valueOf(shapeAttribute.get("id").toString()));
+                shapeAttribute1.setValue(shapeAttribute.get("value").toString());
+            } else {
+                shapeAttribute1 = new ShapeAttribute();
+                shapeAttribute1.setAlias(shapeAttribute.get("alias").toString());
+                shapeAttribute1.setValue(shapeAttribute.get("value").toString());
+                shapeAttribute1.setShape(shape);
+            }
+            shapeAttributeService.save(shapeAttribute1);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 编辑建筑物属性
+     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
+     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
+     */
+//    @SuppressWarnings("unchecked")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/editBuildAttribute", method = RequestMethod.POST)
+    public @ResponseBody Message editBuildAttribute(@RequestBody  Map<String,Object> objectMap) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object buildId = objectMap.get("buildId");
+        Object buildAttributes = objectMap.get("buildAttributes");
+        if (buildId == null || buildAttributes == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Build build = buildService.find(Long.valueOf(buildId.toString()));
+        BuildAttribute buildAttribute1;
+        for (Map<String, Object> buildAttribute : (List<Map<String, Object>>) buildAttributes) {
+            if (buildAttribute.get("id") != null) {
+                buildAttribute1 = buildAttributeService.find(Long.valueOf(buildAttribute.get("id").toString()));
+                buildAttribute1.setValue(buildAttribute.get("value").toString());
+            } else {
+                buildAttribute1 = new BuildAttribute();
+                buildAttribute1.setValue(buildAttribute.get("value").toString());
+                buildAttribute1.setAlias(buildAttribute.get("alias").toString());
+                buildAttribute1.setBuild(build);
+            }
+            buildAttributeService.save(buildAttribute1);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+
 
 
 }

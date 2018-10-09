@@ -355,79 +355,8 @@ public class FieldWorkController {
     }
 
 
-    /**
-     * 删除坐标线面上的某点(编辑线面)
-     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
-     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
-     */
-    @SuppressWarnings("unchecked")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/editShape", method = RequestMethod.POST)
-    public @ResponseBody Message deletePoint(@RequestBody  Map<String,Object> objectMap) {
-        Message message = CommonController.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Object line = objectMap.get("line");
-        Object builds = objectMap.get("build");
-        Object description = objectMap.get("description");
-        if (line == null && description == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        boolean b = coordinateService.checkCoordinateFormat(line);
-        if (!b) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        JSONObject jsonObject = JSONObject.fromObject(line);
-        Object id = jsonObject.get("id");
-        if (id == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        jsonObject.remove("id");
-        String baseType = jsonObject.get("baseType").toString();
-        jsonObject.remove("type");
-        jsonObject.remove("baseType");
-        Coordinate coordinate = coordinateService.find(Long.valueOf(id.toString()));
-        coordinate.setCoordinateStr(jsonObject.toString());
-        coordinate.setDescription(description.toString());
-        coordinate.setCommonType(CommonEnum.CommonType.valueOf(baseType));
-        coordinateService.save(coordinate);
-        if (builds != null) {
-            List<Integer> list = (List<Integer>) builds;
-            for (Integer l : list) {
-                Build build = buildService.find(Long.valueOf(l));
-                if (build == null) {
-                    return MessageService.message(Message.Type.DATA_NOEXIST);
-                }
-                buildService.remove(build);
-            }
-        }
-        return MessageService.message(Message.Type.OK);
-    }
 
-    /**
-     * 删除坐标线面
-     * @param id 线面id
-     * @return FAIL参数验证失败，OK删除成功
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteShape/{id}", method = RequestMethod.DELETE)
-    public @ResponseBody Message deletePLine(@PathVariable("id") Long id) {
-        Message message = CommonController.parametersCheck(id);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Coordinate coordinate = coordinateService.find(id);
-        if (coordinate == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        coordinateService.remove(coordinate);
-        List<Build> builds = buildService.findByCommonId(id, Build.Source.DESIGN);
-        buildService.removes(builds);
-        return MessageService.message(Message.Type.OK);
-    }
+
 
     /**
      * 新建坐标线面
@@ -458,60 +387,5 @@ public class FieldWorkController {
     }
 
 
-    /**
-     * 获取所有建筑物类型
-     * @return OK：请求成功
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/templateInfo", method = RequestMethod.GET)
-    public @ResponseBody Message templateInfo() {
-        return MessageService.message(Message.Type.OK,fieldWorkService.getModelType());
-    }
 
-    /**
-     * 根据类型下载对应模板
-     * @param types  [a,b,c]
-     * @param response 响应
-     * @return OK:下载成功 Fail:下载失败
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadTemplate", method = RequestMethod.GET)
-    public @ResponseBody
-    Message downloadTemplete(@RequestParam String[] types, HttpServletResponse response) {
-        List<String> list = Arrays.asList(types);
-        Workbook wb = fieldWorkService.downloadModel(list);
-        if (wb == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        ByteArrayOutputStream bos = null;
-        InputStream is = null;
-        OutputStream output = null;
-        try {
-            bos = new ByteArrayOutputStream();
-            wb.write(bos);
-            is = new ByteArrayInputStream(bos.toByteArray());
-            String contentType = "application/vnd.ms-excel";
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
-            output = response.getOutputStream();
-            byte b[] = new byte[1024];
-            while (true) {
-                int length = is.read(b);
-                if (length == -1) {
-                    break;
-                }
-                output.write(b, 0, length);
-            }
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            return MessageService.message(Message.Type.FAIL);
-        } finally {
-            IOUtils.safeClose(bos);
-            IOUtils.safeClose(is);
-            IOUtils.safeClose(output);
-        }
-        return MessageService.message(Message.Type.OK);
-    }
 }
