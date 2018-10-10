@@ -803,6 +803,25 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK);
     }
 
+    /**
+     * BIM获取建筑物属性信息
+     * @return OK：请求成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/bim/build/{id}", method = RequestMethod.GET)
+    public @ResponseBody Message getBimBuild(@PathVariable("id") Long id) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Build build = buildService.find(id);
+        if (build == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        JSONArray jsonArray = buildService.toJSON(build);
+        return MessageService.message(Message.Type.OK, jsonArray);
+    }
 
 
 
