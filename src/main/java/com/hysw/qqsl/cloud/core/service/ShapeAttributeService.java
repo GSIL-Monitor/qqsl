@@ -93,4 +93,17 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
         }
         return jsonArray;
     }
+
+    public JSONArray toJSON(List<ShapeAttribute> shapeAttributes) {
+        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        for (ShapeAttribute shapeAttribute : shapeAttributes) {
+            jsonObject = new JSONObject();
+            jsonObject.put("alias", shapeAttribute.getAlias());
+            jsonObject.put("value", shapeAttribute.getValue());
+            jsonObject.put("id", shapeAttribute.getId());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
 }

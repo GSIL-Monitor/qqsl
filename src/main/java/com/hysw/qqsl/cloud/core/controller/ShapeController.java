@@ -823,6 +823,26 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK, jsonArray);
     }
 
+    /**
+     * BIM获取图形及其属性信息
+     * @return OK：请求成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/bim/shape/{id}", method = RequestMethod.GET)
+    public @ResponseBody Message getBimShape(@PathVariable("id") Long id) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Shape shape = shapeService.find(id);
+        List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
+        List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("shapeCoordinate", shapeCoordinateService.toJSON(shapeCoordinates));
+        jsonObject.put("shapeAttribute", shapeAttributeService.toJSON(shapeAttributes));
+        return MessageService.message(Message.Type.OK, jsonObject);
+    }
 
 
 
