@@ -75,10 +75,6 @@ public class Project extends BaseEntity {
      * 占用空间
      */
     private long curSpaceNum;
-    /**
-     * 建筑物
-     */
-    private List<Build> builds = new ArrayList<>();
     ///////////////////////////
     /**
      * 企业间查看
@@ -256,16 +252,6 @@ public class Project extends BaseEntity {
 
     public void setCoordinates(List<Coordinate> coordinates) {
         this.coordinates = coordinates;
-    }
-
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy = "project")
-    @JsonIgnore
-    public List<Build> getBuilds() {
-        return builds;
-    }
-
-    public void setBuilds(List<Build> builds) {
-        this.builds = builds;
     }
 
     ////////////////

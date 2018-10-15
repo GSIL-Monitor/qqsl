@@ -182,15 +182,4 @@ public class UpdateTest {
         }
     }
 
-    /**
-     * 将build中coordinateId转存到commonId
-     */
-    @Test
-    public void test0005() {
-        List<Build> builds = buildService.findAll();
-        for (Build build : builds) {
-            build.setCommonId(build.getCommonId());
-            buildService.save(build);
-        }
-    }
 }

@@ -52,7 +52,7 @@ public class BuildServiceTest extends BaseTest {
         Build build = new Build();
         build.setAlias("11");
         Project project = projectService.find(531l);
-        build.setProject(project);
+        build.setProjectId(project.getId());
         build.setType(CommonEnum.CommonType.QS);
         build.setName("泉室");
         buildService.save(build);
@@ -106,18 +106,6 @@ public class BuildServiceTest extends BaseTest {
         outputStream.flush();
     }
 
-    @Test
-    public void inputBuilds() throws Exception {
-        Project project = projectService.find(868l);
-        Map<String, Workbook> wbs = new HashMap<>();
-        SheetObject sheetObject = new SheetObject();
-        File file = new ClassPathResource("model.xls").getFile();
-        InputStream is = new FileInputStream(file);
-        coordinateService.readExcels(is,file.getName().substring(file.getName().lastIndexOf(".")+1),file.getName(),new JSONObject(),wbs);
-        coordinateService.getAllSheet(wbs,sheetObject);
-//        Map<String, List<Build>> stringListMap = buildService.inputBuilds(sheetObject.getBuildWBs(), project);
-        System.out.println();
-    }
 
     @Test
     public void outputBuilds(){

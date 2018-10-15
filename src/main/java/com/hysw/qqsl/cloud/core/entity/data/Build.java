@@ -34,9 +34,9 @@ public class Build extends BaseEntity{
     /**建筑物属性*/
     private List<BuildAttribute> buildAttributes;
     /** 所属项目 */
-    private Project project;
+    private Long projectId;
     /** 中心坐标 */
-    private String centerCoor;
+//    private String centerCoor;
     private int centerCoorNum;
     /** 定位坐标 */
     private String positionCoor;
@@ -49,8 +49,8 @@ public class Build extends BaseEntity{
     /** 描述 */
     private String remark;
     private int remarkNum;
-    /** 外业fieldWork或内业coordinate坐标id */
-    private Long commonId;
+//    /** 外业fieldWork或内业coordinate坐标id */
+//    private Long commonId;
     /** 错误标记 */
     private boolean errorMsg=false;
     /** 随机字符串 */
@@ -156,23 +156,21 @@ public class Build extends BaseEntity{
         this.buildAttributes = buildAttributes;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    public Project getProject() {
-        return project;
+    public Long getProjectId() {
+        return projectId;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
-    public String getCenterCoor() {
-        return centerCoor;
-    }
+//    public String getCenterCoor() {
+//        return centerCoor;
+//    }
 
-    public void setCenterCoor(String centerCoor) {
-        this.centerCoor = centerCoor;
-    }
+//    public void setCenterCoor(String centerCoor) {
+//        this.centerCoor = centerCoor;
+//    }
 
     public String getPositionCoor() {
         return positionCoor;
@@ -289,13 +287,13 @@ public class Build extends BaseEntity{
         this.number = number;
     }
 
-    public Long getCommonId() {
-        return commonId;
-    }
-
-    public void setCommonId(Long commonId) {
-        this.commonId = commonId;
-    }
+//    public Long getCommonId() {
+//        return commonId;
+//    }
+//
+//    public void setCommonId(Long commonId) {
+//        this.commonId = commonId;
+//    }
 
     @OneToOne
     @JsonIgnore

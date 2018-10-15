@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 外业测量控制层
+ * 内业控制层
  * Created by chenl on 17-4-7.
  */
 @Controller
@@ -165,7 +165,7 @@ public class ShapeController {
         shapeService.getAllSheet(wbs,sheetObject);
 //		进入错误处理环节
         if (sheetObject.getUnknowWBs().size() != 0) {
-            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,coordinateService.errorMsg(sheetObject.getUnknowWBs()));
+            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
         }
         PLACache plaCache = shapeService.reslove(sheetObject, central, wgs84Type, project);
         if (plaCache == null) {
@@ -268,7 +268,7 @@ public class ShapeController {
         shapeService.getAllSheet(wbs,sheetObject);
 //		进入错误处理环节
         if (sheetObject.getUnknowWBs().size() != 0) {
-            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,coordinateService.errorMsg(sheetObject.getUnknowWBs()));
+            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
         }
         shapeService.reslove(sheetObject, shape);
         return MessageService.message(Message.Type.OK);
@@ -382,7 +382,7 @@ public class ShapeController {
         shapeService.getAllSheet(wbs,sheetObject);
 //		进入错误处理环节
         if (sheetObject.getUnknowWBs().size() != 0) {
-            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,coordinateService.errorMsg(sheetObject.getUnknowWBs()));
+            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
         }
         PLACache plaCache = shapeService.reslove(sheetObject, central, wgs84Type, shape.getProject(), shape);
         if (plaCache == null) {

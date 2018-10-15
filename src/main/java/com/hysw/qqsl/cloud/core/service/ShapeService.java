@@ -269,7 +269,7 @@ public class ShapeService extends BaseService<Shape, Long> {
         for (Map.Entry<String, List<Build>> entry : plaCache.getBuildsMap().entrySet()) {
             Build build1;
             for (Build build : entry.getValue()) {
-                build1 = buildService.findByProjectAndRemark(build.getProject(), build.getRemark());
+                build1 = buildService.findByProjectIdAndRemark(build.getProjectId(), build.getRemark());
                 if (build1 == null) {
                     buildService.save(build);
                 } else {
@@ -467,7 +467,7 @@ public class ShapeService extends BaseService<Shape, Long> {
             }
             build.setRemark(list.get(i + 2));
             build.setShapeCoordinate(shapeCoordinate);
-            build.setProject(project);
+            build.setProjectId(project.getId());
             builds.add(build);
         }
     }
@@ -1174,7 +1174,7 @@ public class ShapeService extends BaseService<Shape, Long> {
                 }
                 writeCoordinateToBuild(build1,buildAttributes,code,wgs84Type);
                 build1.setBuildAttributes(buildAttributes);
-                build1.setProject(project);
+                build1.setProjectId(project.getId());
                 Iterator<Build> iterator = builds1.iterator();
                 while (iterator.hasNext()) {
                     build2 = iterator.next();
@@ -1591,6 +1591,30 @@ public class ShapeService extends BaseService<Shape, Long> {
             jsonObject.put("type", commonType.getType());
             jsonObject.put("buildType", commonType.getBuildType());
             jsonObject.put("abbreviate", commonType.getAbbreviate());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    /**
+     * 错误处理
+     * @param unknowWBs
+     */
+    public JSONArray errorMsg(Map<String, List<Sheet>> unknowWBs) {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject;
+        StringBuffer sb = null;
+        for (Map.Entry<String, List<Sheet>> entry : unknowWBs.entrySet()) {
+            List<Sheet> sheets = entry.getValue();
+            sb = new StringBuffer("sheet表：");
+            for (Sheet sheet : sheets) {
+                sb.append(sheet.getSheetName());
+                sb.append("，");
+            }
+            sb.replace(sb.length() - 1, sb.length(), "：");
+            sb.append("未知类型");
+            jsonObject = new JSONObject();
+            jsonObject.put(entry.getKey(), sb.toString());
             jsonArray.add(jsonObject);
         }
         return jsonArray;

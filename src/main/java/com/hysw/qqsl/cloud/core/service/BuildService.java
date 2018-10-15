@@ -193,13 +193,6 @@ public class BuildService extends BaseService<Build,Long> {
         }
     }
 
-    public List<Build> findByCommonId(long id, Build.Source source) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("commonId", id));
-        filters.add(Filter.eq("source", source));
-        return buildDao.findList(0, null, filters);
-     }
-
     public void removes(List<Build> builds) {
         for (Build build : builds) {
             remove(build);
@@ -667,7 +660,7 @@ public class BuildService extends BaseService<Build,Long> {
                             comment = null;
                             continue;
                         }else{
-                            build.setProject(project);
+                            build.setProjectId(project.getId());
                             build.setBuildAttributes(buildAttributes);
                             if (buildMap.get(entry.getKey()) == null) {
                                 builds = new ArrayList<>();
@@ -713,7 +706,7 @@ public class BuildService extends BaseService<Build,Long> {
                     buildAttribute.setBuild(build);
                     buildAttributes.add(buildAttribute);
                     if (j == sheet.getLastRowNum()) {
-                        build.setProject(project);
+                        build.setProjectId(project.getId());
                         build.setBuildAttributes(buildAttributes);
                         if (buildMap.get(entry.getKey()) == null) {
                             builds = new ArrayList<>();
@@ -947,81 +940,6 @@ public class BuildService extends BaseService<Build,Long> {
         return jsonObject1.get("lon") + "," + jsonObject1.get("lat");
     }
 
-    public void saveBuild(Build build, List<Build> builds, List<Coordinate> coordinates,List<Build> builds1) {
-        Build build1;
-        if (build.isErrorMsg()) {
-            return;
-        }
-        Coordinate coordinate = buildBelongToCoordinate(build, coordinates);
-        if (builds.size() == 0) {
-            build.setSource(Build.Source.DESIGN);
-            if (coordinate != null) {
-                build.setCommonId(coordinate.getId());
-            } else {
-                build.setCommonId(null);
-            }
-            save(build);
-            builds1.add(build);
-            return;
-        }
-        boolean flag = true;
-        Iterator<Build> iterator = builds.iterator();
-        while (iterator.hasNext()) {
-            build1 = iterator.next();
-            if (checkCenterCoordinateIsSame(build1.getCenterCoor(), build.getCenterCoor())) {
-                if (build1.getBuildAttributes().size() == 0 && (build.getBuildAttributes() == null || build.getBuildAttributes().size() == 0)) {
-                    build1.setPositionCoor(build.getPositionCoor());
-                    build1.setDesignElevation(build.getDesignElevation());
-                    build1.setRemark(build.getRemark());
-                    build1.setChildType(build.getChildType());
-                    build1.setType(build.getType());
-                    if (coordinate != null) {
-                        build1.setCommonId(coordinate.getId());
-                    } else {
-                        build1.setCommonId(null);
-                    }
-                    build1.setSource(Build.Source.DESIGN);
-                    save(build1);
-                } else if (build1.getBuildAttributes().size() == 0) {
-                    remove(build1);
-                    builds.remove(build1);
-                    build.setSource(Build.Source.DESIGN);
-                    if (coordinate != null) {
-                        build.setCommonId(coordinate.getId());
-                    } else {
-                        build.setCommonId(null);
-                    }
-                    save(build);
-                    builds1.add(build);
-                } else if (build.getBuildAttributes().size() == 0) {
-
-                } else {
-                    remove(build1);
-                    builds.remove(build1);
-                    build.setSource(Build.Source.DESIGN);
-                    if (coordinate != null) {
-                        build.setCommonId(coordinate.getId());
-                    } else {
-                        build.setCommonId(null);
-                    }
-                    save(build);
-                    builds1.add(build);
-                }
-                flag = false;
-                break;
-            }
-        }
-        if (flag) {
-            build.setSource(Build.Source.DESIGN);
-            if (coordinate != null) {
-                build.setCommonId(coordinate.getId());
-            } else {
-                build.setCommonId(null);
-            }
-            save(build);
-            builds1.add(build);
-        }
-    }
 
     private Coordinate buildBelongToCoordinate(Build build, List<Coordinate> coordinates) {
         JSONArray jsonArray;
@@ -1121,9 +1039,9 @@ public class BuildService extends BaseService<Build,Long> {
         }
     }
 
-    public Build findByProjectAndRemark(Project project, String remark) {
+    public Build findByProjectIdAndRemark(Long projectId, String remark) {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("project", project));
+        filters.add(Filter.eq("projectId", projectId));
         filters.add(Filter.eq("remark", remark));
         List<Build> list = buildDao.findList(0, null, filters);
         if (list.size() == 1) {

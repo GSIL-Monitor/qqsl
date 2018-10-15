@@ -648,8 +648,8 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         build1.setCenterCoor(String.valueOf(jsonObject));
         build1.setRemark(remark.toString());
         Project project = projectService.find(Long.valueOf(projectId.toString()));
-        build1.setProject(project);
-        build1.setCommonId(Long.valueOf(commonId.toString()));
+        build1.setProjectId(project.getId());
+//        build1.setCommonId(Long.valueOf(commonId.toString()));
         buildService.save(build1);
         return true;
     }
@@ -704,9 +704,9 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
             jsonObject = new JSONObject();
             jsonObject.put("id", build.getId());
             jsonObject.put("centerCoor", build.getCenterCoor());
-            if (build.getCommonId() != null) {
-                jsonObject.put("commonId", build.getCommonId());
-            }
+//            if (build.getCommonId() != null) {
+//                jsonObject.put("commonId", build.getCommonId());
+//            }
             if (build.getPositionCoor() != null) {
                 jsonObject.put("positionCoor", build.getPositionCoor());
             }
