@@ -36,7 +36,7 @@ public class Build extends BaseEntity{
     /** 所属项目 */
     private Long projectId;
     /** 中心坐标 */
-//    private String centerCoor;
+    private String centerCoor;
     private int centerCoorNum;
     /** 定位坐标 */
     private String positionCoor;
@@ -164,13 +164,14 @@ public class Build extends BaseEntity{
         this.projectId = projectId;
     }
 
-//    public String getCenterCoor() {
-//        return centerCoor;
-//    }
+    @Transient
+    public String getCenterCoor() {
+        return centerCoor;
+    }
 
-//    public void setCenterCoor(String centerCoor) {
-//        this.centerCoor = centerCoor;
-//    }
+    public void setCenterCoor(String centerCoor) {
+        this.centerCoor = centerCoor;
+    }
 
     public String getPositionCoor() {
         return positionCoor;

@@ -690,18 +690,18 @@ public class ShapeController {
 
     /**
      * 删除图形线面某点
-     * @param shaprCoordinateId 线面坐标id
+     * @param shapeCoordinateId 线面坐标id
      * @return FAIL参数验证失败，OK删除成功
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteShapeCoordinate/{shaprCoordinateId}", method = RequestMethod.DELETE)
-    public @ResponseBody Message deleteShapeCoordinate(@PathVariable("shaprCoordinateId") Long shaprCoordinateId) {
-        Message message = CommonController.parametersCheck(shaprCoordinateId);
+    @RequestMapping(value = "/deleteShapeCoordinate/{shapeCoordinateId}", method = RequestMethod.DELETE)
+    public @ResponseBody Message deleteShapeCoordinate(@PathVariable("shapeCoordinateId") Long shapeCoordinateId) {
+        Message message = CommonController.parametersCheck(shapeCoordinateId);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(shaprCoordinateId);
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(shapeCoordinateId);
         if (shapeCoordinate == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }

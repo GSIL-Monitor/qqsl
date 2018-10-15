@@ -40,6 +40,9 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
     public JSONArray buildJson(Shape shape) {
         JSONArray jsonArray = new JSONArray();
         LineSectionPlaneModel lineSectionPlaneModel = shapeService.pickedShapeAndSetProperty(shape);
+        if (lineSectionPlaneModel.getShapeAttribute() == null || lineSectionPlaneModel.getShapeAttribute().size() == 0) {
+            return new JSONArray();
+        }
         jsonArray.add(makeJson(lineSectionPlaneModel.getRemark()));
         jsonArray.add(makeJson(lineSectionPlaneModel.getLineWaterResources()));
         jsonArray.add(makeJson(lineSectionPlaneModel.getLineControlSize()));

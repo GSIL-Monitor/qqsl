@@ -177,6 +177,7 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         build.setDesignElevation(build1.getDesignElevation());
         build.setId(build1.getId());
         build.setRemark(build1.getRemark());
+        build.setShapeCoordinate(build1.getShapeCoordinate());
         if (!sign) {
             return;
         }

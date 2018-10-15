@@ -1239,6 +1239,7 @@ public class ShapeService extends BaseService<Shape, Long> {
                     jsonObject = coordinateXYZToBLH(split[0], split[1], code, wgs84Type);
                 } catch (Exception e) {
 //                    e.printStackTrace();
+                    continue;
                 }
                 build1.setPositionCoor(jsonObject==null?null:jsonObject.toString());
                 build1.setPositionCoorNum(buildAttribute.getRow());
@@ -1558,7 +1559,7 @@ public class ShapeService extends BaseService<Shape, Long> {
     public JSONObject buildJson(Shape shape) {
         JSONObject jsonObject = new JSONObject(),jsonObject1;
         jsonObject.put("remark", shape.getRemark());
-        jsonObject.put("childType", shape.getChildType().getTypeC());
+        jsonObject.put("childType", shape.getChildType()==null?null:shape.getChildType().getTypeC());
         jsonObject.put("commonType", shape.getCommonType().getTypeC());
         jsonObject.put("id", shape.getId());
         List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);

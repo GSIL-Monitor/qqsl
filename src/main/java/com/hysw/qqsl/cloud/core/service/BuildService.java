@@ -93,14 +93,17 @@ public class BuildService extends BaseService<Build,Long> {
                 break;
             }
         }
-        JSONObject jsonObject;
-        JSONObject jsonObject1;
+        JSONObject jsonObject, jsonObject1;
         jsonObject = new JSONObject();
         jsonObject.put("id", build.getId());
         jsonObject.put("name", build.getName());
         jsonObject.put("alias", build.getAlias());
         jsonObject.put("type", build.getType());
-        jsonObject.put("centerCoor", build.getCenterCoor());
+        ShapeCoordinate shapeCoordinate = build.getShapeCoordinate();
+        jsonObject1 = new JSONObject();
+        jsonObject1.put("lon", shapeCoordinate.getLon());
+        jsonObject1.put("lat", shapeCoordinate.getLat());
+        jsonObject.put("centerCoor", jsonObject1);
         jsonObject.put("positionCoor", build.getPositionCoor());
         jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType()==null?null:build.getChildType().name());
