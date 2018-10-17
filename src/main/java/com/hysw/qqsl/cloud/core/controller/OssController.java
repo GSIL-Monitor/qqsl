@@ -1,7 +1,7 @@
 package com.hysw.qqsl.cloud.core.controller;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 
 import com.aliyun.oss.OSSClient;
@@ -12,6 +12,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Oss;
+import com.hysw.qqsl.cloud.core.entity.data.Project;
 import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authz.annotation.Logical;
@@ -47,6 +48,8 @@ public class OssController {
 	private AuthentService authentService;
 	@Autowired
 	private ProjectService projectService;
+	@Autowired
+	private DownloadZipFileService downloadZipFileService;
 	/** office文件的所有后缀 */
 	private List<String> extensiones = Arrays
 			.asList(CommonAttributes.OFFICE_FILE_EXTENSION.split(","));
@@ -299,4 +302,123 @@ public class OssController {
 		jsonObject.put("qqslImageBucket",CommonAttributes.BUCKET_IMAGE);
 		return MessageService.message(Message.Type.OK, jsonObject);
 	}
+
+	/**
+	 * 下载项目外业多媒体Zip文件--全部
+	 * @param response
+	 */
+	@RequestMapping(value = "/getZipFile", method = RequestMethod.GET)
+	public @ResponseBody Message getZipFile(@RequestParam String treePath,HttpServletResponse response){
+		Project project = projectService.findByTreePath(treePath);
+		if (project == null) {
+			return MessageService.message(Message.Type.DATA_NOEXIST);
+		}
+		List<ObjectFile> objectFiles = ossService
+				.getFileInFolder("project" + "/" + treePath + "/2/21/21B/21B1", CommonAttributes.BUCKET_NAME);
+		if (objectFiles.size() == 0) {
+			return MessageService.message(Message.Type.DATA_REFUSE);
+		}
+		String filePath = ossService.getTargetFilePath()+project.getCode()+"--fieldWorkMedias";
+		ossService.downloadFileToFolder(objectFiles,filePath);
+		DownloadZipFileService.toZip(filePath,filePath+".zip",true);
+		File file = null;
+		try {
+			file = new File(filePath+".zip");
+			if (file.exists()) {
+				InputStream ins = new FileInputStream(file);
+				BufferedInputStream bins = new BufferedInputStream(ins);// 放到缓冲流里面
+				OutputStream outs = response.getOutputStream();// 获取文件输出IO流
+				BufferedOutputStream bouts = new BufferedOutputStream(outs);
+				response.setContentType("application/x-download");// 设置response内容的类型
+				response.setHeader(
+						"Content-disposition",
+						"attachment;filename="
+								+ URLEncoder.encode(project.getName()+"外业多媒体.zip", "UTF-8"));// 设置头部信息
+				int bytesRead = 0;
+				byte[] buffer = new byte[8192];
+				// 开始向网络传输文件流
+				while ((bytesRead = bins.read(buffer, 0, 8192)) != -1) {
+					bouts.write(buffer, 0, bytesRead);
+				}
+				bouts.flush();// 这里一定要调用flush()方法
+				ins.close();
+				bins.close();
+				outs.close();
+				bouts.close();
+			} else {
+				response.sendRedirect("../error.jsp");
+			}
+		} catch (IOException e) {
+//			Log.error("文件下载出错", e);
+		}finally {
+			if (file.exists()) {
+				file.delete();
+			}
+			PanoramaService.delAllFile(filePath);
+			file = new File(filePath);
+			file.delete();
+		}
+		return MessageService.message(Message.Type.OK);
+	}
+
+	/**
+	 * 下载项目外业多媒体Zip文件--根据点下载
+	 * @param response
+	 */
+	@RequestMapping(value = "/getZipFileSimple", method = RequestMethod.GET)
+	public @ResponseBody Message getZipFileSimple(@RequestParam String treePath,@RequestParam String mac,@RequestParam String alias,HttpServletResponse response){
+		Project project = projectService.findByTreePath(treePath);
+		if (project == null) {
+			return MessageService.message(Message.Type.DATA_NOEXIST);
+		}
+		List<ObjectFile> objectFiles = ossService
+				.getFileInFolder("project" + "/" + treePath + "/2/21/21B/21B1/" + mac + "/" + alias, CommonAttributes.BUCKET_NAME);
+		if (objectFiles.size() == 0) {
+			return MessageService.message(Message.Type.DATA_REFUSE);
+		}
+		String filePath = ossService.getTargetFilePath()+project.getCode()+"--"+alias+"--fieldWorkMediasSimple";
+		ossService.downloadFileToFolder(objectFiles,filePath);
+		DownloadZipFileService.toZip(filePath, filePath + ".zip", true);
+		File file = null;
+		try {
+			file = new File(filePath+".zip");
+			if (file.exists()) {
+				InputStream ins = new FileInputStream(file);
+				BufferedInputStream bins = new BufferedInputStream(ins);// 放到缓冲流里面
+				OutputStream outs = response.getOutputStream();// 获取文件输出IO流
+				BufferedOutputStream bouts = new BufferedOutputStream(outs);
+				response.setContentType("application/x-download");// 设置response内容的类型
+				response.setHeader(
+						"Content-disposition",
+						"attachment;filename="
+								+ URLEncoder.encode(project.getName()+"外业多媒体.zip", "UTF-8"));// 设置头部信息
+				int bytesRead = 0;
+				byte[] buffer = new byte[8192];
+				// 开始向网络传输文件流
+				while ((bytesRead = bins.read(buffer, 0, 8192)) != -1) {
+					bouts.write(buffer, 0, bytesRead);
+				}
+				bouts.flush();// 这里一定要调用flush()方法
+				ins.close();
+				bins.close();
+				outs.close();
+				bouts.close();
+			} else {
+				response.sendRedirect("../error.jsp");
+			}
+			file.delete();
+		} catch (IOException e) {
+//			Log.error("文件下载出错", e);
+		}finally {
+			if (file.exists()) {
+				file.delete();
+			}
+			PanoramaService.delAllFile(filePath);
+			file = new File(filePath);
+			file.delete();
+		}
+		return MessageService.message(Message.Type.OK);
+	}
+
+
 }
