@@ -61,7 +61,7 @@ public class BuildService extends BaseService<Build,Long> {
 
     public List<Build> findByProjectAndSource(Project project, Build.Source source) {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("project", project));
+        filters.add(Filter.eq("projectId", project.getId()));
         filters.add(Filter.eq("source", source));
         List<Build> list = buildDao.findList(0, null, filters);
         for (Build build : list) {

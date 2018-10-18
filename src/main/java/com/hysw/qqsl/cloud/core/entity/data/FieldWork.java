@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * 外业坐标实体类
@@ -16,24 +17,12 @@ import javax.persistence.*;
 @SequenceGenerator(name = "sequenceGenerator", sequenceName = "fieldWork_sequence")
 @JsonIgnoreProperties(value = { "hibernateLazyInitializer" })
 public class FieldWork extends BaseEntity {
-    private String coordinateStr;
     private Project project;
     // 采集用户
     private long accountId;
     private String name;
     private String deviceMac;
-
-    @JsonIgnore
-    //@Lob
-    @Basic(fetch = FetchType.EAGER)
-    @Column(columnDefinition = "text")
-    public String getCoordinateStr() {
-        return coordinateStr;
-    }
-
-    public void setCoordinateStr(String coordinateStr) {
-        this.coordinateStr = coordinateStr;
-    }
+    private List<FieldWorkPoint> fieldWorkPoints;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
@@ -67,5 +56,15 @@ public class FieldWork extends BaseEntity {
 
     public void setDeviceMac(String deviceMac) {
         this.deviceMac = deviceMac;
+    }
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy = "fieldWork")
+    @JsonIgnore
+    public List<FieldWorkPoint> getFieldWorkPoints() {
+        return fieldWorkPoints;
+    }
+
+    public void setFieldWorkPoints(List<FieldWorkPoint> fieldWorkPoints) {
+        this.fieldWorkPoints = fieldWorkPoints;
     }
 }
