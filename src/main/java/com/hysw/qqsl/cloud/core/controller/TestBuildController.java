@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,8 @@ public class TestBuildController {
     private ProjectService projectService;
     @Autowired
     private CoordinateService coordinateService;
+    @Autowired
+    private NewBuildAttributeService newBuildAttributeService;
 //    要求一个类型只能上传一个建筑物，再次上传替换处理
 //    1.建筑物模板下载
     /**
@@ -113,7 +116,6 @@ public class TestBuildController {
     /**
      * 建筑物属性下载
      *
-     * @param projectId projectId
      * @param response  响应
      * @return OK:下载成功 Fail:下载失败
      */
@@ -203,6 +205,88 @@ public class TestBuildController {
         }
         JSONObject jsonObject = newBuildService.buildJson(newBuild);
         return MessageService.message(Message.Type.OK,jsonObject);
+    }
+
+//    /**
+//     * 编辑建筑物属性
+//     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
+//     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
+//     */
+////    @SuppressWarnings("unchecked")
+////    @RequiresAuthentication
+////    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/editBuildAttribute", method = RequestMethod.POST)
+//    public @ResponseBody Message editBuildAttribute(@RequestBody  Map<String,Object> objectMap) {
+//        Message message = CommonController.parameterCheck(objectMap);
+//        if (message.getType() != Message.Type.OK) {
+//            return message;
+//        }
+//        Object buildId = objectMap.get("buildId");
+//        Object newBuildAttributes = objectMap.get("newBuildAttributes");
+//        if (buildId == null || newBuildAttributes == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        NewBuild newBuild = newBuildService.find(Long.valueOf(buildId.toString()));
+//        NewBuildAttribute newBuildAttribute1;
+//        for (Map<String, Object> newBuildAttribute : (List<Map<String, Object>>) newBuildAttributes) {
+//            if (newBuildAttribute.get("id") != null) {
+//                newBuildAttribute1 = newBuildAttributeService.find(Long.valueOf(newBuildAttribute.get("id").toString()));
+//                newBuildAttribute1.setValue(newBuildAttribute.get("value").toString());
+//            } else {
+//                newBuildAttribute1 = new NewBuildAttribute();
+//                newBuildAttribute1.setValue(newBuildAttribute.get("value").toString());
+//                newBuildAttribute1.setAlias(newBuildAttribute.get("alias").toString());
+//                newBuildAttribute1.setBuild(newBuild);
+//            }
+//            newBuildAttributeService.save(newBuildAttribute1);
+//        }
+//        return MessageService.message(Message.Type.OK);
+//    }
+
+    /**
+     * 建筑物属性模板下载
+     * @param types  [a,b,c]
+     * @param response 响应
+     * @return OK:下载成功 Fail:下载失败
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/downloadBuildModel", method = RequestMethod.GET)
+    public @ResponseBody
+    Message downloadBuildModel(@RequestParam String[] types, HttpServletResponse response) {
+        List<String> list = Arrays.asList(types);
+        Workbook wb = newBuildService.downloadBuildModel(list);
+        if (wb == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
+        return MessageService.message(Message.Type.OK);
     }
 
 }

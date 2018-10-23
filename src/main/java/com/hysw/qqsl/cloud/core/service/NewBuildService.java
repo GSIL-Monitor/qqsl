@@ -431,7 +431,6 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
      *
      * @param longitude
      * @param latitude
-     * @param code
      * @return
      */
     public JSONObject coordinateBLHToXYZ(String longitude, String latitude, Coordinate.WGS84Type wgs84Type) {
@@ -1179,6 +1178,193 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         }
         if (childs.size() != 0) {
             newAttributeGroup.setChilds(childs);
+        }
+    }
+
+    public Workbook downloadBuildModel(List<String> list) {
+        Workbook wb = new XSSFWorkbook();
+        List<NewBuild> builds = new ArrayList<>();
+        for (NewBuild build : getBuilds()) {
+            for (String s : list) {
+                if (build.getType().name().equals(s)) {
+                    if (build.getCoordinate() != null) {
+                        builds.add((NewBuild) SettingUtils.objectCopy(build));
+                    }
+                }
+                if (build.getChildType() == null) {
+                    continue;
+                }
+                if (build.getChildType().name().equals(s)) {
+                    if (build.getCoordinate() != null) {
+                        builds.add((NewBuild) SettingUtils.objectCopy(build));
+                    }
+                }
+            }
+        }
+        if (builds.size() != 0) {
+            outBuildModel(wb, builds);
+        } else {
+            wb = null;
+        }
+        return wb;
+    }
+
+    public void outBuildModel(Workbook wb, List<NewBuild> builds) {
+        String[] s={"一","二","三","四","五"};
+        Sheet sheet = null;
+        Row row = null;
+        Cell cell = null;
+        for (NewBuild build : builds) {
+            if (build.getCoordinate() == null) {
+                continue;
+            }
+            int i = 0/*, n = 0*/;
+            sheet = wb.createSheet(build.getName());
+            for (int l = 0; l < build.getNumber(); l++) {
+                int j = 0, k = 0,m = 0;
+                preBuildModel(build, i);
+//                n = i;
+                writeToCell(i, sheet, row, cell, bold(wb), "编号", "名称", "单位", "值", null, null, null, wb, true, null);
+                if (build.getCoordinate() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getCoordinate(), s[m], j, k);
+                    m++;
+                }
+                if (build.getWaterResources() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getWaterResources(), s[m], j, k);
+                    m++;
+                }
+                if (build.getControlSize() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getControlSize(), s[m], j, k);
+                    m++;
+                }
+                if (build.getGroundStress() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getGroundStress(), s[m], j, k);
+                    m++;
+                }
+                if (build.getComponent() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getComponent(), s[m], j, k);
+                }
+                i++;
+//                sheet.groupRow(n+1,i-1);
+            }
+            sheet.protectSheet("hyswqqsl");
+        }
+    }
+
+    private int writeAttributeGroup1(int i, Sheet sheet, Row row, Cell cell, Workbook wb, NewAttributeGroup attributeGroup, String numC,int j,int k) {
+        if (k == 0) {
+            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundYellow(wb), numC, attributeGroup.getName(), null, null, null, null, null, wb, true, null);
+        }else {
+            writeToCell(++i, sheet, row, cell, noBoldHaveBackgroundSkyBlue(wb), numC, attributeGroup.getName(), null, null, null, null, null, wb, true, null);
+        }
+        if (attributeGroup.getChilds() == null) {
+            if (k == 0) {
+                j = 0;
+                for (NewBuildAttribute buildAttribute : attributeGroup.getNewBuildAttributes()) {
+                    if (buildAttribute.getFx() != null) {
+                        writeToCell(++i, sheet, row, cell, noBoldAndUnlocked(wb), String.valueOf(++j), buildAttribute.getName(), buildAttribute.getUnit(), null, buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
+                        continue;
+                    }
+                    writeToCell(++i, sheet, row, cell, noBold(wb), String.valueOf(++j), buildAttribute.getName(), buildAttribute.getUnit(), null, buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
+                }
+            }else{
+                j = 0;
+                for (NewBuildAttribute buildAttribute : attributeGroup.getNewBuildAttributes()) {
+                    if (buildAttribute.getFx() != null) {
+                        writeToCell(++i, sheet, row, cell, noBoldAndUnlocked(wb), "" + k + "." + (++j), buildAttribute.getName(), buildAttribute.getUnit(), null, buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
+                        continue;
+                    }
+                    writeToCell(++i, sheet, row, cell, noBold(wb), "" + k + "." + (++j), buildAttribute.getName(), buildAttribute.getUnit(), null, buildAttribute.getAlias(), buildAttribute.getType(), buildAttribute.getSelects(), wb, buildAttribute.getLocked(), buildAttribute.getFx());
+                }
+            }
+        }else{
+            for (NewAttributeGroup child : attributeGroup.getChilds()) {
+                i = writeAttributeGroup1(i, sheet, row, cell, wb, child, String.valueOf(++k),j,k);
+            }
+        }
+        return i;
+    }
+
+    /**
+     * 预构建excel结构
+     * @param build
+     */
+    private void preBuildModel(NewBuild build,int i) {
+        writeToCell3(i, null);
+        i = writeAttributeGroup3(i, build.getCoordinate());
+        i = writeAttributeGroup3(i, build.getWaterResources());
+        i = writeAttributeGroup3(i, build.getControlSize());
+        i = writeAttributeGroup3(i, build.getGroundStress());
+        i = writeAttributeGroup3(i, build.getComponent());
+        i++;
+        List<NewBuildAttribute> buildAttributes = new ArrayList<>();
+        pickedAttribute(build.getCoordinate(),buildAttributes);
+        pickedAttribute(build.getWaterResources(),buildAttributes);
+        pickedAttribute(build.getControlSize(),buildAttributes);
+        pickedAttribute(build.getGroundStress(),buildAttributes);
+        pickedAttribute(build.getComponent(),buildAttributes);
+        replaceFx(build.getCoordinate(),buildAttributes);
+        replaceFx(build.getWaterResources(),buildAttributes);
+        replaceFx(build.getControlSize(),buildAttributes);
+        replaceFx(build.getGroundStress(),buildAttributes);
+        replaceFx(build.getComponent(),buildAttributes);
+    }
+
+    private void writeToCell3(int i, NewBuildAttribute buildAttribute) {
+        if (buildAttribute == null) {
+            return;
+        }
+        buildAttribute.setRow(i + 1);
+    }
+
+    private int writeAttributeGroup3(int i, NewAttributeGroup newAttributeGroup) {
+        if (newAttributeGroup == null) {
+            return i;
+        }
+        writeToCell3(++i, null);
+        if (newAttributeGroup.getChilds() == null) {
+            for (NewBuildAttribute buildAttribute : newAttributeGroup.getNewBuildAttributes()) {
+                writeToCell3(++i, buildAttribute);
+            }
+        }else{
+            for (NewAttributeGroup child : newAttributeGroup.getChilds()) {
+                i = writeAttributeGroup3(i, child);
+            }
+        }
+        return i;
+    }
+
+    private void pickedAttribute(NewAttributeGroup attributeGroup, List<NewBuildAttribute> buildAttributes) {
+        if (attributeGroup == null) {
+            return;
+        }
+        if (attributeGroup.getChilds() == null) {
+            buildAttributes.addAll(attributeGroup.getNewBuildAttributes());
+        } else {
+            for (NewAttributeGroup child : attributeGroup.getChilds()) {
+                pickedAttribute(child, buildAttributes);
+            }
+        }
+    }
+
+    private void replaceFx(NewAttributeGroup attributeGroup,List<NewBuildAttribute> buildAttributes) {
+        if (attributeGroup == null) {
+            return;
+        }
+        if (attributeGroup.getChilds() == null) {
+            for (NewBuildAttribute buildAttribute : attributeGroup.getNewBuildAttributes()) {
+                if (buildAttribute.getFormula() == null) {
+                    continue;
+                }
+                buildAttribute.setFx(buildAttribute.getFormula());
+                for (NewBuildAttribute attribute1 : buildAttributes) {
+                    buildAttribute.setFx(buildAttribute.getFx().replaceAll(attribute1.getAlias(), "D" + attribute1.getRow()));
+                }
+            }
+        } else {
+            for (NewAttributeGroup child : attributeGroup.getChilds()) {
+                replaceFx(child, buildAttributes);
+            }
         }
     }
 }

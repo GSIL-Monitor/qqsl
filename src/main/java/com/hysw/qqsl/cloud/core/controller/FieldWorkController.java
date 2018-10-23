@@ -125,6 +125,11 @@ public class FieldWorkController {
         return MessageService.message(Message.Type.OK);
     }
 
+    /**
+     * 外业点重命名
+     * @param objectMap
+     * @return
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/renamePointDescription", method = RequestMethod.POST)
