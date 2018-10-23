@@ -132,54 +132,54 @@ public class UpdateTest {
     /**
      * 将外业迁移至field
      */
-    @Test
-    public void test0003(){
-        FieldWork fieldWork;
-        List<Coordinate> coordinates = coordinateService.findAll();
-        Iterator<Coordinate> it = coordinates.iterator();
-        Coordinate coordinate;
-        while (it.hasNext()) {
-            coordinate = it.next();
-            if (coordinate.getSource() == Build.Source.DESIGN) {
-                continue;
-            }
-            fieldWork = new FieldWork();
-            fieldWork.setProject(coordinate.getProject());
-            fieldWork.setCoordinateStr(coordinate.getCoordinateStr());
-            fieldWork.setDeviceMac(coordinate.getDeviceMac());
-            fieldWork.setName(coordinate.getName());
-            fieldWork.setAccountId(coordinate.getUserId());
-            fieldWorkService.save(fieldWork);
-            coordinateService.remove(coordinate);
-            it.remove();
-        }
-    }
+//    @Test
+//    public void test0003(){
+//        FieldWork fieldWork;
+//        List<Coordinate> coordinates = coordinateService.findAll();
+//        Iterator<Coordinate> it = coordinates.iterator();
+//        Coordinate coordinate;
+//        while (it.hasNext()) {
+//            coordinate = it.next();
+//            if (coordinate.getSource() == Build.Source.DESIGN) {
+//                continue;
+//            }
+//            fieldWork = new FieldWork();
+//            fieldWork.setProject(coordinate.getProject());
+//            fieldWork.setCoordinateStr(coordinate.getCoordinateStr());
+//            fieldWork.setDeviceMac(coordinate.getDeviceMac());
+//            fieldWork.setName(coordinate.getName());
+//            fieldWork.setAccountId(coordinate.getUserId());
+//            fieldWorkService.save(fieldWork);
+//            coordinateService.remove(coordinate);
+//            it.remove();
+//        }
+//    }
 
 
     /**
      * 调整外业格式
      */
-    @Test
-    public void test0004(){
-        List<FieldWork> fieldWorks = fieldWorkService.findAll();
-        for (FieldWork fieldWork : fieldWorks) {
-            JSONArray jsonArray = JSONArray.fromObject(fieldWork.getCoordinateStr());
-            for (Object o : jsonArray) {
-                JSONObject jsonObject = (JSONObject) o;
-                JSONArray jsonArray2 = (JSONArray) jsonObject.get("coordinate");
-                for (Object o1 : jsonArray2) {
-                    JSONObject jsonObject1 = (JSONObject) o1;
-                    jsonObject1.put("lon", jsonObject1.get("longitude"));
-                    jsonObject1.put("lat", jsonObject1.get("latitude"));
-                    jsonObject1.put("ele", jsonObject1.get("elevation"));
-                    jsonObject1.remove("longitude");
-                    jsonObject1.remove("latitude");
-                    jsonObject1.remove("elevation");
-                }
-            }
-            fieldWork.setCoordinateStr(jsonArray.toString());
-            fieldWorkService.save(fieldWork);
-        }
-    }
+//    @Test
+//    public void test0004(){
+//        List<FieldWork> fieldWorks = fieldWorkService.findAll();
+//        for (FieldWork fieldWork : fieldWorks) {
+//            JSONArray jsonArray = JSONArray.fromObject(fieldWork.getCoordinateStr());
+//            for (Object o : jsonArray) {
+//                JSONObject jsonObject = (JSONObject) o;
+//                JSONArray jsonArray2 = (JSONArray) jsonObject.get("coordinate");
+//                for (Object o1 : jsonArray2) {
+//                    JSONObject jsonObject1 = (JSONObject) o1;
+//                    jsonObject1.put("lon", jsonObject1.get("longitude"));
+//                    jsonObject1.put("lat", jsonObject1.get("latitude"));
+//                    jsonObject1.put("ele", jsonObject1.get("elevation"));
+//                    jsonObject1.remove("longitude");
+//                    jsonObject1.remove("latitude");
+//                    jsonObject1.remove("elevation");
+//                }
+//            }
+//            fieldWork.setCoordinateStr(jsonArray.toString());
+//            fieldWorkService.save(fieldWork);
+//        }
+//    }
 
 }

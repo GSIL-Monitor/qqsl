@@ -819,8 +819,8 @@ public class ShapeController {
         if (build == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        JSONArray jsonArray = buildService.toJSON(build);
-        return MessageService.message(Message.Type.OK, jsonArray);
+        JSONObject jsonObject = buildService.toJSON(build);
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
     /**

@@ -2,13 +2,11 @@ package com.hysw.qqsl.cloud.core.controller;
 
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Message;
 import com.hysw.qqsl.cloud.core.entity.buildModel.PLACache;
 import com.hysw.qqsl.cloud.core.entity.buildModel.SheetObject;
-import com.hysw.qqsl.cloud.core.entity.data.Build;
-import com.hysw.qqsl.cloud.core.entity.data.Coordinate;
-import com.hysw.qqsl.cloud.core.entity.data.Project;
-import com.hysw.qqsl.cloud.core.entity.data.Shape;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -34,14 +32,13 @@ import java.util.Map;
  * @author Administrator
  * @since 2018/10/18
  */
-@Controller("/testBuild")
+@Controller
+@RequestMapping("/testBuild")
 public class TestBuildController {
     @Autowired
-    private BuildService buildService;
+    private NewBuildService newBuildService;
     @Autowired
     private ProjectService projectService;
-    @Autowired
-    private ShapeService shapeService;
     @Autowired
     private CoordinateService coordinateService;
 //    要求一个类型只能上传一个建筑物，再次上传替换处理
@@ -55,7 +52,7 @@ public class TestBuildController {
     @RequestMapping(value = "/buildTemplateInfo", method = RequestMethod.GET)
     public @ResponseBody
     Message buildTemplateInfo() {
-        return MessageService.message(Message.Type.OK,buildService.getModelType());
+        return MessageService.message(Message.Type.OK,newBuildService.getModelType());
     }
 //    2.建筑物excel上传
     /**
@@ -70,91 +67,70 @@ public class TestBuildController {
     public @ResponseBody
     Message uploadBuildAttribute(HttpServletRequest request) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-        String shapeId = request.getParameter("shapeId");
-        String baseLevelType = request.getParameter("baseLevelType");
-        String WGS84Type = request.getParameter("WGS84Type");
-        Message message;
-        JSONObject jsonObject = new JSONObject();
-        if (shapeId == null || baseLevelType == null) {
+        String type = request.getParameter("type");
+        String childType = request.getParameter("childType");
+        CommonEnum.CommonType commonType = null;
+        NewBuild.ChildType childType1 = null;
+        if (childType != null && !childType.equals("")) {
+            childType1 = NewBuild.ChildType.valueOf(childType);
+        } else if (type != null && !type.equals("")) {
+            commonType = CommonEnum.CommonType.valueOf(type);
+        } else {
             return MessageService.message(Message.Type.FAIL);
         }
-        Shape shape;
-        Coordinate.WGS84Type wgs84Type = null;
-        Coordinate.BaseLevelType levelType;
-        try {
-            shape = shapeService.find(Long.valueOf(shapeId));
-            message=isAllowUploadCoordinateFile(shape.getProject());
-            levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
-            if (!WGS84Type.equals("")) {
-                wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
-            }
-        } catch (Exception e) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        if (shape == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
-            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
-        }
-        String central = coordinateService.getCoordinateBasedatum(shape.getProject());
-        if (central == null) {
-            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
-        }
+
+        JSONObject jsonObject = new JSONObject();
         Map<String, Workbook> wbs = new HashMap<>();
         if(multipartResolver.isMultipart(request)) {
             //转换成多部分request
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
             Map<String, MultipartFile> map = multiRequest.getFileMap();
             for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-                shapeService.uploadCoordinate(entry,jsonObject,wbs);
+                newBuildService.uploadCoordinate(entry,jsonObject,wbs);
             }
         }
         if (!jsonObject.isEmpty()) {
             return MessageService.message(Message.Type.COOR_FORMAT_ERROR, jsonObject);
         }
         SheetObject sheetObject = new SheetObject();
-        shapeService.getAllSheet(wbs,sheetObject);
+        newBuildService.getAllSheet(wbs,sheetObject);
 //		进入错误处理环节
         if (sheetObject.getUnknowWBs().size() != 0) {
-            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
+            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,newBuildService.errorMsg(sheetObject.getUnknowWBs()));
         }
-        PLACache plaCache = shapeService.reslove(sheetObject, central, wgs84Type, shape.getProject(), shape);
-        if (plaCache == null) {
+        if (sheetObject.getBuildWBs().size() != 1) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        int i = newBuildService.readSheet(sheetObject, commonType, childType1);
+        if (i == 0) {
             return MessageService.message(Message.Type.OK);
         }
-        JSONArray jsonArray = shapeService.pickedErrorMsg1(plaCache);
-        return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
+        return MessageService.message(Message.Type.FAIL);
     }
 
 //    3.建筑物excel下载
+
     /**
      * 建筑物属性下载
-     * @param projectId  projectId
-     * @param response 响应
+     *
+     * @param projectId projectId
+     * @param response  响应
      * @return OK:下载成功 Fail:下载失败
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/downloadBuild", method = RequestMethod.GET)
     public @ResponseBody
-    Message downloadBuild(@RequestParam Long projectId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
-        Project project = projectService.find(projectId);
-        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
-        Coordinate.WGS84Type wgs84Type = null;
-        if (!WGS84Type.equals("")) {
-            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+    Message downloadBuild(@RequestParam String type, @RequestParam String childType, HttpServletResponse response) {
+        NewBuild.ChildType childType1 = null;
+        CommonEnum.CommonType commonType = null;
+        if (type != null && !type.equals("")) {
+            commonType = CommonEnum.CommonType.valueOf(type);
         }
-        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
-            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+        if (childType != null && !childType.equals("")) {
+            childType1 = NewBuild.ChildType.valueOf(childType);
         }
-        if (wgs84Type == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Workbook wb = buildService.downloadBuild(project,wgs84Type);
+        Workbook wb = newBuildService.downloadBuild(commonType, childType1);
         if (wb == null) {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -167,7 +143,7 @@ public class TestBuildController {
             is = new ByteArrayInputStream(bos.toByteArray());
             String contentType = "application/vnd.ms-excel";
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate" + ".xlsx" + "\"");
             output = response.getOutputStream();
             byte b[] = new byte[1024];
             while (true) {
@@ -200,12 +176,12 @@ public class TestBuildController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        Build build = buildService.find(id);
-        if (build == null) {
+        NewBuild newBuild = newBuildService.find(id);
+        if (newBuild == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        JSONArray jsonArray = buildService.toJSON(build);
-        return MessageService.message(Message.Type.OK, jsonArray);
+        JSONObject jsonObject = newBuildService.toJSON(newBuild);
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 //    5.前台获取建筑物信息
     /**
@@ -221,23 +197,12 @@ public class TestBuildController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        Build build = buildService.find(id);
-        if (build == null) {
+        NewBuild newBuild = newBuildService.find(id);
+        if (newBuild == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        JSONObject jsonObject = buildService.buildJson(build);
+        JSONObject jsonObject = newBuildService.buildJson(newBuild);
         return MessageService.message(Message.Type.OK,jsonObject);
     }
 
-    private Message isAllowUploadCoordinateFile(Project project) {
-        if (project == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        List<Coordinate> coordinates = coordinateService.findByProject(project);
-        if (coordinates.size()< CommonAttributes.COORDINATELIMIT) {
-            return MessageService.message(Message.Type.OK);
-        }
-//        超过限制数量，返回已达到最大限制数量
-        return MessageService.message(Message.Type.PACKAGE_LIMIT);
-    }
 }

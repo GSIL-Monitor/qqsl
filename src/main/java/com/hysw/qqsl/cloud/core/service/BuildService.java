@@ -1128,7 +1128,7 @@ public class BuildService extends BaseService<Build,Long> {
         return jsonArray;
     }
 
-    public JSONArray toJSON(Build build2) {
+    public JSONObject toJSON(Build build2) {
         Build build = null;
         List<Build> builds1 = getBuilds();
         for (Build build1 : builds1) {
@@ -1138,38 +1138,24 @@ public class BuildService extends BaseService<Build,Long> {
                 break;
             }
         }
-        JSONObject jsonObject;
+        JSONObject jsonObject,jsonObject1;
         JSONArray jsonArray = new JSONArray();
         jsonObject = new JSONObject();
         jsonObject.put("id", build.getId());
-        jsonArray.add(jsonObject);
-        jsonObject = new JSONObject();
         jsonObject.put("name", build.getName());
-        jsonArray.add(jsonObject);
-        jsonObject = new JSONObject();
         jsonObject.put("type", build.getType());
-        jsonArray.add(jsonObject);
-        jsonObject = new JSONObject();
         jsonObject.put("center", build.getCenterCoor());
-        jsonArray.add(jsonObject);
-        jsonObject = new JSONObject();
         jsonObject.put("position", build.getPositionCoor());
-        jsonArray.add(jsonObject);
-        jsonObject = new JSONObject();
         jsonObject.put("designElevation", build.getDesignElevation());
-        jsonArray.add(jsonObject);
-        jsonObject = new JSONObject();
         jsonObject.put("remark", build.getRemark());
-        jsonArray.add(jsonObject);
-        jsonObject = new JSONObject();
         jsonObject.put("childType", build.getChildType() == null ? null : build.getChildType());
-        jsonArray.add(jsonObject);
         for (BuildAttribute buildAttribute : build.getBuildAttributes()) {
-            jsonObject = new JSONObject();
-            jsonObject.put("alias", buildAttribute.getAlias());
-            jsonObject.put("value", buildAttribute.getValue());
-            jsonArray.add(jsonObject);
+            jsonObject1 = new JSONObject();
+            jsonObject1.put("alias", buildAttribute.getAlias());
+            jsonObject1.put("value", buildAttribute.getValue());
+            jsonArray.add(jsonObject1);
         }
-        return jsonArray;
+        jsonObject.put("buildAttribute", jsonArray);
+        return jsonObject;
     }
 }
