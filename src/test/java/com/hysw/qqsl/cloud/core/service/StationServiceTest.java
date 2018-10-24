@@ -51,6 +51,8 @@ public class StationServiceTest extends BaseTest {
     private String gandsdzh = "B9FBC2E5D6DDB4EFC8D5CFD8";
     // 玛沁江壤
     private String maqsdzh = "B9FBC2E5D6DDC2EAC7DFCFD8";
+    // 同仁门禁
+    private String tongrmj = "FBE20180904";
 
     /**
      * 测站xml配置缓存测试
@@ -65,7 +67,8 @@ public class StationServiceTest extends BaseTest {
     /**
      * 恢复第八次迭代的水位站
      */
-    @Ignore
+    //@Ignore
+    @Test
     public void testRestoreStation() throws ParseException {
         Station station = null;
         // 湟水河1#
@@ -107,6 +110,12 @@ public class StationServiceTest extends BaseTest {
         if (station==null) {
             build(jiefq03_instanceId);
             station = stationService.findByInstanceId(jiefq03_instanceId);
+        }
+        Assert.assertNotNull(station);
+        station = stationService.findByInstanceId(tongrmj);
+        if (station==null) {
+            build(tongrmj);
+            station = stationService.findByInstanceId(tongrmj);
         }
         Assert.assertNotNull(station);
     }
@@ -188,6 +197,16 @@ public class StationServiceTest extends BaseTest {
             station.setCoor("{\"longitude\":\"101.74519193239226\",\"latitude\":\"36.62518183074351\",\"elevation\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
+            station.setTransform(true);
+        }
+        if (instanceId.equals(tongrmj)==true) {
+            station.setType(CommonEnum.StationType.CONSTRUCTION);
+            station.setName("同仁施工现场");
+            station.setDescription("同仁施工现场");
+            station.setAddress("青海省同仁县");
+            station.setCoor("{\"longitude\":\"101.74519193239226\",\"latitude\":\"36.62518183074351\",\"elevation\":\"0\"}");
+            //station.setRiverModel(getRiverModel(instanceId));
+            //station.setFlowModel(getFlowModel(instanceId));
             station.setTransform(true);
         }
         user = userService.find(16l);
