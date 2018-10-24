@@ -28,11 +28,6 @@ public class FieldWorkServiceTest extends BaseTest {
     @Autowired
     private CoordinateService coordinateService;
 
-    @Test
-    public void testWriteExcel(){
-        Workbook workbook = fieldWorkService.writeExcelByFieldWork(projectService.find(848l), Coordinate.WGS84Type.DEGREE);
-        Assert.assertTrue(workbook.getNumberOfSheets()!=0);
-    }
 
     @Test
     public void testNewBuild(){

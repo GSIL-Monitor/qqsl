@@ -269,7 +269,7 @@ public class ShapeService extends BaseService<Shape, Long> {
         for (Map.Entry<String, List<Build>> entry : plaCache.getBuildsMap().entrySet()) {
             Build build1;
             for (Build build : entry.getValue()) {
-                build1 = buildService.findByProjectAndRemark(build.getProject(), build.getRemark());
+                build1 = buildService.findByProjectIdAndRemark(build.getProjectId(), build.getRemark());
                 if (build1 == null) {
                     buildService.save(build);
                 } else {
@@ -432,7 +432,7 @@ public class ShapeService extends BaseService<Shape, Long> {
                         shapeCoordinate.setElevationList(elevation);
                         shapeCoordinate.setElevation(elevation);
                     }
-                    makeBuild(list, line1,builds,shapeCoordinate);
+                    makeBuild(list, line1,builds,shapeCoordinate,project);
                     shapeCoordinates.add(shapeCoordinate);
                 }
                 shape.setShapeCoordinates(shapeCoordinates);
@@ -447,7 +447,7 @@ public class ShapeService extends BaseService<Shape, Long> {
         }
     }
 
-    private void makeBuild(List<String> list, Line line1, List<Build> builds, ShapeCoordinate shapeCoordinate) {
+    private void makeBuild(List<String> list, Line line1, List<Build> builds, ShapeCoordinate shapeCoordinate,Project project) {
         Build build = null;
         for (int i = line1.getCellProperty().split(",").length - 2; i < line1.getCellProperty().split(",").length - 1; i++) {
             if (list.get(i+1).equals("")) {
@@ -467,6 +467,7 @@ public class ShapeService extends BaseService<Shape, Long> {
             }
             build.setRemark(list.get(i + 2));
             build.setShapeCoordinate(shapeCoordinate);
+            build.setProjectId(project.getId());
             builds.add(build);
         }
     }
@@ -977,19 +978,19 @@ public class ShapeService extends BaseService<Shape, Long> {
                 j = 0;
                 for (ShapeAttribute shapeAttribute : lineAttributeGroup.getShapeAttributes()) {
                     if (shapeAttribute.getFx() != null) {
-                        writeToCell(++i, sheet, row, cell, buildService.noBoldAndUnlocked(wb), String.valueOf(++j), shapeAttribute.getName(), shapeAttribute.getUnit(), null, shapeAttribute.getAlias(), shapeAttribute.getType(), shapeAttribute.getSelects(), wb, shapeAttribute.getLocked(), shapeAttribute.getFx());
+                        writeToCell(++i, sheet, row, cell, buildService.noBoldAndUnlocked(wb), String.valueOf(++j), shapeAttribute.getName(), shapeAttribute.getUnit(), shapeAttribute.getValue(), shapeAttribute.getAlias(), shapeAttribute.getType(), shapeAttribute.getSelects(), wb, shapeAttribute.getLocked(), shapeAttribute.getFx());
                         continue;
                     }
-                    writeToCell(++i, sheet, row, cell, buildService.noBold(wb), String.valueOf(++j), shapeAttribute.getName(), shapeAttribute.getUnit(), null, shapeAttribute.getAlias(), shapeAttribute.getType(), shapeAttribute.getSelects(), wb, shapeAttribute.getLocked(), shapeAttribute.getFx());
+                    writeToCell(++i, sheet, row, cell, buildService.noBold(wb), String.valueOf(++j), shapeAttribute.getName(), shapeAttribute.getUnit(), shapeAttribute.getValue(), shapeAttribute.getAlias(), shapeAttribute.getType(), shapeAttribute.getSelects(), wb, shapeAttribute.getLocked(), shapeAttribute.getFx());
                 }
             }else{
                 j = 0;
                 for (ShapeAttribute shapeAttribute : lineAttributeGroup.getShapeAttributes()) {
                     if (shapeAttribute.getFx() != null) {
-                        writeToCell(++i, sheet, row, cell, buildService.noBoldAndUnlocked(wb), "" + k + "." + (++j), shapeAttribute.getName(), shapeAttribute.getUnit(), null, shapeAttribute.getAlias(), shapeAttribute.getType(), shapeAttribute.getSelects(), wb, shapeAttribute.getLocked(), shapeAttribute.getFx());
+                        writeToCell(++i, sheet, row, cell, buildService.noBoldAndUnlocked(wb), "" + k + "." + (++j), shapeAttribute.getName(), shapeAttribute.getUnit(), shapeAttribute.getValue(), shapeAttribute.getAlias(), shapeAttribute.getType(), shapeAttribute.getSelects(), wb, shapeAttribute.getLocked(), shapeAttribute.getFx());
                         continue;
                     }
-                    writeToCell(++i, sheet, row, cell, buildService.noBold(wb), "" + k + "." + (++j), shapeAttribute.getName(), shapeAttribute.getUnit(), null, shapeAttribute.getAlias(), shapeAttribute.getType(), shapeAttribute.getSelects(), wb, shapeAttribute.getLocked(), shapeAttribute.getFx());
+                    writeToCell(++i, sheet, row, cell, buildService.noBold(wb), "" + k + "." + (++j), shapeAttribute.getName(), shapeAttribute.getUnit(), shapeAttribute.getValue(), shapeAttribute.getAlias(), shapeAttribute.getType(), shapeAttribute.getSelects(), wb, shapeAttribute.getLocked(), shapeAttribute.getFx());
                 }
             }
         }else{
@@ -1129,11 +1130,11 @@ public class ShapeService extends BaseService<Shape, Long> {
             buildService.remove(build1);
             buildService.flush();
         }
-//        for (Map.Entry<String, List<Build>> entry : plaCache.getBuildsMap().entrySet()) {
-//            for (Build build : entry.getValue()) {
-//                buildService.save(build);
-//            }
-//        }
+        for (Map.Entry<String, List<Build>> entry : plaCache.getBuildsMap().entrySet()) {
+            for (Build build : entry.getValue()) {
+                buildService.save(build);
+            }
+        }
     }
 
     private Map<PLACache, List<Build>> saveBuildAttribute(Map<String, List<ShapeCache>> map, String code, Coordinate.WGS84Type wgs84Type, Project project, Shape shape) {
@@ -1173,7 +1174,7 @@ public class ShapeService extends BaseService<Shape, Long> {
                 }
                 writeCoordinateToBuild(build1,buildAttributes,code,wgs84Type);
                 build1.setBuildAttributes(buildAttributes);
-                build1.setProject(project);
+                build1.setProjectId(project.getId());
                 Iterator<Build> iterator = builds1.iterator();
                 while (iterator.hasNext()) {
                     build2 = iterator.next();
@@ -1191,9 +1192,9 @@ public class ShapeService extends BaseService<Shape, Long> {
                 for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
                     jsonObject = JSONObject.fromObject(build1.getCenterCoor());
                     if (shapeCoordinate.getLon().equals(jsonObject.get("lon").toString()) && shapeCoordinate.getLat().equals(jsonObject.get("lat").toString())) {
-                        if (shapeCoordinate.getBuilds() != null && shapeCoordinate.getBuilds().size() != 0) {
-                            if (!deleteBuilds.contains(shapeCoordinate.getBuilds().get(0))) {
-                                deleteBuilds.add(shapeCoordinate.getBuilds().get(0));
+                        if (shapeCoordinate.getBuild() != null) {
+                            if (!deleteBuilds.contains(shapeCoordinate.getBuild())) {
+                                deleteBuilds.add(shapeCoordinate.getBuild());
                             }
                         }
                         build1.setShapeCoordinate(shapeCoordinate);
@@ -1238,6 +1239,7 @@ public class ShapeService extends BaseService<Shape, Long> {
                     jsonObject = coordinateXYZToBLH(split[0], split[1], code, wgs84Type);
                 } catch (Exception e) {
 //                    e.printStackTrace();
+                    continue;
                 }
                 build1.setPositionCoor(jsonObject==null?null:jsonObject.toString());
                 build1.setPositionCoorNum(buildAttribute.getRow());
@@ -1280,6 +1282,341 @@ public class ShapeService extends BaseService<Shape, Long> {
                     jsonArray.add(jsonObject);
                 }
             }
+        }
+        return jsonArray;
+    }
+
+    public Workbook downloadShapeModel(List<String> list) {
+        Workbook wb = new XSSFWorkbook();
+        List<Line> lines1 = new ArrayList<>();
+        List<Line> lines = lineService.getLines();
+        for (Line line : lines) {
+            for (String s : list) {
+                if (line.getCommonType().name().equals(s)) {
+                    lines1.add(line);
+                    break;
+                }
+            }
+        }
+        List<String> selects = new ArrayList<>();
+        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
+                continue;
+            }
+            if (commonType.getType().equals("buildModel")) {
+                selects.add(commonType.getTypeC());
+            }
+        }
+        outputShapeModel(wb, lines1,selects);
+        return wb;
+    }
+
+    private void outputShapeModel(Workbook wb, List<Line> lines, List<String> selects) {
+        for (Line line : lines) {
+            int i = 0;
+            Row row = null;
+            Cell cell = null;
+            Sheet sheet = wb.createSheet(line.getCommonType().getTypeC());
+            List<String> list = new ArrayList<>();
+            list.add("描述");
+            writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundSkyBlue(wb), list, null, null, wb, true);
+            list = new ArrayList<>();
+            String[] split = line.getCellProperty().split(",");
+            for (String s : split) {
+                list.add(s.split(":")[0]);
+            }
+            writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundYellow(wb), list, "select", selects, wb, true);
+        }
+    }
+
+    void writeToCell(int i, Sheet sheet, Row row, Cell cell, CellStyle style, List<String> list, String type, List<String> selects, Workbook wb, boolean locked) {
+        row = sheet.createRow(i);
+        for (int i1 = 0; i1 < list.size(); i1++) {
+            cell = row.createCell(i1);
+            if (list.get(i1) != null) {
+                cell.setCellValue(list.get(i1));
+            }
+            cell.setCellStyle(style);
+            sheet.autoSizeColumn(i1);
+        }
+        if (type != null) {
+            buildService.setXSSFValidation1((XSSFSheet) sheet, selects.toArray(new String[selects.size()]), i, i, list.size()-2, list.size()-2);
+        }
+    }
+
+    public List<Shape> findByProject(Project project) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("project", project));
+        return shapeDao.findList(0, null, filters);
+    }
+
+    public Workbook downloadShape(List<Shape> shapes) {
+        Workbook wb = new XSSFWorkbook();
+        Map<String, List<Shape>> map = new HashMap<>();
+        List<Shape> shapes1;
+        for (Shape shape : shapes) {
+            if (shape.getChildType() == null) {
+                if (map.get(shape.getCommonType().toString()) == null) {
+                    shapes1 = new ArrayList<>();
+                    shapes1.add(shape);
+                    map.put(shape.getCommonType().toString(), shapes1);
+                } else {
+                    shapes1 = map.get(shape.getCommonType().toString());
+                    shapes1.add(shape);
+                    map.put(shape.getCommonType().toString(), shapes1);
+                }
+            } else {
+                if (map.get(shape.getChildType().toString()) == null) {
+                    shapes1 = new ArrayList<>();
+                    shapes1.add(shape);
+                    map.put(shape.getChildType().toString(), shapes1);
+                } else {
+                    shapes1 = map.get(shape.getChildType().toString());
+                    shapes1.add(shape);
+                    map.put(shape.getChildType().toString(), shapes1);
+                }
+            }
+        }
+        outputShape(wb, map);
+        return wb;
+    }
+
+    private void outputShape(Workbook wb, Map<String, List<Shape>> map) {
+        Line line;
+        List<String> list;
+        Row row = null;
+        Cell cell = null;
+        Sheet sheet;
+        JSONObject jsonObject = null;
+        JSONArray jsonArray;
+        int size;
+        for (Map.Entry<String, List<Shape>> entry : map.entrySet()) {
+            try {
+                sheet = wb.createSheet(CommonEnum.CommonType.valueOf(entry.getKey()).getTypeC());
+            } catch (Exception e) {
+                sheet = wb.createSheet(LineSectionPlaneModel.Type.valueOf(entry.getKey()).getTypeC());
+            }
+            int i = 0;
+            for (Shape shape : entry.getValue()) {
+                line = getLine(shape);
+                String[] split = line.getCellProperty().split(",");
+                list = new ArrayList<>();
+                list.add("描述");
+                list.add(shape.getRemark());
+                size = list.size();
+                for (int i1 = 0; i1 < split.length - size; i1++) {
+                    list.add("");
+                }
+                writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundSkyBlue(wb), list, null, null, wb, true);
+                list = new ArrayList<>();
+                for (String s : split) {
+                    list.add(s.split(":")[0]);
+                }
+                writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundYellow(wb), list, null, null, wb, true);
+                List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
+                for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
+                    list = new ArrayList<>();
+                    list.add(shapeCoordinate.getLon());
+                    list.add(shapeCoordinate.getLat());
+                    jsonArray = JSONArray.fromObject(shapeCoordinate.getElevations());
+                    for (int i1 = 2; i1 < split.length; i1++) {
+                        for (Object o : jsonArray) {
+                            jsonObject = (JSONObject) o;
+                            if (jsonObject.get("alias").toString().equals(split[i1].split(":")[1])) {
+                                list.add(String.valueOf(jsonObject.get("ele")));
+                                break;
+                            }
+                        }
+                    }
+                    if (shapeCoordinate.getBuild() != null) {
+                        list.add(shapeCoordinate.getBuild().getType().getTypeC());
+                        list.add(shapeCoordinate.getBuild().getRemark());
+                    } else {
+                        if (split.length > 3) {
+                            list.add("");
+                            list.add("");
+                        }
+                    }
+                    writeToCell(i++, sheet, row, cell, buildService.noBold(wb), list, null, null, wb, true);
+                }
+            }
+        }
+    }
+
+    private Line getLine(Shape shape){
+        List<Line> lines = lineService.getLines();
+        for (Line line : lines) {
+            if (shape.getCommonType() == line.getCommonType()) {
+                return line;
+            }
+        }
+        return null;
+    }
+
+    public Workbook downloadSectionPlane(List<Shape> shapes) {
+        Workbook wb = new XSSFWorkbook();
+        List<LineSectionPlaneModel> lineSectionPlaneModels1 = new ArrayList<>();
+        for (Shape shape : shapes) {
+            if (!shape.getCommonType().getType().equals("line")) {
+                continue;
+            }
+            LineSectionPlaneModel lineSectionPlaneModel = pickedShapeAndSetProperty(shape);
+            if (lineSectionPlaneModel.getShapeAttribute().size() != 0) {
+                lineSectionPlaneModels1.add(lineSectionPlaneModel);
+            }
+        }
+        if (lineSectionPlaneModels1.size() != 0) {
+            outLineSectionPlaneModel(wb, lineSectionPlaneModels1);
+        } else {
+            wb = null;
+        }
+        return wb;
+    }
+
+    public LineSectionPlaneModel pickedShapeAndSetProperty(Shape shape) {
+        List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
+        LineSectionPlaneModel lineSectionPlaneModel1 = null;
+        List<LineSectionPlaneModel> lineSectionPlaneModels = lineSectionPlaneModelService.getLineSectionPlaneModel();
+        for (LineSectionPlaneModel lineSectionPlaneModel : lineSectionPlaneModels) {
+            if (shape.getChildType() != null) {
+                if (lineSectionPlaneModel.getType() == shape.getChildType()) {
+                    lineSectionPlaneModel1 = (LineSectionPlaneModel) SettingUtils.objectCopy(lineSectionPlaneModel);
+                    break;
+                }
+            } else {
+                if (lineSectionPlaneModel.getType().getCommonType() == shape.getCommonType()) {
+                    lineSectionPlaneModel1 = (LineSectionPlaneModel) SettingUtils.objectCopy(lineSectionPlaneModel);
+                    break;
+                }
+            }
+        }
+        if (lineSectionPlaneModel1 == null) {
+            return null;
+        }
+        lineSectionPlaneModel1.setShapeAttribute(shapeAttributes);
+        setProperty(lineSectionPlaneModel1);
+        return lineSectionPlaneModel1;
+    }
+
+    /**
+     * 匹配建筑物数据
+     * sign=true 匹配属性
+     *
+     * @param lineSectionPlaneModel
+     */
+    public void setProperty(LineSectionPlaneModel lineSectionPlaneModel) {
+        attributeGroupNotNuLL(lineSectionPlaneModel.getRemark(), lineSectionPlaneModel.getShapeAttribute());
+        attributeGroupNotNuLL(lineSectionPlaneModel.getLineWaterResources(), lineSectionPlaneModel.getShapeAttribute());
+        attributeGroupNotNuLL(lineSectionPlaneModel.getLineControlSize(), lineSectionPlaneModel.getShapeAttribute());
+        attributeGroupNotNuLL(lineSectionPlaneModel.getLineGroundStress(), lineSectionPlaneModel.getShapeAttribute());
+        attributeGroupNotNuLL(lineSectionPlaneModel.getLineComponent(), lineSectionPlaneModel.getShapeAttribute());
+    }
+
+    private void attributeGroupNotNuLL(LineAttributeGroup attributeGroup, List<ShapeAttribute> attributeList) {
+        if (attributeGroup == null) {
+            return;
+        }
+        setAttribute(attributeGroup.getShapeAttributes(), attributeList);
+        setChild(attributeGroup.getChilds(), attributeList);
+    }
+
+    /**
+     * 匹配属性
+     *
+     * @param shapeAttributes    输出的
+     * @param attributeList 数据库中的
+     */
+    private void setAttribute(List<ShapeAttribute> shapeAttributes, List<ShapeAttribute> attributeList) {
+        if (shapeAttributes == null) {
+            return;
+        }
+        for (ShapeAttribute shapeAttribute : shapeAttributes) {
+            for (ShapeAttribute shapeAttribute1 : attributeList) {
+                if (shapeAttribute.getAlias().equals(shapeAttribute1.getAlias())) {
+                    shapeAttribute.setValue(shapeAttribute1.getValue());
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 子节点匹配属性
+     *
+     * @param attributeGroups
+     * @param attributeList
+     */
+    private void setChild(List<LineAttributeGroup> attributeGroups, List<ShapeAttribute> attributeList) {
+        if (attributeGroups == null) {
+            return;
+        }
+        for (LineAttributeGroup attributeGroup : attributeGroups) {
+            setAttribute(attributeGroup.getShapeAttributes(), attributeList);
+            setChild(attributeGroup.getChilds(), attributeList);
+        }
+    }
+
+    public JSONObject buildJson(Shape shape) {
+        JSONObject jsonObject = new JSONObject(),jsonObject1;
+        jsonObject.put("remark", shape.getRemark());
+        jsonObject.put("childType", shape.getChildType()==null?null:shape.getChildType().getTypeC());
+        jsonObject.put("commonType", shape.getCommonType().getTypeC());
+        jsonObject.put("id", shape.getId());
+        List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
+        JSONArray jsonArray = new JSONArray();
+        for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
+            jsonObject1 = new JSONObject();
+            jsonObject1.put("id", shapeCoordinate.getId());
+            jsonObject1.put("lon", shapeCoordinate.getLat());
+            jsonObject1.put("lat", shapeCoordinate.getLat());
+            jsonObject1.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
+            jsonArray.add(jsonObject1);
+        }
+        jsonObject.put("shapeCoordinate", jsonArray);
+        return jsonObject;
+    }
+
+    public JSONArray getModelType() {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject;
+        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
+                continue;
+            }
+            if (commonType.getType().equals("buildModel")) {
+                continue;
+            }
+            jsonObject = new JSONObject();
+            jsonObject.put("typeC", commonType.getTypeC());
+            jsonObject.put("commonType", commonType.name());
+            jsonObject.put("type", commonType.getType());
+            jsonObject.put("buildType", commonType.getBuildType());
+            jsonObject.put("abbreviate", commonType.getAbbreviate());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    /**
+     * 错误处理
+     * @param unknowWBs
+     */
+    public JSONArray errorMsg(Map<String, List<Sheet>> unknowWBs) {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject;
+        StringBuffer sb = null;
+        for (Map.Entry<String, List<Sheet>> entry : unknowWBs.entrySet()) {
+            List<Sheet> sheets = entry.getValue();
+            sb = new StringBuffer("sheet表：");
+            for (Sheet sheet : sheets) {
+                sb.append(sheet.getSheetName());
+                sb.append("，");
+            }
+            sb.replace(sb.length() - 1, sb.length(), "：");
+            sb.append("未知类型");
+            jsonObject = new JSONObject();
+            jsonObject.put(entry.getKey(), sb.toString());
+            jsonArray.add(jsonObject);
         }
         return jsonArray;
     }

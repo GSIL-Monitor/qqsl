@@ -28,10 +28,12 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -511,6 +513,32 @@ public class OssService extends BaseService<Oss,Long>{
 		return objectFiles;
 	}
 
+	public List<ObjectFile> getFileInFolder(String dir,String bucketName){
+		List<ObjectFile> objectFiles = new ArrayList<>();
+		getAllFiles(dir, objectFiles, bucketName);
+		return objectFiles;
+	}
+
+	private void getAllFiles(String dir, List<ObjectFile> objectFiles, String bucketName) {
+		List<String> folders = getFolder(dir, bucketName);
+		// office文件夹
+		List<ObjectFile> files = new ArrayList<ObjectFile>();
+		List<OSSObjectSummary> ossObjectSummaries = getObjects(dir, bucketName);
+		if (ossObjectSummaries.size() != 0) {
+			getFiles(files, ossObjectSummaries, bucketName);
+			objectFiles.addAll(files);
+		}
+		for (String folder : folders) {
+			files = new ArrayList<ObjectFile>();
+			ossObjectSummaries = getObjects(folder.substring(0, folder.length() - 1), bucketName);
+			if (ossObjectSummaries.size() != 0) {
+				getFiles(files, ossObjectSummaries, bucketName);
+				objectFiles.addAll(files);
+			}
+			getAllFiles(folder.substring(0,folder.length()-1), objectFiles, bucketName);
+		}
+	}
+
 	/**
 	 * 取得目录下的文件
 	 * 
@@ -835,5 +863,42 @@ public class OssService extends BaseService<Oss,Long>{
 	public void copyOrigin(String originUrl) {
 		CopyObjectResult result = client.copyObject("qqsl-dev",originUrl, "qqsl",originUrl);
 		System.out.println("-------ETag: " + result.getETag() + " LastModified: " + result.getLastModified());
+	}
+
+	public void downloadFileToFolder(List<ObjectFile> objectFiles, String filePath) {
+		for (ObjectFile objectFile : objectFiles) {
+			try {
+				downloadFolderFileToLocal(objectFile.getKey(), filePath);
+			} catch (Exception e) {
+				continue;
+			}
+		}
+	}
+
+	public void downloadFolderFileToLocal(String key, String path){
+// 下载object到文件
+		String s = path + key.substring(key.indexOf("21B1") + 4);
+		File file = new File(s.substring(0, s.lastIndexOf("/")));
+		file.mkdirs();
+		file = new File(s);
+		client.getObject(new GetObjectRequest(CommonAttributes.BUCKET_NAME, key), file);
+	}
+
+	/**
+	 * 获取目标文件path
+	 */
+	public String getTargetFilePath() {
+		String path = null;
+		try {
+			path = new ClassPathResource("qqsl.xml").getFile().getPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		path = path.substring(0, path.lastIndexOf(System.getProperty("file.separator"))) + System.getProperty("file.separator");
+		File file = new File(path);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+		return path;
 	}
 }

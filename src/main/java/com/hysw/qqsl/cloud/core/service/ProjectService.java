@@ -1111,4 +1111,13 @@ public class ProjectService extends BaseService<Project, Long> {
         return projectJsons;
     }
 
+    public Project findByTreePath(String treePath) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("treePath", treePath));
+        List<Project> list = projectDao.findList(0, null, filters);
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+        return null;
+    }
 }

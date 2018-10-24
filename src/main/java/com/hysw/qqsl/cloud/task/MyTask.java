@@ -178,9 +178,4 @@ public class MyTask {
         logger.info("效验token过期");
     }
 
-    @Scheduled(fixedDelay = 60000*5 )
-    public void deletePLACache(){
-        coordinateService.deteteCache();
-        logger.info("删除PAL缓存");
-    }
 }

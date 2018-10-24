@@ -4,7 +4,7 @@ import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.FieldWorkDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.buildModel.AttributeGroup;
-import com.hysw.qqsl.cloud.core.entity.buildModel.Graph;
+import com.hysw.qqsl.cloud.core.entity.buildModel.CoordinateBase;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
@@ -39,8 +39,16 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
     @Autowired
     private ElementDBService elementDBService;
     @Autowired
+    private FieldWorkPointService fieldWorkPointService;
+    @Autowired
     public void setBaseDao(FieldWorkDao fieldWorkDao) {
         super.setBaseDao(fieldWorkDao);
+    }
+
+    public boolean saveField(Map<String, Object> objectMap) {
+
+        System.out.println();
+        return false;
     }
 
     /**
@@ -84,47 +92,6 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         return null;
     }
 
-    /**
-     * 点线面坐标文件转字符串
-     *
-     * @param list
-     * @return
-     */
-    private String listToString(List<Graph> list, JSONArray coordinates) {
-        List<JSONObject> objects = new ArrayList<>();
-        JSONObject jsonObject;
-        JSONObject coordinate;
-//        Coordinate.Type type = null;
-        CommonEnum.CommonType baseType = null;
-        String description = null;
-        for (int i = 0; i < list.size(); i++) {
-            jsonObject = new JSONObject();
-            jsonObject.put("longitude", list.get(i).getCoordinates().get(0).getLongitude());
-            jsonObject.put("latitude", list.get(i).getCoordinates().get(0).getLatitude());
-            jsonObject.put("elevation", list.get(i).getCoordinates().get(0).getElevation());
-//            type= Coordinate.Type.FIELD;
-            baseType = list.get(i).getBaseType();
-            if (list.get(i).getDescription() == null) {
-                continue;
-            } else {
-                description = list.get(i).getDescription();
-            }
-            objects.add(jsonObject);
-            coordinate = new JSONObject();
-            coordinate.put("coordinate", objects);
-            if (baseType != null) {
-//                coordinate.put("type",type.toString());
-                coordinate.put("baseType", baseType.toString());
-                coordinate.put("alias", list.get(i).getAlias());
-                if (description != null) {
-                    coordinate.put("description", description);
-                }
-            }
-            coordinates.add(coordinate);
-            objects = new ArrayList<>();
-        }
-        return coordinates.toString();
-    }
 
     /**
      * 根据项目以及保存时的来源（设计、外业）返回坐标和建筑物简单数据Json
@@ -177,6 +144,7 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         build.setDesignElevation(build1.getDesignElevation());
         build.setId(build1.getId());
         build.setRemark(build1.getRemark());
+        build.setShapeCoordinate(build1.getShapeCoordinate());
         if (!sign) {
             return;
         }
@@ -299,23 +267,23 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         return wb;
     }
 
-    public Workbook writeExcelByFieldWork(Project project, Coordinate.WGS84Type wgs84Type) {
-        List<FieldWork> fieldWorks =findByProject(project);
-        JSONArray jsonArray = matchFieldWork(fieldWorks);
-        List<Build> builds2 = buildService.findByProjectAndSource(project, Build.Source.FIELD);
-        List<Build> list = matchBuild(builds2, true);
-        putBuildOnline(jsonArray, list);
-        Workbook wb = new XSSFWorkbook();
-        String central = coordinateService.getCoordinateBasedatum(project);
-        if (central == null || central.equals("null") || central.equals("")) {
-            return null;
-        }
-        String code = transFromService.checkCode84(central);
-        writeCoordinateToExcelField(jsonArray, wb, code, wgs84Type);
-        return wb;
-    }
+//    public Workbook writeExcelByFieldWork(Project project, Coordinate.WGS84Type wgs84Type) {
+//        List<FieldWork> fieldWorks =findByProject(project);
+//        JSONArray jsonArray = matchFieldWork(fieldWorks);
+//        List<Build> builds2 = buildService.findByProjectAndSource(project, Build.Source.FIELD);
+//        List<Build> list = matchBuild(builds2, true);
+//        putBuildOnline(jsonArray, list);
+//        Workbook wb = new XSSFWorkbook();
+//        String central = coordinateService.getCoordinateBasedatum(project);
+//        if (central == null || central.equals("null") || central.equals("")) {
+//            return null;
+//        }
+//        String code = transFromService.checkCode84(central);
+//        writeCoordinateToExcelField(jsonArray, wb, code, wgs84Type);
+//        return wb;
+//    }
 
-    private List<FieldWork> findByProject(Project project) {
+    public List<FieldWork> findByProject(Project project) {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("project", project));
         return fieldWorkDao.findList(0, null, filters);
@@ -451,16 +419,16 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         return jsonArray;
     }
 
-    public JSONArray matchFieldWork(List<FieldWork> fieldWorks) {
-        JSONArray jsonArray = new JSONArray();
-        for (FieldWork fieldWork : fieldWorks) {
-            JSONArray jsonArray1 = JSONArray.fromObject(fieldWork.getCoordinateStr());
-            for (Object o : jsonArray1) {
-                putIdInJson(fieldWork,jsonArray,o);
-            }
-        }
-        return jsonArray;
-    }
+//    public JSONArray matchFieldWork(List<FieldWork> fieldWorks) {
+//        JSONArray jsonArray = new JSONArray();
+//        for (FieldWork fieldWork : fieldWorks) {
+//            JSONArray jsonArray1 = JSONArray.fromObject(fieldWork.getCoordinateStr());
+//            for (Object o : jsonArray1) {
+//                putIdInJson(fieldWork,jsonArray,o);
+//            }
+//        }
+//        return jsonArray;
+//    }
 
     /**
      * 将id放入Json中
@@ -648,8 +616,8 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         build1.setCenterCoor(String.valueOf(jsonObject));
         build1.setRemark(remark.toString());
         Project project = projectService.find(Long.valueOf(projectId.toString()));
-        build1.setProject(project);
-        build1.setCommonId(Long.valueOf(commonId.toString()));
+        build1.setProjectId(project.getId());
+//        build1.setCommonId(Long.valueOf(commonId.toString()));
         buildService.save(build1);
         return true;
     }
@@ -704,9 +672,9 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
             jsonObject = new JSONObject();
             jsonObject.put("id", build.getId());
             jsonObject.put("centerCoor", build.getCenterCoor());
-            if (build.getCommonId() != null) {
-                jsonObject.put("commonId", build.getCommonId());
-            }
+//            if (build.getCommonId() != null) {
+//                jsonObject.put("commonId", build.getCommonId());
+//            }
             if (build.getPositionCoor() != null) {
                 jsonObject.put("positionCoor", build.getPositionCoor());
             }
@@ -827,5 +795,115 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         jsonObject.put("lon", longitude);
         jsonObject.put("lat", latitude);
         return jsonObject;
+    }
+
+    public boolean saveFieldWork(Project project, Object coordinatesObject, String name, String accountId, String deviceMac) {
+        FieldWork fieldWork = findByProjectAndDeviceMac(project, deviceMac);
+        if (fieldWork == null) {
+            fieldWork = new FieldWork();
+            fieldWork.setAccountId(Long.valueOf(accountId));
+            fieldWork.setDeviceMac(deviceMac);
+            fieldWork.setName(name);
+            fieldWork.setProject(project);
+            save(fieldWork);
+        }
+        FieldWorkPoint fieldWorkPoint;
+        List<FieldWorkPoint> fieldWorkPoints = fieldWorkPointService.findByFieldWork(fieldWork);
+        List<Map<String, Object>> coordinatesList = (List<Map<String, Object>>) coordinatesObject;
+        for (Map<String, Object> map : coordinatesList) {
+            Object type = map.get("type");
+            Object center = map.get("center");
+            Object position = map.get("position");
+            Object description = map.get("description");
+            Object alias = map.get("alias");
+            Object delete = map.get("delete");
+            if (type == null || center == null || description == null || alias == null || delete == null) {
+                return false;
+            }
+            Object lon = ((Map<String, String>) center).get("longitude");
+            Object lat = ((Map<String, String>) center).get("latitude");
+            Object ele = ((Map<String, String>) center).get("elevation");
+            if (lon == null || lat == null || ele == null) {
+                return false;
+            }
+            CoordinateBase coordinateBase = new CoordinateBase(lon.toString(), lat.toString(), ele.toString());
+            fieldWorkPoint = checkTheCenterIsSame(coordinateBase, fieldWorkPoints);
+            if (Boolean.valueOf(delete.toString()) && fieldWorkPoint != null) {
+                fieldWorkPointService.remove(fieldWorkPoint);
+                continue;
+            }
+            if (fieldWorkPoint == null) {
+                fieldWorkPoint = new FieldWorkPoint();
+                fieldWorkPoint.setAlias(alias.toString());
+                fieldWorkPoint.setCenterCoor(coordinateBase.toJSON());
+                fieldWorkPoint.setCommonType(CommonEnum.CommonType.valueOf(type.toString()));
+                fieldWorkPoint.setDescription(description.toString());
+                fieldWorkPoint.setFieldWork(fieldWork);
+                if (position != null) {
+                    fieldWorkPoint.setPositionCoor(new CoordinateBase(((Map<String, Object>) position).get("longitude").toString(),((Map<String, Object>) position).get("latitude").toString(),((Map<String, Object>) position).get("elevation").toString()).toJSON());
+                }
+                fieldWorkPointService.save(fieldWorkPoint);
+            }
+
+        }
+        return true;
+    }
+
+    /**
+     * 检查已存在数据中中心点坐标相同的数据
+     * @param fieldWorkPoints
+     * */
+    private FieldWorkPoint checkTheCenterIsSame(CoordinateBase coordinateBase, List<FieldWorkPoint> fieldWorkPoints) {
+        CoordinateBase coordinateBase1;
+        for (FieldWorkPoint fieldWorkPoint : fieldWorkPoints) {
+            coordinateBase1 = new CoordinateBase(fieldWorkPoint.getCenterCoor());
+            if (coordinateBase.getLon().equals(coordinateBase1.getLon()) && coordinateBase.getLat().equals(coordinateBase1.getLat()) && coordinateBase.getEle().equals(coordinateBase1.getEle())) {
+                return fieldWorkPoint;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据项目和deviceMac查询FieldWork
+     * @param project
+     * @param deviceMac
+     * @return
+     */
+    private FieldWork findByProjectAndDeviceMac(Project project, String deviceMac) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("project", project));
+        filters.add(Filter.eq("deviceMac", deviceMac));
+        List<FieldWork> list = fieldWorkDao.findList(0, null, filters);
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    public JSONArray toJSON(List<FieldWork> fieldWorks) {
+        JSONArray jsonArray = new JSONArray(),jsonArray1;
+        JSONObject jsonObject,jsonObject1;
+        for (FieldWork fieldWork : fieldWorks) {
+            jsonObject = new JSONObject();
+            jsonObject.put("name", fieldWork.getName());
+            jsonObject.put("deviceMac", fieldWork.getDeviceMac());
+            jsonArray1 = new JSONArray();
+            for (FieldWorkPoint fieldWorkPoint : fieldWorkPointService.findByFieldWork(fieldWork)) {
+                jsonObject1 = new JSONObject();
+                jsonObject1.put("id",fieldWorkPoint.getId());
+                jsonObject1.put("centerCoor",fieldWorkPoint.getCenterCoor());
+                jsonObject1.put("alias",fieldWorkPoint.getAlias());
+                jsonObject1.put("commonType",fieldWorkPoint.getCommonType().getTypeC());
+                jsonObject1.put("description",fieldWorkPoint.getDescription());
+                jsonObject1.put("positionCoor",fieldWorkPoint.getPositionCoor());
+                jsonArray1.add(jsonObject1);
+            }
+            jsonObject.put("fieldWorkPoints", jsonArray1);
+            jsonObject.put("id", fieldWork.getId());
+            jsonObject.put("modifyDate", fieldWork.getModifyDate().getTime());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
     }
 }

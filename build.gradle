@@ -104,6 +104,7 @@ dependencies {
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "com.jayway.jsonpath:json-path:$jsonpathVersion"
 //    testCompile 'com.google.code.gson:gson:2.2.4'
+    compile group: 'org.apache.ant', name: 'ant', version: '1.10.5'
 }
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 

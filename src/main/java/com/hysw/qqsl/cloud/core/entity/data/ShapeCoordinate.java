@@ -26,7 +26,7 @@ public class ShapeCoordinate extends BaseEntity {
     private Shape shape;
     private int cellNum;
     private boolean errorMsg;
-    private List<Build> builds;
+    private Build build;
 
     public String getLon() {
         return lon;
@@ -103,13 +103,12 @@ public class ShapeCoordinate extends BaseEntity {
         this.errorMsg = errorMsg;
     }
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy = "shapeCoordinate")
-    @JsonIgnore
-    public List<Build> getBuilds() {
-        return builds;
+    @OneToOne(mappedBy = "shapeCoordinate")
+    public Build getBuild() {
+        return build;
     }
 
-    public void setBuilds(List<Build> builds) {
-        this.builds = builds;
+    public void setBuild(Build build) {
+        this.build = build;
     }
 }

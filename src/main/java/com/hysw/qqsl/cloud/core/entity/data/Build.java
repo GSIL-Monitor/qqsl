@@ -34,7 +34,7 @@ public class Build extends BaseEntity{
     /**建筑物属性*/
     private List<BuildAttribute> buildAttributes;
     /** 所属项目 */
-    private Project project;
+    private Long projectId;
     /** 中心坐标 */
     private String centerCoor;
     private int centerCoorNum;
@@ -49,8 +49,8 @@ public class Build extends BaseEntity{
     /** 描述 */
     private String remark;
     private int remarkNum;
-    /** 外业fieldWork或内业coordinate坐标id */
-    private Long commonId;
+//    /** 外业fieldWork或内业coordinate坐标id */
+//    private Long commonId;
     /** 错误标记 */
     private boolean errorMsg=false;
     /** 随机字符串 */
@@ -66,9 +66,6 @@ public class Build extends BaseEntity{
          */
         DILSXLC(CommonEnum.CommonType.XIAOLC, "buildModel", "底流式消力池", "dlsxlc"),
         KAICSSZ(CommonEnum.CommonType.FSZ, "buildModel", "开敞式水闸", "kcssz"),
-        ZHONGLSDQ(CommonEnum.CommonType.DANGQ, "buildModel", "重力式挡墙", "zlsdq"),
-        FUBSDQ(CommonEnum.CommonType.DANGQ, "buildModel", "扶臂式挡墙", "fbsdq"),
-        ANPSDQ(CommonEnum.CommonType.DANGQ, "buildModel", "岸坡式挡墙", "apsdq"),
         YUANXXSC(CommonEnum.CommonType.XSC, "buildModel", "圆形蓄水池", "yxxsc"),
         ;
         //必须增加一个构造函数,变量,得到该变量的值\
@@ -159,16 +156,15 @@ public class Build extends BaseEntity{
         this.buildAttributes = buildAttributes;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    public Project getProject() {
-        return project;
+    public Long getProjectId() {
+        return projectId;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
+    @Transient
     public String getCenterCoor() {
         return centerCoor;
     }
@@ -292,15 +288,15 @@ public class Build extends BaseEntity{
         this.number = number;
     }
 
-    public Long getCommonId() {
-        return commonId;
-    }
+//    public Long getCommonId() {
+//        return commonId;
+//    }
+//
+//    public void setCommonId(Long commonId) {
+//        this.commonId = commonId;
+//    }
 
-    public void setCommonId(Long commonId) {
-        this.commonId = commonId;
-    }
-
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne
     @JsonIgnore
     public ShapeCoordinate getShapeCoordinate() {
         return shapeCoordinate;

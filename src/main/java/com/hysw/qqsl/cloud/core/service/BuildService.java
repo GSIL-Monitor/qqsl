@@ -38,6 +38,10 @@ public class BuildService extends BaseService<Build,Long> {
     @Autowired
     private CacheManager cacheManager;
     @Autowired
+    private CoordinateService coordinateService;
+    @Autowired
+    private TransFromService transFromService;
+    @Autowired
     public void setBaseDao(BuildDao buildDao) {
         super.setBaseDao( buildDao);
     }
@@ -57,7 +61,7 @@ public class BuildService extends BaseService<Build,Long> {
 
     public List<Build> findByProjectAndSource(Project project, Build.Source source) {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("project", project));
+        filters.add(Filter.eq("projectId", project.getId()));
         filters.add(Filter.eq("source", source));
         List<Build> list = buildDao.findList(0, null, filters);
         for (Build build : list) {
@@ -72,6 +76,13 @@ public class BuildService extends BaseService<Build,Long> {
         return list;
     }
 
+    public List<Build> findByProject(Project project) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("project", project));
+        List<Build> list = buildDao.findList(0, null, filters);
+        return list;
+    }
+
     public JSONObject buildJson(Build build2) {
         Build build = null;
         List<Build> builds1 = getBuilds();
@@ -82,14 +93,17 @@ public class BuildService extends BaseService<Build,Long> {
                 break;
             }
         }
-        JSONObject jsonObject;
-        JSONObject jsonObject1;
+        JSONObject jsonObject, jsonObject1;
         jsonObject = new JSONObject();
         jsonObject.put("id", build.getId());
         jsonObject.put("name", build.getName());
         jsonObject.put("alias", build.getAlias());
         jsonObject.put("type", build.getType());
-        jsonObject.put("centerCoor", build.getCenterCoor());
+        ShapeCoordinate shapeCoordinate = build.getShapeCoordinate();
+        jsonObject1 = new JSONObject();
+        jsonObject1.put("lon", shapeCoordinate.getLon());
+        jsonObject1.put("lat", shapeCoordinate.getLat());
+        jsonObject.put("centerCoor", jsonObject1);
         jsonObject.put("positionCoor", build.getPositionCoor());
         jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType()==null?null:build.getChildType().name());
@@ -182,13 +196,6 @@ public class BuildService extends BaseService<Build,Long> {
         }
     }
 
-    public List<Build> findByCommonId(long id, Build.Source source) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("commonId", id));
-        filters.add(Filter.eq("source", source));
-        return buildDao.findList(0, null, filters);
-     }
-
     public void removes(List<Build> builds) {
         for (Build build : builds) {
             remove(build);
@@ -234,6 +241,7 @@ public class BuildService extends BaseService<Build,Long> {
             }
             buildMap.put(build.getAlias(),build);
         }
+        System.out.println();
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getCoordinate(),stringAlias);
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getWaterResources(),stringAlias);
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getControlSize(),stringAlias);
@@ -655,7 +663,7 @@ public class BuildService extends BaseService<Build,Long> {
                             comment = null;
                             continue;
                         }else{
-                            build.setProject(project);
+                            build.setProjectId(project.getId());
                             build.setBuildAttributes(buildAttributes);
                             if (buildMap.get(entry.getKey()) == null) {
                                 builds = new ArrayList<>();
@@ -701,7 +709,7 @@ public class BuildService extends BaseService<Build,Long> {
                     buildAttribute.setBuild(build);
                     buildAttributes.add(buildAttribute);
                     if (j == sheet.getLastRowNum()) {
-                        build.setProject(project);
+                        build.setProjectId(project.getId());
                         build.setBuildAttributes(buildAttributes);
                         if (buildMap.get(entry.getKey()) == null) {
                             builds = new ArrayList<>();
@@ -794,6 +802,9 @@ public class BuildService extends BaseService<Build,Long> {
         for (Map.Entry<String, List<Build>> entry : map.entrySet()) {
             int i = 0, j = 0, k = 0;
             for (Build build : entry.getValue()) {
+                if (build.getCenterCoor() == null) {
+                    continue;
+                }
                 if (build.getBuildAttributes().size() == 3) {
                     continue;
                 }
@@ -900,6 +911,9 @@ public class BuildService extends BaseService<Build,Long> {
         BuildAttribute buildAttribute;
         List<BuildAttribute> buildAttributes;
         for (Build build : builds) {
+            if (build.getCenterCoor() == null) {
+                continue;
+            }
             buildAttributes = build.getBuildAttributes();
             buildAttribute = new BuildAttribute();
             buildAttribute.setValue(jsonToCoordinate(build.getCenterCoor(), code, wgs84Type));
@@ -926,84 +940,9 @@ public class BuildService extends BaseService<Build,Long> {
     private String jsonToCoordinate(String coor, String code, Coordinate.WGS84Type wgs84Type) {
         JSONObject jsonObject = JSONObject.fromObject(coor);
         JSONObject jsonObject1 = fieldWorkService.coordinateBLHToXYZ(jsonObject.get("lon").toString(), jsonObject.get("lat").toString(), code, wgs84Type);
-        return jsonObject1.get("lon") + "," + jsonObject1.get("lat") + "," + jsonObject.get("ele");
+        return jsonObject1.get("lon") + "," + jsonObject1.get("lat");
     }
 
-    public void saveBuild(Build build, List<Build> builds, List<Coordinate> coordinates,List<Build> builds1) {
-        Build build1;
-        if (build.isErrorMsg()) {
-            return;
-        }
-        Coordinate coordinate = buildBelongToCoordinate(build, coordinates);
-        if (builds.size() == 0) {
-            build.setSource(Build.Source.DESIGN);
-            if (coordinate != null) {
-                build.setCommonId(coordinate.getId());
-            } else {
-                build.setCommonId(null);
-            }
-            save(build);
-            builds1.add(build);
-            return;
-        }
-        boolean flag = true;
-        Iterator<Build> iterator = builds.iterator();
-        while (iterator.hasNext()) {
-            build1 = iterator.next();
-            if (checkCenterCoordinateIsSame(build1.getCenterCoor(), build.getCenterCoor())) {
-                if (build1.getBuildAttributes().size() == 0 && (build.getBuildAttributes() == null || build.getBuildAttributes().size() == 0)) {
-                    build1.setPositionCoor(build.getPositionCoor());
-                    build1.setDesignElevation(build.getDesignElevation());
-                    build1.setRemark(build.getRemark());
-                    build1.setChildType(build.getChildType());
-                    build1.setType(build.getType());
-                    if (coordinate != null) {
-                        build1.setCommonId(coordinate.getId());
-                    } else {
-                        build1.setCommonId(null);
-                    }
-                    build1.setSource(Build.Source.DESIGN);
-                    save(build1);
-                } else if (build1.getBuildAttributes().size() == 0) {
-                    remove(build1);
-                    builds.remove(build1);
-                    build.setSource(Build.Source.DESIGN);
-                    if (coordinate != null) {
-                        build.setCommonId(coordinate.getId());
-                    } else {
-                        build.setCommonId(null);
-                    }
-                    save(build);
-                    builds1.add(build);
-                } else if (build.getBuildAttributes().size() == 0) {
-
-                } else {
-                    remove(build1);
-                    builds.remove(build1);
-                    build.setSource(Build.Source.DESIGN);
-                    if (coordinate != null) {
-                        build.setCommonId(coordinate.getId());
-                    } else {
-                        build.setCommonId(null);
-                    }
-                    save(build);
-                    builds1.add(build);
-                }
-                flag = false;
-                break;
-            }
-        }
-        if (flag) {
-            build.setSource(Build.Source.DESIGN);
-            if (coordinate != null) {
-                build.setCommonId(coordinate.getId());
-            } else {
-                build.setCommonId(null);
-            }
-            save(build);
-            builds1.add(build);
-        }
-    }
 
     private Coordinate buildBelongToCoordinate(Build build, List<Coordinate> coordinates) {
         JSONArray jsonArray;
@@ -1103,9 +1042,9 @@ public class BuildService extends BaseService<Build,Long> {
         }
     }
 
-    public Build findByProjectAndRemark(Project project, String remark) {
+    public Build findByProjectIdAndRemark(Long projectId, String remark) {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("project", project));
+        filters.add(Filter.eq("projectId", projectId));
         filters.add(Filter.eq("remark", remark));
         List<Build> list = buildDao.findList(0, null, filters);
         if (list.size() == 1) {
@@ -1120,17 +1059,103 @@ public class BuildService extends BaseService<Build,Long> {
         for (Build build : getBuilds()) {
             for (String s : list) {
                 if (build.getType().name().equals(s)) {
-                    builds.add((Build) SettingUtils.objectCopy(build));
+                    if (build.getCoordinate() != null) {
+                        builds.add((Build) SettingUtils.objectCopy(build));
+                    }
                 }
                 if (build.getChildType() == null) {
                     continue;
                 }
                 if (build.getChildType().name().equals(s)) {
-                    builds.add((Build) SettingUtils.objectCopy(build));
+                    if (build.getCoordinate() != null) {
+                        builds.add((Build) SettingUtils.objectCopy(build));
+                    }
                 }
             }
         }
-        outBuildModel(wb, builds);
+        if (builds.size() != 0) {
+            outBuildModel(wb, builds);
+        } else {
+            wb = null;
+        }
         return wb;
+    }
+
+    public Workbook downloadBuild( Project project, Coordinate.WGS84Type wgs84Type) {
+        List<Build> builds = findByProject(project);
+        Workbook wb = new XSSFWorkbook();
+        String central = coordinateService.getCoordinateBasedatum(project);
+        if (central == null || central.equals("null") || central.equals("")) {
+            return null;
+        }
+        String code = transFromService.checkCode84(central);
+        outputBuilds(builds, wb, code, wgs84Type);
+        return wb;
+    }
+
+    public JSONArray getModelType() {
+        JSONObject jsonObject,jsonObject1;
+        JSONArray jsonArray = new JSONArray(),jsonArray1;
+        for (CommonEnum.CommonType commonType : CommonEnum.CommonType.values()) {
+            if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
+                continue;
+            }
+            if (!commonType.getType().equals("buildModel")) {
+                continue;
+            }
+            jsonObject = new JSONObject();
+            jsonObject.put("typeC", commonType.getTypeC());
+            jsonObject.put("commonType", commonType.name());
+            jsonObject.put("type", commonType.getType());
+            jsonObject.put("buildType", commonType.getBuildType());
+            jsonObject.put("abbreviate", commonType.getAbbreviate());
+            jsonArray1 = new JSONArray();
+            for (Build.ChildType childType : Build.ChildType.values()) {
+                if (childType.getCommonType() == commonType) {
+                    jsonObject1 = new JSONObject();
+                    jsonObject1.put("typeC", childType.getTypeC());
+                    jsonObject1.put("childType", childType.name());
+                    jsonObject1.put("type", childType.getType());
+                    jsonObject1.put("abbreviate", childType.getAbbreviate());
+                    jsonArray1.add(jsonObject1);
+                }
+            }
+            if (!jsonArray1.isEmpty()) {
+                jsonObject.put("child", jsonArray1);
+            }
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    public JSONObject toJSON(Build build2) {
+        Build build = null;
+        List<Build> builds1 = getBuilds();
+        for (Build build1 : builds1) {
+            if (build2.getType().equals(build1.getType())) {
+                build = (Build) SettingUtils.objectCopy(build1);
+                fieldWorkService.setProperty(build,build2,true);
+                break;
+            }
+        }
+        JSONObject jsonObject,jsonObject1;
+        JSONArray jsonArray = new JSONArray();
+        jsonObject = new JSONObject();
+        jsonObject.put("id", build.getId());
+        jsonObject.put("name", build.getName());
+        jsonObject.put("type", build.getType());
+        jsonObject.put("center", build.getCenterCoor());
+        jsonObject.put("position", build.getPositionCoor());
+        jsonObject.put("designElevation", build.getDesignElevation());
+        jsonObject.put("remark", build.getRemark());
+        jsonObject.put("childType", build.getChildType() == null ? null : build.getChildType());
+        for (BuildAttribute buildAttribute : build.getBuildAttributes()) {
+            jsonObject1 = new JSONObject();
+            jsonObject1.put("alias", buildAttribute.getAlias());
+            jsonObject1.put("value", buildAttribute.getValue());
+            jsonArray.add(jsonObject1);
+        }
+        jsonObject.put("buildAttribute", jsonArray);
+        return jsonObject;
     }
 }
