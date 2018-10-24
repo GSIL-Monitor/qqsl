@@ -352,7 +352,11 @@ public class CommonEnum {
         /**
          * 管井
          */
-        GUANJ("buildModel","管井","gj","水源建筑物"),;
+        GUANJ("buildModel","管井","gj","水源建筑物"),
+        /**
+         * 铺盖
+         */
+        PUG("buildModel","铺盖","pg","水源建筑物");
         //必须增加一个构造函数,变量,得到该变量的值
         private String  type="";
         private String typeC = "";
