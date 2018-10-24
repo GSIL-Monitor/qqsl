@@ -1186,7 +1186,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         List<NewBuild> builds = new ArrayList<>();
         for (NewBuild build : getBuilds()) {
             for (String s : list) {
-                if (build.getType().name().equals(s)) {
+                if (build.getType().name().equals(s.toUpperCase())) {
                     if (build.getCoordinate() != null) {
                         builds.add((NewBuild) SettingUtils.objectCopy(build));
                     }
@@ -1194,7 +1194,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                 if (build.getChildType() == null) {
                     continue;
                 }
-                if (build.getChildType().name().equals(s)) {
+                if (build.getChildType().name().equals(s.toUpperCase())) {
                     if (build.getCoordinate() != null) {
                         builds.add((NewBuild) SettingUtils.objectCopy(build));
                     }

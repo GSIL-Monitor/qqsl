@@ -75,9 +75,9 @@ public class TestBuildController {
         CommonEnum.CommonType commonType = null;
         NewBuild.ChildType childType1 = null;
         if (childType != null && !childType.equals("")) {
-            childType1 = NewBuild.ChildType.valueOf(childType);
+            childType1 = NewBuild.ChildType.valueOf(childType.toUpperCase());
         } else if (type != null && !type.equals("")) {
-            commonType = CommonEnum.CommonType.valueOf(type);
+            commonType = CommonEnum.CommonType.valueOf(type.toUpperCase());
         } else {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -127,10 +127,10 @@ public class TestBuildController {
         NewBuild.ChildType childType1 = null;
         CommonEnum.CommonType commonType = null;
         if (type != null && !type.equals("")) {
-            commonType = CommonEnum.CommonType.valueOf(type);
+            commonType = CommonEnum.CommonType.valueOf(type.toUpperCase());
         }
         if (childType != null && !childType.equals("")) {
-            childType1 = NewBuild.ChildType.valueOf(childType);
+            childType1 = NewBuild.ChildType.valueOf(childType.toUpperCase());
         }
         Workbook wb = newBuildService.downloadBuild(commonType, childType1);
         if (wb == null) {
@@ -177,10 +177,10 @@ public class TestBuildController {
         NewBuild.ChildType childType1 = null;
         CommonEnum.CommonType commonType = null;
         if (type != null && !type.equals("")) {
-            commonType = CommonEnum.CommonType.valueOf(type);
+            commonType = CommonEnum.CommonType.valueOf(type.toUpperCase());
         }
         if (childType != null && !childType.equals("")) {
-            childType1 = NewBuild.ChildType.valueOf(childType);
+            childType1 = NewBuild.ChildType.valueOf(childType.toUpperCase());
         }
         NewBuild newBuild = newBuildService.findbyTypeAndChildType(childType1,commonType);
         if (newBuild == null) {
@@ -203,10 +203,10 @@ public class TestBuildController {
         NewBuild.ChildType childType1 = null;
         CommonEnum.CommonType commonType = null;
         if (type != null && !type.equals("")) {
-            commonType = CommonEnum.CommonType.valueOf(type);
+            commonType = CommonEnum.CommonType.valueOf(type.toUpperCase());
         }
         if (childType != null && !childType.equals("")) {
-            childType1 = NewBuild.ChildType.valueOf(childType);
+            childType1 = NewBuild.ChildType.valueOf(childType.toUpperCase());
         }
         NewBuild newBuild = newBuildService.findbyTypeAndChildType(childType1,commonType);
         if (newBuild == null) {
