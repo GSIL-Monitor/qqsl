@@ -184,7 +184,7 @@ public class TestBuildController {
         }
         NewBuild newBuild = newBuildService.findbyTypeAndChildType(childType1,commonType);
         if (newBuild == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         JSONObject jsonObject = newBuildService.toJSON(newBuild);
         return MessageService.message(Message.Type.OK, jsonObject);
