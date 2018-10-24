@@ -846,7 +846,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         return jsonArray;
     }
 
-    public int readSheet(SheetObject sheetObject, CommonEnum.CommonType commonType, NewBuild.ChildType childType1) {
+    public NewBuild readSheet(SheetObject sheetObject, CommonEnum.CommonType commonType, NewBuild.ChildType childType1) {
         Row row;
         NewBuild newBuild = null;
         String a = null,b = null,c = null;
@@ -862,7 +862,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                     for (NewBuild.ChildType value : NewBuild.ChildType.values()) {
                         if (value.getTypeC().equals(sheet.getSheetName())) {
                             if (value != childType1) {
-                                return -1;
+                                return null;
                             }
                         }
                     }
@@ -870,12 +870,12 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                     for (CommonEnum.CommonType value : CommonEnum.CommonType.values()) {
                         if (value.getTypeC().equals(sheet.getSheetName())) {
                             if (value != commonType) {
-                                return -1;
+                                return null;
                             }
                         }
                     }
                 } else {
-                    return -1;
+                    return null;
                 }
                 for (NewBuild newBuild1 : getBuilds()) {
                     if (childType1 != null) {
@@ -891,7 +891,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                     }
                 }
                 if (newBuild == null) {
-                    return -2;
+                    return null;
                 }
                 for (int j = 0; j <= sheet.getLastRowNum(); j++) {
                     row = sheet.getRow(j);
@@ -936,7 +936,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                     if (b.trim().equals("center")) {
                         String[] split = c.split(",");
                         if (split.length != 2) {
-                            return -3;
+                            return null;
                         }
                         jsonObject = new JSONObject();
                         jsonObject.put("lon", split[0]);
@@ -979,7 +979,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                 }
             }
         }
-        return 0;
+        return newBuild;
     }
 
     public NewBuild findbyTypeAndChildType(NewBuild.ChildType childType1, CommonEnum.CommonType commonType) {

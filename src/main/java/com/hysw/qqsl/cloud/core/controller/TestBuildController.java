@@ -104,11 +104,11 @@ public class TestBuildController {
         if (sheetObject.getBuildWBs().size() != 1) {
             return MessageService.message(Message.Type.FAIL);
         }
-        int i = newBuildService.readSheet(sheetObject, commonType, childType1);
-        if (i == 0) {
-            return MessageService.message(Message.Type.OK);
+        NewBuild newBuild = newBuildService.readSheet(sheetObject, commonType, childType1);
+        if (newBuild == null) {
+            return MessageService.message(Message.Type.FAIL);
         }
-        return MessageService.message(Message.Type.FAIL);
+        return MessageService.message(Message.Type.OK,newBuildService.buildJson(newBuild));
     }
 
 //    3.建筑物excel下载
