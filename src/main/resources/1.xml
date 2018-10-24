@@ -55,4 +55,16 @@
         <attribute name="设计标高" unit="井口（m）" type="number" alias="designElevation"/>
         <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
     </attributeGroup>
+    <!--海漫-->
+    <attributeGroup name="坐标" buildAlias="b0014" alias="coor">
+        <attribute name="中心点（顶板圆心）" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="设计标高" unit="海漫顶（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
+    <!--铺盖-->
+    <attributeGroup name="坐标" buildAlias="b0063" alias="coor">
+        <attribute name="中心点（顶板圆心）" unit="经度,纬度,高程" type="text" alias="center"/>
+        <attribute name="设计标高" unit="铺盖顶（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
 </coordinate>

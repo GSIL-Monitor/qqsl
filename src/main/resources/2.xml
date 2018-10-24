@@ -43,4 +43,14 @@
         <attribute name="设计流量Q" unit="m3/h" type="number" alias="wr00018"/>
         <attribute name="最低动水位" unit="m" type="number" alias="wr00019"/>
     </attributeGroup>
+    <!--海漫-->
+    <attributeGroup name="水力要素" buildAlias="b0014" alias="wr" >
+        <attribute name="上下游水头差△Ｈ" unit="m" type="number" alias="wr00020"/>
+        <attribute name="消力池末端单宽流量ｑｓ" unit="m3/s" type="number" alias="wr00021"/>
+        <attribute name="长度系数Ｋｓ" unit="14～7" type="number" alias="wr00022"/>
+    </attributeGroup>
+    <!--铺盖-->
+    <attributeGroup name="水力要素" buildAlias="b0063" alias="wr" >
+        <attribute name="上下游水头差△Ｈ" unit="m" type="number" alias="wr00023"/>
+    </attributeGroup>
 </waterResources>

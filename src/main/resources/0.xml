@@ -59,4 +59,5 @@
     <build name="圆形蓄水池" childType="YUANXXSC" alias="b0060" number="1"/>
     <build name="渡槽" type="DC" alias="b0061" number="1"/>
     <build name="管井" type="GUANJ" alias="b0062" number="1"/>
+    <build name="铺盖" type="PUG" alias="b0063" number="1"/>
 </builds>
