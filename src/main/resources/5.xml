@@ -284,5 +284,19 @@
       <attribute name="深度" unit="m" type="number" alias="ct0191"/>  
       <attribute name="厚度" unit="m" type="number" alias="ct0192"/> 
     </attributeGroup> 
-  </attributeGroup> 
+  </attributeGroup>
+  <!--管井-->
+  <attributeGroup name="构件" buildAlias="b0003" alias="ct">
+    <attributeGroup name="八字墙">
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0193"/>
+      <attribute name="夹角1" unit="度" type="number" alias="ct0194"/>
+      <attribute name="夹角2" unit="度" type="number" alias="ct0195"/>
+      <attribute name="八字墙1长" unit="m" type="number" alias="ct0196"/>
+      <attribute name="八字墙2长" unit="m" type="number" alias="ct0197"/>
+      <attribute name="平行墙长" unit="m" type="number" alias="ct0198"/>
+      <attribute name="墙身高" unit="m" type="number" alias="ct0199"/>
+      <attribute name="基础高" unit="m" type="number" alias="ct0200"/>
+      <attribute name="背水面坡比" unit="" type="text" alias="ct0201"/>
+    </attributeGroup>
+  </attributeGroup>
 </component>
