@@ -982,7 +982,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         return 0;
     }
 
-    private NewBuild findbyTypeAndChildType(NewBuild.ChildType childType1, CommonEnum.CommonType commonType) {
+    public NewBuild findbyTypeAndChildType(NewBuild.ChildType childType1, CommonEnum.CommonType commonType) {
         List<NewBuild> list;
         if (childType1 != null && commonType != null) {
             List<Filter> filters = new ArrayList<>();

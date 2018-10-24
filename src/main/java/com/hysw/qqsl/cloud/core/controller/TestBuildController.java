@@ -172,13 +172,17 @@ public class TestBuildController {
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/bim/build/{id}", method = RequestMethod.GET)
-    public @ResponseBody Message getBimBuild(@PathVariable("id") Long id) {
-        Message message = CommonController.parametersCheck(id);
-        if (message.getType() != Message.Type.OK) {
-            return message;
+    @RequestMapping(value = "/bim/build", method = RequestMethod.GET)
+    public @ResponseBody Message getBimBuild(@RequestParam String type ,@RequestParam String childType) {
+        NewBuild.ChildType childType1 = null;
+        CommonEnum.CommonType commonType = null;
+        if (type != null && !type.equals("")) {
+            commonType = CommonEnum.CommonType.valueOf(type);
         }
-        NewBuild newBuild = newBuildService.find(id);
+        if (childType != null && !childType.equals("")) {
+            childType1 = NewBuild.ChildType.valueOf(childType);
+        }
+        NewBuild newBuild = newBuildService.findbyTypeAndChildType(childType1,commonType);
         if (newBuild == null) {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -188,18 +192,23 @@ public class TestBuildController {
 //    5.前台获取建筑物信息
     /**
      * 获取建筑物
-     * @param id 建筑物id
+     * @param type
+     * @param childType
      * @return 建筑物对象
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/build", method = RequestMethod.GET)
-    public @ResponseBody Message getBuild(@RequestParam long id) {
-        Message message = CommonController.parametersCheck(id);
-        if (message.getType() != Message.Type.OK) {
-            return message;
+    public @ResponseBody Message getBuild(@RequestParam String type ,@RequestParam String childType) {
+        NewBuild.ChildType childType1 = null;
+        CommonEnum.CommonType commonType = null;
+        if (type != null && !type.equals("")) {
+            commonType = CommonEnum.CommonType.valueOf(type);
         }
-        NewBuild newBuild = newBuildService.find(id);
+        if (childType != null && !childType.equals("")) {
+            childType1 = NewBuild.ChildType.valueOf(childType);
+        }
+        NewBuild newBuild = newBuildService.findbyTypeAndChildType(childType1,commonType);
         if (newBuild == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
