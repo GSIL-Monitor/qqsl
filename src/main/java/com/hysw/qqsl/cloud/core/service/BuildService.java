@@ -436,11 +436,13 @@ public class BuildService extends BaseService<Build,Long> {
             cell.setCellValue(a);
         }
         cell.setCellStyle(style);
+        cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         cell = row.createCell(1);
         if (b != null) {
             cell.setCellValue(b);
         }
         cell.setCellStyle(style);
+        cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         cell = row.createCell(2);
         if (e != null) {
             Drawing patriarch = sheet.createDrawingPatriarch();
@@ -452,6 +454,7 @@ public class BuildService extends BaseService<Build,Long> {
             cell.setCellValue(c);
         }
         cell.setCellStyle(style);
+        cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         cell = row.createCell(3);
         if (fx != null) {
             cell.setCellType(Cell.CELL_TYPE_FORMULA);
@@ -463,6 +466,7 @@ public class BuildService extends BaseService<Build,Long> {
         }
         if (locked) {
             cell.setCellStyle(style);
+            cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         } else {
             cell.setCellStyle(noBoldAndLocked(wb));
         }
@@ -489,6 +493,8 @@ public class BuildService extends BaseService<Build,Long> {
         style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setFillPattern((short) 9);
         style.setFillForegroundColor(IndexedColors.RED.getIndex());
+        DataFormat dataFormat = wb.createDataFormat();
+        style.setDataFormat(dataFormat.getFormat("@"));
         return style;
     }
 
@@ -503,6 +509,8 @@ public class BuildService extends BaseService<Build,Long> {
         style.setBorderBottom(CellStyle.BORDER_THIN);//下边框
         style.setBorderLeft(CellStyle.BORDER_THIN);//左边框
         style.setBorderRight(CellStyle.BORDER_THIN);//右边框
+        DataFormat dataFormat = wb.createDataFormat();
+        style.setDataFormat(dataFormat.getFormat("@"));
         return style;
     }
 
@@ -520,6 +528,8 @@ public class BuildService extends BaseService<Build,Long> {
 //        style.setFillPattern((short) 1);
 //        style.setFillForegroundColor(IndexedColors.PINK.getIndex());
         style.setLocked(false);
+        DataFormat dataFormat = wb.createDataFormat();
+        style.setDataFormat(dataFormat.getFormat("@"));
         return style;
     }
 
@@ -537,6 +547,8 @@ public class BuildService extends BaseService<Build,Long> {
         style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setFillPattern((short) 9);
         style.setFillForegroundColor(IndexedColors.PINK.getIndex());
+        DataFormat dataFormat = wb.createDataFormat();
+        style.setDataFormat(dataFormat.getFormat("@"));
         return style;
     }
 
@@ -554,6 +566,8 @@ public class BuildService extends BaseService<Build,Long> {
         style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setFillPattern((short) 9);
         style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        DataFormat dataFormat = wb.createDataFormat();
+        style.setDataFormat(dataFormat.getFormat("@"));
         return style;
     }
 
@@ -571,6 +585,8 @@ public class BuildService extends BaseService<Build,Long> {
         style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setFillPattern((short) 9);
         style.setFillForegroundColor(IndexedColors.SKY_BLUE.getIndex());
+        DataFormat dataFormat = wb.createDataFormat();
+        style.setDataFormat(dataFormat.getFormat("@"));
         return style;
     }
 

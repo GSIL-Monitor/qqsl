@@ -13,10 +13,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -928,11 +925,13 @@ public class ShapeService extends BaseService<Shape, Long> {
             cell.setCellValue(a);
         }
         cell.setCellStyle(style);
+        cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         cell = row.createCell(1);
         if (b != null) {
             cell.setCellValue(b);
         }
         cell.setCellStyle(style);
+        cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         cell = row.createCell(2);
         if (e != null) {
             Drawing patriarch = sheet.createDrawingPatriarch();
@@ -944,6 +943,7 @@ public class ShapeService extends BaseService<Shape, Long> {
             cell.setCellValue(c);
         }
         cell.setCellStyle(style);
+        cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         cell = row.createCell(3);
         if (fx != null) {
             cell.setCellType(Cell.CELL_TYPE_FORMULA);
@@ -955,6 +955,7 @@ public class ShapeService extends BaseService<Shape, Long> {
         }
         if (locked) {
             cell.setCellStyle(style);
+            cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         } else {
             cell.setCellStyle(buildService.noBoldAndLocked(wb));
         }
