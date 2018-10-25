@@ -511,6 +511,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         jsonObject.put("centerCoor", newBuild.getCenterCoor());
         jsonObject.put("positionCoor", newBuild.getPositionCoor());
         jsonObject.put("remark", newBuild.getRemark());
+        jsonObject.put("designElevation", newBuild.getDesignElevation());
         jsonObject.put("childType", newBuild.getChildType()==null?null:newBuild.getChildType().name());
         jsonObject1 = new JSONObject();
         writeAttributeGroup(newBuild.getCoordinate(),jsonObject1);
