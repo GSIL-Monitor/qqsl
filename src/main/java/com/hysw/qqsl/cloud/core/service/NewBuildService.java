@@ -952,7 +952,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                         jsonObject = new JSONObject();
                         jsonObject.put("lon", split[0]);
                         jsonObject.put("lat", split[1]);
-                        newBuild.setCenterCoor(jsonObject.toString());
+                        newBuild.setPositionCoor(jsonObject.toString());
                         continue;
                     }
                     if (b.trim().equals("designElevation")) {
