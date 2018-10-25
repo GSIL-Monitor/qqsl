@@ -162,7 +162,7 @@
       <attribute name="墙厚c9" unit="m" type="number" alias="ct0114"/>  
       <attribute name="梁高h8" unit="m" type="number" alias="ct0115"/>  
       <attribute name="梁宽b13" unit="m" type="number" alias="ct0116"/>  
-      <attribute name="梁数" unit="" type="number" alias="ct0117"/> 
+      <attribute name="梁数" unit="个" type="number" alias="ct0117"/>
     </attributeGroup>  
     <attributeGroup name="弧门支墩（选填）"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0118"/>  
