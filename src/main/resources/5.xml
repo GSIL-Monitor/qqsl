@@ -153,7 +153,7 @@
       <attribute name="墙厚c8" unit="m" type="number" alias="ct0107"/>  
       <attribute name="梁高h6" unit="m" type="number" alias="ct0108"/>  
       <attribute name="梁宽b11" unit="m" type="number" alias="ct0109"/>  
-      <attribute name="梁数" unit="m" type="number" alias="ct0110"/> 
+      <attribute name="梁数" unit="个" type="number" alias="ct0110"/>
     </attributeGroup>  
     <attributeGroup name="工作闸胸墙（选填）"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0111"/>  
