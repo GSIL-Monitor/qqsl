@@ -87,10 +87,18 @@ public class BuildService extends BaseService<Build,Long> {
         Build build = null;
         List<Build> builds1 = getBuilds();
         for (Build build1 : builds1) {
-            if (build2.getType().equals(build1.getType())) {
-                build = (Build) SettingUtils.objectCopy(build1);
-                fieldWorkService.setProperty(build,build2,true);
-                break;
+            if (build2.getChildType() != null) {
+                if (build2.getChildType() == build1.getChildType()) {
+                    build = (Build) SettingUtils.objectCopy(build1);
+                    fieldWorkService.setProperty(build,build2,true);
+                    break;
+                }
+            }else{
+                if (build2.getType().equals(build1.getType())) {
+                    build = (Build) SettingUtils.objectCopy(build1);
+                    fieldWorkService.setProperty(build,build2,true);
+                    break;
+                }
             }
         }
         JSONObject jsonObject, jsonObject1;
@@ -1148,10 +1156,18 @@ public class BuildService extends BaseService<Build,Long> {
         Build build = null;
         List<Build> builds1 = getBuilds();
         for (Build build1 : builds1) {
-            if (build2.getType().equals(build1.getType())) {
-                build = (Build) SettingUtils.objectCopy(build1);
-                fieldWorkService.setProperty(build,build2,true);
-                break;
+            if (build2.getChildType() != null) {
+                if (build2.getChildType() == build1.getChildType()) {
+                    build = (Build) SettingUtils.objectCopy(build1);
+                    fieldWorkService.setProperty(build,build2,true);
+                    break;
+                }
+            }else{
+                if (build2.getType().equals(build1.getType())) {
+                    build = (Build) SettingUtils.objectCopy(build1);
+                    fieldWorkService.setProperty(build,build2,true);
+                    break;
+                }
             }
         }
         JSONObject jsonObject,jsonObject1;
