@@ -727,14 +727,14 @@ public class ProjectService extends BaseService<Project, Long> {
         introduceJson = introduceService.buildIntroduceJson(project);
         projectJson.put("introduce", introduceJson);
         //构建坐标数据
-        JSONObject design = fieldWorkService.field(project, Build.Source.DESIGN);
-        if (!design.isEmpty()) {
-            projectJson.put("coordinates", design);
-        }
-        JSONObject field = fieldWorkService.field(project, Build.Source.FIELD);
-        if (!field.isEmpty()) {
-            projectJson.put("measures", field);
-        }
+//        JSONObject design = fieldWorkService.field(project, Build.Source.DESIGN);
+//        if (!design.isEmpty()) {
+//            projectJson.put("coordinates", design);
+//        }
+//        JSONObject field = fieldWorkService.field(project, Build.Source.FIELD);
+//        if (!field.isEmpty()) {
+//            projectJson.put("measures", field);
+//        }
         return projectJson;
     }
 
