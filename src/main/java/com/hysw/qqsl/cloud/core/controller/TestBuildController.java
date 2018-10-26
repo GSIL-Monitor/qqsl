@@ -173,7 +173,7 @@ public class TestBuildController {
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/bim/build", method = RequestMethod.GET)
-    public @ResponseBody Message getBimBuild(@RequestParam String type ,@RequestParam String childType) {
+    public @ResponseBody Object getBimBuild(@RequestParam String type ,@RequestParam String childType) {
         NewBuild.ChildType childType1 = null;
         CommonEnum.CommonType commonType = null;
         if (type != null && !type.equals("")) {
@@ -186,8 +186,7 @@ public class TestBuildController {
         if (newBuild == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        JSONObject jsonObject = newBuildService.toJSON(newBuild);
-        return MessageService.message(Message.Type.OK, jsonObject);
+        return newBuildService.toJSON(newBuild);
     }
 //    5.前台获取建筑物信息
     /**
