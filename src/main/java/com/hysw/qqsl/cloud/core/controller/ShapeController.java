@@ -810,7 +810,7 @@ public class ShapeController {
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/bim/build/{id}", method = RequestMethod.GET)
-    public @ResponseBody Message getBimBuild(@PathVariable("id") Long id) {
+    public @ResponseBody Object getBimBuild(@PathVariable("id") Long id) {
         Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
@@ -819,8 +819,7 @@ public class ShapeController {
         if (build == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        JSONObject jsonObject = buildService.toJSON(build);
-        return MessageService.message(Message.Type.OK, jsonObject);
+        return buildService.toJSON(build);
     }
 
     /**

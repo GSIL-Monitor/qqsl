@@ -1171,23 +1171,20 @@ public class BuildService extends BaseService<Build,Long> {
             }
         }
         JSONObject jsonObject,jsonObject1;
-        JSONArray jsonArray = new JSONArray();
         jsonObject = new JSONObject();
         jsonObject.put("id", build.getId());
         jsonObject.put("name", build.getName());
         jsonObject.put("type", build.getType());
-        jsonObject.put("center", build.getCenterCoor());
-        jsonObject.put("position", build.getPositionCoor());
+        jsonObject1 = JSONObject.fromObject(build.getCenterCoor());
+        jsonObject.put("center", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
+        jsonObject1 = JSONObject.fromObject(build.getPositionCoor());
+        jsonObject.put("position", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
         jsonObject.put("designElevation", build.getDesignElevation());
         jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType() == null ? null : build.getChildType());
         for (BuildAttribute buildAttribute : build.getBuildAttributes()) {
-            jsonObject1 = new JSONObject();
-            jsonObject1.put("alias", buildAttribute.getAlias());
-            jsonObject1.put("value", buildAttribute.getValue());
-            jsonArray.add(jsonObject1);
+            jsonObject.put(buildAttribute.getAlias(), buildAttribute.getValue());
         }
-        jsonObject.put("buildAttribute", jsonArray);
         return jsonObject;
     }
 }
