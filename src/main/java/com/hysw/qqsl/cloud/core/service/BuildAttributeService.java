@@ -22,4 +22,9 @@ public class BuildAttributeService extends BaseService<BuildAttribute,Long> {
         super.setBaseDao(buildAttributeDao);
     }
 
+    public List<BuildAttribute> findByNewBuild(Build build1) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("build", build1));
+        return buildAttributeDao.findList(0,null,filters);
+    }
 }

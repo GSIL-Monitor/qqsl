@@ -41,6 +41,8 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
     @Autowired
     private FieldWorkPointService fieldWorkPointService;
     @Autowired
+    private BuildAttributeService buildAttributeService;
+    @Autowired
     public void setBaseDao(FieldWorkDao fieldWorkDao) {
         super.setBaseDao(fieldWorkDao);
     }
@@ -148,6 +150,9 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         if (!sign) {
             return;
         }
+        if (build1.getId() != null) {
+            build1.setBuildAttributes(buildAttributeService.findByNewBuild(build1));
+        }
         build.setBuildAttributes((List<BuildAttribute>) SettingUtils.objectCopy(build1.getBuildAttributes()));
 //        attributeGroupNotNuLL(build.getCoordinate(), build1.getAttribeList());
 
@@ -175,7 +180,7 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
      * @param attributeList 数据库中的
      */
     private void setAttribute(List<BuildAttribute> buildAttributes, List<BuildAttribute> attributeList) {
-        if (buildAttributes == null) {
+        if (buildAttributes == null || attributeList == null) {
             return;
         }
         for (BuildAttribute buildAttribute : buildAttributes) {

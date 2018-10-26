@@ -644,7 +644,9 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         if (!sign) {
             return;
         }
-        newBuild1.setNewBuildAttributes(newBuildAttributeService.findByNewBuild(newBuild1));
+        if (newBuild1.getId() != null) {
+            newBuild1.setNewBuildAttributes(newBuildAttributeService.findByNewBuild(newBuild1));
+        }
         newBuild.setNewBuildAttributes((List<NewBuildAttribute>) SettingUtils.objectCopy(newBuild1.getNewBuildAttributes()));
 //        attributeGroupNotNuLL(build.getCoordinate(), build1.getAttribeList());
 
@@ -672,7 +674,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
      * @param attributeList 数据库中的
      */
     private void setAttribute(List<NewBuildAttribute> buildAttributes, List<NewBuildAttribute> attributeList) {
-        if (buildAttributes == null) {
+        if (buildAttributes == null || attributeList == null) {
             return;
         }
         for (NewBuildAttribute buildAttribute : buildAttributes) {
