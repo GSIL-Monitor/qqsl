@@ -44,4 +44,16 @@
     <attributeGroup name="控制尺寸" buildAlias="b0063" alias="cs">
         <attribute name="铺盖长" unit="m" type="number" alias="cs0020" locked="false" formula=""/>
     </attributeGroup>
+    <!--跌水-->
+    <attributeGroup name="控制尺寸" buildAlias="b0011" alias="cs">
+        <attribute name="级数" unit="" type="number" alias="cs0021" locked="false" formula=""/>
+        <attribute name="跌水口宽B" unit="m" type="number" alias="cs0022" locked="false" formula=""/>
+        <attribute name="堰前水头H" unit="m" type="number" alias="cs0023" locked="false" formula=""/>
+        <attribute name="行近流速水头Hv" unit="m" type="number" alias="cs0024" locked="false" formula=""/>
+        <attribute name="堰前总水头H0" unit="m" type="number" alias="cs0025" locked="false" formula=""/>
+        <attribute name="总跌差" unit="m" type="number" alias="cs0026" locked="false" formula=""/>
+        <attribute name="陡坡段距离" unit="m" type="number" alias="cs0027" locked="false" formula=""/>
+        <attribute name="消力池长Lk" unit="m" type="number" alias="cs0028" locked="false" formula=""/>
+        <attribute name="铺盖长" unit="m" type="number" alias="cs0029" locked="false" formula=""/>
+    </attributeGroup>
 </controlSize>

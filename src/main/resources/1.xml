@@ -67,4 +67,11 @@
         <attribute name="设计标高" unit="铺盖顶（m）" type="number" alias="designElevation"/>
         <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
     </attributeGroup>
+    <!--跌水-->
+    <attributeGroup name="坐标" buildAlias="b0011" alias="coor">
+        <attribute name="中心点（进口底板顶中心点）" unit="经度,纬度" type="text" alias="center"/>
+        <attribute name="定位点（出口底板顶中心点）" unit="经度,纬度" type="text" alias="center"/>
+        <attribute name="设计标高" unit="进口堰顶（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
 </coordinate>

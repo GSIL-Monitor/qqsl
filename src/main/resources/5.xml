@@ -153,7 +153,7 @@
       <attribute name="墙厚c8" unit="m" type="number" alias="ct0107"/>  
       <attribute name="梁高h6" unit="m" type="number" alias="ct0108"/>  
       <attribute name="梁宽b11" unit="m" type="number" alias="ct0109"/>  
-      <attribute name="梁数" unit="个" type="number" alias="ct0110"/>
+      <attribute name="梁数" unit="个" type="number" alias="ct0110"/> 
     </attributeGroup>  
     <attributeGroup name="工作闸胸墙（选填）"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0111"/>  
@@ -162,7 +162,7 @@
       <attribute name="墙厚c9" unit="m" type="number" alias="ct0114"/>  
       <attribute name="梁高h8" unit="m" type="number" alias="ct0115"/>  
       <attribute name="梁宽b13" unit="m" type="number" alias="ct0116"/>  
-      <attribute name="梁数" unit="个" type="number" alias="ct0117"/>
+      <attribute name="梁数" unit="个" type="number" alias="ct0117"/> 
     </attributeGroup>  
     <attributeGroup name="弧门支墩（选填）"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0118"/>  
@@ -349,6 +349,56 @@
     <attributeGroup name="伸缩缝"> 
       <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0230"/>  
       <attribute name="伸缩缝设置间距" unit="m" type="number" alias="ct0231"/> 
+    </attributeGroup> 
+  </attributeGroup>  
+  <!--跌水-->  
+  <attributeGroup name="构件" buildAlias="b0011" alias="ct"> 
+    <attributeGroup name="进口渐变段（选型）"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0232"/>  
+      <attribute name="渐变段长" unit="m" type="number" alias="ct0233"/> 
+    </attributeGroup>  
+    <attributeGroup name="挡土墙A"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0234"/>  
+      <attribute name="顶宽b2" unit="m" type="number" alias="ct0235"/>  
+      <attribute name="高h2" unit="m" type="number" alias="ct0236"/>  
+      <attribute name="背坡比" unit="" type="number" alias="ct0237"/>  
+      <attribute name="后趾宽b3" unit="m" type="number" alias="ct0238"/>  
+      <attribute name="后趾外侧高h3" unit="m" type="number" alias="ct0239"/>  
+      <attribute name="后趾内侧高h4" unit="m" type="number" alias="ct0240"/> 
+    </attributeGroup>  
+    <attributeGroup name="挡土墙B"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0241"/>  
+      <attribute name="顶宽b4" unit="m" type="number" alias="ct0242"/>  
+      <attribute name="高h5" unit="m" type="number" alias="ct0243"/>  
+      <attribute name="背坡比" unit="" type="number" alias="ct0244"/>  
+      <attribute name="基础高h6" unit="m" type="number" alias="ct0245"/> 
+    </attributeGroup>  
+    <attributeGroup name="消力池底板"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0246"/>  
+      <attribute name="宽b5" unit="m" type="number" alias="ct0247"/>  
+      <attribute name="厚c1" unit="m" type="number" alias="ct0248"/> 
+    </attributeGroup>  
+    <attributeGroup name="消力池边墙"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0249"/>  
+      <attribute name="边墙厚" unit="m" type="number" alias="ct0250"/>  
+      <attribute name="出口高h8" unit="m" type="number" alias="ct0251"/>  
+      <attribute name="进口水平段长a4" unit="m" type="number" alias="ct0252"/>  
+      <attribute name="出口水平段长a5" unit="m" type="number" alias="ct0253"/> 
+    </attributeGroup>  
+    <attributeGroup name="消能尾坎"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0254"/>  
+      <attribute name="高h9" unit="m" type="number" alias="ct0255"/>  
+      <attribute name="顶宽b6" unit="m" type="number" alias="ct0256"/>  
+      <attribute name="前坡比" unit="" type="number" alias="ct0257"/> 
+    </attributeGroup>  
+    <attributeGroup name="排水管"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0258"/>  
+      <attribute name="直径" unit="m" type="number" alias="ct0259"/>  
+      <attribute name="间距" unit="m" type="number" alias="ct0260"/> 
+    </attributeGroup>  
+    <attributeGroup name="出口渐变段（选型）"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0261"/>  
+      <attribute name="渐变段长" unit="m" type="number" alias="ct0262"/> 
     </attributeGroup> 
   </attributeGroup> 
 </component>
