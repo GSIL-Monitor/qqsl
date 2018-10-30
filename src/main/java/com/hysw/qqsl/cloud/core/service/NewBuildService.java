@@ -731,8 +731,10 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         jsonObject.put("type", newBuild.getType());
         jsonObject1 = JSONObject.fromObject(newBuild.getCenterCoor());
         jsonObject.put("center", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
-        jsonObject1 = JSONObject.fromObject(newBuild.getPositionCoor());
-        jsonObject.put("position", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
+        if (newBuild.getPositionCoor() != null) {
+            jsonObject1 = JSONObject.fromObject(newBuild.getPositionCoor());
+            jsonObject.put("position", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
+        }
         jsonObject.put("designElevation", newBuild.getDesignElevation());
         jsonObject.put("remark", newBuild.getRemark());
         jsonObject.put("childType", newBuild.getChildType() == null ? null : newBuild.getChildType());
