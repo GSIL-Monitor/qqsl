@@ -1177,8 +1177,10 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("type", build.getType());
         jsonObject1 = JSONObject.fromObject(build.getCenterCoor());
         jsonObject.put("center", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
-        jsonObject1 = JSONObject.fromObject(build.getPositionCoor());
-        jsonObject.put("position", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
+        if (build.getPositionCoor() != null) {
+            jsonObject1 = JSONObject.fromObject(build.getPositionCoor());
+            jsonObject.put("position", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
+        }
         jsonObject.put("designElevation", build.getDesignElevation());
         jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType() == null ? null : build.getChildType());
