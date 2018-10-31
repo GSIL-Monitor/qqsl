@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
 
 import javax.persistence.*;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by leinuo on 17-3-27.
@@ -22,20 +24,93 @@ public class Build1 extends BaseEntity{
     private String name;
     /**建筑物别名*/
     private String alias;
-    /**建筑物类型*/
+    /**
+     * 建筑物类型
+     */
     private CommonEnum.CommonType type;
+    /**
+     * 建筑物子类型
+     */
+    private ChildType childType;
     /** 所属项目 */
     private Project project;
     /** 中心坐标 */
     private String centerCoor;
+    /** 中心坐标行号 */
+    private Integer centerCoorNum;
     /** 定位坐标 */
     private String positionCoor;
+    /** 定位坐标行号 */
+    private Integer positionCoorNum;
+    /** 设计标高 */
+    private String designElevation;
+    /** 设计标高行高 */
+    private Integer designElevationNum;
     /** 来源 */
     private Source source;
     /** 描述 */
     private String remark;
+    /** 描述行号 */
+    private Integer remarkNum;
     /** 坐标id */
     private Long coordinateId;
+    /** 错误标记 */
+    private boolean errorMsg=false;
+    /** 随机字符串 */
+    private String noticeStr;
+    /** 生成模板个数 */
+    private int number;
+    /** 错误信息 */
+    private Map<Integer, String> errorMsgInfo = new LinkedHashMap<>();
+
+    public enum ChildType {
+        /**
+         * 底流式消力池
+         */
+        DILSXLC(CommonEnum.CommonType.XIAOLC, "builds", "底流式消力池", "dlsxlc"),
+        KAICSSZ(CommonEnum.CommonType.FSZ,"builds","开敞式水闸","kcssz"),
+        ZHONGLSDQ(CommonEnum.CommonType.DANGQ, "builds", "重力式挡墙", "zlsdq"),
+        FUBSDQ(CommonEnum.CommonType.DANGQ, "builds", "扶臂式挡墙", "fbsdq"),
+        ANPSDQ(CommonEnum.CommonType.DANGQ, "builds", "岸坡式挡墙", "apsdq"),
+        ;
+        //必须增加一个构造函数,变量,得到该变量的值\
+        private CommonEnum.CommonType commonType;
+        private String type;
+        private String typeC;
+        private String abbreviate;
+
+
+        ChildType(CommonEnum.CommonType commonType, String type, String typeC, String abbreviate) {
+            this.commonType = commonType;
+            this.type = type;
+            this.typeC = typeC;
+            this.abbreviate = abbreviate;
+        }
+
+        public CommonEnum.CommonType getCommonType() {
+            return commonType;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getTypeC() {
+            return typeC;
+        }
+
+        public String getAbbreviate() {
+            return abbreviate;
+        }
+
+        public static ChildType valueOf(int ordinal) {
+            if (ordinal < 0 || ordinal >= values().length) {
+                throw new IndexOutOfBoundsException("Invalid ordinal");
+            }
+            return values()[ordinal];
+        }
+
+    }
 
     public enum Source{
         /** 设计 */
@@ -43,15 +118,6 @@ public class Build1 extends BaseEntity{
         /** 外业 */
         FIELD;
     }
-
-    //非数据库对应
-    private String mater;
-    private String dimensions;
-    private String hydraulics;
-    private String geology;
-    private String structure;
-    /** 用于检索 */
-    private String py;
 
     @Transient
     public String getName() {
@@ -129,53 +195,94 @@ public class Build1 extends BaseEntity{
         this.coordinateId = coordinateId;
     }
 
+    public ChildType getChildType() {
+        return childType;
+    }
+
+    public void setChildType(ChildType childType) {
+        this.childType = childType;
+    }
+
+    public String getDesignElevation() {
+        return designElevation;
+    }
+
+    public void setDesignElevation(String designElevation) {
+        this.designElevation = designElevation;
+    }
+
     @Transient
-    public String getMater() {
-        return mater;
+    public boolean isErrorMsg() {
+        return errorMsg;
     }
 
-    public void setMater(String mater) {
-        this.mater = mater;
+    public void setErrorMsg(boolean errorMsg) {
+        this.errorMsg = errorMsg;
     }
+    public void setErrorMsgTrue() {
+        this.errorMsg = true;
+    }
+
     @Transient
-    public String getDimensions() {
-        return dimensions;
+    public String getNoticeStr() {
+        return noticeStr;
     }
 
-    public void setDimensions(String dimensions) {
-        this.dimensions = dimensions;
+    public void setNoticeStr(String noticeStr) {
+        this.noticeStr = noticeStr;
     }
+
     @Transient
-    public String getHydraulics() {
-        return hydraulics;
+    public Map<Integer, String> getErrorMsgInfo() {
+        return errorMsgInfo;
     }
 
-    public void setHydraulics(String hydraulics) {
-        this.hydraulics = hydraulics;
+    public void setErrorMsgInfo(Integer key,String value) {
+        this.errorMsgInfo.put(key, value);
     }
+
     @Transient
-    public String getGeology() {
-        return geology;
+    public Integer getCenterCoorNum() {
+        return centerCoorNum;
     }
 
-    public void setGeology(String geology) {
-        this.geology = geology;
+    public void setCenterCoorNum(Integer centerCoorNum) {
+        this.centerCoorNum = centerCoorNum;
     }
+
     @Transient
-    public String getStructure() {
-        return structure;
+    public Integer getPositionCoorNum() {
+        return positionCoorNum;
     }
 
-    public void setStructure(String structure) {
-        this.structure = structure;
+    public void setPositionCoorNum(Integer positionCoorNum) {
+        this.positionCoorNum = positionCoorNum;
     }
+
     @Transient
-    public String getPy() {
-        return py;
+    public Integer getDesignElevationNum() {
+        return designElevationNum;
     }
 
-    public void setPy(String py) {
-        this.py = py;
+    public void setDesignElevationNum(Integer designElevationNum) {
+        this.designElevationNum = designElevationNum;
     }
 
+    @Transient
+    public Integer getRemarkNum() {
+        return remarkNum;
+    }
+
+    public void setRemarkNum(Integer remarkNum) {
+        this.remarkNum = remarkNum;
+    }
+
+    @Transient
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
 }

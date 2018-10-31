@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.buildModel.Elevation;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.listener.TestExecutionListener;
 import com.hysw.qqsl.cloud.pay.service.PackageService;
@@ -45,6 +46,8 @@ public class UpdateTest {
     @Autowired
     private BuildService buildService;
     @Autowired
+    private Build1Service build1Service;
+    @Autowired
     private BuildGroupService buildGroupService;
     @Autowired
     private UserService userService;
@@ -60,126 +63,130 @@ public class UpdateTest {
     private AdminService adminService;
     @Autowired
     private FieldWorkService fieldWorkService;
-    //coordinate 删除username,type,treePath,baseType,device_mac,source,userId,name
-    //buildModel 删除alias,name，coordinateId
-    //删除attribe表 删除属性code,status,genre,
-    //修改索引/field为fieldWork/
-    //新建线面时传入的坐标格式为lon，lat，ele
+    @Autowired
+    private ShapeService shapeService;
+
     /**
-     * 将坐标格式转换为新的格式
+     * 1.删除attribute表
+     * 2.修改build表名为build1表名
+     * 3.运行测试用例
      */
+
     @Test
-    public void test0001(){
-        List<Coordinate> coordinates = coordinateService.findAll();
-        for (Coordinate coordinate : coordinates) {
-            if (coordinate.getSource() != Build.Source.DESIGN) {
-                continue;
-            }
-            if (coordinate.getCommonType() != null) {
-                continue;
-            }
-            JSONObject jsonObject = JSONObject.fromObject(coordinate.getCoordinateStr());
-            if (jsonObject.get("baseType") == null) {
-                coordinate.setCommonType(CommonEnum.CommonType.GONGGXM);
+    public void test00001(){
+        List<Coordinate> all = coordinateService.findAll();
+        for (Coordinate coordinate : all) {
+            if (coordinate.getSource() == Build.Source.DESIGN) {
+                rosloveDesign(coordinate);
             } else {
-                coordinate.setCommonType(CommonEnum.CommonType.valueOf(jsonObject.get("baseType").toString()));
+                rosloveField(coordinate);
             }
-            JSONArray jsonArray = JSONArray.fromObject(jsonObject.get("coordinate"));
-            JSONArray jsonArray1 = new JSONArray();
-            for (Object o : jsonArray) {
-                JSONObject jsonObject1 = (JSONObject) o;
-                Object longitude = jsonObject1.get("longitude");
-                Object latitude = jsonObject1.get("latitude");
-                Object elevation = jsonObject1.get("elevation");
-                jsonObject1 = new JSONObject();
-                jsonObject1.put("lon", longitude);
-                jsonObject1.put("lat", latitude);
-                jsonObject1.put("ele", elevation);
-                jsonArray1.add(jsonObject1);
-            }
-            jsonObject = new JSONObject();
-            jsonObject.put("coordinate", jsonArray1);
-            coordinate.setCoordinateStr(jsonObject.toString());
-            coordinateService.save(coordinate);
         }
     }
 
     /**
-     * 将建筑物转换为新的格式
+     * 处理外业
+     * @param coordinate
      */
-    @Test
-    public void test0002(){
-        List<Build> builds = buildService.findAll();
-        for (Build build : builds) {
-            JSONObject jsonObject = JSONObject.fromObject(build.getCenterCoor());
-            JSONObject jsonObject1 = new JSONObject();
-            jsonObject1.put("lon", jsonObject.get("longitude"));
-            jsonObject1.put("lat", jsonObject.get("latitude"));
-            jsonObject1.put("ele", jsonObject.get("elevation"));
-            build.setCenterCoor(jsonObject1.toString());
-            if (build.getPositionCoor() != null) {
-                jsonObject = JSONObject.fromObject(build.getPositionCoor());
-                jsonObject1 = new JSONObject();
-                jsonObject1.put("lon", jsonObject.get("longitude"));
-                jsonObject1.put("lat", jsonObject.get("latitude"));
-                jsonObject1.put("ele", jsonObject.get("elevation"));
-                build.setPositionCoor(jsonObject1.toString());
+    private void rosloveField(Coordinate coordinate) {
+        FieldWork fieldWork = new FieldWork();
+        fieldWork.setProject(coordinate.getProject());
+        fieldWork.setName(coordinate.getName());
+        fieldWork.setDeviceMac(coordinate.getDeviceMac());
+        fieldWork.setAccountId(coordinate.getUserId());
+        List<FieldWorkPoint> fieldWorkPoints = new ArrayList<>();
+        FieldWorkPoint fieldWorkPoint;
+        JSONArray jsonArray = JSONArray.fromObject(coordinate.getCoordinateStr());
+        List<Build1> build1s = build1Service.findByCoordinateId(coordinate.getId());
+        for (Object o : jsonArray) {
+            JSONObject jsonObject = (JSONObject) o;
+            JSONArray jsonArray1 = JSONArray.fromObject(jsonObject.get("coordinate"));
+            JSONObject jsonObject1 = JSONObject.fromObject(jsonArray1.get(0));
+            JSONObject jsonObject2 = new JSONObject();
+            jsonObject2.put("lon", jsonObject1.get("longitude"));
+            jsonObject2.put("lat", jsonObject1.get("latitude"));
+            fieldWorkPoint = new FieldWorkPoint();
+            fieldWorkPoint.setDescription(jsonObject.get("description").toString());
+            fieldWorkPoint.setFieldWork(fieldWork);
+            fieldWorkPoint.setCommonType(CommonEnum.CommonType.valueOf(jsonObject.get("baseType").toString()));
+            fieldWorkPoint.setCenterCoor(jsonObject2.toString());
+            fieldWorkPoint.setAlias(jsonObject.get("alias").toString());
+            for (Build1 build1 : build1s) {
+                if (build1.getCenterCoor() == null) {
+                    continue;
+                }
+                JSONObject jsonObject3 = JSONObject.fromObject(build1.getCenterCoor());
+                if (jsonObject3.get("longitude").toString().equals(jsonObject1.get("longitude").toString()) && jsonObject3.get("latitude").toString().equals(jsonObject1.get("latitude").toString())) {
+                    if (build1.getPositionCoor() != null) {
+                        JSONObject jsonObject4 = JSONObject.fromObject(build1.getPositionCoor());
+                        jsonObject2 = new JSONObject();
+                        jsonObject2.put("lon", jsonObject4.get("longitude"));
+                        jsonObject2.put("lat", jsonObject4.get("latitude"));
+                        fieldWorkPoint.setPositionCoor(jsonObject2.toString());
+                        break;
+                    }
+
+                }
             }
-            buildService.save(build);
+            fieldWorkPoints.add(fieldWorkPoint);
         }
+        fieldWork.setFieldWorkPoints(fieldWorkPoints);
+        fieldWorkService.save(fieldWork);
     }
 
     /**
-     * 将外业迁移至field
+     * 处理内业
+     * @param coordinate
      */
-//    @Test
-//    public void test0003(){
-//        FieldWork fieldWork;
-//        List<Coordinate> coordinates = coordinateService.findAll();
-//        Iterator<Coordinate> it = coordinates.iterator();
-//        Coordinate coordinate;
-//        while (it.hasNext()) {
-//            coordinate = it.next();
-//            if (coordinate.getSource() == Build.Source.DESIGN) {
-//                continue;
-//            }
-//            fieldWork = new FieldWork();
-//            fieldWork.setProject(coordinate.getProject());
-//            fieldWork.setCoordinateStr(coordinate.getCoordinateStr());
-//            fieldWork.setDeviceMac(coordinate.getDeviceMac());
-//            fieldWork.setName(coordinate.getName());
-//            fieldWork.setAccountId(coordinate.getUserId());
-//            fieldWorkService.save(fieldWork);
-//            coordinateService.remove(coordinate);
-//            it.remove();
-//        }
-//    }
-
-
-    /**
-     * 调整外业格式
-     */
-//    @Test
-//    public void test0004(){
-//        List<FieldWork> fieldWorks = fieldWorkService.findAll();
-//        for (FieldWork fieldWork : fieldWorks) {
-//            JSONArray jsonArray = JSONArray.fromObject(fieldWork.getCoordinateStr());
-//            for (Object o : jsonArray) {
-//                JSONObject jsonObject = (JSONObject) o;
-//                JSONArray jsonArray2 = (JSONArray) jsonObject.get("coordinate");
-//                for (Object o1 : jsonArray2) {
-//                    JSONObject jsonObject1 = (JSONObject) o1;
-//                    jsonObject1.put("lon", jsonObject1.get("longitude"));
-//                    jsonObject1.put("lat", jsonObject1.get("latitude"));
-//                    jsonObject1.put("ele", jsonObject1.get("elevation"));
-//                    jsonObject1.remove("longitude");
-//                    jsonObject1.remove("latitude");
-//                    jsonObject1.remove("elevation");
-//                }
-//            }
-//            fieldWork.setCoordinateStr(jsonArray.toString());
-//            fieldWorkService.save(fieldWork);
-//        }
-//    }
+    private void rosloveDesign(Coordinate coordinate) {
+        Shape shape = new Shape();
+        shape.setProject(coordinate.getProject());
+        JSONObject jsonObject = JSONObject.fromObject(coordinate.getCoordinateStr());
+        Object baseType = jsonObject.get("baseType");
+        if (baseType == null) {
+            return;
+        }
+        JSONArray jsonArray = JSONArray.fromObject(jsonObject.get("coordinate"));
+        ShapeCoordinate shapeCoordinate;
+        List<ShapeCoordinate> shapeCoordinates = new ArrayList<>();
+        List<Build1> build1s = build1Service.findByCoordinateId(coordinate.getId());
+        for (Object o : jsonArray) {
+            JSONObject jsonObject1 = (JSONObject) o;
+            shapeCoordinate = new ShapeCoordinate();
+            shapeCoordinate.setShape(shape);
+            if (jsonObject1.get("elevation") == null) {
+                continue;
+            }
+            shapeCoordinate.setElevation(new Elevation(jsonObject1.get("elevation").toString(),"desgin-ele"));
+            shapeCoordinate.setLon(jsonObject1.get("longitude").toString());
+            shapeCoordinate.setLat(jsonObject1.get("latitude").toString());
+            shapeCoordinates.add(shapeCoordinate);
+            for (Build1 build1 : build1s) {
+                if (build1.getCenterCoor() == null) {
+                    continue;
+                }
+                JSONObject jsonObject2 = JSONObject.fromObject(build1.getCenterCoor());
+                if (jsonObject2.get("longitude").toString().equals(shapeCoordinate.getLon()) && jsonObject2.get("latitude").toString().equals(shapeCoordinate.getLat())) {
+                    Build build = new Build();
+                    build.setShapeCoordinate(shapeCoordinate);
+                    build.setProjectId(coordinate.getProject().getId());
+                    if (build1.getPositionCoor() != null) {
+                        JSONObject jsonObject3 = JSONObject.fromObject(build1.getPositionCoor());
+                        JSONObject jsonObject4 = new JSONObject();
+                        jsonObject4.put("lon", jsonObject3.get("longitude"));
+                        jsonObject4.put("lat", jsonObject3.get("latitude"));
+                        build.setPositionCoor(jsonObject4.toString());
+                    }
+                    build.setRemark(build1.getRemark());
+                    build.setType(build1.getType());
+                    buildService.save(build);
+                }
+            }
+        }
+        shape.setShapeCoordinates(shapeCoordinates);
+        shape.setRemark(coordinate.getDescription());
+        shape.setCommonType(CommonEnum.CommonType.valueOf(baseType.toString()));
+        shapeService.save(shape);
+    }
 
 }

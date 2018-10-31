@@ -593,39 +593,39 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         }
     }
 
-    /**
-     * 新建建筑物
-     *
-     * @param type
-     * @param centerCoor
-     * @param remark
-     * @param projectId
-     */
-    public boolean newBuild(Object type, Object centerCoor, Object remark, Object projectId,Object commonId) {
-        Build build1 = null;
-        List<Build> builds = buildService.getBuilds();
-        for (Build build : builds) {
-            if (build.getType().toString().equals(type.toString())) {
-                build1 = (Build) SettingUtils.objectCopy(build);
-                break;
-            }
-        }
-        if (build1 == null) {
-            return false;
-        }
-        build1.setSource(Build.Source.DESIGN);
-        JSONObject jsonObject = JSONObject.fromObject(centerCoor);
-//        if (jsonObject.get("lon") == null || jsonObject.get("lat") == null || jsonObject.get("ele") == null) {
+//    /**
+//     * 新建建筑物
+//     *
+//     * @param type
+//     * @param centerCoor
+//     * @param remark
+//     * @param projectId
+//     */
+//    public boolean newBuild(Object type, Object centerCoor, Object remark, Object projectId,Object commonId) {
+//        Build build1 = null;
+//        List<Build> builds = buildService.getBuilds();
+//        for (Build build : builds) {
+//            if (build.getType().toString().equals(type.toString())) {
+//                build1 = (Build) SettingUtils.objectCopy(build);
+//                break;
+//            }
+//        }
+//        if (build1 == null) {
 //            return false;
 //        }
-        build1.setCenterCoor(String.valueOf(jsonObject));
-        build1.setRemark(remark.toString());
-        Project project = projectService.find(Long.valueOf(projectId.toString()));
-        build1.setProjectId(project.getId());
-//        build1.setCommonId(Long.valueOf(commonId.toString()));
-        buildService.save(build1);
-        return true;
-    }
+//        build1.setSource(Build.Source.DESIGN);
+//        JSONObject jsonObject = JSONObject.fromObject(centerCoor);
+////        if (jsonObject.get("lon") == null || jsonObject.get("lat") == null || jsonObject.get("ele") == null) {
+////            return false;
+////        }
+//        build1.setCenterCoor(String.valueOf(jsonObject));
+//        build1.setRemark(remark.toString());
+//        Project project = projectService.find(Long.valueOf(projectId.toString()));
+//        build1.setProjectId(project.getId());
+////        build1.setCommonId(Long.valueOf(commonId.toString()));
+//        buildService.save(build1);
+//        return true;
+//    }
 
 
     /**

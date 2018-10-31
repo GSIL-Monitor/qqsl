@@ -44,8 +44,6 @@ public class Build extends BaseEntity{
     /** 设计标高 */
     private String designElevation;
     private int designElevationNum;
-    /** 来源 */
-    private Source source;
     /** 描述 */
     private String remark;
     private int remarkNum;
@@ -179,14 +177,6 @@ public class Build extends BaseEntity{
 
     public void setPositionCoor(String positionCoor) {
         this.positionCoor = positionCoor;
-    }
-    @JsonIgnore
-    public Source getSource() {
-        return source;
-    }
-
-    public void setSource(Source source) {
-        this.source = source;
     }
 
     public String getRemark() {

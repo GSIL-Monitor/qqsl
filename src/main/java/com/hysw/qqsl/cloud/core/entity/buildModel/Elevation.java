@@ -34,6 +34,11 @@ public class Elevation implements Serializable {
         this.alias = split[i-1].split(":")[1];
     }
 
+    public Elevation(String ele, String alias) {
+        this.ele = ele;
+        this.alias = alias;
+    }
+
     public String getEle() {
         return ele;
     }
