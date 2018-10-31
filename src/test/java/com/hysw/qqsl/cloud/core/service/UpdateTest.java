@@ -74,7 +74,8 @@ public class UpdateTest {
      * 5.删除build1实体
      * 6.删除coordinate实体
      * 7.删除build1srvice
-     *  删除对应数据库 build1，coordinate
+     * 8.删除对应数据库 build1，coordinate
+     * 9.模板补全时需对迁移数据进行多高程处理
      */
 
     @Test
