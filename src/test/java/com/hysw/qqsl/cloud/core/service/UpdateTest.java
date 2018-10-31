@@ -70,6 +70,11 @@ public class UpdateTest {
      * 1.删除attribute表
      * 2.修改build表名为build1表名
      * 3.运行测试用例
+     * 4.删除build1Dao
+     * 5.删除build1实体
+     * 6.删除coordinate实体
+     * 7.删除build1srvice
+     *  删除对应数据库 build1，coordinate
      */
 
     @Test
