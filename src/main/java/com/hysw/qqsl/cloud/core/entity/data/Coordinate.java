@@ -2,13 +2,12 @@ package com.hysw.qqsl.cloud.core.entity.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.hysw.qqsl.cloud.CommonEnum;
 
 import javax.persistence.*;
 
 /**
- * 项目工程布置坐标实体类
- * 
+ * 项目坐标实体类
+ *
  * @author leinuo
  *
  * @date 2016年1月12日
@@ -21,6 +20,15 @@ public class Coordinate extends BaseEntity {
 
 	private static final long serialVersionUID = -5197136434842823108L;
 
+	public enum Type {
+		POINT,LINE, AREA, FIELD;
+		public static Type valueOf(int ordinal) {
+			if (ordinal < 0 || ordinal >= values().length) {
+				throw new IndexOutOfBoundsException("Invalid ordinal");
+			}
+			return values()[ordinal];
+		}
+	}
 
 	/**
 	 * 坐标转换基准面类型
@@ -66,10 +74,9 @@ public class Coordinate extends BaseEntity {
 	// 点线面json
 	private String coordinateStr;
 	private Project project;
-	private Build.Source source= Build.Source.DESIGN;
+	private Build.Source source;
+	private String TreePath;
 	private String description;
-	private CommonEnum.CommonType commonType;
-	private Boolean errorMsg = false;
 	// 采集用户
 	private long userId;
 	private String name;
@@ -107,6 +114,15 @@ public class Coordinate extends BaseEntity {
 	}
 
 	@JsonIgnore
+	public String getTreePath() {
+		return TreePath;
+	}
+
+	public void setTreePath(String treePath) {
+		TreePath = treePath;
+	}
+
+	@JsonIgnore
 	public String getDescription() {
 		return description;
 	}
@@ -139,20 +155,5 @@ public class Coordinate extends BaseEntity {
 		this.deviceMac = deviceMac;
 	}
 
-	public CommonEnum.CommonType getCommonType() {
-		return commonType;
-	}
 
-	public void setCommonType(CommonEnum.CommonType commonType) {
-		this.commonType = commonType;
-	}
-
-	@Transient
-	public Boolean getErrorMsg() {
-		return errorMsg;
-	}
-
-	public void setErrorMsg(Boolean errorMsg) {
-		this.errorMsg = errorMsg;
-	}
 }

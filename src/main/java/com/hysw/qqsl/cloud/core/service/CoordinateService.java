@@ -103,19 +103,19 @@ public class CoordinateService extends BaseService<Coordinate, Long> {
 	 * @param description
 	 * @return
 	 */
-	public void saveCoordinateFromPage(Object line, Object projectId, Object description) {
-		Coordinate coordinate = new Coordinate();
-		JSONObject jsonObject = JSONObject.fromObject(line);
-		String baseType = jsonObject.get("baseType").toString();
-		Project project = projectService.find(Long.valueOf(projectId.toString()));
-		jsonObject.remove("type");
-		jsonObject.remove("baseType");
-		coordinate.setCoordinateStr(String.valueOf(jsonObject));
-		coordinate.setProject(project);
-		coordinate.setCommonType(CommonEnum.CommonType.valueOf(baseType));
-		coordinate.setDescription(description.toString());
-		save(coordinate);
-	}
+//	public void saveCoordinateFromPage(Object line, Object projectId, Object description) {
+//		Coordinate coordinate = new Coordinate();
+//		JSONObject jsonObject = JSONObject.fromObject(line);
+//		String baseType = jsonObject.get("baseType").toString();
+//		Project project = projectService.find(Long.valueOf(projectId.toString()));
+//		jsonObject.remove("type");
+//		jsonObject.remove("baseType");
+//		coordinate.setCoordinateStr(String.valueOf(jsonObject));
+//		coordinate.setProject(project);
+//		coordinate.setCommonType(CommonEnum.CommonType.valueOf(baseType));
+//		coordinate.setDescription(description.toString());
+//		save(coordinate);
+//	}
 
 	public List<Coordinate> findByDate() {
 		List<Filter> filters = new ArrayList<>();

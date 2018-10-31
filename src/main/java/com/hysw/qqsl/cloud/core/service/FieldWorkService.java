@@ -98,24 +98,24 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
     /**
      * 根据项目以及保存时的来源（设计、外业）返回坐标和建筑物简单数据Json
      *
-     * @param project
-     * @param source
+//     * @param project
+//     * @param source
      * @return
      */
-    public JSONObject field(Project project, Build.Source source) {
-        List<Coordinate> coordinates = coordinateService.findByProject(project);
-        List<Build> builds = buildService.findByProjectAndSource(project, source);
-        JSONArray jsonArray = matchCoordinate(coordinates);
-        JSONArray jsonArray1 = returnSimpleBuildJson(builds);
-        JSONObject jsonObject1 = new JSONObject();
-        if (!jsonArray.isEmpty()) {
-            jsonObject1.put("coordinates", jsonArray);
-        }
-        if (!jsonArray1.isEmpty()) {
-            jsonObject1.put("buildModel", jsonArray1);
-        }
-        return jsonObject1;
-    }
+//    public JSONObject field(Project project, Build.Source source) {
+//        List<Coordinate> coordinates = coordinateService.findByProject(project);
+//        List<Build> builds = buildService.findByProjectAndSource(project, source);
+//        JSONArray jsonArray = matchCoordinate(coordinates);
+//        JSONArray jsonArray1 = returnSimpleBuildJson(builds);
+//        JSONObject jsonObject1 = new JSONObject();
+//        if (!jsonArray.isEmpty()) {
+//            jsonObject1.put("coordinates", jsonArray);
+//        }
+//        if (!jsonArray1.isEmpty()) {
+//            jsonObject1.put("buildModel", jsonArray1);
+//        }
+//        return jsonObject1;
+//    }
 
     private void writeProperty(List<Build> list, JSONArray jsonArray) {
         JSONObject jsonObject;
@@ -255,22 +255,22 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
      * @param project
      * @return
      */
-    public Workbook writeExcelByDesign(Project project, Coordinate.WGS84Type wgs84Type) {
-        List<Coordinate> coordinates = coordinateService.findByProject(project);
-        JSONArray jsonArray = matchCoordinate(coordinates);
-        List<Build> builds2 = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
-        List<Build> list = matchBuild(builds2, true);
-        putBuildOnline(jsonArray, list);
-        Workbook wb = new XSSFWorkbook();
-        String central = coordinateService.getCoordinateBasedatum(project);
-        if (central == null || central.equals("null") || central.equals("")) {
-            return null;
-        }
-        String code = transFromService.checkCode84(central);
-        writeCoordinateToExcelDesign(jsonArray, wb, code, wgs84Type);
-        buildService.outputBuilds(list, wb, code, wgs84Type);
-        return wb;
-    }
+//    public Workbook writeExcelByDesign(Project project, Coordinate.WGS84Type wgs84Type) {
+//        List<Coordinate> coordinates = coordinateService.findByProject(project);
+//        JSONArray jsonArray = matchCoordinate(coordinates);
+//        List<Build> builds2 = buildService.findByProjectAndSource(project, Build.Source.DESIGN);
+//        List<Build> list = matchBuild(builds2, true);
+//        putBuildOnline(jsonArray, list);
+//        Workbook wb = new XSSFWorkbook();
+//        String central = coordinateService.getCoordinateBasedatum(project);
+//        if (central == null || central.equals("null") || central.equals("")) {
+//            return null;
+//        }
+//        String code = transFromService.checkCode84(central);
+//        writeCoordinateToExcelDesign(jsonArray, wb, code, wgs84Type);
+//        buildService.outputBuilds(list, wb, code, wgs84Type);
+//        return wb;
+//    }
 
 //    public Workbook writeExcelByFieldWork(Project project, Coordinate.WGS84Type wgs84Type) {
 //        List<FieldWork> fieldWorks =findByProject(project);
@@ -416,13 +416,13 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
      * @param coordinates
      * @return
      */
-    public JSONArray matchCoordinate(List<Coordinate> coordinates) {
-        JSONArray jsonArray = new JSONArray();
-        for (Coordinate coordinate : coordinates) {
-            putIdInJson(coordinate, jsonArray, coordinate.getCoordinateStr());
-        }
-        return jsonArray;
-    }
+//    public JSONArray matchCoordinate(List<Coordinate> coordinates) {
+//        JSONArray jsonArray = new JSONArray();
+//        for (Coordinate coordinate : coordinates) {
+//            putIdInJson(coordinate, jsonArray, coordinate.getCoordinateStr());
+//        }
+//        return jsonArray;
+//    }
 
 //    public JSONArray matchFieldWork(List<FieldWork> fieldWorks) {
 //        JSONArray jsonArray = new JSONArray();
@@ -442,25 +442,25 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
      * @param jsonArray
      * @param str
      */
-    private void putIdInJson(Object object, JSONArray jsonArray, Object str) {
-        JSONObject jsonObject = JSONObject.fromObject(str);
-        JSONObject jsonObject11 = jsonObject;
-        if (object instanceof Coordinate) {
-            jsonObject11.put("id", ((Coordinate)object).getId());
-            jsonObject11.put("baseType", ((Coordinate)object).getCommonType());
-            jsonObject11.put("type", ((Coordinate)object).getCommonType().getType().toUpperCase());
-            jsonObject11.put("description", ((Coordinate)object).getDescription());
-        }
-        if (object instanceof FieldWork) {
-            jsonObject11.put("id", ((FieldWork)object).getId());
-            if (((FieldWork)object).getName() != null) {
-                jsonObject11.put("name", ((FieldWork)object).getName());
-                jsonObject11.put("modifyDate", ((FieldWork)object).getModifyDate());
-                jsonObject11.put("deviceMac", ((FieldWork)object).getDeviceMac());
-            }
-        }
-        jsonArray.add(jsonObject11);
-    }
+//    private void putIdInJson(Object object, JSONArray jsonArray, Object str) {
+//        JSONObject jsonObject = JSONObject.fromObject(str);
+//        JSONObject jsonObject11 = jsonObject;
+//        if (object instanceof Coordinate) {
+//            jsonObject11.put("id", ((Coordinate)object).getId());
+//            jsonObject11.put("baseType", ((Coordinate)object).getCommonType());
+//            jsonObject11.put("type", ((Coordinate)object).getCommonType().getType().toUpperCase());
+//            jsonObject11.put("description", ((Coordinate)object).getDescription());
+//        }
+//        if (object instanceof FieldWork) {
+//            jsonObject11.put("id", ((FieldWork)object).getId());
+//            if (((FieldWork)object).getName() != null) {
+//                jsonObject11.put("name", ((FieldWork)object).getName());
+//                jsonObject11.put("modifyDate", ((FieldWork)object).getModifyDate());
+//                jsonObject11.put("deviceMac", ((FieldWork)object).getDeviceMac());
+//            }
+//        }
+//        jsonArray.add(jsonObject11);
+//    }
 
     /**
      * 匹配建筑
