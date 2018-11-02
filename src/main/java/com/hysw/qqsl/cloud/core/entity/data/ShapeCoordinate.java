@@ -27,6 +27,8 @@ public class ShapeCoordinate extends BaseEntity {
     private int cellNum;
     private boolean errorMsg;
     private Build build;
+    private ShapeCoordinate next;
+    private ShapeCoordinate parent;
 
     public String getLon() {
         return lon;
@@ -103,12 +105,30 @@ public class ShapeCoordinate extends BaseEntity {
         this.errorMsg = errorMsg;
     }
 
-    @OneToOne(mappedBy = "shapeCoordinate")
+    @OneToOne(cascade={CascadeType.PERSIST,CascadeType.REMOVE},mappedBy = "shapeCoordinate")
     public Build getBuild() {
         return build;
     }
 
     public void setBuild(Build build) {
         this.build = build;
+    }
+
+    @OneToOne(cascade={CascadeType.PERSIST})
+    public ShapeCoordinate getNext() {
+        return next;
+    }
+
+    public void setNext(ShapeCoordinate next) {
+        this.next = next;
+    }
+
+    @OneToOne(cascade={CascadeType.PERSIST})
+    public ShapeCoordinate getParent() {
+        return parent;
+    }
+
+    public void setParent(ShapeCoordinate parent) {
+        this.parent = parent;
     }
 }

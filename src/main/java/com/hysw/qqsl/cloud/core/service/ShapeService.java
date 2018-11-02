@@ -264,15 +264,8 @@ public class ShapeService extends BaseService<Shape, Long> {
             }
         }
         for (Map.Entry<String, List<Build>> entry : plaCache.getBuildsMap().entrySet()) {
-            Build build1;
             for (Build build : entry.getValue()) {
-                build1 = buildService.findByProjectIdAndRemark(build.getProjectId(), build.getRemark());
-                if (build1 == null) {
-                    buildService.save(build);
-                } else {
-                    buildService.remove(build1);
-                    buildService.save(build);
-                }
+                buildService.save(build);
             }
         }
     }
@@ -361,6 +354,10 @@ public class ShapeService extends BaseService<Shape, Long> {
                         shapeCoordinate.setElevationList(elevation);
                         shapeCoordinate.setElevation(elevation);
                     }
+                    if (shapeCoordinates.size() != 0) {
+                        shapeCoordinates.get(shapeCoordinates.size() - 1).setNext(shapeCoordinate);
+                        shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
+                    }
                     shapeCoordinates.add(shapeCoordinate);
                 }
                 shape.setShapeCoordinates(shapeCoordinates);
@@ -430,6 +427,12 @@ public class ShapeService extends BaseService<Shape, Long> {
                         shapeCoordinate.setElevation(elevation);
                     }
                     makeBuild(list, line1,builds,shapeCoordinate,project);
+                    if (shapeCoordinates.size() != 0) {
+                        shapeCoordinates.get(shapeCoordinates.size() - 1).setNext(shapeCoordinate);
+                        shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
+                    } else {
+                        shapeCoordinate.setParent(null);
+                    }
                     shapeCoordinates.add(shapeCoordinate);
                 }
                 shape.setShapeCoordinates(shapeCoordinates);
@@ -1565,16 +1568,47 @@ public class ShapeService extends BaseService<Shape, Long> {
         jsonObject.put("id", shape.getId());
         List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
         JSONArray jsonArray = new JSONArray();
-        for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
+        for (ShapeCoordinate shapeCoordinate : sortShapeCoordinate(shapeCoordinates)) {
             jsonObject1 = new JSONObject();
             jsonObject1.put("id", shapeCoordinate.getId());
             jsonObject1.put("lon", shapeCoordinate.getLat());
             jsonObject1.put("lat", shapeCoordinate.getLat());
             jsonObject1.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
+            if (shapeCoordinate.getNext() != null) {
+                jsonObject1.put("next", shapeCoordinate.getNext().getId());
+            }
             jsonArray.add(jsonObject1);
         }
         jsonObject.put("shapeCoordinate", jsonArray);
         return jsonObject;
+    }
+
+    /**
+     * 对查出的坐标进行排序
+     * @param shapeCoordinates
+     * @return
+     */
+    private List<ShapeCoordinate> sortShapeCoordinate(List<ShapeCoordinate> shapeCoordinates) {
+        List<ShapeCoordinate> list = new ArrayList<>();
+        for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
+            if (shapeCoordinate.getParent() == null) {
+                list.add(shapeCoordinate);
+                break;
+            }
+        }
+        if (list.size() == 0) {
+            return null;
+        }
+        while (list.get(list.size() - 1).getNext() != null) {
+            ShapeCoordinate next = list.get(list.size() - 1).getNext();
+            for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
+                if (next.getId().equals(shapeCoordinate.getId())) {
+                    list.add(shapeCoordinate);
+                    break;
+                }
+            }
+        }
+        return list;
     }
 
     public JSONArray getModelType() {

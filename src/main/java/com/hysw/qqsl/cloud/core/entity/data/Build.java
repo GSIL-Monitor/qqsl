@@ -286,7 +286,7 @@ public class Build extends BaseEntity{
 //        this.commonId = commonId;
 //    }
 
-    @OneToOne
+    @OneToOne(cascade={CascadeType.PERSIST,CascadeType.REMOVE})
     @JsonIgnore
     public ShapeCoordinate getShapeCoordinate() {
         return shapeCoordinate;

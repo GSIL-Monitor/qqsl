@@ -708,6 +708,18 @@ public class ShapeController {
         if (shapeCoordinate.getBuild() != null) {
             buildService.remove(shapeCoordinate.getBuild());
         }
+        if (shapeCoordinate.getParent()==null) {
+            ShapeCoordinate next = shapeCoordinate.getNext();
+            next.setParent(null);
+            shapeCoordinateService.save(next);
+        } else {
+            ShapeCoordinate parent = shapeCoordinate.getParent();
+            ShapeCoordinate next = shapeCoordinate.getNext();
+            parent.setNext(next);
+            next.setParent(parent);
+            shapeCoordinateService.save(parent);
+            shapeCoordinateService.save(next);
+        }
         shapeCoordinateService.remove(shapeCoordinate);
         return MessageService.message(Message.Type.OK);
     }
@@ -718,18 +730,18 @@ public class ShapeController {
      * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
      * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
      */
-//    @SuppressWarnings("unchecked")
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-//    @RequestMapping(value = "/editShape", method = RequestMethod.POST)
-//    public @ResponseBody Message deletePoint(@RequestBody  Map<String,Object> objectMap) {
-//        Message message = CommonController.parameterCheck(objectMap);
-//        if (message.getType() != Message.Type.OK) {
-//            return message;
-//        }
-//        objectMap.get("");
-//        return MessageService.message(Message.Type.OK);
-//    }
+    @SuppressWarnings("unchecked")
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/editShape", method = RequestMethod.POST)
+    public @ResponseBody Message deletePoint(@RequestBody  Map<String,Object> objectMap) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        objectMap.get("");
+        return MessageService.message(Message.Type.OK);
+    }
 
     /**
      * 编辑图形属性

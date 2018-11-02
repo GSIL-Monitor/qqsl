@@ -166,6 +166,12 @@ public class UpdateTest {
             shapeCoordinate.setElevation(new Elevation(jsonObject1.get("elevation").toString(),"desgin-ele"));
             shapeCoordinate.setLon(jsonObject1.get("longitude").toString());
             shapeCoordinate.setLat(jsonObject1.get("latitude").toString());
+            if (shapeCoordinates.size() != 0) {
+                shapeCoordinates.get(shapeCoordinates.size() - 1).setNext(shapeCoordinate);
+                shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
+            } else {
+                shapeCoordinate.setParent(null);
+            }
             shapeCoordinates.add(shapeCoordinate);
             for (Build1 build1 : build1s) {
                 if (build1.getCenterCoor() == null) {
