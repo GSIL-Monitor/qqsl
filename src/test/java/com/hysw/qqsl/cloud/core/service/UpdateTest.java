@@ -169,8 +169,6 @@ public class UpdateTest {
             if (shapeCoordinates.size() != 0) {
                 shapeCoordinates.get(shapeCoordinates.size() - 1).setNext(shapeCoordinate);
                 shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
-            } else {
-                shapeCoordinate.setParent(null);
             }
             shapeCoordinates.add(shapeCoordinate);
             for (Build1 build1 : build1s) {
