@@ -48,4 +48,9 @@
         <attribute name="固结灌浆孔距b1" unit="m" type="number" alias="gs0020"/>
         <attribute name="换基材料/厚度c" unit="" type="select" select="a,b,c,d" alias="gs0021"/>
     </attributeGroup>
+    <!--水表井-->
+    <attributeGroup name="地基处理" buildAlias="b0064" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0022"/>
+        <attribute name="换基材料/厚度c" unit="" type="select" select="a,b,c,d" alias="gs0023"/>
+    </attributeGroup>
 </groundStress>

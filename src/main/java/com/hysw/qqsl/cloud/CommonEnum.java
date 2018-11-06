@@ -356,7 +356,11 @@ public class CommonEnum {
         /**
          * 铺盖
          */
-        PUG("buildModel","铺盖","pg","水源建筑物");
+        PUG("buildModel","铺盖","pg","水源建筑物"),
+        /**
+         * 水表井
+         */
+        SHUIBJ("buildModel","水表井","sbj","管道建筑物");
         //必须增加一个构造函数,变量,得到该变量的值
         private String  type="";
         private String typeC = "";

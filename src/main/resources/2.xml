@@ -61,4 +61,8 @@
         <attribute name="水跃长度Lj" unit="m" type="number" alias="wr0027"/>
         <attribute name="水舌射流长度L1" unit="m" type="number" alias="wr0028"/>
     </attributeGroup>
+    <!--水表井-->
+    <attributeGroup name="水力要素" buildAlias="b0064" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0029"/>
+    </attributeGroup>
 </waterResources>

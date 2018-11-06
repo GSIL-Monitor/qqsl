@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.xerces.xs.datatypes.ObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 内业控制层
@@ -731,15 +729,56 @@ public class ShapeController {
      * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
      */
     @SuppressWarnings("unchecked")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editShape", method = RequestMethod.POST)
     public @ResponseBody Message deletePoint(@RequestBody  Map<String,Object> objectMap) {
         Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        objectMap.get("");
+        Object shape = objectMap.get("shape");
+        if (shape == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        List<ShapeCoordinate> shapeCoordinates = new ArrayList<>();
+        Shape shape1 = null;
+        List<Object> list = (List<Object>) shape;
+        for (Object list1 : list) {
+            List<Map<String, Object>> map = (List<Map<String, Object>>) list1;
+            ShapeCoordinate next = null;
+            for (Map<String, Object> map1 : map) {
+                Object id = map1.get("id");
+                if (id != null) {
+                    ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
+                    next = shapeCoordinate.getNext();
+                    shape1 = shapeCoordinate.getShape();
+                    shapeCoordinate.setLon(map1.get("lon").toString());
+                    shapeCoordinate.setLat(map1.get("lat").toString());
+                    shapeCoordinates.add(shapeCoordinate);
+                    continue;
+                }
+                ShapeCoordinate shapeCoordinate = new ShapeCoordinate();
+                shapeCoordinate.setLat(map1.get("lat").toString());
+                shapeCoordinate.setLon(map1.get("lon").toString());
+                shapeCoordinate.setElevations("1");
+                if (shapeCoordinates.size() != 0) {
+                    shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
+                    shapeCoordinates.get(shapeCoordinates.size()-1).setNext(shapeCoordinate);
+                }
+                shapeCoordinate.setShape(shape1);
+                shapeCoordinates.add(shapeCoordinate);
+            }
+            shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
+        }
+        if (shape1 == null) {
+            shape1 = new Shape();
+        }
+        shape1.setShapeCoordinates(shapeCoordinates);
+        shapeService.save(shape1);
+//        for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
+//            shapeCoordinateService.save(shapeCoordinate);
+//        }
         return MessageService.message(Message.Type.OK);
     }
 
@@ -855,6 +894,29 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK, jsonObject);
     }
 
-
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public @ResponseBody Object test() {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("id", 1);
+        jsonObject1.put("lon", 102);
+        jsonObject1.put("lat", 35);
+        jsonArray.add(jsonObject1);
+        jsonObject1 = new JSONObject();
+        jsonObject1.put("lon", 103);
+        jsonObject1.put("lat", 36);
+        jsonArray.add(jsonObject1);
+        jsonObject1 = new JSONObject();
+        jsonObject1.put("lon", 104);
+        jsonObject1.put("lat", 35);
+        jsonArray.add(jsonObject1);
+        JSONArray jsonArray1 = new JSONArray();
+        jsonArray1.add(jsonArray);
+        jsonArray1.add(jsonArray);
+        jsonArray1.add(jsonArray);
+        jsonObject.put("shape", jsonArray1);
+        return jsonObject;
+    }
 
 }
