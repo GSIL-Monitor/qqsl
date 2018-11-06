@@ -924,29 +924,4 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK, jsonObject);
     }
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public @ResponseBody Object test() {
-        JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject1.put("id", 1);
-        jsonObject1.put("lon", 102);
-        jsonObject1.put("lat", 35);
-        jsonArray.add(jsonObject1);
-        jsonObject1 = new JSONObject();
-        jsonObject1.put("lon", 103);
-        jsonObject1.put("lat", 36);
-        jsonArray.add(jsonObject1);
-        jsonObject1 = new JSONObject();
-        jsonObject1.put("lon", 104);
-        jsonObject1.put("lat", 35);
-        jsonArray.add(jsonObject1);
-        JSONArray jsonArray1 = new JSONArray();
-        jsonArray1.add(jsonArray);
-        jsonArray1.add(jsonArray);
-        jsonArray1.add(jsonArray);
-        jsonObject.put("shape", jsonArray1);
-        return jsonObject;
-    }
-
 }
