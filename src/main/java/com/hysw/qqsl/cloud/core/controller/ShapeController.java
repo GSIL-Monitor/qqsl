@@ -2,11 +2,15 @@ package com.hysw.qqsl.cloud.core.controller;
 
 import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonAttributes;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.Message;
+import com.hysw.qqsl.cloud.core.entity.buildModel.Elevation;
+import com.hysw.qqsl.cloud.core.entity.buildModel.Line;
 import com.hysw.qqsl.cloud.core.entity.buildModel.PLACache;
 import com.hysw.qqsl.cloud.core.entity.buildModel.SheetObject;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
+import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -52,6 +56,8 @@ public class ShapeController {
     private ShapeCoordinateService shapeCoordinateService;
     @Autowired
     private BuildAttributeService buildAttributeService;
+    @Autowired
+    private LineService lineService;
 
     Log logger = LogFactory.getLog(getClass());
 
@@ -741,44 +747,68 @@ public class ShapeController {
         if (shape == null) {
             return MessageService.message(Message.Type.FAIL);
         }
+        shapeService.editShape(shape);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 新建图形
+     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
+     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
+     */
+    @SuppressWarnings("unchecked")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/newShape", method = RequestMethod.POST)
+    public @ResponseBody Message newShape(@RequestBody  Map<String,Object> objectMap) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object shape = objectMap.get("shape");
+        Object type = objectMap.get("type");
+        Object remark = objectMap.get("remark");
+        Object projectId = objectMap.get("projectId");
+        if (shape == null || type == null || remark == null || projectId == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
         List<ShapeCoordinate> shapeCoordinates = new ArrayList<>();
-        Shape shape1 = null;
+        Shape shape1 = new Shape();
+        shape1.setCommonType(CommonEnum.CommonType.valueOf(type.toString()));
+        shape1.setRemark(remark.toString());
+        shape1.setProject(projectService.find(Long.valueOf(projectId.toString())));
+        Line line = null;
+        Elevation elevation;
+        ShapeCoordinate shapeCoordinate;
         List<Object> list = (List<Object>) shape;
         for (Object list1 : list) {
             List<Map<String, Object>> map = (List<Map<String, Object>>) list1;
             ShapeCoordinate next = null;
             for (Map<String, Object> map1 : map) {
-                Object id = map1.get("id");
-                if (id != null) {
-                    ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
-                    next = shapeCoordinate.getNext();
-                    shape1 = shapeCoordinate.getShape();
-                    shapeCoordinate.setLon(map1.get("lon").toString());
-                    shapeCoordinate.setLat(map1.get("lat").toString());
-                    shapeCoordinates.add(shapeCoordinate);
-                    continue;
-                }
-                ShapeCoordinate shapeCoordinate = new ShapeCoordinate();
+                shapeCoordinate = new ShapeCoordinate();
                 shapeCoordinate.setLat(map1.get("lat").toString());
                 shapeCoordinate.setLon(map1.get("lon").toString());
-                shapeCoordinate.setElevations("1");
+                for (Line line1 : lineService.getLines()) {
+                    if (line1.getCommonType() == shape1.getCommonType()) {
+                        line = (Line) SettingUtils.objectCopy(line1);
+                    }
+                }
+                for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
+                    elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
+                    shapeCoordinate.setElevation(elevation);
+                }
+                shapeCoordinate.setShape(shape1);
+//                shapeCoordinateService.save(shapeCoordinate);
                 if (shapeCoordinates.size() != 0) {
                     shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
                     shapeCoordinates.get(shapeCoordinates.size()-1).setNext(shapeCoordinate);
                 }
-                shapeCoordinate.setShape(shape1);
                 shapeCoordinates.add(shapeCoordinate);
             }
             shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
         }
-        if (shape1 == null) {
-            shape1 = new Shape();
-        }
         shape1.setShapeCoordinates(shapeCoordinates);
         shapeService.save(shape1);
-//        for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
-//            shapeCoordinateService.save(shapeCoordinate);
-//        }
         return MessageService.message(Message.Type.OK);
     }
 

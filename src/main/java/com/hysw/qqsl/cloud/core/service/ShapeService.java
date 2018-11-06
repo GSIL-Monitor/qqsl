@@ -1653,4 +1653,53 @@ public class ShapeService extends BaseService<Shape, Long> {
         }
         return jsonArray;
     }
+
+    public void editShape(Object shape) {
+        List<ShapeCoordinate> shapeCoordinates = new ArrayList<>();
+        Shape shape1 = null;
+        Line line = null;
+        Elevation elevation;
+        ShapeCoordinate shapeCoordinate;
+        List<Object> list = (List<Object>) shape;
+        for (Object list1 : list) {
+            List<Map<String, Object>> map = (List<Map<String, Object>>) list1;
+            ShapeCoordinate next = null;
+            for (Map<String, Object> map1 : map) {
+                Object id = map1.get("id");
+                if (id != null) {
+                    shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
+                    next = shapeCoordinate.getNext();
+                    shape1 = shapeCoordinate.getShape();
+                    shapeCoordinate.setLon(map1.get("lon").toString());
+                    shapeCoordinate.setLat(map1.get("lat").toString());
+                    shapeCoordinateService.save(shapeCoordinate);
+                    shapeCoordinates.add(shapeCoordinate);
+                    continue;
+                }
+                shapeCoordinate = new ShapeCoordinate();
+                shapeCoordinate.setLat(map1.get("lat").toString());
+                shapeCoordinate.setLon(map1.get("lon").toString());
+                for (Line line1 : lineService.getLines()) {
+                    if (line1.getCommonType() == shape1.getCommonType()) {
+                        line = (Line) SettingUtils.objectCopy(line1);
+                    }
+                }
+                for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
+                    elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
+                    shapeCoordinate.setElevation(elevation);
+                }
+                shapeCoordinate.setShape(shape1);
+                shapeCoordinateService.save(shapeCoordinate);
+                if (shapeCoordinates.size() != 0) {
+                    shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
+                    shapeCoordinates.get(shapeCoordinates.size()-1).setNext(shapeCoordinate);
+                }
+                shapeCoordinates.add(shapeCoordinate);
+            }
+            shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
+        }
+        for (ShapeCoordinate shapeCoordinate1 : shapeCoordinates) {
+            shapeCoordinateService.save(shapeCoordinate1);
+        }
+    }
 }

@@ -34,6 +34,24 @@ public class Elevation implements Serializable {
         this.alias = split[i-1].split(":")[1];
     }
 
+    public Elevation(String l, String cellProperty, int i, Shape shape, ShapeCoordinate shapeCoordinate) {
+        try {
+            this.ele = l;
+            if (Float.valueOf(this.ele) < 0) {
+                shape.setErrorMsg(true);
+                errorMsg = true;
+                shapeCoordinate.setErrorMsg(true);
+                return;
+            }
+        } catch (Exception e) {
+            shape.setErrorMsg(true);
+            shapeCoordinate.setErrorMsg(true);
+            this.ele = null;
+        }
+        String[] split = cellProperty.split(",");
+        this.alias = split[i-1].split(":")[1];
+    }
+
     public Elevation(String ele, String alias) {
         this.ele = ele;
         this.alias = alias;
