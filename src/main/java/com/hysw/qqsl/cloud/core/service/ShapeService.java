@@ -1684,9 +1684,17 @@ public class ShapeService extends BaseService<Shape, Long> {
                         line = (Line) SettingUtils.objectCopy(line1);
                     }
                 }
-                for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
-                    elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
-                    shapeCoordinate.setElevation(elevation);
+                if (line.getCommonType().getType().equals("line")) {
+                    for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
+                        elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
+                        shapeCoordinate.setElevation(elevation);
+                    }
+                }
+                if (line.getCommonType().getType().equals("area")) {
+                    for (int i = 3; i <= line.getCellProperty().split(",").length; i++) {
+                        elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
+                        shapeCoordinate.setElevation(elevation);
+                    }
                 }
                 shapeCoordinate.setShape(shape1);
                 shapeCoordinateService.save(shapeCoordinate);
@@ -1725,9 +1733,17 @@ public class ShapeService extends BaseService<Shape, Long> {
                         line = (Line) SettingUtils.objectCopy(line1);
                     }
                 }
-                for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
-                    elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
-                    shapeCoordinate.setElevation(elevation);
+                if (line.getCommonType().getType().equals("line")) {
+                    for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
+                        elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
+                        shapeCoordinate.setElevation(elevation);
+                    }
+                }
+                if (line.getCommonType().getType().equals("area")) {
+                    for (int i = 3; i <= line.getCellProperty().split(",").length; i++) {
+                        elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
+                        shapeCoordinate.setElevation(elevation);
+                    }
                 }
                 shapeCoordinate.setShape(shape1);
 //                shapeCoordinateService.save(shapeCoordinate);
