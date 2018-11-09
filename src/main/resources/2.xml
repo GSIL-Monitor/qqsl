@@ -65,4 +65,8 @@
     <attributeGroup name="水力要素" buildAlias="b0064" alias="wr" >
         <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0029"/>
     </attributeGroup>
+    <!--曲线式倒虹吸-->
+    <attributeGroup name="水力要素" buildAlias="b0065" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0030"/>
+    </attributeGroup>
 </waterResources>

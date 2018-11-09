@@ -400,5 +400,47 @@
       <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0261"/>  
       <attribute name="渐变段长" unit="m" type="number" alias="ct0262"/> 
     </attributeGroup> 
+  </attributeGroup>  
+  <!--曲线式倒虹吸-->  
+  <attributeGroup name="构件" buildAlias="b0065" alias="ct"> 
+    <attributeGroup name="进口渐变段（选型）"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0263"/> 
+    </attributeGroup>  
+    <attributeGroup name="挡土墙"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0264"/>  
+      <attribute name="顶宽" unit="m" type="number" alias="ct0265"/>  
+      <attribute name="高" unit="m" type="number" alias="ct0266"/>  
+      <attribute name="背坡比" unit="" type="number" alias="ct0267"/>  
+      <attribute name="基础高" unit="m" type="number" alias="ct0268"/>  
+      <attribute name="挡墙长" unit="m" type="number" alias="ct0269"/> 
+    </attributeGroup>  
+    <attributeGroup name="排架基础"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0270"/>  
+      <attribute name="上台直径" unit="m" type="number" alias="ct0271"/>  
+      <attribute name="上台高" unit="m" type="number" alias="ct0272"/>  
+      <attribute name="下台直径" unit="m" type="number" alias="ct0273"/>  
+      <attribute name="下台高" unit="m" type="number" alias="ct0274"/> 
+    </attributeGroup>  
+    <attributeGroup name="排架立柱"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0275"/>  
+      <attribute name="柱高" unit="m" type="number" alias="ct0276"/>  
+      <attribute name="直径" unit="m" type="number" alias="ct0277"/> 
+    </attributeGroup>  
+    <attributeGroup name="排架支墩"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0278"/>  
+      <attribute name="长" unit="m" type="number" alias="ct0279"/>  
+      <attribute name="宽" unit="m" type="number" alias="ct0280"/>  
+      <attribute name="高" unit="m" type="number" alias="ct0281"/> 
+    </attributeGroup>  
+    <attributeGroup name="金属构件"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0282"/>  
+      <attribute name="加劲环－高/间距" unit="m" type="number" alias="ct0283"/>  
+      <attribute name="伸缩节" unit="m" type="select" select="a,b,c,d" alias="ct0284"/>  
+      <attribute name="固定件" unit="" type="select" select="a,b,c,d" alias="ct0285"/>  
+      <attribute name="锚筋" unit="" type="select" select="a,b,c,d" alias="ct0286"/> 
+    </attributeGroup>  
+    <attributeGroup name="出口渐变段（选型）"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0287"/> 
+    </attributeGroup> 
   </attributeGroup> 
 </component>

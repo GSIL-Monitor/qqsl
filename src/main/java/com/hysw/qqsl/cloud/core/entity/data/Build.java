@@ -65,6 +65,7 @@ public class Build extends BaseEntity{
         DILSXLC(CommonEnum.CommonType.XIAOLC, "buildModel", "底流式消力池", "dlsxlc"),
         KAICSSZ(CommonEnum.CommonType.FSZ, "buildModel", "开敞式水闸", "kcssz"),
         YUANXXSC(CommonEnum.CommonType.XSC, "buildModel", "圆形蓄水池", "yxxsc"),
+        QUXSDHX(CommonEnum.CommonType.DHX, "buildModel", "曲线式倒虹吸", "qxsdhx"),
         ;
         //必须增加一个构造函数,变量,得到该变量的值\
         private CommonEnum.CommonType commonType;

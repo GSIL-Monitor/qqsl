@@ -102,7 +102,7 @@ public class CommonEnum {
         /**
          * 倒虹吸
          */
-        DHX("buildModel","倒虹吸","dhx","渠系建筑物",false),
+        DHX("buildModel","倒虹吸","dhx","渠系建筑物",true),
         /**
          * 跌水
          */

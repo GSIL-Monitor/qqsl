@@ -60,4 +60,11 @@
     <attributeGroup name="控制尺寸" buildAlias="b0064" alias="cs">
         <attribute name="阀门直径（DN）" unit="mm" type="select" select="a,b,c,d" alias="cs0030" locked="false" formula=""/>
     </attributeGroup>
+    <!--曲线式倒虹吸-->
+    <attributeGroup name="控制尺寸" buildAlias="b0065" alias="cs">
+        <attribute name="管径" unit="mm" type="number" alias="cs0031" locked="false" formula=""/>
+        <attribute name="壁厚" unit="mm" type="number"  alias="cs0032" locked="false" formula=""/>
+        <attribute name="排架间距" unit="m" type="number"  alias="cs0033" locked="false" formula=""/>
+        <attribute name="钢管总长" unit="m" type="number" alias="cs0034" locked="false" formula=""/>
+    </attributeGroup>
 </controlSize>
