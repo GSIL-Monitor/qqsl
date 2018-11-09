@@ -1090,7 +1090,7 @@ public class BuildService extends BaseService<Build,Long> {
                 if (build.getChildType() == null) {
                     continue;
                 }
-                if (build.getChildType().name().equals(s)) {
+                if (build.getChildType().name().equals(s.toUpperCase())) {
                     if (build.getCoordinate() != null) {
                         builds.add((Build) SettingUtils.objectCopy(build));
                     }
