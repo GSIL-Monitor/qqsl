@@ -1082,8 +1082,8 @@ public class BuildService extends BaseService<Build,Long> {
         List<Build> builds = new ArrayList<>();
         for (Build build : getBuilds()) {
             for (String s : list) {
-                if (build.getType().name().equals(s)) {
-                    if (build.getCoordinate() != null) {
+                if (build.getType().name().equals(s.toUpperCase())) {
+                    if (build.getCoordinate() != null&&build.getType().isModel()) {
                         builds.add((Build) SettingUtils.objectCopy(build));
                     }
                 }
@@ -1124,7 +1124,7 @@ public class BuildService extends BaseService<Build,Long> {
             if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
                 continue;
             }
-            if (!commonType.getType().equals("buildModel")) {
+            if (!commonType.isModel()) {
                 continue;
             }
             jsonObject = new JSONObject();

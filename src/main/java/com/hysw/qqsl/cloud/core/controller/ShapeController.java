@@ -888,4 +888,55 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK, jsonObject);
     }
 
+    /**
+     * 新建建筑物
+     * @param objectMap
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/newBuild", method = RequestMethod.POST)
+    public @ResponseBody Message newBuild(@RequestBody  Map<String,Object> objectMap) {
+        Object shapeCoordinateId = objectMap.get("shapeCoordinateId");
+        Object projectId = objectMap.get("projectId");
+        Object childType = objectMap.get("childType");
+        Object designElevation = objectMap.get("designElevation");
+        Object positionCoor = objectMap.get("positionCoor");
+        Object remark = objectMap.get("remark");
+        Object type = objectMap.get("type");
+        if (shapeCoordinateId == null || remark == null || type == null || projectId == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Build build = new Build();
+        build.setShapeCoordinate(shapeCoordinateService.find(Long.valueOf(shapeCoordinateId.toString())));
+        build.setType(CommonEnum.CommonType.valueOf(type.toString()));
+        build.setRemark(remark.toString());
+        if (positionCoor != null) {
+            JSONObject jsonObject = JSONObject.fromObject(positionCoor);
+            if (!(jsonObject.containsKey("lon") && jsonObject.containsKey("lat"))) {
+                return MessageService.message(Message.Type.FAIL);
+            }
+            build.setPositionCoor(positionCoor.toString());
+        }
+        if (designElevation != null) {
+            build.setDesignElevation(designElevation.toString());
+        }
+        if (childType != null) {
+            build.setChildType(Build.ChildType.valueOf(childType.toString()));
+        }
+        build.setProjectId(Long.valueOf(projectId.toString()));
+        buildService.save(build);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    @SuppressWarnings("unchecked")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/editBuild", method = RequestMethod.POST)
+    public @ResponseBody Message editBuild(@RequestBody  Map<String,Object> objectMap) {
+        return MessageService.message(Message.Type.OK);
+    }
+
+
 }

@@ -63,7 +63,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
             if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
                 continue;
             }
-            if (!commonType.getType().equals("buildModel")) {
+            if (!commonType.isModel()) {
                 continue;
             }
             jsonObject = new JSONObject();

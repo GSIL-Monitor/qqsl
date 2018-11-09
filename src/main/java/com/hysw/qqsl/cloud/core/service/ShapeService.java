@@ -844,11 +844,14 @@ public class ShapeService extends BaseService<Shape, Long> {
         List<LineSectionPlaneModel> lineSectionPlaneModels = lineSectionPlaneModelService.getLineSectionPlaneModel();
         for (String s : list) {
             for (LineSectionPlaneModel lineSectionPlaneModel : lineSectionPlaneModels) {
-                if (lineSectionPlaneModel.getType().name().equals(s)) {
+                if (lineSectionPlaneModel.getType().name().equals(s.toUpperCase())) {
                     lineSectionPlaneModels1.add(lineSectionPlaneModel);
                     break;
                 }
             }
+        }
+        if (lineSectionPlaneModels1.size() == 0) {
+            return null;
         }
         outLineSectionPlaneModel(wb,lineSectionPlaneModels1);
         return wb;
@@ -1294,7 +1297,7 @@ public class ShapeService extends BaseService<Shape, Long> {
         List<Line> lines = lineService.getLines();
         for (Line line : lines) {
             for (String s : list) {
-                if (line.getCommonType().name().equals(s)) {
+                if (line.getCommonType().name().equals(s.toUpperCase())&&(line.getCommonType().getType().equals("area")||line.getCommonType().getType().equals("line"))&&line.getCommonType().isModel()) {
                     lines1.add(line);
                     break;
                 }
@@ -1309,6 +1312,9 @@ public class ShapeService extends BaseService<Shape, Long> {
                 selects.add(commonType.getTypeC());
             }
         }
+        if (lines1.size() == 0) {
+            return null;
+        }
         outputShapeModel(wb, lines1,selects);
         return wb;
     }
@@ -1320,14 +1326,21 @@ public class ShapeService extends BaseService<Shape, Long> {
             Cell cell = null;
             Sheet sheet = wb.createSheet(line.getCommonType().getTypeC());
             List<String> list = new ArrayList<>();
+            String[] split = line.getCellProperty().split(",");
             list.add("描述");
+            for (int i1 = 1; i1 < split.length; i1++) {
+                list.add("");
+            }
             writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundSkyBlue(wb), list, null, null, wb, true);
             list = new ArrayList<>();
-            String[] split = line.getCellProperty().split(",");
             for (String s : split) {
                 list.add(s.split(":")[0]);
             }
-            writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundYellow(wb), list, "select", selects, wb, true);
+            if (line.getCommonType().getType().equals("line")) {
+                writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundYellow(wb), list, "select", selects, wb, true);
+            } else {
+                writeToCell(i++, sheet, row, cell, buildService.noBoldHaveBackgroundYellow(wb), list, null, null, wb, true);
+            }
         }
     }
 
@@ -1616,7 +1629,7 @@ public class ShapeService extends BaseService<Shape, Long> {
             if (SettingUtils.changeDeprecatedEnum(commonType, commonType.name())) {
                 continue;
             }
-            if (commonType.getType().equals("buildModel")) {
+            if (!commonType.isModel()||commonType.getType().equals("buildModel")) {
                 continue;
             }
             jsonObject = new JSONObject();
