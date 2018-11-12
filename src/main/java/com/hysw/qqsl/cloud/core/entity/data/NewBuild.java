@@ -30,7 +30,7 @@ public class NewBuild extends BaseEntity{
     /**
      * 建筑物子类型
      */
-    private ChildType childType;
+    private Build.ChildType childType;
     /**建筑物属性*/
     private List<NewBuildAttribute> newBuildAttributes;
     /** 所属项目 */
@@ -57,53 +57,6 @@ public class NewBuild extends BaseEntity{
     private String noticeStr;
     /** 生成模板个数 */
     private int number;
-
-    public enum ChildType {
-        /**
-         * 底流式消力池
-         */
-        DILSXLC(CommonEnum.CommonType.XIAOLC, "buildModel", "底流式消力池", "dlsxlc"),
-        KAICSSZ(CommonEnum.CommonType.FSZ, "buildModel", "开敞式水闸", "kcssz"),
-        YUANXXSC(CommonEnum.CommonType.XSC, "buildModel", "圆形蓄水池", "yxxsc"),
-        ;
-        //必须增加一个构造函数,变量,得到该变量的值\
-        private CommonEnum.CommonType commonType;
-        private String type;
-        private String typeC;
-        private String abbreviate;
-
-
-        ChildType(CommonEnum.CommonType commonType, String type, String typeC, String abbreviate) {
-            this.commonType = commonType;
-            this.type = type;
-            this.typeC = typeC;
-            this.abbreviate = abbreviate;
-        }
-
-        public CommonEnum.CommonType getCommonType() {
-            return commonType;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getTypeC() {
-            return typeC;
-        }
-
-        public String getAbbreviate() {
-            return abbreviate;
-        }
-
-        public static ChildType valueOf(int ordinal) {
-            if (ordinal < 0 || ordinal >= values().length) {
-                throw new IndexOutOfBoundsException("Invalid ordinal");
-            }
-            return values()[ordinal];
-        }
-
-    }
 
     public enum Source{
         /** 设计 */
@@ -195,11 +148,11 @@ public class NewBuild extends BaseEntity{
         this.remark = remark;
     }
 
-    public ChildType getChildType() {
+    public Build.ChildType getChildType() {
         return childType;
     }
 
-    public void setChildType(ChildType childType) {
+    public void setChildType(Build.ChildType childType) {
         this.childType = childType;
     }
 
