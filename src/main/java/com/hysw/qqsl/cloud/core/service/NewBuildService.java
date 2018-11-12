@@ -73,7 +73,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
             jsonObject.put("buildType", commonType.getBuildType());
             jsonObject.put("abbreviate", commonType.getAbbreviate());
             jsonArray1 = new JSONArray();
-            for (NewBuild.ChildType childType : NewBuild.ChildType.values()) {
+            for (Build.ChildType childType : Build.ChildType.values()) {
                 if (childType.getCommonType() == commonType) {
                     jsonObject1 = new JSONObject();
                     jsonObject1.put("typeC", childType.getTypeC());
@@ -91,7 +91,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         return jsonArray;
     }
 
-    public Workbook downloadBuild(CommonEnum.CommonType commonType, NewBuild.ChildType childType1) {
+    public Workbook downloadBuild(CommonEnum.CommonType commonType, Build.ChildType childType1) {
         Workbook wb = new XSSFWorkbook();
         NewBuild newBuild = findbyTypeAndChildType(childType1, commonType);
         outputBuilds(newBuild, wb);
@@ -840,7 +840,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                         }
                     }
                 }
-                for (NewBuild.ChildType childType : NewBuild.ChildType.values()) {
+                for (Build.ChildType childType : Build.ChildType.values()) {
                     if (sheet.getSheetName().trim().equals(childType.getTypeC())) {
                         if (childType.getType().equals("buildModel")) {
                             sheetObject.setBuildSheetList(entry.getKey(), sheet);
@@ -881,7 +881,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         return jsonArray;
     }
 
-    public NewBuild readSheet(SheetObject sheetObject, CommonEnum.CommonType commonType, NewBuild.ChildType childType1) {
+    public NewBuild readSheet(SheetObject sheetObject, CommonEnum.CommonType commonType, Build.ChildType childType1) {
         Row row;
         NewBuild newBuild = null;
         String a = null,b = null,c = null;
@@ -894,7 +894,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                     continue;
                 }
                 if (childType1 != null) {
-                    for (NewBuild.ChildType value : NewBuild.ChildType.values()) {
+                    for (Build.ChildType value : Build.ChildType.values()) {
                         if (value.getTypeC().equals(sheet.getSheetName())) {
                             if (value != childType1) {
                                 return null;
@@ -1017,7 +1017,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         return newBuild;
     }
 
-    public NewBuild findbyTypeAndChildType(NewBuild.ChildType childType1, CommonEnum.CommonType commonType) {
+    public NewBuild findbyTypeAndChildType(Build.ChildType childType1, CommonEnum.CommonType commonType) {
         List<NewBuild> list;
         if (childType1 != null && commonType != null) {
             List<Filter> filters = new ArrayList<>();
@@ -1077,7 +1077,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                 newBuild.setName(element.attributeValue("name"));
             }
             if (element.attributeValue("childType") != null&&!element.attributeValue("childType").equals("")) {
-                newBuild.setChildType(NewBuild.ChildType.valueOf(element.attributeValue("childType")));
+                newBuild.setChildType(Build.ChildType.valueOf(element.attributeValue("childType")));
                 newBuild.setType(newBuild.getChildType().getCommonType());
             }else{
                 if (element.attributeValue("type") != null&&!element.attributeValue("type").equals("")) {

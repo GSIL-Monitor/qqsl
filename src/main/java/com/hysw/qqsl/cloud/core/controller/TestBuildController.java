@@ -73,9 +73,9 @@ public class TestBuildController {
         String type = request.getParameter("type");
         String childType = request.getParameter("childType");
         CommonEnum.CommonType commonType = null;
-        NewBuild.ChildType childType1 = null;
+        Build.ChildType childType1 = null;
         if (childType != null && !childType.equals("")) {
-            childType1 = NewBuild.ChildType.valueOf(childType.toUpperCase());
+            childType1 = Build.ChildType.valueOf(childType.toUpperCase());
         } else if (type != null && !type.equals("")) {
             commonType = CommonEnum.CommonType.valueOf(type.toUpperCase());
         } else {
@@ -124,13 +124,13 @@ public class TestBuildController {
     @RequestMapping(value = "/downloadBuild", method = RequestMethod.GET)
     public @ResponseBody
     Message downloadBuild(@RequestParam String type, @RequestParam String childType, HttpServletResponse response) {
-        NewBuild.ChildType childType1 = null;
+        Build.ChildType childType1 = null;
         CommonEnum.CommonType commonType = null;
         if (type != null && !type.equals("")) {
             commonType = CommonEnum.CommonType.valueOf(type.toUpperCase());
         }
         if (childType != null && !childType.equals("")) {
-            childType1 = NewBuild.ChildType.valueOf(childType.toUpperCase());
+            childType1 = Build.ChildType.valueOf(childType.toUpperCase());
         }
         Workbook wb = newBuildService.downloadBuild(commonType, childType1);
         if (wb == null) {
@@ -174,13 +174,13 @@ public class TestBuildController {
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/bim/build", method = RequestMethod.GET)
     public @ResponseBody Object getBimBuild(@RequestParam String type ,@RequestParam String childType) {
-        NewBuild.ChildType childType1 = null;
+        Build.ChildType childType1 = null;
         CommonEnum.CommonType commonType = null;
         if (type != null && !type.equals("")) {
             commonType = CommonEnum.CommonType.valueOf(type.toUpperCase());
         }
         if (childType != null && !childType.equals("")) {
-            childType1 = NewBuild.ChildType.valueOf(childType.toUpperCase());
+            childType1 = Build.ChildType.valueOf(childType.toUpperCase());
         }
         NewBuild newBuild = newBuildService.findbyTypeAndChildType(childType1,commonType);
         if (newBuild == null) {
@@ -199,13 +199,13 @@ public class TestBuildController {
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/build", method = RequestMethod.GET)
     public @ResponseBody Message getBuild(@RequestParam String type ,@RequestParam String childType) {
-        NewBuild.ChildType childType1 = null;
+        Build.ChildType childType1 = null;
         CommonEnum.CommonType commonType = null;
         if (type != null && !type.equals("")) {
             commonType = CommonEnum.CommonType.valueOf(type.toUpperCase());
         }
         if (childType != null && !childType.equals("")) {
-            childType1 = NewBuild.ChildType.valueOf(childType.toUpperCase());
+            childType1 = Build.ChildType.valueOf(childType.toUpperCase());
         }
         NewBuild newBuild = newBuildService.findbyTypeAndChildType(childType1,commonType);
         if (newBuild == null) {
