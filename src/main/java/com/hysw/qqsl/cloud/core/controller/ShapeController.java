@@ -935,6 +935,24 @@ public class ShapeController {
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/editBuild", method = RequestMethod.POST)
     public @ResponseBody Message editBuild(@RequestBody  Map<String,Object> objectMap) {
+        Object id = objectMap.get("id");
+        Object designElevation = objectMap.get("designElevation");
+        Object remark = objectMap.get("remark");
+        Object positionCoor = objectMap.get("positionCoor");
+        if (id == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Build build = buildService.find(Long.valueOf(id.toString()));
+        if (designElevation != null) {
+            build.setDesignElevation(designElevation.toString());
+        }
+        if (remark != null) {
+            build.setRemark(remark.toString());
+        }
+        if (positionCoor != null) {
+            build.setPositionCoor(positionCoor.toString());
+        }
+        buildService.save(build);
         return MessageService.message(Message.Type.OK);
     }
 
