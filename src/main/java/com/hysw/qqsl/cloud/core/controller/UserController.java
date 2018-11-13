@@ -1099,5 +1099,25 @@ public class UserController {
         return MessageService.message(Message.Type.FAIL);
     }
 
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/updateUserName", method = RequestMethod.POST)
+    public @ResponseBody Message updateUserName(@RequestBody Map<String, Object> map){
+        Object userName = map.get("userName");
+        if (userName == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if (!SettingUtils.userNameRegexNumber(userName.toString())) {
+            return MessageService.message(Message.Type.PARAMETER_ERROR);
+        }
+        User user = authentService.getUserFromSubject();
+        if (user == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        user.setUserName(userName.toString());
+        userService.save(user);
+        return MessageService.message(Message.Type.OK);
+    }
+
 }
 

@@ -225,6 +225,35 @@ public class SettingUtils {
 	}
 
 	/**
+	 * userName正则验证(字母数字)
+	 * @param userName
+	 * @return
+	 */
+	public static boolean userNameRegexNumber(String userName){
+		if(!StringUtils.hasText(userName)){
+			return false;
+		}
+		if (userName.length() > 36) {
+			return false;
+		}
+		String regex = "^[a-zA-Z0-9]+$";
+		return regexResult(userName,regex);
+	}
+
+	/**
+	 * userName正则验证(字母中文)
+	 * @param userName
+	 * @return
+	 */
+	public static boolean userNameRegexChinese(String userName){
+		if(!StringUtils.hasText(userName)){
+			return false;
+		}
+		String regex = "^[a-zA-Z\u4E00-\u9FA5]+$";
+		return regexResult(userName,regex);
+	}
+
+	/**
 	 * httpUrl验证
 	 * @param url
 	 * @return
