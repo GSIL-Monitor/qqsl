@@ -610,10 +610,47 @@ public class UserService extends BaseService<User, Long> {
 		return true;
 	}
 
-	public boolean haveRole(User user) {
-		if (user.getRoles().contains("user:simple")) {
+	public boolean haveRole(User user,String role) {
+		if (user.getRoles().contains(role)) {
 			return true;
 		}
 		return false;
 	}
+
+	/**
+	 * 用户注册业务封装
+	 *
+	 * @param user
+	 * @param userName
+	 * @param phone
+	 * @param password
+	 */
+	public boolean registerAbll(User user, String userName, String phone, String password) {
+		try {
+			if (phone.length() != 11 || SettingUtils.phoneRegex(phone) == false) {
+				throw new QQSLException(phone + ":电话号码异常！");
+			}
+			if (password.length() != 32) {
+				throw new QQSLException(password + ":密码异常！");
+			}
+		} catch (QQSLException e) {
+			logger.info(e.getMessage());
+			return false;
+		}
+		user.setUserName(userName);
+		user.setPhone(phone);
+		user.setPassword(password);
+//				user.setType(User.Type.USER);
+		//默认新注册用户角色为web
+		user.setRoles(CommonAttributes.ROLES[5]);
+		save(user);
+		pollingService.addUser(user);
+//				激活试用版套餐
+		packageService.activateTestPackage(user);
+//		构建认证状态
+		Certify certify = new Certify(user);
+		certifyService.save(certify);
+		return true;
+	}
+
 }

@@ -30,7 +30,7 @@ public final class CommonAttributes {
      * 角色：管理员,系统用户,web用户,移动端用户,水文模型用户
      * admin:simple,user:simple,user:system,user:hydrology,account:simple
      */
-    public static final String[] ROLES = {"admin:simple", "user:system", "user:simple", "user:hydrology", "account:simple"};
+    public static final String[] ROLES = {"admin:simple", "user:system", "user:simple", "user:hydrology", "account:simple","user:abll"};
 
     /**
      * 协同工作的编辑权限

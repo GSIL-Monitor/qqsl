@@ -508,7 +508,7 @@ public class UserController {
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST) ;
         }
-        if (!userService.haveRole(user)) {
+        if (!userService.haveRole(user,"user:simple")) {
             return MessageService.message(Message.Type.UNAUTHORIZED);
         }
         if("18661925010".equals(code)){
@@ -575,7 +575,7 @@ public class UserController {
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST) ;
         }
-        if (!userService.haveRole(user)) {
+        if (!userService.haveRole(user,"user:simple")) {
             return MessageService.message(Message.Type.UNAUTHORIZED);
         }
         //判断是否被禁用
@@ -622,7 +622,7 @@ public class UserController {
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        if (!userService.haveRole(user)) {
+        if (!userService.haveRole(user,"user:simple")) {
             return MessageService.message(Message.Type.UNAUTHORIZED);
         }
         //判断是否被禁用
@@ -674,7 +674,7 @@ public class UserController {
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        if (!userService.haveRole(user)) {
+        if (!userService.haveRole(user,"user:simple")) {
             return MessageService.message(Message.Type.UNAUTHORIZED);
         }
         //判断是否被禁用
@@ -707,7 +707,7 @@ public class UserController {
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        if (!userService.haveRole(user)) {
+        if (!userService.haveRole(user,"user:simple")) {
             return MessageService.message(Message.Type.UNAUTHORIZED);
         }
         if (map.get("verification") == null) {
@@ -1099,6 +1099,11 @@ public class UserController {
         return MessageService.message(Message.Type.FAIL);
     }
 
+    /**
+     * 修改用户昵称
+     * @param map <li>userName:userName</li>
+     * @return
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/updateUserName", method = RequestMethod.POST)
@@ -1117,6 +1122,184 @@ public class UserController {
         user.setUserName(userName.toString());
         userService.save(user);
         return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 修改安布雷拉水文监测用户公司名称
+     * @param map <li>userName:userName</li>
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/abll/updateUserName", method = RequestMethod.POST)
+    public @ResponseBody Message abllUpdateUserName(@RequestBody Map<String, Object> map){
+        Object userName = map.get("userName");
+        if (userName == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if (!SettingUtils.userNameRegexChinese(userName.toString())) {
+            return MessageService.message(Message.Type.PARAMETER_ERROR);
+        }
+        User user = authentService.getUserFromSubject();
+        if (user == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        user.setUserName(userName.toString());
+        userService.save(user);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 安布雷拉用户注册
+     * @param objectMap verification验证码，userName用户名，password密码
+     * @return FAIL参数验证失败，INVALID验证码失效，NO_ALLOW验证码错误，OK注册成功
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/abll/register", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Message abllRegister(@RequestBody Map<String, String> objectMap,
+                     HttpSession session) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Map<String, Object> map = (Map<String, Object>) message.getData();
+        Verification verification = (Verification) session
+                .getAttribute("verification");
+        message = commonController.checkCode(map.get("verification").toString(), verification);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        String userName = map.get("userName").toString();
+        String phone = verification.getPhone();
+        String password = map.get("password").toString();
+        User user = userService.findByPhone(phone);
+        // 用户已存在
+        if (user != null) {
+            return MessageService.message(Message.Type.DATA_EXIST);
+        } else {
+            user = new User();
+        }
+        if (userService.registerAbll(user, userName, phone, password)) {
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
+    }
+
+    /**
+     * web端登录abll
+     * @param objectMap code 手机号或邮箱 password加密后密码 cookie
+     * @return 用户对象
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/abll/web/login", method = RequestMethod.POST, produces = "application/json")
+    public
+    @ResponseBody
+    Message abllLogin(
+            @RequestBody Map<String, Object> objectMap) {
+        if (SecurityUtils.getSubject().getSession() != null) {
+            SecurityUtils.getSubject().logout();
+        }
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Map<String, Object> map = (Map<String, Object>) message.getData();
+        if (map.get("code") == null || !StringUtils.hasText(map.get("code").toString())) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        String code = map.get("code").toString();
+        if (!(SettingUtils.phoneRegex(code)||SettingUtils.emailRegex(code))) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        User user = userService.findByPhoneOrEmial(code);
+        if (user == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST) ;
+        }
+        if (!userService.haveRole(user,"user:abll")) {
+            return MessageService.message(Message.Type.UNAUTHORIZED);
+        }
+        if("18661925010".equals(code)){
+            return subjectLogin(user, "web",null);
+        }
+        //判断是否被禁用
+        if (user.getLocked() != null && user.getLocked()) {
+            return MessageService.message(Message.Type.DATA_LOCK);
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password").toString())) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if (!user.getPassword().equals(map.get("password").toString())) {
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
+        }
+        if("dev".equals(SettingUtils.getInstance().getSetting().getStatus())){
+            return subjectLogin(user, "web",null);
+        }
+        if(map.get("cookie")==null||!StringUtils.hasText(map.get("cookie").toString())){
+            return MessageService.message(Message.Type.CODE_NEED);
+        }
+        //登录间隔时间过长需重新登录
+        if(user.getLoginDate()==null){
+            user.setLoginDate(new Date());
+        }
+        if(System.currentTimeMillis() - user.getLoginDate().getTime()>15*24*60*60*1000l){
+            return MessageService.message(Message.Type.CODE_NEED);
+        }
+        String cookie = map.get("cookie").toString();
+        if(!cookie.equals(DigestUtils.md5Hex(user.getPassword()))){
+            return MessageService.message(Message.Type.CODE_NEED);
+        }else{
+            return subjectLogin(user, "web",null);
+        }
+    }
+
+    /**
+     * web端验证码登录
+     * @param map password加密后密码
+     * @return 用户对象
+     */
+    @RequestMapping(value = "/abll/web/loginByVerify", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Message abllLoginByVerify(
+            @RequestBody Map<String, String> map, HttpSession session) {
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Verification verification = (Verification) session.getAttribute("verification");
+        if (verification == null) {
+            return MessageService.message(Message.Type.CODE_NOEXIST);
+        }
+        String code = verification.getEmail()==null?verification.getPhone():verification.getEmail();
+        User user = userService.findByPhoneOrEmial(code);
+        if (user == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (!userService.haveRole(user,"user:abll")) {
+            return MessageService.message(Message.Type.UNAUTHORIZED);
+        }
+        if (map.get("verification") == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        String verifyCode = map.get("verification");
+        //判断是否被禁用
+        if (user.getLocked() != null && user.getLocked()) {
+            return MessageService.message(Message.Type.DATA_LOCK);
+        }
+        if (map.get("password") == null || !StringUtils.hasText(map.get("password"))) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        if (!user.getPassword().equals(map.get("password"))) {
+            return MessageService.message(Message.Type.PASSWORD_ERROR);
+        }
+        message = commonController.checkCode(verifyCode,verification);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        return subjectLogin(user,"web",null);
     }
 
 }
