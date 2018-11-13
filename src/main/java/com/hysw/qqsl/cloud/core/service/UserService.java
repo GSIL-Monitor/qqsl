@@ -609,4 +609,11 @@ public class UserService extends BaseService<User, Long> {
 		}
 		return true;
 	}
+
+	public boolean haveRole(User user) {
+		if (user.getRoles().contains("user:simple")) {
+			return true;
+		}
+		return false;
+	}
 }

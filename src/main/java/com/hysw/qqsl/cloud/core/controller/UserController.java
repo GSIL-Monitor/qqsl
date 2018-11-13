@@ -508,6 +508,9 @@ public class UserController {
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST) ;
         }
+        if (!userService.haveRole(user)) {
+            return MessageService.message(Message.Type.UNAUTHORIZED);
+        }
         if("18661925010".equals(code)){
             return subjectLogin(user, "web",null);
         }
@@ -572,6 +575,9 @@ public class UserController {
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST) ;
         }
+        if (!userService.haveRole(user)) {
+            return MessageService.message(Message.Type.UNAUTHORIZED);
+        }
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
             return MessageService.message(Message.Type.DATA_LOCK);
@@ -615,6 +621,9 @@ public class UserController {
         User user = userService.findByPhoneOrEmial(code);
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (!userService.haveRole(user)) {
+            return MessageService.message(Message.Type.UNAUTHORIZED);
         }
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
@@ -665,6 +674,9 @@ public class UserController {
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
+        if (!userService.haveRole(user)) {
+            return MessageService.message(Message.Type.UNAUTHORIZED);
+        }
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
             return MessageService.message(Message.Type.DATA_LOCK);
@@ -694,6 +706,9 @@ public class UserController {
         User user = userService.findByPhoneOrEmial(code);
         if (user == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (!userService.haveRole(user)) {
+            return MessageService.message(Message.Type.UNAUTHORIZED);
         }
         if (map.get("verification") == null) {
             return MessageService.message(Message.Type.FAIL);
