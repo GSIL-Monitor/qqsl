@@ -2,9 +2,11 @@ package com.hysw.qqsl.cloud.core.entity.data;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * 仪表实体类
@@ -58,6 +60,7 @@ public class Sensor extends BaseEntity {
     private String pictureurl;
 
     private Station station;
+    private List<SensorAttribute> sensorAttributes;
     public enum Type {
         // 宏电液位仪
         IRTU,
@@ -233,5 +236,15 @@ public class Sensor extends BaseEntity {
 
     public void setPictureurl(String pictureurl) {
         this.pictureurl = pictureurl;
+    }
+
+    @OneToMany(mappedBy="sensor", fetch=FetchType.EAGER, cascade={CascadeType.PERSIST})
+    @JsonIgnore
+    public List<SensorAttribute> getSensorAttributes() {
+        return sensorAttributes;
+    }
+
+    public void setSensorAttributes(List<SensorAttribute> sensorAttributes) {
+        this.sensorAttributes = sensorAttributes;
     }
 }
