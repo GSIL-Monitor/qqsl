@@ -7,7 +7,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Account;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.core.entity.data.User;
-import com.hysw.qqsl.cloud.core.entity.station.Camera;
+import com.hysw.qqsl.cloud.core.entity.data.Camera;
 import com.hysw.qqsl.cloud.core.entity.station.Cooperate;
 import com.hysw.qqsl.cloud.core.entity.station.Share;
 import com.hysw.qqsl.cloud.util.SettingUtils;

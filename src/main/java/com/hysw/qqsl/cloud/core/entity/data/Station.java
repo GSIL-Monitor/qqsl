@@ -3,8 +3,6 @@ package com.hysw.qqsl.cloud.core.entity.data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hysw.qqsl.cloud.CommonEnum;
-import com.hysw.qqsl.cloud.core.entity.station.Camera;
-import com.hysw.qqsl.cloud.core.entity.station.Cooperate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,18 +33,18 @@ public class Station extends BaseEntity {
     private String riverModel;
     /** 流量曲线 */
     private String flowModel;
-    /** 参数 */
-    private String parameter;
+//    /** 参数 */
+//    private String parameter;
     /** 测站唯一标识 */
     private String instanceId;
     /** 测站分享 */
     private String shares;
-    /** 是否修改过 */
-    private boolean transform;
+//    /** 是否修改过 */
+//    private boolean transform;
     /** 到期时间 */
     private Date expireDate;
     /** 测站图片(阿里云图片路径) */
-    private String  picture;
+    private String  pictureUrl;
 
     private User user;
 
@@ -56,7 +54,7 @@ public class Station extends BaseEntity {
     private Double bottomElevation;
 
     /** 摄像头 非数据库对应*/
-    private Camera camera;
+    private List<Camera> cameras;
 
 
     private List<Sensor> sensors = new ArrayList<>();
@@ -94,15 +92,15 @@ public class Station extends BaseEntity {
     public void setAddress(String address) {
         this.address = address;
     }
-    @Basic(fetch = FetchType.EAGER)
-    @Column(columnDefinition = "text")
-    public String getParameter() {
-        return parameter;
-    }
-
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
-    }
+//    @Basic(fetch = FetchType.EAGER)
+//    @Column(columnDefinition = "text")
+//    public String getParameter() {
+//        return parameter;
+//    }
+//
+//    public void setParameter(String parameter) {
+//        this.parameter = parameter;
+//    }
 
     @Basic(fetch = FetchType.EAGER)
     @Column(columnDefinition = "text")
@@ -132,23 +130,6 @@ public class Station extends BaseEntity {
 
     public void setShares(String shares) {
         this.shares = shares;
-    }
-
-    public boolean isTransform() {
-        return transform;
-    }
-
-    public void setTransform(boolean transform) {
-        this.transform = transform;
-    }
-
-    @Column(length = 10000)
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
     }
 
     @ManyToOne(fetch=FetchType.EAGER)
@@ -203,13 +184,22 @@ public class Station extends BaseEntity {
         this.bottomElevation = bottomElevation;
     }
 
-    @Transient
-    public Camera getCamera() {
-        return camera;
+    public String getPictureUrl() {
+        return pictureUrl;
     }
 
-    public void setCamera(Camera camera) {
-        this.camera = camera;
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
+
+    @OneToMany(mappedBy="station", fetch=FetchType.EAGER, cascade={CascadeType.PERSIST})
+    @JsonIgnore
+    public List<Camera> getCameras() {
+        return cameras;
+    }
+
+    public void setCameras(List<Camera> cameras) {
+        this.cameras = cameras;
     }
 
     @Basic(fetch = FetchType.EAGER)

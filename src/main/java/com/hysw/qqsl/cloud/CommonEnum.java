@@ -422,6 +422,8 @@ public class CommonEnum {
     }
 
     public enum StationType{
+        /** 普通测站 */
+        NORMAL_STATION,
         /** 水文站 */
         HYDROLOGIC_STATION,
         /** 雨量站 */
