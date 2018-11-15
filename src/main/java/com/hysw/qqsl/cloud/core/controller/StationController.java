@@ -4,12 +4,10 @@ import com.aliyun.oss.common.utils.IOUtils;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.annotation.util.StationIsExpire;
 import com.hysw.qqsl.cloud.core.entity.Message;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
-import com.hysw.qqsl.cloud.core.entity.data.Sensor;
-import com.hysw.qqsl.cloud.core.entity.data.Station;
-import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import com.hysw.qqsl.cloud.util.TradeUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -25,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import sun.misc.resources.Messages;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +31,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -61,12 +62,19 @@ public class StationController {
     private AccountService accountService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CameraService cameraService;
+    @Autowired
+    private SensorAttributeService sensorAttributeService;
+
+    private final String sDate = "2099/12/31";
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     /**
      * 获取token
      * @return message消息体,附带token令牌
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple","account:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/token", method = RequestMethod.GET)
     public @ResponseBody
     Message getToken() {
@@ -81,6 +89,374 @@ public class StationController {
         return MessageService.message(Message.Type.OK, applicationTokenService.makeIntendedEffectToken());
     }
 
+    /**
+     * 获取测站列表包括分享的测站
+     * @return message消息体,OK:获取成功
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/lists",method = RequestMethod.GET)
+    public @ResponseBody Message getStations(){
+        User user = authentService.getUserFromSubject();
+        List<JSONObject> jsonObjectList = stationService.getStations(user);
+        pollingService.changeStationStatus(user, false);
+        return MessageService.message(Message.Type.OK,jsonObjectList);
+    }
+
+
+    /**
+     * 安布雷拉水文用户新建站点
+     *
+     * @param map
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/abll/create", method = RequestMethod.POST)
+    public @ResponseBody
+    Message abllCreate(@RequestBody Map<String, Object> map) {
+        User user = authentService.getUserFromSubject();
+        Object name = map.get("name");
+        Object type = map.get("type");
+        Object description = map.get("description");
+        if (name == null || type == null || description == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        List<Station> byUser = stationService.findByUser(user);
+        if (byUser.size() > 1000) {
+            return MessageService.message(Message.Type.DATA_LOCK);
+        }
+        Station station = new Station();
+        station.setName(name.toString());
+        station.setType(CommonEnum.StationType.valueOf(type.toString().toUpperCase()));
+        station.setDescription(description.toString());
+        station.setUser(user);
+        station.setInstanceId(TradeUtil.buildInstanceId());
+        try {
+            station.setExpireDate(sdf.parse(sDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        stationService.save(station);
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+    /**
+     * 测站编辑
+     * @param map 包含测站id,以及测站类型type,测站名字name,测站描述description,测站地址address,测站坐标coor
+     * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
+     */
+    @StationIsExpire("station")
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/edit",method = RequestMethod.POST)
+    public @ResponseBody Message editStation(@RequestBody Map<String,Object> map){
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        if(map.get("id")==null){
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Long id = Long.valueOf(map.get("id").toString());
+        Station station = stationService.find(id);
+        if(station==null||station.getId()==null){
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if(!isOperate(station)){
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        if (stationService.edit(map, station)) {
+            return MessageService.message(Message.Type.OK);
+        }
+        return MessageService.message(Message.Type.FAIL);
+    }
+
+    /**
+     * 仪表添加
+     * @param map 包含测站id,以及仪表参数factory,contact,phone,settingHeight,ciphertext,code
+     * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:添加成功,FAIL:添加失败
+     */
+    @StationIsExpire
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/addSensor",method = RequestMethod.POST)
+    public @ResponseBody Message addSensor(@RequestBody Map<String,Object> map){
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object id = map.get("id");
+        Object name = map.get("name");
+        Object code = map.get("code");
+        Object ciphertext = map.get("ciphertext");
+        if (id == null || name == null || code == null || ciphertext == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Station station = stationService.find(Long.valueOf(id.toString()));
+        if (station == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if(!isOperate(station)){
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        if (monitorService.verify(code.toString(),ciphertext.toString())) {
+            Sensor sensor = sensorService.findByCode(code.toString());
+            if (sensor != null) {
+                return MessageService.message(Message.Type.DATA_EXIST);
+            }
+            //注册成功
+            sensor = new Sensor();
+            sensor.setName(name.toString());
+            sensor.setCode(code.toString());
+            sensor.setStation(station);
+            sensorService.save(sensor);
+            return MessageService.message(Message.Type.OK);
+        } else {
+            return MessageService.message(Message.Type.FAIL);
+        }
+    }
+
+    /**
+     * 添加摄像头
+     * @param map 包含测站id,以及摄像头参数factory,contact,phone,settingHeight,cameraUrl
+     * @return  message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:添加成功,FAIL:添加失败
+     */
+    @StationIsExpire
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/addCamera",method = RequestMethod.POST)
+    public @ResponseBody Message addCamera(@RequestBody Map<String,Object> map){
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object id = map.get("id");
+        Object name = map.get("name");
+        Object code = map.get("code");
+        Object password = map.get("password");
+        if (id == null || name == null || code == null || password == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Station station = stationService.find(Long.valueOf(id.toString()));
+        if(!isOperate(station)){
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        Camera camera = new Camera();
+        camera.setName(name.toString());
+        camera.setStation(station);
+        camera.setCode(code.toString());
+        camera.setPassword(password.toString());
+        cameraService.save(camera);
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+    /**
+     * 编辑仪表
+     * @param map 包含测站station,以及仪表参数id,factory,contact,phone,settingHeight
+     * @return message消息体,EXIST:仪表或测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
+     */
+    @StationIsExpire("sensor")
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/editSensor",method = RequestMethod.POST)
+    public @ResponseBody Message editSensor(@RequestBody Map<String,Object> map){
+        Object id = map.get("id");
+        Object name = map.get("name");
+        Object description = map.get("description");
+        Object factory = map.get("factory");
+        Object contact = map.get("contact");
+        Object phone = map.get("phone");
+        Object settingHeight = map.get("settingHeight");
+        Object settingElevation = map.get("settingElevation");
+        Object settingAddress = map.get("settingAddress");
+        Object measureRange = map.get("measureRange");
+        Object maxValue = map.get("maxValue");
+        Object isMaxValueWaring = map.get("isMaxValueWaring");
+        Object minValue = map.get("minValue");
+        Object isMinValueWaring = map.get("isMinValueWaring");
+        Object extraParameters = map.get("extraParameters");
+        if (id == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Sensor sensor = sensorService.find(Long.valueOf(id.toString()));
+        if (sensor == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if(!isOperate(sensor.getStation())){
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        sensorService.editSensor(sensor, name, description, factory, contact, phone, settingHeight, settingElevation, settingAddress, measureRange, maxValue, isMaxValueWaring, minValue, isMinValueWaring);
+        JSONObject jsonObject;
+        SensorAttribute sensorAttribute;
+        if (extraParameters != null) {
+            for (Object o : JSONArray.fromObject(extraParameters)) {
+                jsonObject = JSONObject.fromObject(o);
+                if (jsonObject.get("id") != null) {
+                    sensorAttribute = sensorAttributeService.find(Long.valueOf(jsonObject.get("id").toString()));
+                    if (sensorAttribute != null) {
+                        sensorAttribute.setValue(jsonObject.get("value") == null ? null : jsonObject.get("value").toString());
+                        sensorAttributeService.save(sensorAttribute);
+                    }
+                }
+            }
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 仪表添加自定义属性
+     * @param map <ul>
+     *            <li>id：仪表id</li>
+     *            <li>displayName: 属性名</li>
+     * </ul>
+     * @return <ul>
+     *     <li>OK，添加成功</li>
+     *     <li>DATA_REFUSE：不是自己的仪表</li>
+     *     <li>DATA_NOEXIST:仪表不存在</li>
+     *     <li>DATA_LOCK: 属性超多20个，不能再添加</li>
+     * </ul>
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/sensor/extra/create",method = RequestMethod.POST)
+    public @ResponseBody Message extraCreate(@RequestBody Map<String,Object> map){
+        Object id = map.get("id");
+        Object displayName = map.get("displayName");
+        if (id == null || displayName == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Sensor sensor = sensorService.find(Long.valueOf(id.toString()));
+        if (sensor == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(sensor.getStation().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        if (sensorAttributeService.findBySensor(sensor).size() > 20) {
+            return MessageService.message(Message.Type.DATA_LOCK);
+        }
+        SensorAttribute sensorAttribute = new SensorAttribute();
+        sensorAttribute.setDisplayName(displayName.toString());
+        sensorAttribute.setType(SensorAttribute.Type.CUSTOM);
+        sensorAttribute.setSensor(sensor);
+        sensorAttributeService.save(sensorAttribute);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 仪表删除自定义属性
+     * @param id 自定义属性id
+     * @return <ul>
+     *     <li>OK，添加成功</li>
+     *     <li>DATA_REFUSE：不是自己的仪表</li>
+     *     <li>DATA_NOEXIST:仪表不存在</li>
+     *     <li>DATA_LOCK: 属性类型是系统属性，不能删除</li>
+     * </ul>
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/sensor/extra/delete/{id}",method = RequestMethod.DELETE)
+    public @ResponseBody Message extraDelete(@PathVariable("id") Long id){
+        SensorAttribute sensorAttribute = sensorAttributeService.find(id);
+        if (sensorAttribute == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(sensorAttribute.getSensor().getStation().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        if (sensorAttribute.getType() == SensorAttribute.Type.SYSTEM) {
+            return MessageService.message(Message.Type.DATA_LOCK);
+        }
+        sensorAttributeService.remove(sensorAttribute);
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+        /**
+         * 编辑摄像头
+         * @param map  包含测站station,以及摄像头参数,id,factory,contact,phone,settingHeight,cameraUrl
+         * @return  message消息体,EXIST:仪表或测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
+         */
+    @StationIsExpire("camera")
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/editCamera",method = RequestMethod.POST)
+    public @ResponseBody Message editCamera(@RequestBody Map<String,Object> map){
+        Message message = CommonController.parameterCheck(map);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object id = map.get("id");
+        Object name = map.get("name");
+        Object description = map.get("description");
+        Object factory = map.get("factory");
+        Object contact = map.get("contact");
+        Object phone = map.get("phone");
+        Object settingAddress = map.get("settingAddress");
+        Object password = map.get("password");
+        if (id == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Camera camera = cameraService.find(Long.valueOf(id.toString()));
+        if(camera==null){
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if(!isOperate(camera.getStation())){
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        cameraService.editCamera(camera,name,description,factory,contact,phone,settingAddress,password);
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+    /**
+     * 仪表删除
+     * @param id 仪表id
+     * @return message消息体,EXIST:仪表不存在,OK:删除成功
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteSensor/{id}",method = RequestMethod.DELETE)
+    public @ResponseBody Message deleteSensor(@PathVariable("id") Long id){
+        Sensor sensor = sensorService.find(id);
+        if (sensor == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if(!isOperate(sensor.getStation())){
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        sensorService.remove(sensor);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 摄像头删除
+     * @param id 摄像头id
+     * @return message消息体,EXIST:仪表不存在,OK:删除成功,FAIL:删除失败
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/deleteCamera/{id}",method = RequestMethod.DELETE)
+    public @ResponseBody Message deleteCamera(@PathVariable("id") Long id){
+        Camera camera = cameraService.find(id);
+        if (camera == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if(!isOperate(camera.getStation())){
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        cameraService.remove(camera);
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+
+
 
     /**
      * 河道模型和水位流量关系曲线上传
@@ -89,7 +465,7 @@ public class StationController {
      */
     @StationIsExpire("request")
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/uploadModel" ,method = RequestMethod.POST)
     public @ResponseBody Message uploadModel(HttpServletRequest request){
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
@@ -124,7 +500,7 @@ public class StationController {
      * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:下载成功,FAIL:下载失败
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/downloadModel",method = RequestMethod.GET)
     public @ResponseBody Message downloadModel(@RequestParam long id,HttpServletResponse response){
         Station station = stationService.find(id);
@@ -164,378 +540,28 @@ public class StationController {
         }
         return MessageService.message(Message.Type.OK);
     }
-    /**
-     * 获取测站列表包括分享的测站
-     * @return message消息体,OK:获取成功
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/lists",method = RequestMethod.GET)
-    public @ResponseBody Message getStations(){
-        User user = authentService.getUserFromSubject();
-        List<JSONObject> jsonObjectList = stationService.getStations(user);
-        pollingService.changeStationStatus(user, false);
-        return MessageService.message(Message.Type.OK,jsonObjectList);
-    }
+
 
     /**
-     * 测站编辑
-     * @param map 包含测站id,以及测站类型type,测站名字name,测站描述description,测站地址address,测站坐标coor
-     * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
+     * 监测取得仪表参数：getParamters，GET
+     * 监测系统取得所有已改变的参数列表
+     * @param token 自定义安全令牌token
+     * @return FAIL:获取失败，OK：获取成功，附带测站参数
      */
-    @StationIsExpire("station")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/edit",method = RequestMethod.POST)
-    public @ResponseBody Message editStation(@RequestBody Map<String,Object> map){
-        Message message = CommonController.parameterCheck(map);
+    @RequestMapping(value = "/sensor/getParameters", method = RequestMethod.GET)
+    public @ResponseBody Message getParameters(@RequestParam String token){
+        Message message = CommonController.parametersCheck(token);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        Map<String,Object> stationMap = (Map<String, Object>) map.get("station");
-        if(stationMap.get("id")==null){
+        if(!applicationTokenService.decrypt(token)){
             return MessageService.message(Message.Type.FAIL);
         }
-        Long id = Long.valueOf(stationMap.get("id").toString());
-        Station station = stationService.find(id);
-        if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if(!isOperate(station)){
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        if (stationService.edit(stationMap, station)) {
-            return MessageService.message(Message.Type.OK);
-        }
-        return MessageService.message(Message.Type.FAIL);
+        JSONArray paramters = stationService.getParameters();
+        return MessageService.message(Message.Type.OK,paramters);
     }
 
-    /**
-     * 仪表添加
-     * @param map 包含测站id,以及仪表参数factory,contact,phone,settingHeight,ciphertext,code
-     * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:添加成功,FAIL:添加失败
-     */
-    @StationIsExpire
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/addSensor",method = RequestMethod.POST)
-    public @ResponseBody Message addSensor(@RequestBody Map<String,Object> map){
-        Message message = CommonController.parameterCheck(map);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        if(map.get("id")==null){
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Long id = Long.valueOf(map.get("id").toString());
-        Station station = stationService.find(id);
-        if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if(!isOperate(station)){
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        return addSensor((Map<String, Object>) map.get("sensor"),station);
-    }
 
-    /**
-     * 仪表添加
-     *
-     * @param map
-     * @return
-     */
-    public Message addSensor(Map<String, Object> map, Station station) {
-        if(map.get("code")==null||!StringUtils.hasText(map.get("code").toString())){
-            return MessageService.message(Message.Type.FAIL);
-        }
-        if(map.get("ciphertext")==null||!StringUtils.hasText(map.get("ciphertext").toString())){
-            return MessageService.message(Message.Type.FAIL);
-        }
-        String code = map.get("code").toString();
-        String ciphertext = map.get("ciphertext").toString();
-        //加密并验证密码是否一致
-        boolean verify = monitorService.verify(code,ciphertext);
-        if (verify) {
-            Sensor sensor = sensorService.findByCode(code);
-            if (sensor != null) {
-                return MessageService.message(Message.Type.DATA_EXIST);
-            }
-            //注册成功
-            JSONObject infoJson = new JSONObject();
-            sensor = new Sensor();
-            if (!stationService.sensorVerify(map, sensor, infoJson)) {
-                return MessageService.message(Message.Type.FAIL);
-            }
-            //判断测站类型,当前测站为水位站时,只能绑定一个仪表,一个摄像头
-            if(!station.getType().equals(CommonEnum.StationType.WATER_LEVEL_STATION)){
-                return MessageService.message(Message.Type.OK);
-            }
-            List<Sensor> sensors = station.getSensors();
-            if(sensors.size()==0){
-                return MessageService.message(Message.Type.OK);
-            }
-            for(int i = 0;i<sensors.size();i++){
-                if(!Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
-                    logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                    return MessageService.message(Message.Type.DATA_EXIST);
-                }
-            }
-            return MessageService.message(Message.Type.OK, stationService.saveAndAddCache(code, infoJson, station, sensor));
-        } else {
-            return MessageService.message(Message.Type.FAIL);
-        }
-    }
-
-    /**
-     * 添加摄像头
-     * @param map 包含测站id,以及摄像头参数factory,contact,phone,settingHeight,cameraUrl
-     * @return  message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:添加成功,FAIL:添加失败
-     */
-    @StationIsExpire
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/addCamera",method = RequestMethod.POST)
-    public @ResponseBody Message addCamera(@RequestBody Map<String,Object> map){
-        Message message = CommonController.parameterCheck(map);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        if(map.get("id")==null){
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Long id = Long.valueOf(map.get("id").toString());
-        Station station = stationService.find(id);
-        if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if(!isOperate(station)){
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        return addCamera((Map<String, Object>) map.get("camera"),station);
-    }
-
-    /**
-     * 添加摄像头
-     * @param cameraMap
-     * @param station
-     * @return
-     */
-    public Message addCamera(Map<String, Object> cameraMap, Station station) {
-        //判断测站类型,当前测站为水位站时,只能绑定一个仪表,一个摄像头
-        Sensor sensor = new Sensor();
-        sensor.setType(Sensor.Type.CAMERA);
-        if(!station.getType().equals(CommonEnum.StationType.WATER_LEVEL_STATION)){
-            return MessageService.message(Message.Type.OK);
-        }
-        List<Sensor> sensors = station.getSensors();
-        if(sensors.size()==0){
-            return MessageService.message(Message.Type.OK);
-        }
-        for(int i = 0;i<sensors.size();i++){
-            if(Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
-                logger.info("测站Id:" + station.getId() + ",水位站已有仪表绑定");
-                return MessageService.message(Message.Type.DATA_EXIST);
-            }
-        }
-        JSONObject infoJson = new JSONObject();
-        if (!stationService.cameraVerify(cameraMap, infoJson, station, sensor)) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        sensor.setInfo(infoJson.isEmpty()?null:infoJson.toString());
-        sensor.setStation(station);
-        sensorService.save(sensor);
-        JSONObject cameraJson = new JSONObject();
-        cameraJson.put("id",sensor.getId());
-        return MessageService.message(Message.Type.OK,cameraJson);
-    }
-
-    /**
-     * 仪表删除
-     * @param id 仪表id
-     * @return message消息体,EXIST:仪表不存在,OK:删除成功
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteSensor/{id}",method = RequestMethod.DELETE)
-    public @ResponseBody Message deleteSensor(@PathVariable("id") Long id){
-       Sensor sensor = sensorService.find(id);
-        if(sensor==null||sensor.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        sensorService.remove(sensor);
-        return MessageService.message(Message.Type.OK);
-    }
-
-    /**
-     * 摄像头删除
-     * @param id 摄像头id
-     * @return message消息体,EXIST:仪表不存在,OK:删除成功,FAIL:删除失败
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteCamera/{id}",method = RequestMethod.DELETE)
-    public @ResponseBody Message deleteCamera(@PathVariable("id") Long id){
-        Sensor sensor = sensorService.find(id);
-        if(sensor==null||sensor.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if(!Sensor.Type.CAMERA.equals(sensor.getType())){
-            return MessageService.message(Message.Type.FAIL);
-        }
-        sensorService.remove(sensor);
-        return MessageService.message(Message.Type.OK);
-    }
-
-    /**
-     * 编辑仪表
-     * @param map 包含测站station,以及仪表参数id,factory,contact,phone,settingHeight
-     * @return message消息体,EXIST:仪表或测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
-     */
-    @StationIsExpire("sensor")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/editSensor",method = RequestMethod.POST)
-    public @ResponseBody Message editSensor(@RequestBody Map<String,Object> map){
-        Message message = CommonController.parameterCheck(map);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Map<String,Object> sensorMap = (Map<String,Object>)map.get("sensor");
-        if(sensorMap.get("id")==null){
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Long id = Long.valueOf(sensorMap.get("id").toString());
-        Sensor sensor = sensorService.find(id);
-        if(sensor==null||sensor.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        Long stationId = Long.valueOf(sensorMap.get("station").toString());
-        Station station = stationService.find(stationId);
-        if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if(!isOperate(station)){
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        if (sensorService.editSensor(sensorMap, sensor)) {
-            return MessageService.message(Message.Type.OK);
-        }
-        return MessageService.message(Message.Type.FAIL);
-    }
-
-    /**
-     * 编辑摄像头
-     * @param map  包含测站station,以及摄像头参数,id,factory,contact,phone,settingHeight,cameraUrl
-     * @return  message消息体,EXIST:仪表或测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
-     */
-    @StationIsExpire("camera")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/editCamera",method = RequestMethod.POST)
-    public @ResponseBody Message editCamera(@RequestBody Map<String,Object> map){
-        Message message = CommonController.parameterCheck(map);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Map<String,Object> cameraMap = (Map<String,Object>)map.get("camera");
-        if(cameraMap.get("id")==null){
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Long id = Long.valueOf(cameraMap.get("id").toString());
-        Sensor sensor = sensorService.find(id);
-        if(sensor==null||sensor.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        Long stationId = Long.valueOf(cameraMap.get("station").toString());
-        Station station = stationService.find(stationId);
-        if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if(!isOperate(station)){
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        if (sensorService.editCamera(cameraMap, sensor)) {
-            return MessageService.message(Message.Type.OK);
-        }
-        return MessageService.message(Message.Type.FAIL);
-    }
-
-    /**
-     * 编辑测站参数
-     * @param map 包含测站id,以及参数信息,maxValue,minvalue,phone,sendStatus
-     * @return message消息体,EXIST:测站不存在,NO_AUTHORIZE:无操作权限,OK:编辑成功,FAIL:编辑失败
-     */
-    @StationIsExpire
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/editParameter",method = RequestMethod.POST)
-    public @ResponseBody Message editParameter(@RequestBody Map<String,Object> map){
-        Message message = CommonController.parameterCheck(map);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        if(map.get("id")==null){
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Long id = Long.valueOf(map.get("id").toString());
-        Station station = stationService.find(id);
-        if(station==null||station.getId()==null){
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if(!isOperate(station)){
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        return editParameter((Map<String,Object>)map.get("parameter"),station);
-    }
-
-    /**maxValue/minValue/phone/sendStatus
-     * 编辑测站参数
-     *
-     * @param map
-     * @param station
-     * @return
-     */
-    public Message editParameter(Map<String, Object> map, Station station) {
-        double maxValue,minValue;
-        try{
-            if(map.get("maxValue")!=null){
-                maxValue = Double.valueOf(map.get("maxValue").toString());
-                if(maxValue<0||maxValue>100){
-                    return MessageService.message(Message.Type.FAIL);
-                }
-                if(map.get("minValue")!=null){
-                    minValue = Double.valueOf(map.get("minValue").toString());
-                    if(minValue<0||minValue>100){
-                        return MessageService.message(Message.Type.FAIL);
-                    }
-                    if (minValue>maxValue){
-                        return MessageService.message(Message.Type.FAIL);
-                    }
-                }
-            }
-        }catch (NumberFormatException e){
-            return MessageService.message(Message.Type.FAIL);
-        }
-        if(map.get("phone")!=null){
-            if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return MessageService.message(Message.Type.FAIL);
-            }
-        }
-        if(map.get("sendStatus")!=null){
-            boolean falg = "true".equals(map.get("sendStatus").toString())||"false".equals(map.get("sendStatus"));
-            if(!falg){
-                return MessageService.message(Message.Type.FAIL);
-            }
-        }
-        JSONObject jsonObject = SettingUtils.convertMapToJson(map);
-        station.setParameter(jsonObject.isEmpty()?null:jsonObject.toString());
-        station.setTransform(true);
-        stationService.save(station);
-        return MessageService.message(Message.Type.OK);
-    }
 
     /**
      * 取消测站分享
@@ -599,24 +625,7 @@ public class StationController {
         return false;
     }
 
-    /**
-     * 监测取得仪表参数：getParamters，GET
-     * 监测系统取得所有已改变的参数列表
-     * @param token 自定义安全令牌token
-     * @return FAIL:获取失败，OK：获取成功，附带测站参数
-     */
-    @RequestMapping(value = "/getParameters", method = RequestMethod.GET)
-    public @ResponseBody Message getParameters(@RequestParam String token){
-       Message message = CommonController.parametersCheck(token);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-       if(!applicationTokenService.decrypt(token)){
-           return MessageService.message(Message.Type.FAIL);
-       }
-        JSONArray paramters = stationService.getParameters();
-        return MessageService.message(Message.Type.OK,paramters);
-    }
+
 
     /**
      * 将多个测站协同给多个子账号

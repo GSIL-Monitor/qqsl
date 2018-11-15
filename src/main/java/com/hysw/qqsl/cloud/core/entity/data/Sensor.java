@@ -62,22 +62,32 @@ public class Sensor extends BaseEntity {
     private Station station;
     private List<SensorAttribute> sensorAttributes;
     public enum Type {
-        // 宏电液位仪
-        IRTU,
-        // 超声波液位仪
-        ULTRA_WATER,
-        // 超声波液差计
-        ULTRA_DIFF,
-        // 明渠流量计
-        CANAL_FLOW,
-        // 多普勒流速计
-        DOPPLER_FLOW,
-        // 雷达物位计
-        RADAR,
-        // 投入式液位计
-        THROW_WATER,
-        // 摄像头
-        CAMERA;
+        /** 超声波液位计 */
+        U_WATER,
+        /** 超声波液位差计 */
+        U_WATER_DIFF,
+        /** 超声波明渠流量计 */
+        U_CHANNEL_FLOW,
+        /** 超声波多普勒流量计 */
+        U_DOPPLER_FLOW,
+        /** 超声波多普勒流速仪 */
+        U_DOPPLER_RATE,
+        /** 雷达物位计 */
+        R_LEVEL,
+        /** 双通道仪表组合-多普勒流速仪+中核浊度计 */
+        D_DOPPLER_CORE_T,
+        /** 双通道仪表组合-多普勒流速仪+ZS浊度计 */
+        D_DOPPLER_ZS_T,
+        /** 双通道仪表组合-多普勒流速仪+ZPD浊度计 */
+        D_DOPPLER_ZPD_T,
+        /** 双通道仪表组合-超声波液位计+投入式液位计 */
+        D_ULTRA_INPUT,
+        /** 双通道仪表组合-投入式液位计+投入式液位计 */
+        D_INPUT_INPUT,
+        /** 双通道仪表组合-雷达式液位计+投入式液位计 */
+        D_RADAR_INPUT,
+        /** 宏电液位仪 */
+        IRTU_WATER;
         public static Type valueOf(int ordinal) {
             if (ordinal < 0 || ordinal >= values().length) {
                 throw new IndexOutOfBoundsException("Invalid ordinal");
@@ -110,7 +120,7 @@ public class Sensor extends BaseEntity {
         this.activate = activate;
     }
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     public Station getStation() {
         return station;
     }
@@ -238,7 +248,7 @@ public class Sensor extends BaseEntity {
         this.pictureurl = pictureurl;
     }
 
-    @OneToMany(mappedBy="sensor", fetch=FetchType.EAGER, cascade={CascadeType.PERSIST})
+    @OneToMany(mappedBy="sensor", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST,CascadeType.REMOVE})
     @JsonIgnore
     public List<SensorAttribute> getSensorAttributes() {
         return sensorAttributes;

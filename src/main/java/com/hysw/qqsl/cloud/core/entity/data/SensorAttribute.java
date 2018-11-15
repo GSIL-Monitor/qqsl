@@ -88,7 +88,7 @@ public class SensorAttribute extends BaseEntity {
         this.valueType = valueType;
     }
 
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.EAGER)
     public Sensor getSensor() {
         return sensor;
     }

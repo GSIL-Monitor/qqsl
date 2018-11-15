@@ -141,7 +141,7 @@ public class Station extends BaseEntity {
         this.user = user;
     }
 
-    @OneToMany(mappedBy="station", fetch=FetchType.EAGER, cascade={CascadeType.PERSIST})
+    @OneToMany(mappedBy="station", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
     @JsonIgnore
     public List<Sensor> getSensors() {
         return sensors;
@@ -192,7 +192,7 @@ public class Station extends BaseEntity {
         this.pictureUrl = pictureUrl;
     }
 
-    @OneToMany(mappedBy="station", fetch=FetchType.EAGER, cascade={CascadeType.PERSIST})
+    @OneToMany(mappedBy="station", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
     @JsonIgnore
     public List<Camera> getCameras() {
         return cameras;

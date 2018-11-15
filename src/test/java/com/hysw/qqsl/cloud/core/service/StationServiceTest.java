@@ -141,8 +141,8 @@ public class StationServiceTest extends BaseTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         station.setExpireDate(sdf.parse(sDate));
         station.setType(CommonEnum.StationType.WATER_LEVEL_STATION);
-        station.setTransform(false);
-        station.setParameter("{}");
+//        station.setTransform(false);
+//        station.setParameter("{}");
         // 湟水河1#
         if (instanceId.equals(huangshh01_instanceId)==true) {
             station.setName("湟水河一号测点");
@@ -151,7 +151,7 @@ public class StationServiceTest extends BaseTest {
             station.setCoor("{\"longitude\":\"101.67822819977684\",\"latitude\":\"36.65375645069668\",\"elevation\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
-            station.setTransform(true);
+//            station.setTransform(true);
         }
         // 湟水河2#
         if (instanceId.equals(huangshh02_instanceId)==true) {
@@ -197,17 +197,17 @@ public class StationServiceTest extends BaseTest {
             station.setCoor("{\"longitude\":\"101.74519193239226\",\"latitude\":\"36.62518183074351\",\"elevation\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
-            station.setTransform(true);
+//            station.setTransform(true);
         }
         if (instanceId.equals(tongrmj)==true) {
-            station.setType(CommonEnum.StationType.CONSTRUCTION);
+            station.setType(CommonEnum.StationType.ACCESS_CONTROL);
             station.setName("同仁施工现场");
             station.setDescription("同仁施工现场");
             station.setAddress("青海省同仁县");
             station.setCoor("{\"longitude\":\"101.74519193239226\",\"latitude\":\"36.62518183074351\",\"elevation\":\"0\"}");
             //station.setRiverModel(getRiverModel(instanceId));
             //station.setFlowModel(getFlowModel(instanceId));
-            station.setTransform(true);
+//            station.setTransform(true);
         }
         user = userService.find(16l);
         station.setUser(user);
@@ -316,7 +316,7 @@ public class StationServiceTest extends BaseTest {
         for(int i = 0;i<stations.size();i++){
             station = stations.get(i);
             station.getUser();
-            station.setPicture("https://qqsl.oss-cn-hangzhou.aliyuncs.com/user/16/station/"+station.getId()+".jpg");
+            station.setPictureUrl("https://qqsl.oss-cn-hangzhou.aliyuncs.com/user/16/station/"+station.getId()+".jpg");
         }
     }
 

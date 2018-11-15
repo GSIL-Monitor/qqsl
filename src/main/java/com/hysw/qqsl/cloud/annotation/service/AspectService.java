@@ -42,6 +42,10 @@ public class AspectService {
     private TradeService tradeService;
     @Autowired
     private StationService stationService;
+    @Autowired
+    private SensorService sensorService;
+    @Autowired
+    private CameraService cameraService;
 
     private final static Log log = LogFactory.getLog(AspectService.class);
 
@@ -110,18 +114,17 @@ public class AspectService {
         Object id = null;
         Station station = null;
         if (value.equals("station")) {
-            Map<Object, Object> station1 = (Map<Object, Object>) map.get("station");
-            id = station1.get("id");
+            id = map.get("id");
         } else if (value.equals("request")) {
             Object[] args = joinPoint.getArgs();
             HttpServletRequest request= (HttpServletRequest) args[0];
             id = request.getParameter("id");
         }else if (value.equals("sensor")) {
-            Map<Object, Object> sensor = (Map<Object, Object>) map.get("sensor");
-            id = sensor.get("station");
+            id = map.get("id");
+            id = sensorService.find(Long.valueOf(id.toString())).getStation().getId();
         }else if(value.equals("camera")){
-            Map<Object, Object> camera = (Map<Object, Object>) map.get("camera");
-            id = camera.get("station");
+            id = map.get("id");
+            id = cameraService.find(Long.valueOf(id.toString())).getStation().getId();
         }else if(value.equals("object")){
             id = map.get("id");
         } else if (value.equals("instanceId")) {

@@ -432,8 +432,8 @@ public class CommonEnum {
         WATER_LEVEL_STATION,
         /** 水质站 */
         WATER_QUALITY_STATION,
-        /** 施工现场 */
-        CONSTRUCTION
+        /** 门禁系统 */
+        ACCESS_CONTROL
     }
 
     /**

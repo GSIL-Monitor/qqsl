@@ -3,7 +3,9 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.core.dao.SensorDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
+import com.hysw.qqsl.cloud.core.entity.data.SensorAttribute;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,21 +83,6 @@ public class SensorService extends BaseService<Sensor,Long>{
     }
 
     /**
-     * 获取仪表列表Json数据
-     * @param sensors
-     * @return
-     */
-    public List<JSONObject> makeSensorJsons(List<Sensor> sensors) {
-        List<JSONObject> jsonObjects = new ArrayList<>();
-        JSONObject jsonObject;
-        for(int i = 0;i<sensors.size();i++){
-            jsonObject = makeSensorJson(sensors.get(i));
-            jsonObjects.add(jsonObject);
-        }
-        return jsonObjects;
-    }
-
-    /**
      * 获取仪表Json数据
      * @param sensor
      * @return
@@ -107,86 +94,97 @@ public class SensorService extends BaseService<Sensor,Long>{
         }
         jsonObject.put("id",sensor.getId());
         jsonObject.put("createDate",sensor.getCreateDate());
-        jsonObject.put("cameraUrl",sensor.getCameraUrl()==null?null:JSONObject.fromObject(sensor.getCameraUrl()));
+        jsonObject.put("phone",sensor.getPhone());
+        jsonObject.put("contact",sensor.getContact());
+        jsonObject.put("minValue",sensor.getMinValue());
         jsonObject.put("code",sensor.getCode());
-        jsonObject.put("info",sensor.getInfo());
-        jsonObject.put("modifyDate",sensor.getModifyDate());
+        jsonObject.put("maxValue",sensor.getMaxValue());
         jsonObject.put("type",sensor.getType());
         jsonObject.put("settingHeight",sensor.getSettingHeight());
-        jsonObject.put("activate",sensor.isActivate());
-        jsonObject.put("station",sensor.getStation().getId());
+        jsonObject.put("description",sensor.getDescription());
+        jsonObject.put("fgetFactroy",sensor.getFactroy());
+        jsonObject.put("measureRange",sensor.getMeasureRange());
+        jsonObject.put("name",sensor.getName());
+        jsonObject.put("pictureurl",sensor.getPictureurl());
+        List<SensorAttribute> sensorAttributes = sensor.getSensorAttributes();
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject1;
+        for (SensorAttribute sensorAttribute : sensorAttributes) {
+            jsonObject1 = new JSONObject();
+            jsonObject1.put("id", sensorAttribute.getId());
+            jsonObject1.put("value", sensorAttribute.getValue());
+            jsonObject1.put("valueType", sensorAttribute.getValueType());
+            jsonObject1.put("displayName", sensorAttribute.getDisplayName());
+            jsonObject1.put("name", sensorAttribute.getName());
+            jsonObject1.put("type", sensorAttribute.getType());
+            jsonArray.add(jsonObject1);
+        }
+        jsonObject.put("sensorAttributes", jsonArray);
+        jsonObject.put("settingAddress",sensor.getSettingAddress());
+        jsonObject.put("settingElevation",sensor.getSettingElevation());
         return jsonObject;
     }
 
     /**
      * 编辑仪表
-     * @param map
      * @param sensor
+     * @param name
+     * @param description
+     * @param factory
+     * @param contact
+     * @param phone
+     * @param settingHeight
+     * @param settingElevation
+     * @param settingAddress
+     * @param measureRange
+     * @param maxValue
+     * @param isMaxValueWaring
+     * @param minValue
+     * @param isMinValueWaring
      * @return
      */
-    public boolean editSensor(Map<String, Object> map, Sensor sensor) {
-        JSONObject infoJson =  sensor.getInfo()==null?new JSONObject():JSONObject.fromObject(sensor.getInfo());
-        if(map.get("phone")!=null&&StringUtils.hasText(map.get("phone").toString())){
-            if(!SettingUtils.phoneRegex(map.get("phone").toString())){
-                return false;
-            }
-            infoJson.put("phone",map.get("phone").toString());
+    public void editSensor(Sensor sensor, Object name, Object description, Object factory, Object contact, Object phone, Object settingHeight, Object settingElevation, Object settingAddress, Object measureRange, Object maxValue, Object isMaxValueWaring, Object minValue, Object isMinValueWaring) {
+        if (name != null) {
+            sensor.setName(name.toString());
         }
-        if(map.get("contact")!=null&&StringUtils.hasText(map.get("contact").toString())){
-            infoJson.put("contact",map.get("contact").toString());
+        if (description != null) {
+            sensor.setDescription(description.toString());
         }
-        if(map.get("factory")!=null&&StringUtils.hasText(map.get("factory").toString())){
-            infoJson.put("factory",map.get("factory").toString());
+        if (factory != null) {
+            sensor.setFactroy(factory.toString());
         }
-        if(map.get("settingHeight")!=null&&StringUtils.hasText(map.get("settingHeight").toString())){
-            try{
-                Double settingHeight = Double.valueOf(map.get("settingHeight").toString());
-                sensor.setSettingHeight(settingHeight);
-                if (settingHeight>100.0||settingHeight<0.0){
-                    return false;
-                }
-            }catch (NumberFormatException e){
-                e.printStackTrace();
-                return false;
-            }
-
+        if (contact != null) {
+            sensor.setContact(contact.toString());
         }
-        sensor.setInfo(infoJson.isEmpty()?null:infoJson.toString());
-        sensorDao.save(sensor);
-        return true;
+        if (phone != null) {
+            sensor.setPhone(phone.toString());
+        }
+        if (settingHeight != null) {
+            sensor.setSettingHeight(Double.valueOf(settingHeight.toString()));
+        }
+        if (settingElevation != null) {
+            sensor.setSettingElevation(Double.valueOf(settingElevation.toString()));
+        }
+        if (settingAddress != null) {
+            sensor.setSettingAddress(settingAddress.toString());
+        }
+        if (measureRange != null) {
+            sensor.setMeasureRange(measureRange.toString());
+        }
+        if (maxValue != null) {
+            sensor.setMaxValue(Double.valueOf(maxValue.toString()));
+        }
+        if (isMaxValueWaring != null) {
+            sensor.setMaxValueWaring(Boolean.valueOf(isMaxValueWaring.toString()));
+        }
+        if (minValue != null) {
+            sensor.setMinValue(Double.valueOf(minValue.toString()));
+        }
+        if (isMinValueWaring != null) {
+            sensor.setMinValueWaring(Boolean.valueOf(isMinValueWaring.toString()));
+        }
+        sensor.setChanged(true);
+        save(sensor);
     }
 
-    /**
-     * 摄像头编辑
-     * @param cameraMap
-     * @return
-     */
-    public boolean editCamera(Map<String, Object> cameraMap,Sensor sensor) {
-        if(!Sensor.Type.CAMERA.equals(sensor.getType())){
-            return false;
-        }
-        JSONObject infoJson = new JSONObject();
-        if(cameraMap.get("phone")!=null&&StringUtils.hasText(cameraMap.get("phone").toString())){
-            if(!SettingUtils.phoneRegex(cameraMap.get("phone").toString())){
-                return false;
-            }
-            infoJson.put("phone",cameraMap.get("phone").toString());
-        }
-        if(cameraMap.get("contact")!=null&&StringUtils.hasText(cameraMap.get("contact").toString())){
-            infoJson.put("contact",cameraMap.get("contact").toString());
-        }
-        if(cameraMap.get("factory")!=null&&StringUtils.hasText(cameraMap.get("factory").toString())){
-            infoJson.put("factory",cameraMap.get("factory").toString());
-        }
-        //cameraUrl只能是由数字和字母组成,是视频拼接的唯一编码
-        if(cameraMap.get("cameraUrl")!=null&&StringUtils.hasText(cameraMap.get("cameraUrl").toString())){
-            String cameraUrl = cameraMap.get("cameraUrl").toString();
-            if(!SettingUtils.parameterRegex(cameraUrl)){
-                return false;
-            }
-            sensor.setCameraUrl(cameraUrl);
-        }
-        sensorDao.save(sensor);
-        return true;
-    }
 }

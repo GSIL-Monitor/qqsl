@@ -310,24 +310,24 @@ public class StationControllerTest extends BaseControllerTest {
         }
         List<Sensor> sensors = station.getSensors();
         Sensor sensor = null;
-        for (int i = 0; i < sensors.size(); i++) {
-            if("camera".equals(type)&&Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
-                sensor = sensors.get(i);
-                break;
-            }
-            if (!"camera".equals(type)&&!Sensor.Type.CAMERA.equals(sensors.get(i).getType())) {
-                sensor = sensors.get(i);
-                break;
-            }
-        }
+//        for (int i = 0; i < sensors.size(); i++) {
+//            if("camera".equals(type)&&Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
+//                sensor = sensors.get(i);
+//                break;
+//            }
+//            if (!"camera".equals(type)&&!Sensor.Type.CAMERA.equals(sensors.get(i).getType())) {
+//                sensor = sensors.get(i);
+//                break;
+//            }
+//        }
         if (sensor == null) {
             logger.info("暂无仪表,则添加仪表");
             sensor = new Sensor();
-            if("camera".equals(type)){
-                sensor.setType(Sensor.Type.CAMERA);
-            }else {
-                sensor.setType(Sensor.Type.CANAL_FLOW);
-            }
+//            if("camera".equals(type)){
+//                sensor.setType(Sensor.Type.CAMERA);
+//            }else {
+//                sensor.setType(Sensor.Type.CANAL_FLOW);
+//            }
             sensor.setCode("1213213");
             sensor.setStation(station);
             sensorService.save(sensor);

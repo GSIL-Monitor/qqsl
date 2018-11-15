@@ -201,14 +201,14 @@ public class StationService extends BaseService<Station, Long> {
     private JSONObject makeStationJson(Station station) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", station.getId());
-        jsonObject.put("parameter", StringUtils.hasText(station.getParameter()) ? JSONObject.fromObject(station.getParameter()) : null);
+//        jsonObject.put("parameter", StringUtils.hasText(station.getParameter()) ? JSONObject.fromObject(station.getParameter()) : null);
         jsonObject.put("address", station.getAddress());
         jsonObject.put("coor", station.getCoor());
         jsonObject.put("description", station.getDescription());
         jsonObject.put("exprieDate",station.getExpireDate()==null?null:station.getExpireDate().getTime());
         jsonObject.put("createDate", station.getCreateDate());
         jsonObject.put("instanceId", station.getInstanceId());
-        jsonObject.put("picture", station.getPicture());
+        jsonObject.put("pictureUrl", station.getPictureUrl());
         jsonObject.put("riverModel", station.getRiverModel()==null?null:JSONArray.fromObject(station.getRiverModel()));
         jsonObject.put("flowModel", station.getFlowModel()==null?null:JSONArray.fromObject(station.getFlowModel()));
         jsonObject.put("bottomElevation", station.getBottomElevation());
@@ -216,50 +216,38 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("type", station.getType());
         jsonObject.put("shares", station.getShares());
         jsonObject.put("cooperate", station.getCooperate());
-        Camera camera = getCameraFromStation(station);
-        Sensor sensor = getSensorFromStation(station);
-        JSONObject cameraJson = makeCameraJson(camera);
-        jsonObject.put("camera",cameraJson.isEmpty()?null:cameraJson);
-       // List<JSONObject> sensorJsons = sensorService.makeSensorJsons(station.getSensors());
-        JSONObject sensorJson = sensorService.makeSensorJson(sensor);
-        jsonObject.put("sensor", sensorJson.isEmpty()?null:sensorJson);
+        JSONArray cameras = getCameraFromStation(station);
+        jsonObject.put("cameras", cameras.isEmpty() ? null : cameras);
+        JSONArray sensors = getSensorFromStation(station);
+        jsonObject.put("sensor", sensors.isEmpty() ? null : sensors);
         jsonObject.put("userId", station.getUser().getId());
         return jsonObject;
 
     }
 
-    private Sensor getSensorFromStation(Station station) {
+    private JSONArray getSensorFromStation(Station station) {
         List<Sensor> sensors = station.getSensors();
-        if(sensors.size()==0){
+        if (sensors == null || sensors.size() == 0) {
             return null;
         }
-        for(int i = 0;i<sensors.size();i++){
-            if(!Sensor.Type.CAMERA.equals(sensors.get(i).getType())){
-                return sensors.get(i);
-            }
+        JSONArray jsonArray = new JSONArray();
+        for (Sensor sensor : sensors) {
+            jsonArray.add(sensorService.makeSensorJson(sensor));
         }
-        return null;
+        return jsonArray;
     }
 
-    private Camera getCameraFromStation(Station station) {
-        List<Sensor> sensors = station.getSensors();
-        Camera camera = null;
-        if(sensors.size()==0){
-            return camera;
+    private JSONArray getCameraFromStation(Station station) {
+        List<Camera> cameras = station.getCameras();
+        if (cameras == null) {
+            return null;
         }
-        Sensor sensor;
-        for(int i = 0;i<sensors.size();i++){
-            sensor = sensors.get(i);
-            if(Sensor.Type.CAMERA.equals(sensor.getType())){
-                camera = new Camera();
-                camera.setCameraUrl(sensor.getCameraUrl());
-                camera.setInfo(sensor.getInfo());
-                camera.setId(sensor.getId());
-                camera.setStation(station);
-                return camera;
-            }
+        JSONArray jsonArray = new JSONArray();
+        for (Camera camera : cameras) {
+            jsonArray.add(makeCameraJson(camera));
         }
-        return camera;
+
+        return jsonArray;
     }
 
 
@@ -269,9 +257,14 @@ public class StationService extends BaseService<Station, Long> {
             return jsonObject;
         }
         jsonObject.put("id",camera.getId());
-        jsonObject.put("info",camera.getInfo());
-        jsonObject.put("station",camera.getStation().getId());
-        jsonObject.put("cameraUrl",camera.getCameraUrl());
+        jsonObject.put("code",camera.getCode());
+        jsonObject.put("contact",camera.getContact());
+        jsonObject.put("description",camera.getDescription());
+        jsonObject.put("factroy",camera.getFactroy());
+        jsonObject.put("name",camera.getName());
+        jsonObject.put("password",camera.getPassword());
+        jsonObject.put("phone",camera.getPhone());
+        jsonObject.put("settingAddress",camera.getSettingAddress());
         return jsonObject;
     }
 
@@ -415,31 +408,29 @@ public class StationService extends BaseService<Station, Long> {
      */
     public JSONArray getParameters() {
         JSONArray paramters = new JSONArray();
-        List<Station> stations = getStationsByTransform();
-        if(stations==null||stations.size()==0){
+        List<Station> stations = findAll();
+        if (stations == null || stations.size() == 0) {
             return paramters;
         }
-        JSONObject paramter,code;
-        JSONArray sensorsJson;
-        Station station;
-        List<Sensor> sensors;
-        for(int i = 0;i<stations.size();i++){
-            station = stations.get(i);
-            paramter = new JSONObject();
-            paramter.put("instanceId",station.getInstanceId());
-            paramter.put("name",station.getName());
-            paramter.put("parameters",StringUtils.hasText(station.getParameter())?station.getParameter():"");
-            sensors = station.getSensors();
-            sensorsJson = new JSONArray();
-            for(int k =0;k<sensors.size();k++){
-                code = new JSONObject();
-                code.put("code",sensors.get(k).getCode());
-                sensorsJson.add(code);
+        JSONObject jsonObject;
+        for (Station station : stations) {
+            List<Sensor> sensors = station.getSensors();
+            for (Sensor sensor : sensors) {
+                if (!sensor.isChanged()) {
+                    continue;
+                }
+                jsonObject = new JSONObject();
+                jsonObject.put("code", sensor.getCode());
+                jsonObject.put("maxValue", sensor.getMaxValue());
+                jsonObject.put("isMaxValueWaring", sensor.isMaxValueWaring());
+                jsonObject.put("minValue", sensor.getMinValue());
+                jsonObject.put("isMinValueWaring", sensor.isMinValueWaring());
+                jsonObject.put("contact", sensor.getContact());
+                jsonObject.put("phone", sensor.getPhone());
+                sensor.setChanged(false);
+                sensorService.save(sensor);
+                paramters.add(jsonObject);
             }
-            paramter.put("sensors",sensorsJson);
-            paramters.add(paramter);
-            station.setTransform(false);
-            save(station);
         }
         return paramters;
     }
@@ -462,9 +453,9 @@ public class StationService extends BaseService<Station, Long> {
      * @return
      */
     public boolean edit(Map<String, Object> map, Station station) {
-        if (map.get("type") != null && StringUtils.hasText(map.get("type").toString())) {
-            station.setType(CommonEnum.StationType.valueOf(map.get("type").toString()));
-        }
+//        if (map.get("type") != null && StringUtils.hasText(map.get("type").toString())) {
+//            station.setType(CommonEnum.StationType.valueOf(map.get("type").toString()));
+//        }
         if (map.get("name") != null && StringUtils.hasText(map.get("name").toString())) {
             station.setName(map.get("name").toString());
         }
@@ -475,7 +466,7 @@ public class StationService extends BaseService<Station, Long> {
             station.setAddress(map.get("address").toString());
         }
         if (map.get("coor") != null && StringUtils.hasText(map.get("coor").toString())) {
-            JSONObject jsonObject = SettingUtils.checkCoordinateIsInvalid(map.get("coor").toString());
+            JSONObject jsonObject = JSONObject.fromObject(map.get("coor").toString());
             if (jsonObject == null) {
                 return false;
             }
@@ -486,63 +477,21 @@ public class StationService extends BaseService<Station, Long> {
     }
 
     /**
-     * 保存仪表归属并添加至缓存激活
-     * @param code
-     * @param infoJson
-     * @param station
-     * @param sensor
-     * @return
-     */
-    public JSONObject saveAndAddCache(String code, JSONObject infoJson, Station station, Sensor sensor) {
-        sensor.setCode(code);
-        sensor.setActivate(false);
-        sensor.setInfo(infoJson.isEmpty()?null:infoJson.toString());
-        sensor.setStation(station);
-        sensorService.save(sensor);
-        monitorService.add(code);
-        return sensorService.makeSensorJson(sensor);
-    }
-
-    public boolean cameraVerify(Map<String, Object> cameraMap, JSONObject infoJson, Station station, Sensor sensor) {
-        if (cameraMap.get("phone") != null && StringUtils.hasText(cameraMap.get("phone").toString())) {
-            if (!SettingUtils.phoneRegex(cameraMap.get("phone").toString())) {
-                return false;
-            }
-            infoJson.put("phone", cameraMap.get("phone").toString());
-        }
-        if (cameraMap.get("contact") != null && StringUtils.hasText(cameraMap.get("contact").toString())) {
-            infoJson.put("contact", cameraMap.get("contact").toString());
-        }
-        if (cameraMap.get("factory") != null && StringUtils.hasText(cameraMap.get("factory").toString())) {
-            infoJson.put("factory", cameraMap.get("factory").toString());
-        }
-        //视频地址:rtmp://rtmp.open.ys7.com/openlive/ba4b2fde89ab43739e3d3e74d8b08f4a.hd
-        if (cameraMap.get("cameraUrl") != null && StringUtils.hasText(cameraMap.get("cameraUrl").toString())) {
-            String cameraUrl = cameraMap.get("cameraUrl").toString();
-            if (!SettingUtils.parameterRegex(cameraUrl)) {
-                return false;
-            }
-            sensor.setCameraUrl(cameraMap.get("cameraUrl").toString());
-        }
-        return true;
-    }
-
-    /**
      * sensor参数效验
      * @return
      */
-    public boolean sensorVerify(Map<String, Object> map, Sensor sensor, JSONObject infoJson) {
+    public boolean sensorVerify(Map<String, Object> map, Sensor sensor) {
         if(map.get("factory")!=null&&StringUtils.hasText(map.get("factory").toString())){
-            infoJson.put("factory",map.get("factory").toString());
+            sensor.setFactroy(map.get("factory").toString());
         }
         if(map.get("contact")!=null&&StringUtils.hasText(map.get("contact").toString())){
-            infoJson.put("contact",map.get("contact").toString());
+            sensor.setContact(map.get("contact").toString());
         }
         if(map.get("phone")!=null&&StringUtils.hasText(map.get("phone").toString())){
             if(!SettingUtils.phoneRegex(map.get("phone").toString())){
                 return false;
             }
-            infoJson.put("phone",map.get("phone").toString());
+            sensor.setPhone(map.get("phone").toString());
         }
         if(map.get("settingHeight")!=null&&StringUtils.hasText(map.get("settingHeight").toString())){
             Double settingHeight = Double.valueOf(map.get("settingHeight").toString());

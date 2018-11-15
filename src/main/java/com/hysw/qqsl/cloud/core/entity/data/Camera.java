@@ -35,6 +35,8 @@ public class Camera extends BaseEntity{
     private String code;
     /** 密码 */
     private String password;
+    /** 安装位置 */
+    private String settingAddress;
 
 
     private Station station;
@@ -95,12 +97,20 @@ public class Camera extends BaseEntity{
         this.password = password;
     }
 
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.EAGER)
     public Station getStation() {
         return station;
     }
 
     public void setStation(Station station) {
         this.station = station;
+    }
+
+    public String getSettingAddress() {
+        return settingAddress;
+    }
+
+    public void setSettingAddress(String settingAddress) {
+        this.settingAddress = settingAddress;
     }
 }
