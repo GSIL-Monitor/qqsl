@@ -427,6 +427,8 @@ public class StationService extends BaseService<Station, Long> {
                 jsonObject.put("isMinValueWaring", sensor.isMinValueWaring());
                 jsonObject.put("contact", sensor.getContact());
                 jsonObject.put("phone", sensor.getPhone());
+                jsonObject.put("name", sensor.getName());
+                jsonObject.put("stationName", sensor.getStation().getName());
                 sensor.setChanged(false);
                 sensorService.save(sensor);
                 paramters.add(jsonObject);
