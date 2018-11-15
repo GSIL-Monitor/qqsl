@@ -62,6 +62,7 @@ public class Sensor extends BaseEntity {
     private Station station;
     private List<SensorAttribute> sensorAttributes;
     public enum Type {
+
         /** 超声波液位计 */
         U_WATER,
         /** 超声波液位差计 */
