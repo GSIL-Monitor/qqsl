@@ -1284,6 +1284,7 @@ public class UserController {
         if (map.get("verification") == null) {
             return MessageService.message(Message.Type.FAIL);
         }
+
         String verifyCode = map.get("verification");
         //判断是否被禁用
         if (user.getLocked() != null && user.getLocked()) {
