@@ -148,7 +148,7 @@ public class StationServiceTest extends BaseTest {
             station.setName("湟水河一号测点");
             station.setDescription("湟水河一号测点");
             station.setAddress("西宁市");
-            station.setCoor("{\"longitude\":\"101.67822819977684\",\"latitude\":\"36.65375645069668\",\"elevation\":\"0\"}");
+            station.setCoor("{\"lon\":\"101.67822819977684\",\"lat\":\"36.65375645069668\",\"ele\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
 //            station.setTransform(true);
@@ -158,7 +158,7 @@ public class StationServiceTest extends BaseTest {
             station.setName("湟水河二号测点");
             station.setDescription("湟水河二号测点");
             station.setAddress("西宁市");
-            station.setCoor("{\"longitude\":\"101.70140996276658\",\"latitude\":\"36.65429995072397\",\"elevation\":\"0\"}");
+            station.setCoor("{\"lon\":\"101.70140996276658\",\"lat\":\"36.65429995072397\",\"ele\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
         }
@@ -167,7 +167,7 @@ public class StationServiceTest extends BaseTest {
             station.setName("湟水河三号测点");
             station.setDescription("湟水河三号测点");
             station.setAddress("西宁市");
-            station.setCoor("{\"longitude\":\"101.75777646850432\",\"latitude\":\"36.64124067972177\",\"elevation\":\"0\"}");
+            station.setCoor("{\"lon\":\"101.75777646850432\",\"lat\":\"36.64124067972177\",\"ele\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
         }
@@ -176,7 +176,7 @@ public class StationServiceTest extends BaseTest {
             station.setName("解放渠一号测点");
             station.setDescription("解放渠一号测点");
             station.setAddress("西宁市");
-            station.setCoor("{\"longitude\":\"101.66680146228761\",\"latitude\":\"36.6472833310488\",\"elevation\":\"0\"}");
+            station.setCoor("{\"lon\":\"101.66680146228761\",\"lat\":\"36.6472833310488\",\"ele\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
         }
@@ -185,7 +185,7 @@ public class StationServiceTest extends BaseTest {
             station.setName("解放渠二号测点");
             station.setDescription("解放渠二号测点");
             station.setAddress("西宁市");
-            station.setCoor("{\"longitude\":\"101.70956709457784\",\"latitude\":\"36.63710166807447\",\"elevation\":\"0\"}");
+            station.setCoor("{\"lon\":\"101.70956709457784\",\"lat\":\"36.63710166807447\",\"ele\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
         }
@@ -194,7 +194,7 @@ public class StationServiceTest extends BaseTest {
             station.setName("解放渠三号测点");
             station.setDescription("解放渠三号测点");
             station.setAddress("西宁市");
-            station.setCoor("{\"longitude\":\"101.74519193239226\",\"latitude\":\"36.62518183074351\",\"elevation\":\"0\"}");
+            station.setCoor("{\"lon\":\"101.74519193239226\",\"lat\":\"36.62518183074351\",\"ele\":\"0\"}");
             station.setRiverModel(getRiverModel(instanceId));
             station.setFlowModel(getFlowModel(instanceId));
 //            station.setTransform(true);
@@ -204,7 +204,7 @@ public class StationServiceTest extends BaseTest {
             station.setName("同仁施工现场");
             station.setDescription("同仁施工现场");
             station.setAddress("青海省同仁县");
-            station.setCoor("{\"longitude\":\"101.74519193239226\",\"latitude\":\"36.62518183074351\",\"elevation\":\"0\"}");
+            station.setCoor("{\"lon\":\"101.74519193239226\",\"lat\":\"36.62518183074351\",\"ele\":\"0\"}");
             //station.setRiverModel(getRiverModel(instanceId));
             //station.setFlowModel(getFlowModel(instanceId));
 //            station.setTransform(true);
