@@ -90,7 +90,7 @@ public class OssController {
 	 * @return message消息体,FAIL:文件不存在,url获取失败,OK:url获取成功
 	 */
 	@RequiresAuthentication
-	@RequiresRoles(value = {"user:simple","account:simple","admin:simple"}, logical = Logical.OR)
+	@RequiresRoles(value = {"user:simple","account:simple","admin:simple","user:abll"}, logical = Logical.OR)
 	@RequestMapping(value = "/getFileUrl", method = RequestMethod.GET)
 	public @ResponseBody Message getFileUrl(
 			@RequestParam("key") String key,@RequestParam("bucketName") String bucketName) {
