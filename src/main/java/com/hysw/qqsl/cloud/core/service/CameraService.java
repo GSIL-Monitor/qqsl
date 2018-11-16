@@ -20,25 +20,53 @@ public class CameraService extends BaseService<Camera, Long> {
 
     public void editCamera(Camera camera, Object name, Object description, Object factory, Object contact, Object phone, Object settingAddress, Object password) {
         if (name != null) {
-            camera.setName(name.toString());
+            if (name.equals("")) {
+                camera.setName(null);
+            } else {
+                camera.setName(name.toString());
+            }
         }
         if (description != null) {
-            camera.setDescription(description.toString());
+            if (description.equals("")) {
+                camera.setDescription(null);
+            } else {
+                camera.setDescription(description.toString());
+            }
         }
         if (factory != null) {
-            camera.setFactroy(factory.toString());
+            if (factory.equals("")) {
+                camera.setFactroy(null);
+            } else {
+                camera.setFactroy(factory.toString());
+            }
         }
         if (contact != null) {
-            camera.setContact(contact.toString());
+            if (contact.equals("")) {
+                camera.setContact(null);
+            } else {
+                camera.setContact(contact.toString());
+            }
         }
         if (phone != null) {
-            camera.setPhone(phone.toString());
+            if (phone.equals("")) {
+                camera.setPhone(null);
+            } else {
+                camera.setPhone(phone.toString());
+            }
         }
         if (settingAddress != null) {
-            camera.setSettingAddress(settingAddress.toString());
+            if (settingAddress.equals("")) {
+                camera.setSettingAddress(null);
+            } else {
+                camera.setSettingAddress(settingAddress.toString());
+            }
         }
         if (password != null) {
-            camera.setPassword(password.toString());
+            if (password.equals("")) {
+                camera.setPassword(null);
+            } else {
+                camera.setPassword(password.toString());
+            }
         }
         save(camera);
     }

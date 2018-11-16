@@ -145,43 +145,95 @@ public class SensorService extends BaseService<Sensor,Long>{
      */
     public void editSensor(Sensor sensor, Object name, Object description, Object factory, Object contact, Object phone, Object settingHeight, Object settingElevation, Object settingAddress, Object measureRange, Object maxValue, Object isMaxValueWaring, Object minValue, Object isMinValueWaring) {
         if (name != null) {
-            sensor.setName(name.toString());
+            if (name.equals("")) {
+                sensor.setName(null);
+            } else {
+                sensor.setName(name.toString());
+            }
         }
         if (description != null) {
-            sensor.setDescription(description.toString());
+            if (description.equals("")) {
+                sensor.setDescription(null);
+            } else {
+                sensor.setDescription(description.toString());
+            }
         }
         if (factory != null) {
-            sensor.setFactroy(factory.toString());
+            if (factory.equals("")) {
+                sensor.setFactroy(null);
+            } else {
+                sensor.setFactroy(factory.toString());
+            }
         }
         if (contact != null) {
-            sensor.setContact(contact.toString());
+            if (contact.equals("")) {
+                sensor.setContact(null);
+            } else {
+                sensor.setContact(contact.toString());
+            }
         }
         if (phone != null) {
-            sensor.setPhone(phone.toString());
+            if (phone.equals("")) {
+                sensor.setPhone(null);
+            } else {
+                sensor.setPhone(phone.toString());
+            }
         }
         if (settingHeight != null) {
-            sensor.setSettingHeight(Double.valueOf(settingHeight.toString()));
+            if (settingHeight.equals("")) {
+                sensor.setSettingHeight(null);
+            } else {
+                sensor.setSettingHeight(Double.valueOf(settingHeight.toString()));
+            }
         }
         if (settingElevation != null) {
-            sensor.setSettingElevation(Double.valueOf(settingElevation.toString()));
+            if (settingElevation.equals("")) {
+                sensor.setSettingElevation(null);
+            } else {
+                sensor.setSettingElevation(Double.valueOf(settingElevation.toString()));
+            }
         }
         if (settingAddress != null) {
-            sensor.setSettingAddress(settingAddress.toString());
+            if (settingAddress.equals("")) {
+                sensor.setSettingAddress(null);
+            } else {
+                sensor.setSettingAddress(settingAddress.toString());
+            }
         }
         if (measureRange != null) {
-            sensor.setMeasureRange(measureRange.toString());
+            if (measureRange.equals("")) {
+                sensor.setMeasureRange(null);
+            } else {
+                sensor.setMeasureRange(measureRange.toString());
+            }
         }
         if (maxValue != null) {
-            sensor.setMaxValue(Double.valueOf(maxValue.toString()));
+            if (maxValue.equals("")) {
+                sensor.setMaxValue(null);
+            } else {
+                sensor.setMaxValue(Double.valueOf(maxValue.toString()));
+            }
         }
         if (isMaxValueWaring != null) {
-            sensor.setMaxValueWaring(Boolean.valueOf(isMaxValueWaring.toString()));
+            if (isMaxValueWaring.equals("")) {
+                sensor.setMaxValueWaring(false);
+            } else {
+                sensor.setMaxValueWaring(Boolean.valueOf(isMaxValueWaring.toString()));
+            }
         }
         if (minValue != null) {
-            sensor.setMinValue(Double.valueOf(minValue.toString()));
+            if (minValue.equals("")) {
+                sensor.setMinValue(null);
+            } else {
+                sensor.setMinValue(Double.valueOf(minValue.toString()));
+            }
         }
         if (isMinValueWaring != null) {
-            sensor.setMinValueWaring(Boolean.valueOf(isMinValueWaring.toString()));
+            if (isMinValueWaring.equals("")) {
+                sensor.setMinValueWaring(false);
+            } else {
+                sensor.setMinValueWaring(Boolean.valueOf(isMinValueWaring.toString()));
+            }
         }
         sensor.setChanged(true);
         save(sensor);
