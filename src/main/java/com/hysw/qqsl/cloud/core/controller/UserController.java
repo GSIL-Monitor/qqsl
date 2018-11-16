@@ -348,7 +348,7 @@ public class UserController {
      * @return FAIL参数验证失败，UNKNOWN原密码错误，OTHER加密后的密码位数错误，OK修改成功
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public @ResponseBody Message updatePassword(@RequestBody Map<String,Object> map){
         Message message = CommonController.parameterCheck(map);
@@ -382,7 +382,7 @@ public class UserController {
      * @return FAIL参数验证失败，INVALID验证码失效，NO_ALLOW验证码错误，OK绑定/修改成功
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/updatePhone", method = RequestMethod.POST)
     public @ResponseBody Message updatePhone(@RequestBody Map<String,Object> map,HttpSession session){
         Message message = CommonController.parameterCheck(map);
@@ -410,7 +410,7 @@ public class UserController {
      * @return FAIL参数验证失败，INVALID验证码失效，NO_ALLOW验证码错误，OK绑定/修改成功
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
     public @ResponseBody Message updateEmail(@RequestBody Map<String,Object> map,HttpSession session){
         Message message = CommonController.parameterCheck(map);
@@ -437,7 +437,7 @@ public class UserController {
      * @return 用户对象
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/getUser", method = RequestMethod.GET)
     public
     @ResponseBody
