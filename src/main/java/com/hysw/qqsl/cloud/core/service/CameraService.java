@@ -74,7 +74,15 @@ public class CameraService extends BaseService<Camera, Long> {
 
     public JSONObject makeCameraJson(Camera camera) {
         JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("", camera.get);
+        jsonObject.put("name", camera.getName());
+        jsonObject.put("settingAddress", camera.getSettingAddress());
+        jsonObject.put("phone", camera.getPhone());
+        jsonObject.put("password", camera.getPassword());
+        jsonObject.put("factroy", camera.getFactroy());
+        jsonObject.put("description", camera.getDescription());
+        jsonObject.put("contact", camera.getContact());
+        jsonObject.put("code", camera.getCode());
+        jsonObject.put("id", camera.getId());
         return jsonObject;
     }
 }

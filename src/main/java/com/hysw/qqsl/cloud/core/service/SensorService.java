@@ -26,6 +26,8 @@ public class SensorService extends BaseService<Sensor,Long>{
     private SensorDao sensorDao;
     @Autowired
     private MonitorService monitorService;
+    @Autowired
+    private SensorAttributeService sensorAttributeService;
     Log logger = LogFactory.getLog(getClass());
     @Autowired
     public void setBaseDao(SensorDao sensorDao) {
@@ -106,10 +108,9 @@ public class SensorService extends BaseService<Sensor,Long>{
         jsonObject.put("measureRange",sensor.getMeasureRange());
         jsonObject.put("name",sensor.getName());
         jsonObject.put("pictureurl",sensor.getPictureUrl());
-        List<SensorAttribute> sensorAttributes = sensor.getSensorAttributes();
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject1;
-        for (SensorAttribute sensorAttribute : sensorAttributes) {
+        for (SensorAttribute sensorAttribute : sensorAttributeService.findBySensor(sensor)) {
             jsonObject1 = new JSONObject();
             jsonObject1.put("id", sensorAttribute.getId());
             jsonObject1.put("value", sensorAttribute.getValue());

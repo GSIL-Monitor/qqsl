@@ -92,10 +92,10 @@ public class MonitorService {
                 if (map.get("code").toString().equals(codes.get(j))) {
                     //将数据库中激活状态改为true
                     Sensor sensor = sensorService.findByCode(codes.get(j));
-                    station = sensor.getStation();
                     if (sensor == null) {
                         return;
                     }
+                    station = sensor.getStation();
                     Object type = map.get("type");
                     if (type == null || type.toString().trim().equals("0")) {
                         return;
