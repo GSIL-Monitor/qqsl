@@ -108,7 +108,7 @@ public class OssController {
 	 * @return message消息体,OK:获取成功
 	 */
 	@RequiresAuthentication
-	@RequiresRoles(value = {"user:simple","account:simple","admin:simple"}, logical = Logical.OR)
+	@RequiresRoles(value = {"user:simple","account:simple","admin:simple","user:abll"}, logical = Logical.OR)
 	@RequestMapping(value = "/sts", method = RequestMethod.GET)
 	public @ResponseBody Message getSts() {
 		String sts = ossService.getStsToken();
