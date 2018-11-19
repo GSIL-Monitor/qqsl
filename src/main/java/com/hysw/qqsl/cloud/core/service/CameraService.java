@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.core.dao.CameraDao;
 import com.hysw.qqsl.cloud.core.entity.data.Camera;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,5 +70,11 @@ public class CameraService extends BaseService<Camera, Long> {
             }
         }
         save(camera);
+    }
+
+    public JSONObject makeCameraJson(Camera camera) {
+        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("", camera.get);
+        return jsonObject;
     }
 }

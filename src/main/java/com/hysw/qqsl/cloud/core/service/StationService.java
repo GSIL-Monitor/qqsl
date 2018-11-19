@@ -824,4 +824,26 @@ public class StationService extends BaseService<Station, Long> {
             unCooperate(stations.get(i),accounts);
         }
     }
+
+    public JSONObject toJSON(Station station) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", station.getId());
+//        jsonObject.put("parameter", StringUtils.hasText(station.getParameter()) ? JSONObject.fromObject(station.getParameter()) : null);
+        jsonObject.put("address", station.getAddress());
+        jsonObject.put("coor", station.getCoor());
+        jsonObject.put("description", station.getDescription());
+        jsonObject.put("exprieDate",station.getExpireDate()==null?null:station.getExpireDate().getTime());
+        jsonObject.put("createDate", station.getCreateDate());
+        jsonObject.put("instanceId", station.getInstanceId());
+        jsonObject.put("pictureUrl", station.getPictureUrl());
+        jsonObject.put("riverModel", station.getRiverModel()==null?null:JSONArray.fromObject(station.getRiverModel()));
+        jsonObject.put("flowModel", station.getFlowModel()==null?null:JSONArray.fromObject(station.getFlowModel()));
+        jsonObject.put("bottomElevation", station.getBottomElevation());
+        jsonObject.put("name", station.getName());
+        jsonObject.put("type", station.getType());
+        jsonObject.put("shares", station.getShares());
+        jsonObject.put("cooperate", station.getCooperate());
+        jsonObject.put("userId", station.getUser().getId());
+        return jsonObject;
+    }
 }

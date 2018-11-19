@@ -104,7 +104,8 @@ public class StationController {
     }
 
     /**
-     *
+     * 取得站点详情
+     * @param id 测站id
      * @return
      */
     @RequiresAuthentication
@@ -115,8 +116,49 @@ public class StationController {
         if (station == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        return MessageService.message(Message.Type.OK);
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(station.getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        JSONObject jsonObject = stationService.toJSON(station);
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
+
+
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/sensor/details/{id}",method = RequestMethod.GET)
+    public @ResponseBody Message sensorDetailsId(@PathVariable("id") Long id){
+        Sensor sensor = sensorService.find(id);
+        if (sensor == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(sensor.getStation().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        JSONObject jsonObject = sensorService.makeSensorJson(sensor);
+        return MessageService.message(Message.Type.OK, jsonObject);
+    }
+
+
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/camera/details/{id}",method = RequestMethod.GET)
+    public @ResponseBody Message cameraDetailsId(@PathVariable("id") Long id){
+        Camera camera = cameraService.find(id);
+        if (camera == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(camera.getStation().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        JSONObject jsonObject = cameraService.makeCameraJson(camera);
+        return MessageService.message(Message.Type.OK, jsonObject);
+    }
+
+
 
 
     /**
