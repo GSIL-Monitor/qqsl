@@ -122,6 +122,7 @@ public class StationController {
         if (name == null || type == null || description == null) {
             return MessageService.message(Message.Type.FAIL);
         }
+
         List<Station> byUser = stationService.findByUser(user);
         if (byUser.size() > 1000) {
             return MessageService.message(Message.Type.DATA_LOCK);
