@@ -219,7 +219,7 @@ public class StationService extends BaseService<Station, Long> {
         JSONArray cameras = getCameraFromStation(station);
         jsonObject.put("cameras", cameras.isEmpty() ? null : cameras);
         JSONArray sensors = getSensorFromStation(station);
-        jsonObject.put("sensor", sensors.isEmpty() ? null : sensors);
+        jsonObject.put("sensor", sensors == null ? null : sensors);
         jsonObject.put("userId", station.getUser().getId());
         return jsonObject;
 
