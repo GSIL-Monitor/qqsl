@@ -155,20 +155,27 @@ public class StationService extends BaseService<Station, Long> {
      * @param account
      * @return
      */
-    private List<JSONObject> getStationsFromAccount(Account  account) {
+    private JSONArray getStationsFromAccount(Account  account) {
         List<Station> stations = findAll();
         Cooperate cooperate;
-        List<JSONObject> jsonObjects = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", "999999");
+        jsonObject.put("pid", "0");
+        jsonObject.put("name", "所有站点");
+        jsonObject.put("open", true);
+        jsonObject.put("type", "top");
+        jsonArray.add(jsonObject);
         for (Station station : stations) {
             cooperate = new Cooperate(station);
             makeCooperateVisits(station, cooperate);
             for (Account account1 : cooperate.getVisits()) {
                 if (account1.getId().toString().equals(account.getId().toString())) {
-                    jsonObjects.add(makeStationJson(station));
+                    makeStationJson(station,jsonArray);
                 }
             }
         }
-        return jsonObjects;
+        return jsonArray;
     }
 
     /**
@@ -177,19 +184,24 @@ public class StationService extends BaseService<Station, Long> {
      * @param user
      * @return
      */
-    private List<JSONObject> getStationsFromUser(User user) {
+    private JSONArray getStationsFromUser(User user) {
         List<Station> stations = findAll();
-        List<JSONObject> jsonObjects = new ArrayList<>();
         Station station;
-        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", "999999");
+        jsonObject.put("pid", "0");
+        jsonObject.put("name", "所有站点");
+        jsonObject.put("open", true);
+        jsonObject.put("type", "top");
+        jsonArray.add(jsonObject);
         for (int i = 0; i < stations.size(); i++) {
             station = stations.get(i);
             if(station.getUser().getId().equals(user.getId())||isShare(user,station)){
-                jsonObject = makeStationJson(stations.get(i));
-                jsonObjects.add(jsonObject);
+                makeStationJson(stations.get(i),jsonArray);
             }
         }
-        return jsonObjects;
+        return jsonArray;
     }
 
     /**
@@ -198,56 +210,50 @@ public class StationService extends BaseService<Station, Long> {
      * @param station
      * @return
      */
-    private JSONObject makeStationJson(Station station) {
+    private void makeStationJson(Station station,JSONArray jsonArray) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", station.getId());
-//        jsonObject.put("parameter", StringUtils.hasText(station.getParameter()) ? JSONObject.fromObject(station.getParameter()) : null);
-        jsonObject.put("address", station.getAddress());
-        jsonObject.put("coor", station.getCoor());
-        jsonObject.put("description", station.getDescription());
-        jsonObject.put("exprieDate",station.getExpireDate()==null?null:station.getExpireDate().getTime());
-        jsonObject.put("createDate", station.getCreateDate());
-        jsonObject.put("instanceId", station.getInstanceId());
-        jsonObject.put("pictureUrl", station.getPictureUrl());
-        jsonObject.put("riverModel", station.getRiverModel()==null?null:JSONArray.fromObject(station.getRiverModel()));
-        jsonObject.put("flowModel", station.getFlowModel()==null?null:JSONArray.fromObject(station.getFlowModel()));
-        jsonObject.put("bottomElevation", station.getBottomElevation());
+        jsonObject.put("pid", "999999");
         jsonObject.put("name", station.getName());
-        jsonObject.put("type", station.getType());
-        jsonObject.put("shares", station.getShares());
-        jsonObject.put("cooperate", station.getCooperate());
-        JSONArray cameras = getCameraFromStation(station);
-        jsonObject.put("cameras", cameras.isEmpty() ? null : cameras);
-        JSONArray sensors = getSensorFromStation(station);
-        jsonObject.put("sensor", sensors.isEmpty() ? null : sensors);
-        jsonObject.put("userId", station.getUser().getId());
-        return jsonObject;
-
+        jsonObject.put("open", true);
+        jsonObject.put("type", "station");
+        jsonArray.add(jsonObject);
+        getCameraFromStation(station,jsonArray);
+        getSensorFromStation(station,jsonArray);
     }
 
-    private JSONArray getSensorFromStation(Station station) {
+    private void getSensorFromStation(Station station, JSONArray jsonArray) {
+        JSONObject jsonObject;
         List<Sensor> sensors = station.getSensors();
         if (sensors == null || sensors.size() == 0) {
-            return new JSONArray();
+            return;
         }
-        JSONArray jsonArray = new JSONArray();
         for (Sensor sensor : sensors) {
-            jsonArray.add(sensorService.makeSensorJson(sensor));
+            jsonObject = new JSONObject();
+            jsonObject.put("id", sensor.getId());
+            jsonObject.put("pid", station.getId());
+            jsonObject.put("name", sensor.getName());
+            jsonObject.put("open", true);
+            jsonObject.put("type", "sensor");
+            jsonArray.add(jsonObject);
         }
-        return jsonArray;
     }
 
-    private JSONArray getCameraFromStation(Station station) {
+    private void getCameraFromStation(Station station, JSONArray jsonArray) {
+        JSONObject jsonObject;
         List<Camera> cameras = station.getCameras();
         if (cameras == null) {
-            return new JSONArray();
+            return;
         }
-        JSONArray jsonArray = new JSONArray();
         for (Camera camera : cameras) {
-            jsonArray.add(makeCameraJson(camera));
+            jsonObject = new JSONObject();
+            jsonObject.put("id", camera.getId());
+            jsonObject.put("pid", station.getId());
+            jsonObject.put("name", camera.getName());
+            jsonObject.put("open", true);
+            jsonObject.put("type", "camera");
+            jsonArray.add(jsonObject);
         }
-
-        return jsonArray;
     }
 
 

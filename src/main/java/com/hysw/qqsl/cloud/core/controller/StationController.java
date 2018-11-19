@@ -95,12 +95,27 @@ public class StationController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
-    @RequestMapping(value = "/lists",method = RequestMethod.GET)
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
     public @ResponseBody Message getStations(){
         User user = authentService.getUserFromSubject();
         List<JSONObject> jsonObjectList = stationService.getStations(user);
         pollingService.changeStationStatus(user, false);
         return MessageService.message(Message.Type.OK,jsonObjectList);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/details/{id}",method = RequestMethod.GET)
+    public @ResponseBody Message detailsId(@PathVariable("id") Long id){
+        Station station = stationService.find(id);
+        if (station == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        return MessageService.message(Message.Type.OK);
     }
 
 
