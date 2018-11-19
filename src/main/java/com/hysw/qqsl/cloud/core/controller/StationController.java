@@ -620,6 +620,66 @@ public class StationController {
     }
 
 
+    /**
+     * 编辑测站封面照片
+     * @param map <ul>
+     *            <li>id：测站id</li>
+     *            <li>pictureUrl：封面图片oss地址</li>
+     * </ul>
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/pictureUrl/edit",method = RequestMethod.POST)
+    public @ResponseBody Message editPictureUrl(@RequestBody Map<String,Object> map){
+        Object id = map.get("id");
+        Object pictureUrl = map.get("pictureUrl");
+        if (id == null || pictureUrl == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Station station = stationService.find(Long.valueOf(id.toString()));
+        if (station == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (station.getUser().getId().equals(user.getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        station.setPictureUrl(pictureUrl.toString());
+        stationService.save(station);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 编辑仪表封面照片
+     * @param map <ul>
+     *            <li>id：仪表id</li>
+     *            <li>pictureUrl：封面图片oss地址</li>
+     * </ul>
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/sensor/pictureUrl/edit",method = RequestMethod.POST)
+    public @ResponseBody Message editSensorPictureUrl(@RequestBody Map<String,Object> map){
+        Object id = map.get("id");
+        Object pictureUrl = map.get("pictureUrl");
+        if (id == null || pictureUrl == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Sensor sensor = sensorService.find(Long.valueOf(id.toString()));
+        if (sensor == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (sensor.getStation().getUser().getId().equals(user.getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        sensor.setPictureUrl(pictureUrl.toString());
+        sensorService.save(sensor);
+        return MessageService.message(Message.Type.OK);
+    }
+
 
     /**
      * 取消测站分享
