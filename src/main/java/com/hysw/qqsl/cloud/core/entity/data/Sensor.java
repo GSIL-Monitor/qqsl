@@ -57,7 +57,7 @@ public class Sensor extends BaseEntity {
     /** 是否编辑过仪表 */
     private boolean isChanged;
     /** 图片地址 */
-    private String pictureurl;
+    private String pictureUrl;
 
     private Station station;
     private List<SensorAttribute> sensorAttributes;
@@ -241,12 +241,12 @@ public class Sensor extends BaseEntity {
         isChanged = changed;
     }
 
-    public String getPictureurl() {
-        return pictureurl;
+    public String getPictureUrl() {
+        return pictureUrl;
     }
 
-    public void setPictureurl(String pictureurl) {
-        this.pictureurl = pictureurl;
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
     }
 
     @OneToMany(mappedBy="sensor", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST,CascadeType.REMOVE})
