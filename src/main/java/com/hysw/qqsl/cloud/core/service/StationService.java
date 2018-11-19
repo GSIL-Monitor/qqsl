@@ -219,7 +219,7 @@ public class StationService extends BaseService<Station, Long> {
         JSONArray cameras = getCameraFromStation(station);
         jsonObject.put("cameras", cameras.isEmpty() ? null : cameras);
         JSONArray sensors = getSensorFromStation(station);
-        jsonObject.put("sensor", sensors == null ? null : sensors);
+        jsonObject.put("sensor", sensors.isEmpty() ? null : sensors);
         jsonObject.put("userId", station.getUser().getId());
         return jsonObject;
 
@@ -228,7 +228,7 @@ public class StationService extends BaseService<Station, Long> {
     private JSONArray getSensorFromStation(Station station) {
         List<Sensor> sensors = station.getSensors();
         if (sensors == null || sensors.size() == 0) {
-            return null;
+            return new JSONArray();
         }
         JSONArray jsonArray = new JSONArray();
         for (Sensor sensor : sensors) {
@@ -240,7 +240,7 @@ public class StationService extends BaseService<Station, Long> {
     private JSONArray getCameraFromStation(Station station) {
         List<Camera> cameras = station.getCameras();
         if (cameras == null) {
-            return null;
+            return new JSONArray();
         }
         JSONArray jsonArray = new JSONArray();
         for (Camera camera : cameras) {
