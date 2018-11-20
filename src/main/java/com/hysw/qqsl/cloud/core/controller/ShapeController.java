@@ -62,14 +62,47 @@ public class ShapeController {
     Log logger = LogFactory.getLog(getClass());
 
     /**
-     * 建筑物属性模板下载
-     * @param types  [a,b,c]
+     * BIM取得建筑物详情
+     * @param id 建筑物id
+     * @return OK：请求成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/bim/build/{id}", method = RequestMethod.GET)
+    public @ResponseBody Object getBimBuild(@PathVariable("id") Long id) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Build build = buildService.find(id);
+        if (build == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        return buildService.toJSON(build);
+    }
+
+
+    /**
+     * 获取所有图形线面类型
+     * @return OK：请求成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shape/type/download", method = RequestMethod.GET)
+    public @ResponseBody Message shapeTemplateInfo() {
+        return MessageService.message(Message.Type.OK,shapeService.getModelType());
+    }
+
+
+    /**
+     * 图形线面模板下载
+     * @param types  a,b,c
      * @param response 响应
      * @return OK:下载成功 Fail:下载失败
      */
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadShapeModel", method = RequestMethod.GET)
+    @RequestMapping(value = "/shape/template/download", method = RequestMethod.GET)
     public @ResponseBody
     Message downloadShapeModel(@RequestParam String[] types, HttpServletResponse response) {
         List<String> list = Arrays.asList(types);
@@ -108,14 +141,14 @@ public class ShapeController {
     }
 
     /**
-     * 线面坐标文件上传
+     * 上传图形线面
      * @param request projectId项目Id，baseLevelType坐标转换基准面类型，WGS84Type-WGS84坐标格式
      * @return FAIL参数验证失败，EXIST项目不存在或者中心点为空，OTHER已达到最大限制数量，OK上传成功
      */
 //    @PackageIsExpire(value = "request")
 //    @RequiresAuthentication
 //    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/uploadShape", method = RequestMethod.POST)
+    @RequestMapping(value = "/shape/upload", method = RequestMethod.POST)
     public @ResponseBody
     Message uploadShape(HttpServletRequest request) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
@@ -178,6 +211,194 @@ public class ShapeController {
         JSONArray jsonArray = shapeService.pickedErrorMsg(plaCache);
         return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
     }
+
+    /**
+     * 图形线面下载
+     * @param projectId  projectId
+     * @param response 响应
+     * @return OK:下载成功 Fail:下载失败
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shape/download", method = RequestMethod.GET)
+    public @ResponseBody
+    Message downloadShape(@RequestParam Long projectId, HttpServletResponse response) {
+        Project project = projectService.find(projectId);
+        List<Shape> shapes = shapeService.findByProject(project);
+        Workbook wb = shapeService.downloadShape(shapes);
+        if (wb == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "shape"+ ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 获取图形线面详情
+     * @param id 建筑物id
+     * @return 建筑物对象
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shape/details/{id}", method = RequestMethod.GET)
+    public @ResponseBody Message getShape(@PathVariable("id") Long id) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Shape shape = shapeService.find(id);
+        if (shape == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        JSONObject jsonObject = shapeService.buildJson(shape);
+        return MessageService.message(Message.Type.OK,jsonObject);
+    }
+
+    /**
+     * 新建图形线面
+     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
+     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
+     */
+    @SuppressWarnings("unchecked")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shape/create", method = RequestMethod.POST)
+    public @ResponseBody Message newShape(@RequestBody  Map<String,Object> objectMap) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object shape = objectMap.get("shape");
+        Object type = objectMap.get("type");
+        Object remark = objectMap.get("remark");
+        Object projectId = objectMap.get("projectId");
+        if (shape == null || type == null || remark == null || projectId == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        shapeService.newShape(shape,type,remark,projectId);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 编辑图形线面
+     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
+     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
+     */
+    @SuppressWarnings("unchecked")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shape/edit", method = RequestMethod.POST)
+    public @ResponseBody Message editShape(@RequestBody  Map<String,Object> objectMap) {
+        Message message = CommonController.parameterCheck(objectMap);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Object shape = objectMap.get("shape");
+        if (shape == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        shapeService.editShape(shape);
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+    /**
+     * 删除图形线面
+     * @param id 线面id
+     * @return FAIL参数验证失败，OK删除成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shape/delete/{id}", method = RequestMethod.DELETE)
+    public @ResponseBody Message deleteShape(@PathVariable("id") Long id) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        Shape shape = shapeService.find(id);
+        if (shape == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
+        for (ShapeAttribute shapeAttribute : shapeAttributes) {
+            shapeAttributeService.remove(shapeAttribute);
+        }
+        List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
+        for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
+            if (shapeCoordinate.getBuild() != null) {
+                buildService.remove(shapeCoordinate.getBuild());
+            }
+            shapeCoordinateService.remove(shapeCoordinate);
+        }
+        shapeService.remove(shape);
+        return MessageService.message(Message.Type.OK);
+    }
+
+    /**
+     * 删除图形线面某点
+     * @param shapeCoordinateId 线面坐标id
+     * @return FAIL参数验证失败，OK删除成功
+     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/coordinate/delete/{id}", method = RequestMethod.DELETE)
+    public @ResponseBody Message deleteShapeCoordinate(@PathVariable("id") Long id) {
+        Message message = CommonController.parametersCheck(id);
+        if (message.getType() != Message.Type.OK) {
+            return message;
+        }
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(id);
+        if (shapeCoordinate == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        if (shapeCoordinate.getBuild() != null) {
+            buildService.remove(shapeCoordinate.getBuild());
+        }
+        if (shapeCoordinate.getParent()==null) {
+            ShapeCoordinate next = shapeCoordinate.getNext();
+            next.setParent(null);
+            shapeCoordinateService.save(next);
+        } else {
+            ShapeCoordinate parent = shapeCoordinate.getParent();
+            ShapeCoordinate next = shapeCoordinate.getNext();
+            parent.setNext(next);
+            next.setParent(parent);
+            shapeCoordinateService.save(parent);
+            shapeCoordinateService.save(next);
+        }
+        shapeCoordinateService.remove(shapeCoordinate);
+        return MessageService.message(Message.Type.OK);
+    }
+
+
+
+
 
     /**
      * 剖面模板下载
@@ -396,52 +617,7 @@ public class ShapeController {
         return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
     }
 
-    /**
-     * 图形下载
-     * @param projectId  projectId
-     * @param response 响应
-     * @return OK:下载成功 Fail:下载失败
-     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadShape", method = RequestMethod.GET)
-    public @ResponseBody
-    Message downloadShape(@RequestParam Long projectId, HttpServletResponse response) {
-        Project project = projectService.find(projectId);
-        List<Shape> shapes = shapeService.findByProject(project);
-        Workbook wb = shapeService.downloadShape(shapes);
-        if (wb == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        ByteArrayOutputStream bos = null;
-        InputStream is = null;
-        OutputStream output = null;
-        try {
-            bos = new ByteArrayOutputStream();
-            wb.write(bos);
-            is = new ByteArrayInputStream(bos.toByteArray());
-            String contentType = "application/vnd.ms-excel";
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "shape"+ ".xlsx" + "\"");
-            output = response.getOutputStream();
-            byte b[] = new byte[1024];
-            while (true) {
-                int length = is.read(b);
-                if (length == -1) {
-                    break;
-                }
-                output.write(b, 0, length);
-            }
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            return MessageService.message(Message.Type.FAIL);
-        } finally {
-            IOUtils.safeClose(bos);
-            IOUtils.safeClose(is);
-            IOUtils.safeClose(output);
-        }
-        return MessageService.message(Message.Type.OK);
-    }
+
 
     /**
      * 图形剖面下载
@@ -585,26 +761,7 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK,jsonObject);
     }
 
-    /**
-     * 获取图形线面
-     * @param id 建筑物id
-     * @return 建筑物对象
-     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/shape", method = RequestMethod.GET)
-    public @ResponseBody Message getShape(@RequestParam long id) {
-        Message message = CommonController.parametersCheck(id);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Shape shape = shapeService.find(id);
-        if (shape == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        JSONObject jsonObject = shapeService.buildJson(shape);
-        return MessageService.message(Message.Type.OK,jsonObject);
-    }
+
 
     /**
      * 获取图形属性
@@ -627,16 +784,6 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK,jsonArray);
     }
 
-    /**
-     * 获取所有图形线面类型
-     * @return OK：请求成功
-     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/shapeTemplateInfo", method = RequestMethod.GET)
-    public @ResponseBody Message shapeTemplateInfo() {
-        return MessageService.message(Message.Type.OK,shapeService.getModelType());
-    }
 
     /**
      * 获取所有图形线面属性类型
@@ -660,121 +807,13 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK,buildService.getModelType());
     }
 
-    /**
-     * 删除图形线面
-     * @param id 线面id
-     * @return FAIL参数验证失败，OK删除成功
-     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteShape/{id}", method = RequestMethod.DELETE)
-    public @ResponseBody Message deleteShape(@PathVariable("id") Long id) {
-        Message message = CommonController.parametersCheck(id);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Shape shape = shapeService.find(id);
-        if (shape == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
-        for (ShapeAttribute shapeAttribute : shapeAttributes) {
-            shapeAttributeService.remove(shapeAttribute);
-        }
-        List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
-        for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
-            if (shapeCoordinate.getBuild() != null) {
-                buildService.remove(shapeCoordinate.getBuild());
-            }
-            shapeCoordinateService.remove(shapeCoordinate);
-        }
-        shapeService.remove(shape);
-        return MessageService.message(Message.Type.OK);
-    }
-
-    /**
-     * 删除图形线面某点
-     * @param shapeCoordinateId 线面坐标id
-     * @return FAIL参数验证失败，OK删除成功
-     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/deleteShapeCoordinate/{shapeCoordinateId}", method = RequestMethod.DELETE)
-    public @ResponseBody Message deleteShapeCoordinate(@PathVariable("shapeCoordinateId") Long shapeCoordinateId) {
-        Message message = CommonController.parametersCheck(shapeCoordinateId);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(shapeCoordinateId);
-        if (shapeCoordinate == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (shapeCoordinate.getBuild() != null) {
-            buildService.remove(shapeCoordinate.getBuild());
-        }
-        if (shapeCoordinate.getParent()==null) {
-            ShapeCoordinate next = shapeCoordinate.getNext();
-            next.setParent(null);
-            shapeCoordinateService.save(next);
-        } else {
-            ShapeCoordinate parent = shapeCoordinate.getParent();
-            ShapeCoordinate next = shapeCoordinate.getNext();
-            parent.setNext(next);
-            next.setParent(parent);
-            shapeCoordinateService.save(parent);
-            shapeCoordinateService.save(next);
-        }
-        shapeCoordinateService.remove(shapeCoordinate);
-        return MessageService.message(Message.Type.OK);
-    }
 
 
-    /**
-     * 编辑图形
-     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
-     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
-     */
-    @SuppressWarnings("unchecked")
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/editShape", method = RequestMethod.POST)
-    public @ResponseBody Message deletePoint(@RequestBody  Map<String,Object> objectMap) {
-        Message message = CommonController.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Object shape = objectMap.get("shape");
-        if (shape == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        shapeService.editShape(shape);
-        return MessageService.message(Message.Type.OK);
-    }
 
-    /**
-     * 新建图形
-     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
-     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
-     */
-    @SuppressWarnings("unchecked")
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/newShape", method = RequestMethod.POST)
-    public @ResponseBody Message newShape(@RequestBody  Map<String,Object> objectMap) {
-        Message message = CommonController.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Object shape = objectMap.get("shape");
-        Object type = objectMap.get("type");
-        Object remark = objectMap.get("remark");
-        Object projectId = objectMap.get("projectId");
-        if (shape == null || type == null || remark == null || projectId == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        shapeService.newShape(shape,type,remark,projectId);
-        return MessageService.message(Message.Type.OK);
-    }
+
+
+
+
 
     /**
      * 编辑图形属性
@@ -848,24 +887,7 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK);
     }
 
-    /**
-     * BIM获取建筑物属性信息
-     * @return OK：请求成功
-     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/bim/build/{id}", method = RequestMethod.GET)
-    public @ResponseBody Object getBimBuild(@PathVariable("id") Long id) {
-        Message message = CommonController.parametersCheck(id);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Build build = buildService.find(id);
-        if (build == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        return buildService.toJSON(build);
-    }
+
 
     /**
      * BIM获取图形及其属性信息
