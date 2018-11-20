@@ -161,7 +161,7 @@ public class StationService extends BaseService<Station, Long> {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", "999999");
-        jsonObject.put("pid", "0");
+        jsonObject.put("pId", "0");
         jsonObject.put("name", "所有站点");
         jsonObject.put("open", true);
         jsonObject.put("type", "top");
@@ -190,7 +190,7 @@ public class StationService extends BaseService<Station, Long> {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", "999999");
-        jsonObject.put("pid", "0");
+        jsonObject.put("pId", "0");
         jsonObject.put("name", "所有站点");
         jsonObject.put("open", true);
         jsonObject.put("type", "top");
@@ -213,7 +213,7 @@ public class StationService extends BaseService<Station, Long> {
     private void makeStationJson(Station station,JSONArray jsonArray) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", station.getId());
-        jsonObject.put("pid", "999999");
+        jsonObject.put("pId", "999999");
         jsonObject.put("name", station.getName());
         jsonObject.put("open", true);
         jsonObject.put("type", "station");
@@ -231,7 +231,7 @@ public class StationService extends BaseService<Station, Long> {
         for (Sensor sensor : sensors) {
             jsonObject = new JSONObject();
             jsonObject.put("id", sensor.getId());
-            jsonObject.put("pid", station.getId());
+            jsonObject.put("pId", station.getId());
             jsonObject.put("name", sensor.getName());
             jsonObject.put("open", true);
             jsonObject.put("type", "sensor");
@@ -248,7 +248,7 @@ public class StationService extends BaseService<Station, Long> {
         for (Camera camera : cameras) {
             jsonObject = new JSONObject();
             jsonObject.put("id", camera.getId());
-            jsonObject.put("pid", station.getId());
+            jsonObject.put("pId", station.getId());
             jsonObject.put("name", camera.getName());
             jsonObject.put("open", true);
             jsonObject.put("type", "camera");
