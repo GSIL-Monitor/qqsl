@@ -125,6 +125,11 @@ public class StationController {
     }
 
 
+    /**
+     * 取得仪表详情
+     * @param id 仪表id
+     * @return
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/sensor/details/{id}",method = RequestMethod.GET)
@@ -142,6 +147,11 @@ public class StationController {
     }
 
 
+    /**
+     * 取得摄像头详情
+     * @param id 摄像头id
+     * @return
+     */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/camera/details/{id}",method = RequestMethod.GET)
@@ -196,7 +206,10 @@ public class StationController {
             e.printStackTrace();
         }
         stationService.save(station);
-        return MessageService.message(Message.Type.OK);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", station.getId());
+        jsonObject.put("name", station.getName());
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
 
@@ -229,6 +242,27 @@ public class StationController {
             return MessageService.message(Message.Type.OK);
         }
         return MessageService.message(Message.Type.FAIL);
+    }
+
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/delete/{id}",method = RequestMethod.DELETE)
+    public @ResponseBody Message delete(@PathVariable("id") Long id){
+        Station station = stationService.find(id);
+        if (station == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(station.getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        List<Camera> cameras = cameraService.findByStation(station);
+        List<Sensor> sensors = sensorService.findByStation(station);
+        if (sensors.size() != 0 || cameras.size() != 0) {
+            return MessageService.message(Message.Type.DATA_LOCK);
+        }
+        stationService.remove(station);
+        return MessageService.message(Message.Type.OK);
     }
 
     /**

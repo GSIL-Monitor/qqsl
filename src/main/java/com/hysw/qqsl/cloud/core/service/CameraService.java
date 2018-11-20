@@ -1,10 +1,15 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.core.dao.CameraDao;
+import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.data.Camera;
+import com.hysw.qqsl.cloud.core.entity.data.Station;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Administrator
@@ -84,5 +89,11 @@ public class CameraService extends BaseService<Camera, Long> {
         jsonObject.put("code", camera.getCode());
         jsonObject.put("id", camera.getId());
         return jsonObject;
+    }
+
+    public List<Camera> findByStation(Station station) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("station", station));
+        return cameraDao.findList(0, null, filters);
     }
 }

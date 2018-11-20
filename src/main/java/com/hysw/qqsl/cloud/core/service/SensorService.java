@@ -2,8 +2,10 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.core.dao.SensorDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
+import com.hysw.qqsl.cloud.core.entity.data.Camera;
 import com.hysw.qqsl.cloud.core.entity.data.Sensor;
 import com.hysw.qqsl.cloud.core.entity.data.SensorAttribute;
+import com.hysw.qqsl.cloud.core.entity.data.Station;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -240,4 +242,9 @@ public class SensorService extends BaseService<Sensor,Long>{
         save(sensor);
     }
 
+    public List<Sensor> findByStation(Station station) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("station", station));
+        return sensorDao.findList(0, null, filters);
+    }
 }
