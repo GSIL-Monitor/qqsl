@@ -304,7 +304,10 @@ public class StationController {
             sensor.setCode(code.toString());
             sensor.setStation(station);
             sensorService.save(sensor);
-            return MessageService.message(Message.Type.OK);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", sensor.getId());
+            jsonObject.put("name", sensor.getName());
+            return MessageService.message(Message.Type.OK, jsonObject);
         } else {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -341,7 +344,10 @@ public class StationController {
         camera.setCode(code.toString());
         camera.setPassword(password.toString());
         cameraService.save(camera);
-        return MessageService.message(Message.Type.OK);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", camera.getId());
+        jsonObject.put("name", camera.getName());
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
 
