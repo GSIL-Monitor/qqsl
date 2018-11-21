@@ -833,7 +833,7 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("coor", station.getCoor());
         jsonObject.put("description", station.getDescription());
         jsonObject.put("exprieDate",station.getExpireDate()==null?null:station.getExpireDate().getTime());
-        jsonObject.put("createDate", station.getCreateDate());
+        jsonObject.put("createDate", station.getCreateDate().getTime());
         jsonObject.put("instanceId", station.getInstanceId());
         jsonObject.put("pictureUrl", station.getPictureUrl());
         jsonObject.put("riverModel", station.getRiverModel()==null?null:JSONArray.fromObject(station.getRiverModel()));
