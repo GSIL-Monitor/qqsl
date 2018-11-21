@@ -58,7 +58,7 @@
     </attributeGroup>
     <!--水表井-->
     <attributeGroup name="控制尺寸" buildAlias="b0064" alias="cs">
-        <attribute name="阀门直径（DN）" unit="mm" type="select" select="a,b,c,d" alias="cs0030" locked="false" formula=""/>
+        <attribute name="阀门直径（DN）" unit="mm" type="select" select="φ50,φ65,φ80,φ100,φ125,φ150,φ200,φ300,φ350,φ400,φ450,φ500,φ600" alias="cs0030" locked="false" formula=""/>
     </attributeGroup>
     <!--曲线式倒虹吸-->
     <attributeGroup name="控制尺寸" buildAlias="b0065" alias="cs">
