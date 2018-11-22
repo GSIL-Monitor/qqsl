@@ -19,7 +19,7 @@ public class LineSectionPlaneModel implements Serializable {
 
 
     private LineAttributeGroup remark;
-    private LineAttributeGroup lineWaterResources;
+    private LineAttributeGroup lineWaterResource;
     private LineAttributeGroup lineControlSize;
     private LineAttributeGroup lineGroundStress;
     private LineAttributeGroup lineComponent;
@@ -94,12 +94,12 @@ public class LineSectionPlaneModel implements Serializable {
         this.remark = remark;
     }
 
-    public LineAttributeGroup getLineWaterResources() {
-        return lineWaterResources;
+    public LineAttributeGroup getLineWaterResource() {
+        return lineWaterResource;
     }
 
-    public void setLineWaterResources(LineAttributeGroup lineWaterResources) {
-        this.lineWaterResources = lineWaterResources;
+    public void setLineWaterResources(LineAttributeGroup lineWaterResource) {
+        this.lineWaterResource = lineWaterResource;
     }
 
     public LineAttributeGroup getLineControlSize() {

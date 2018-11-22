@@ -97,7 +97,7 @@ public class SensorService extends BaseService<Sensor,Long>{
             return jsonObject;
         }
         jsonObject.put("id",sensor.getId());
-        jsonObject.put("createDate",sensor.getCreateDate());
+        jsonObject.put("createDate",sensor.getCreateDate().getTime());
         jsonObject.put("phone",sensor.getPhone());
         jsonObject.put("contact",sensor.getContact());
         jsonObject.put("minValue",sensor.getMinValue());
@@ -106,7 +106,7 @@ public class SensorService extends BaseService<Sensor,Long>{
         jsonObject.put("type",sensor.getType());
         jsonObject.put("settingHeight",sensor.getSettingHeight());
         jsonObject.put("description",sensor.getDescription());
-        jsonObject.put("fgetFactroy",sensor.getFactroy());
+        jsonObject.put("factroy",sensor.getFactroy());
         jsonObject.put("measureRange",sensor.getMeasureRange());
         jsonObject.put("name",sensor.getName());
         jsonObject.put("pictureurl",sensor.getPictureUrl());

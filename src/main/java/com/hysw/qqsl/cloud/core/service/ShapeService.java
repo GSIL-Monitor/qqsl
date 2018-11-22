@@ -874,8 +874,8 @@ public class ShapeService extends BaseService<Shape, Long> {
                     i = writeAttributeGroup1(i, sheet, row, cell, wb, lineSectionPlaneModel.getRemark(), s[m], j, k);
                     m++;
                 }
-                if (lineSectionPlaneModel.getLineWaterResources() != null) {
-                    i = writeAttributeGroup1(i, sheet, row, cell, wb, lineSectionPlaneModel.getLineWaterResources(), s[m], j, k);
+                if (lineSectionPlaneModel.getLineWaterResource() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, lineSectionPlaneModel.getLineWaterResource(), s[m], j, k);
                     m++;
                 }
                 if (lineSectionPlaneModel.getLineControlSize() != null) {
@@ -904,19 +904,19 @@ public class ShapeService extends BaseService<Shape, Long> {
     private void preBuildModel(LineSectionPlaneModel lineSectionPlaneModel,int i) {
         writeToCell3(i, null);
         i = writeAttributeGroup3(i, lineSectionPlaneModel.getRemark());
-        i = writeAttributeGroup3(i, lineSectionPlaneModel.getLineWaterResources());
+        i = writeAttributeGroup3(i, lineSectionPlaneModel.getLineWaterResource());
         i = writeAttributeGroup3(i, lineSectionPlaneModel.getLineControlSize());
         i = writeAttributeGroup3(i, lineSectionPlaneModel.getLineGroundStress());
         i = writeAttributeGroup3(i, lineSectionPlaneModel.getLineComponent());
         i++;
         List<ShapeAttribute> shapeAttributes = new ArrayList<>();
         pickedAttribute(lineSectionPlaneModel.getRemark(),shapeAttributes);
-        pickedAttribute(lineSectionPlaneModel.getLineWaterResources(),shapeAttributes);
+        pickedAttribute(lineSectionPlaneModel.getLineWaterResource(),shapeAttributes);
         pickedAttribute(lineSectionPlaneModel.getLineControlSize(),shapeAttributes);
         pickedAttribute(lineSectionPlaneModel.getLineGroundStress(),shapeAttributes);
         pickedAttribute(lineSectionPlaneModel.getLineComponent(),shapeAttributes);
         replaceFx(lineSectionPlaneModel.getRemark(),shapeAttributes);
-        replaceFx(lineSectionPlaneModel.getLineWaterResources(),shapeAttributes);
+        replaceFx(lineSectionPlaneModel.getLineWaterResource(),shapeAttributes);
         replaceFx(lineSectionPlaneModel.getLineControlSize(),shapeAttributes);
         replaceFx(lineSectionPlaneModel.getLineGroundStress(),shapeAttributes);
         replaceFx(lineSectionPlaneModel.getLineComponent(),shapeAttributes);
@@ -1521,7 +1521,7 @@ public class ShapeService extends BaseService<Shape, Long> {
      */
     public void setProperty(LineSectionPlaneModel lineSectionPlaneModel) {
         attributeGroupNotNuLL(lineSectionPlaneModel.getRemark(), lineSectionPlaneModel.getShapeAttribute());
-        attributeGroupNotNuLL(lineSectionPlaneModel.getLineWaterResources(), lineSectionPlaneModel.getShapeAttribute());
+        attributeGroupNotNuLL(lineSectionPlaneModel.getLineWaterResource(), lineSectionPlaneModel.getShapeAttribute());
         attributeGroupNotNuLL(lineSectionPlaneModel.getLineControlSize(), lineSectionPlaneModel.getShapeAttribute());
         attributeGroupNotNuLL(lineSectionPlaneModel.getLineGroundStress(), lineSectionPlaneModel.getShapeAttribute());
         attributeGroupNotNuLL(lineSectionPlaneModel.getLineComponent(), lineSectionPlaneModel.getShapeAttribute());
@@ -1574,8 +1574,7 @@ public class ShapeService extends BaseService<Shape, Long> {
     public JSONObject buildJson(Shape shape) {
         JSONObject jsonObject = new JSONObject(),jsonObject1;
         jsonObject.put("remark", shape.getRemark());
-        jsonObject.put("childType", shape.getChildType()==null?null:shape.getChildType().getTypeC());
-        jsonObject.put("commonType", shape.getCommonType().getTypeC());
+        jsonObject.put("type", shape.getCommonType().getTypeC());
         jsonObject.put("id", shape.getId());
         List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
         JSONArray jsonArray = new JSONArray();
@@ -1585,12 +1584,19 @@ public class ShapeService extends BaseService<Shape, Long> {
             jsonObject1.put("lon", shapeCoordinate.getLat());
             jsonObject1.put("lat", shapeCoordinate.getLat());
             jsonObject1.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
+            jsonObject1.put("buildName", shapeCoordinate.getBuild().getName());
 //            if (shapeCoordinate.getNext() != null) {
 //                jsonObject1.put("next", shapeCoordinate.getNext().getId());
 //            }
             jsonArray.add(jsonObject1);
         }
         jsonObject.put("shapeCoordinate", jsonArray);
+        if (shape.getChildType() == null) {
+            jsonObject.put("childTypes", shapeAttributeService.getModelType());
+        } else {
+            jsonObject.put("childType", shape.getChildType().getTypeC());
+            JSONArray jsonArray1 = shapeAttributeService.buildJson(shape);
+        }
         return jsonObject;
     }
 
