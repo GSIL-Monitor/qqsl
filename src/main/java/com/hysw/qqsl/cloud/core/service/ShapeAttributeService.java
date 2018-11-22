@@ -44,7 +44,7 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
             return new JSONArray();
         }
         jsonArray.add(makeJson(lineSectionPlaneModel.getRemark()));
-        jsonArray.add(makeJson(lineSectionPlaneModel.getLineWaterResources()));
+        jsonArray.add(makeJson(lineSectionPlaneModel.getLineWaterResource()));
         jsonArray.add(makeJson(lineSectionPlaneModel.getLineControlSize()));
         jsonArray.add(makeJson(lineSectionPlaneModel.getLineGroundStress()));
         jsonArray.add(makeJson(lineSectionPlaneModel.getLineComponent()));
