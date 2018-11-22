@@ -682,7 +682,7 @@ public class StationController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (station.getUser().getId().equals(user.getId())) {
+        if (!station.getUser().getId().equals(user.getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
         station.setPictureUrl(pictureUrl.toString());
@@ -712,7 +712,7 @@ public class StationController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (sensor.getStation().getUser().getId().equals(user.getId())) {
+        if (!sensor.getStation().getUser().getId().equals(user.getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
         sensor.setPictureUrl(pictureUrl.toString());

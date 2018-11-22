@@ -1105,6 +1105,20 @@ public class BuildService extends BaseService<Build,Long> {
         return wb;
     }
 
+    public Workbook downloadBuild(ShapeCoordinate shapeCoordinate, Coordinate.WGS84Type wgs84Type) {
+        Build build = shapeCoordinate.getBuild();
+        List<Build> builds = new ArrayList<>();
+        builds.add(build);
+        Workbook wb = new XSSFWorkbook();
+        String central = coordinateService.getCoordinateBasedatum(shapeCoordinate.getShape().getProject());
+        if (central == null || central.equals("null") || central.equals("")) {
+            return null;
+        }
+        String code = transFromService.checkCode84(central);
+        outputBuilds(builds, wb, code, wgs84Type);
+        return wb;
+    }
+
     public Workbook downloadBuild( Project project, Coordinate.WGS84Type wgs84Type) {
         List<Build> builds = findByProject(project);
         Workbook wb = new XSSFWorkbook();
@@ -1175,8 +1189,10 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("id", build.getId());
         jsonObject.put("name", build.getName());
         jsonObject.put("type", build.getType());
-        jsonObject1 = JSONObject.fromObject(build.getCenterCoor());
-        jsonObject.put("center", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
+        jsonObject1 = new JSONObject();
+        jsonObject1.put("lon", build.getShapeCoordinate().getLon());
+        jsonObject1.put("lat", build.getShapeCoordinate().getLat());
+        jsonObject.put("center", jsonObject1);
         if (build.getPositionCoor() != null) {
             jsonObject1 = JSONObject.fromObject(build.getPositionCoor());
             jsonObject.put("position", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
@@ -1188,5 +1204,15 @@ public class BuildService extends BaseService<Build,Long> {
             jsonObject.put(buildAttribute.getAlias(), buildAttribute.getValue());
         }
         return jsonObject;
+    }
+
+    public Build findByShapeCoordinate(ShapeCoordinate shapeCoordinate) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("shapeCoordinate", shapeCoordinate));
+        List<Build> list = buildDao.findList(0, null, filters);
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+        return null;
     }
 }

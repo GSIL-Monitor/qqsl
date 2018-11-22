@@ -5,10 +5,7 @@ import com.hysw.qqsl.cloud.CommonAttributes;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.annotation.util.PackageIsExpire;
 import com.hysw.qqsl.cloud.core.entity.Message;
-import com.hysw.qqsl.cloud.core.entity.buildModel.Elevation;
-import com.hysw.qqsl.cloud.core.entity.buildModel.Line;
-import com.hysw.qqsl.cloud.core.entity.buildModel.PLACache;
-import com.hysw.qqsl.cloud.core.entity.buildModel.SheetObject;
+import com.hysw.qqsl.cloud.core.entity.buildModel.*;
 import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.core.service.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
@@ -58,7 +55,7 @@ public class ShapeController {
     @Autowired
     private BuildAttributeService buildAttributeService;
     @Autowired
-    private LineService lineService;
+    private AuthentService authentService;
 
     Log logger = LogFactory.getLog(getClass());
 
@@ -276,15 +273,15 @@ public class ShapeController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        Object shape = objectMap.get("shape");
+        Object coors = objectMap.get("coors");
         Object type = objectMap.get("type");
         Object remark = objectMap.get("remark");
         Object projectId = objectMap.get("projectId");
-        if (shape == null || type == null || remark == null || projectId == null) {
+        if (coors == null || type == null || remark == null || projectId == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        shapeService.newShape(shape,type,remark,projectId);
-        return MessageService.message(Message.Type.OK);
+        Shape shape = shapeService.newShape(coors, type, remark, projectId);
+        return MessageService.message(Message.Type.OK,shapeService.buildJson(shape));
     }
 
     /**
@@ -301,12 +298,15 @@ public class ShapeController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        Object shape = objectMap.get("shape");
-        if (shape == null) {
+        Object shapeId = objectMap.get("id");
+        Object remark = objectMap.get("remark");
+        Object coors = objectMap.get("coors");
+        if (coors == null || shapeId == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        shapeService.editShape(shape);
-        return MessageService.message(Message.Type.OK);
+        Shape shape = shapeService.editShape(coors,shapeId,remark);
+
+        return MessageService.message(Message.Type.OK,shapeService.buildJson(shape));
     }
 
 
@@ -327,6 +327,10 @@ public class ShapeController {
         if (shape == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(shape.getProject().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
         List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
         for (ShapeAttribute shapeAttribute : shapeAttributes) {
             shapeAttributeService.remove(shapeAttribute);
@@ -344,7 +348,7 @@ public class ShapeController {
 
     /**
      * 删除图形线面某点
-     * @param shapeCoordinateId 线面坐标id
+     * @param id 线面坐标id
      * @return FAIL参数验证失败，OK删除成功
      */
     @RequiresAuthentication
@@ -358,6 +362,10 @@ public class ShapeController {
         ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(id);
         if (shapeCoordinate == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
         }
         if (shapeCoordinate.getBuild() != null) {
             buildService.remove(shapeCoordinate.getBuild());
@@ -380,64 +388,161 @@ public class ShapeController {
 
     /**
      * 取得图形线面下某点详情
+     *
      * @param id 线面点id
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/coordinate/details/{id}", method = RequestMethod.GET)
-    public @ResponseBody Message coordinateDetailsId(@PathVariable("id") Long id) {
-        return MessageService.message(Message.Type.OK);
+    public @ResponseBody
+    Message coordinateDetailsId(@PathVariable("id") Long id) {
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(id);
+        if (shapeCoordinate == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        JSONObject jsonObject = new JSONObject(),jsonObject1;
+        jsonObject.put("lon", shapeCoordinate.getLon());
+        jsonObject.put("lat", shapeCoordinate.getLat());
+        jsonObject.put("elevations", JSONObject.fromObject(shapeCoordinate.getElevations()));
+        Build build = shapeCoordinate.getBuild();
+        jsonObject1 = new JSONObject();
+        jsonObject1.put("id", build.getId());
+        jsonObject1.put("name", build.getName());
+        jsonObject1.put("childType", build.getChildType() == null ? null : build.getChildType());
+        jsonObject1.put("type", build.getType());
+        jsonObject.put("build", jsonObject1);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**
      * 编辑图形线面下某点高程组
+     *
      * @param objectMap <ul>
      *                  <li>id：线面点id</li>
      *                  <li>elevations:[{{top-ele:xxx,name:xxx,value:xxx}}, {...}]</li>
-     * </ul>
+     *                  </ul>
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/coordinate/elevation/edit", method = RequestMethod.POST)
-    public @ResponseBody Message coordinateElevationEdit(@RequestBody  Map<String,Object> objectMap) {
+    public @ResponseBody
+    Message coordinateElevationEdit(@RequestBody Map<String, Object> objectMap) {
+        Object id = objectMap.get("id");
+        Object elevations = objectMap.get("elevations");
+        if (id == null || elevations == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
+        if (shapeCoordinate == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        shapeCoordinate.setElevations(elevations.toString());
         return MessageService.message(Message.Type.OK);
     }
 
     /**
      * 新建图形线面剖面属性
+     *
      * @param objectMap
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/shape/attribute/create", method = RequestMethod.POST)
-    public @ResponseBody Message coordinateDetailsId(@RequestBody  Map<String,Object> objectMap) {
-        return MessageService.message(Message.Type.OK);
+    public @ResponseBody
+    Message coordinateDetailsId(@RequestBody Map<String, Object> objectMap) {
+        Object id = objectMap.get("id");
+        Object type = objectMap.get("type");
+        if (id == null || type == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Shape shape = shapeService.find(Long.valueOf(id.toString()));
+        if (shape == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(shape.getProject().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        shape.setChildType(LineSectionPlaneModel.Type.valueOf(type.toString()));
+        shapeService.save(shape);
+        return MessageService.message(Message.Type.OK, shapeService.buildJson(shape));
     }
 
     /**
      * 删除图形剖面属性
+     *
      * @param objectMap
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/shape/attribute/remove", method = RequestMethod.POST)
-    public @ResponseBody Message shapeAttributeRemove(@RequestBody  Map<String,Object> objectMap) {
+    public @ResponseBody
+    Message shapeAttributeRemove(@RequestBody Map<String, Object> objectMap) {
+        Object id = objectMap.get("id");
+        if (id == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ShapeAttribute shapeAttribute = shapeAttributeService.find(Long.valueOf(id.toString()));
+        if (shapeAttribute == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(shapeAttribute.getShape().getProject().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        shapeAttributeService.remove(shapeAttribute);
         return MessageService.message(Message.Type.OK);
     }
 
     /**
      * 编辑图形线面剖面属性
+     *
      * @param objectMap
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/shape/attribute/edit", method = RequestMethod.POST)
-    public @ResponseBody Message shapeAttributeEdit(@RequestBody  Map<String,Object> objectMap) {
+    public @ResponseBody
+    Message shapeAttributeEdit(@RequestBody Map<String, Object> objectMap) {
+        Object id = objectMap.get("id");
+        Object attributes = objectMap.get("attributes");
+        if (id == null || attributes == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Shape shape = shapeService.find(Long.valueOf(id.toString()));
+        if (shape == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(shape.getProject().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
+        ShapeAttribute shapeAttribute;
+        for (Map<String,Object> attribute : (List<Map<String,Object>>) attributes) {
+            if (attribute.get("id") == null) {
+                shapeAttribute = new ShapeAttribute();
+                shapeAttribute.setAlias(attribute.get("alias") == null ? null : attribute.get("alias").toString());
+                shapeAttribute.setValue(attribute.get("value") == null ? null : attribute.get("value").toString());
+                shapeAttributeService.save(shapeAttribute);
+            } else {
+                shapeAttribute = shapeAttributeService.find(Long.valueOf(attribute.get("id").toString()));
+                shapeAttribute.setValue(attribute.get("value") == null ? null : attribute.get("value").toString());
+                shapeAttributeService.save(shapeAttribute);
+            }
+        }
         return MessageService.message(Message.Type.OK);
     }
 
@@ -510,20 +615,20 @@ public class ShapeController {
     public @ResponseBody
     Message singleUploadBuild(HttpServletRequest request) {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-        String shapeId = request.getParameter("shapeId");
+        String shapeCoordinateId = request.getParameter("shapeCoordinateId");
         String baseLevelType = request.getParameter("baseLevelType");
         String WGS84Type = request.getParameter("WGS84Type");
         Message message;
         JSONObject jsonObject = new JSONObject();
-        if (shapeId == null || baseLevelType == null) {
+        if (shapeCoordinateId == null || baseLevelType == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        Shape shape;
+        ShapeCoordinate shapeCoordinate;
         Coordinate.WGS84Type wgs84Type = null;
         Coordinate.BaseLevelType levelType;
         try {
-            shape = shapeService.find(Long.valueOf(shapeId));
-            message=isAllowUploadCoordinateFile(shape.getProject());
+            shapeCoordinate = shapeCoordinateService.find(Long.valueOf(shapeCoordinateId));
+            message=isAllowUploadCoordinateFile(shapeCoordinate.getShape().getProject());
             levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
             if (!WGS84Type.equals("")) {
                 wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
@@ -534,13 +639,13 @@ public class ShapeController {
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        if (shape == null) {
+        if (shapeCoordinate == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (levelType == Coordinate.BaseLevelType.CGCS2000) {
             wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
         }
-        String central = coordinateService.getCoordinateBasedatum(shape.getProject());
+        String central = coordinateService.getCoordinateBasedatum(shapeCoordinate.getShape().getProject());
         if (central == null) {
             return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
         }
@@ -549,9 +654,11 @@ public class ShapeController {
             //转换成多部分request
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
             Map<String, MultipartFile> map = multiRequest.getFileMap();
-            for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-                shapeService.uploadCoordinate(entry,jsonObject,wbs);
-            }
+            MultipartFile file = map.get("file");
+            shapeService.uploadCoordinate(file,jsonObject,wbs);
+        }
+        if (wbs.size() != 1) {
+            return MessageService.message(Message.Type.FAIL);
         }
         if (!jsonObject.isEmpty()) {
             return MessageService.message(Message.Type.COOR_FORMAT_ERROR, jsonObject);
@@ -562,7 +669,7 @@ public class ShapeController {
         if (sheetObject.getUnknowWBs().size() != 0) {
             return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
         }
-        PLACache plaCache = shapeService.reslove(sheetObject, central, wgs84Type, shape.getProject(), shape);
+        PLACache plaCache = shapeService.reslove(sheetObject, central, wgs84Type, shapeCoordinate.getShape().getProject(), shapeCoordinate);
         if (plaCache == null) {
             return MessageService.message(Message.Type.OK);
         }
@@ -644,7 +751,8 @@ public class ShapeController {
 
     /**
      * 单建筑物下载
-     * @param types
+     *
+     * @param coordinateId
      * @param response
      * @return
      */
@@ -652,7 +760,53 @@ public class ShapeController {
     @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/build/single/download", method = RequestMethod.GET)
     public @ResponseBody
-    Message buildSingleDownload(@RequestParam String[] types, HttpServletResponse response) {
+    Message buildSingleDownload(@RequestParam Long coordinateId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(coordinateId);
+        if (shapeCoordinate == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+        Coordinate.WGS84Type wgs84Type = null;
+        if (!WGS84Type.equals("")) {
+            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+        }
+        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
+            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+        }
+        if (wgs84Type == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        Workbook wb = buildService.downloadBuild(shapeCoordinate,wgs84Type);
+        if (wb == null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        ByteArrayOutputStream bos = null;
+        InputStream is = null;
+        OutputStream output = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            wb.write(bos);
+            is = new ByteArrayInputStream(bos.toByteArray());
+            String contentType = "application/vnd.ms-excel";
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+            output = response.getOutputStream();
+            byte b[] = new byte[1024];
+            while (true) {
+                int length = is.read(b);
+                if (length == -1) {
+                    break;
+                }
+                output.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return MessageService.message(Message.Type.FAIL);
+        } finally {
+            IOUtils.safeClose(bos);
+            IOUtils.safeClose(is);
+            IOUtils.safeClose(output);
+        }
         return MessageService.message(Message.Type.OK);
     }
 
@@ -730,6 +884,10 @@ public class ShapeController {
         if (build == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(build.getShapeCoordinate().getShape().getProject().getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
         JSONObject jsonObject = buildService.buildJson(build);
         return MessageService.message(Message.Type.OK,jsonObject);
     }
@@ -742,18 +900,22 @@ public class ShapeController {
     @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/editBuildAttribute", method = RequestMethod.POST)
+    @RequestMapping(value = "/build/edit", method = RequestMethod.POST)
     public @ResponseBody Message editBuildAttribute(@RequestBody  Map<String,Object> objectMap) {
         Message message = CommonController.parameterCheck(objectMap);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        Object buildId = objectMap.get("buildId");
+        Object buildId = objectMap.get("id");
         Object buildAttributes = objectMap.get("buildAttributes");
+        Object positionCoor = objectMap.get("positionCoor");
         if (buildId == null || buildAttributes == null) {
             return MessageService.message(Message.Type.FAIL);
         }
         Build build = buildService.find(Long.valueOf(buildId.toString()));
+        if (build == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
         BuildAttribute buildAttribute1;
         for (Map<String, Object> buildAttribute : (List<Map<String, Object>>) buildAttributes) {
             if (buildAttribute.get("id") != null) {
@@ -767,6 +929,10 @@ public class ShapeController {
             }
             buildAttributeService.save(buildAttribute1);
         }
+        if (positionCoor != null) {
+            build.setPositionCoor(positionCoor.toString());
+            buildService.save(build);
+        }
         return MessageService.message(Message.Type.OK);
     }
 
@@ -779,35 +945,24 @@ public class ShapeController {
     @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/newBuild", method = RequestMethod.POST)
+    @RequestMapping(value = "/map/build/create", method = RequestMethod.POST)
     public @ResponseBody Message newBuild(@RequestBody  Map<String,Object> objectMap) {
         Object shapeCoordinateId = objectMap.get("shapeCoordinateId");
         Object projectId = objectMap.get("projectId");
-        Object childType = objectMap.get("childType");
-        Object designElevation = objectMap.get("designElevation");
-        Object positionCoor = objectMap.get("positionCoor");
         Object remark = objectMap.get("remark");
         Object type = objectMap.get("type");
         if (shapeCoordinateId == null || remark == null || type == null || projectId == null) {
             return MessageService.message(Message.Type.FAIL);
         }
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(Long.valueOf(shapeCoordinateId.toString()));
         Build build = new Build();
-        build.setShapeCoordinate(shapeCoordinateService.find(Long.valueOf(shapeCoordinateId.toString())));
+        build.setShapeCoordinate(shapeCoordinate);
         build.setType(CommonEnum.CommonType.valueOf(type.toString()));
         build.setRemark(remark.toString());
-        if (positionCoor != null) {
-            JSONObject jsonObject = JSONObject.fromObject(positionCoor);
-            if (!(jsonObject.containsKey("lon") && jsonObject.containsKey("lat"))) {
-                return MessageService.message(Message.Type.FAIL);
-            }
-            build.setPositionCoor(positionCoor.toString());
-        }
-        if (designElevation != null) {
-            build.setDesignElevation(designElevation.toString());
-        }
-        if (childType != null) {
-            build.setChildType(Build.ChildType.valueOf(childType.toString()));
-        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("lon", shapeCoordinate.getLon());
+        jsonObject.put("lat", shapeCoordinate.getLat());
+        build.setPositionCoor(jsonObject.toString());
         build.setProjectId(Long.valueOf(projectId.toString()));
         buildService.save(build);
         return MessageService.message(Message.Type.OK);
@@ -821,24 +976,16 @@ public class ShapeController {
     @SuppressWarnings("unchecked")
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/edit", method = RequestMethod.POST)
+    @RequestMapping(value = "/map/build/edit", method = RequestMethod.POST)
     public @ResponseBody Message editBuild(@RequestBody  Map<String,Object> objectMap) {
         Object id = objectMap.get("id");
-        Object designElevation = objectMap.get("designElevation");
         Object remark = objectMap.get("remark");
-        Object positionCoor = objectMap.get("positionCoor");
         if (id == null) {
             return MessageService.message(Message.Type.FAIL);
         }
         Build build = buildService.find(Long.valueOf(id.toString()));
-        if (designElevation != null) {
-            build.setDesignElevation(designElevation.toString());
-        }
         if (remark != null) {
             build.setRemark(remark.toString());
-        }
-        if (positionCoor != null) {
-            build.setPositionCoor(positionCoor.toString());
         }
         buildService.save(build);
         return MessageService.message(Message.Type.OK);
@@ -850,8 +997,8 @@ public class ShapeController {
      * @param id 建筑物id
      * @return OK：请求成功
      */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/bim/build/{id}", method = RequestMethod.GET)
     public @ResponseBody Object getBimBuild(@PathVariable("id") Long id) {
         Message message = CommonController.parametersCheck(id);
@@ -860,7 +1007,7 @@ public class ShapeController {
         }
         Build build = buildService.find(id);
         if (build == null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         return buildService.toJSON(build);
     }
@@ -869,8 +1016,8 @@ public class ShapeController {
      * BIM获取图形及其属性信息
      * @return OK：请求成功
      */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/bim/shape/{id}", method = RequestMethod.GET)
     public @ResponseBody Message getBimShape(@PathVariable("id") Long id) {
         Message message = CommonController.parametersCheck(id);
@@ -890,97 +1037,6 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK, jsonObject);
     }
 
-
-
-
-    /**
-     * 获取图形属性
-     * @param shapeId 图形id
-     * @return 建筑物对象
-     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/shapeAttribute", method = RequestMethod.GET)
-    public @ResponseBody Message getShapeAttribute(@RequestParam long shapeId) {
-        Message message = CommonController.parametersCheck(shapeId);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Shape shape = shapeService.find(shapeId);
-        if (shape == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        JSONArray jsonArray = shapeAttributeService.buildJson(shape);
-        return MessageService.message(Message.Type.OK,jsonArray);
-    }
-
-
-    /**
-     * 获取所有图形线面属性类型
-     * @return OK：请求成功
-     */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/shapeAttributeTemplateInfo", method = RequestMethod.GET)
-    public @ResponseBody Message shapeAttributeTemplateInfo() {
-        return MessageService.message(Message.Type.OK,shapeAttributeService.getModelType());
-    }
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * 编辑图形属性
-     * @param objectMap <ol><li>line线面对象</li><li>build建筑物集<ol><li>建筑物id</li></ol></li><li>description描述</li></ol>
-     * @return FAIL参数验证失败，OTHER坐标格式错误，EXIST建筑物不存在，OK编辑成功
-     */
-//    @SuppressWarnings("unchecked")
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/editShapeAttribute", method = RequestMethod.POST)
-    public @ResponseBody Message editShapeAttribute(@RequestBody  Map<String,Object> objectMap) {
-        Message message = CommonController.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Object shapeId = objectMap.get("shapeId");
-        Object shapeAttributes = objectMap.get("shapeAttributes");
-        if (shapeId == null || shapeAttributes == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Shape shape = shapeService.find(Long.valueOf(shapeId.toString()));
-        ShapeAttribute shapeAttribute1;
-        for (Map<String, Object> shapeAttribute : (List<Map<String, Object>>) shapeAttributes) {
-            if (shapeAttribute.get("id") != null) {
-                shapeAttribute1 = shapeAttributeService.find(Long.valueOf(shapeAttribute.get("id").toString()));
-                shapeAttribute1.setValue(shapeAttribute.get("value").toString());
-            } else {
-                shapeAttribute1 = new ShapeAttribute();
-                shapeAttribute1.setAlias(shapeAttribute.get("alias").toString());
-                shapeAttribute1.setValue(shapeAttribute.get("value").toString());
-                shapeAttribute1.setShape(shape);
-            }
-            shapeAttributeService.save(shapeAttribute1);
-        }
-        return MessageService.message(Message.Type.OK);
-    }
-
-
-
-
-
-
-
-
-
-
     private Message isAllowUploadCoordinateFile(Project project) {
         if (project == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
@@ -992,51 +1048,5 @@ public class ShapeController {
 //        超过限制数量，返回已达到最大限制数量
         return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
-
-    @RequestMapping(value = "/uploadShapeAttribute", method = RequestMethod.POST)
-    public @ResponseBody
-    Message uploadShapeAttribute(HttpServletRequest request) {
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-        String shapeId = request.getParameter("shapeId");
-        Message message;
-        JSONObject jsonObject = new JSONObject();
-        if (shapeId == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Shape shape;
-        try {
-            shape = shapeService.find(Long.valueOf(shapeId));
-            if (shape == null) {
-                return MessageService.message(Message.Type.DATA_NOEXIST);
-            }
-            message=isAllowUploadCoordinateFile(shape.getProject());
-        } catch (Exception e) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        Map<String, Workbook> wbs = new HashMap<>();
-        if(multipartResolver.isMultipart(request)) {
-            //转换成多部分request
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-            Map<String, MultipartFile> map = multiRequest.getFileMap();
-            for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-                shapeService.uploadCoordinate(entry,jsonObject,wbs);
-            }
-        }
-        if (!jsonObject.isEmpty()) {
-            return MessageService.message(Message.Type.COOR_FORMAT_ERROR, jsonObject);
-        }
-        SheetObject sheetObject = new SheetObject();
-        shapeService.getAllSheet(wbs,sheetObject);
-//		进入错误处理环节
-        if (sheetObject.getUnknowWBs().size() != 0) {
-            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
-        }
-        shapeService.reslove(sheetObject, shape);
-        return MessageService.message(Message.Type.OK);
-    }
-
 
 }

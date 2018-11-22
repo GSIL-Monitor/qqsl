@@ -98,6 +98,37 @@ public class ShapeService extends BaseService<Shape, Long> {
         }
     }
 
+    public void uploadCoordinate(MultipartFile mFile, JSONObject jsonObject, Map<String, Workbook> wbs) {
+        String fileName = mFile.getOriginalFilename();
+        // 限制上传文件的大小
+        if (mFile.getSize() > CommonAttributes.CONVERT_MAX_SZIE) {
+            // return "文件过大无法上传";
+            logger.debug("文件过大");
+            jsonObject.put(fileName, "文件过大");
+            return;
+        }
+        InputStream is;
+        try {
+            is = mFile.getInputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.info("坐标文件或格式异常");
+            jsonObject.put(fileName, "坐标文件或格式异常");
+            return;
+        }
+        String s = fileName.substring(fileName.lastIndexOf(".") + 1);
+        try {
+            readExcels(is, s, fileName, jsonObject, wbs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("坐标文件或格式异常");
+            jsonObject.put(fileName, "坐标文件或格式异常");
+            return;
+        } finally {
+            IOUtils.safeClose(is);
+        }
+    }
+
     /**
      * 尝试使用workbook解析
      *
@@ -1127,6 +1158,36 @@ public class ShapeService extends BaseService<Shape, Long> {
         return plaCache;
     }
 
+    public PLACache reslove(SheetObject sheetObject, String central, Coordinate.WGS84Type wgs84Type, Project project, ShapeCoordinate shapeCoordinate) {
+        Map<String, List<ShapeCache>> map = inputSectionPlaneModel(sheetObject.getBuildWBs());
+        //		数据分析
+        String code = transFromService.checkCode84(central);
+        Map<PLACache, List<Build>> map1 = saveBuildAttribute(map, code, wgs84Type, project, shapeCoordinate);
+        boolean flag = false;
+        PLACache plaCache = null;
+        for (Map.Entry<PLACache, List<Build>> entry : map1.entrySet()) {
+            flag=true;
+            for (Map.Entry<String, List<Build>> entity1 : entry.getKey().getBuildsMap().entrySet()) {
+                for (Build build : entity1.getValue()) {
+                    if (build.isErrorMsg()) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    break;
+                }
+            }
+            plaCache = entry.getKey();
+            if (flag) {
+                saveBuildAttributes(entry.getKey(), entry.getValue());
+                plaCache = null;
+            }
+            break;
+        }
+        return plaCache;
+    }
+
     private void saveBuildAttributes(PLACache plaCache, List<Build> deletes) {
         Iterator<Build> iterator = deletes.iterator();
         Build build1;
@@ -1205,6 +1266,77 @@ public class ShapeService extends BaseService<Shape, Long> {
                         build1.setShapeCoordinate(shapeCoordinate);
                         break;
                     }
+                }
+                if (build1.getShapeCoordinate() == null) {
+                    build1.setErrorMsgTrue();
+                }
+            }
+            map2.put(entry.getKey(), builds1);
+        }
+        plaCache.setBuildsMap(map2);
+        map1.put(plaCache, deleteBuilds);
+        return map1;
+    }
+
+    private Map<PLACache, List<Build>> saveBuildAttribute(Map<String, List<ShapeCache>> map, String code, Coordinate.WGS84Type wgs84Type, Project project, ShapeCoordinate shapeCoordinate) {
+        List<Build> builds;
+        Build build1 = null, build2;
+        BuildAttribute buildAttribute;
+        List<BuildAttribute> buildAttributes;
+        JSONObject jsonObject;
+        List<Build> builds1 = new ArrayList<>();
+        List<Build> deleteBuilds = new ArrayList<>();
+        PLACache plaCache = new PLACache();
+        Map<String, List<Build>> map2 = new HashMap<>();
+        Map<PLACache, List<Build>> map1 = new HashMap<>();
+        for (Map.Entry<String, List<ShapeCache>> entry : map.entrySet()) {
+            for (ShapeCache shapeCache : entry.getValue()) {
+                builds = buildService.getBuilds();
+                for (Build build : builds) {
+                    if (build.getType().getTypeC().equals(shapeCache.getName())) {
+                        build1 = (Build) SettingUtils.objectCopy(build);
+                        break;
+                    }
+                    if (build.getChildType() != null) {
+                        if (build.getChildType().getTypeC().equals(shapeCache.getName())) {
+                            build1 = (Build) SettingUtils.objectCopy(build);
+                            break;
+                        }
+                    }
+                }
+                buildAttributes = new ArrayList<>();
+                for (List<String> list : shapeCache.getList()) {
+                    buildAttribute = new BuildAttribute();
+                    buildAttribute.setValue(list.get(3));
+                    buildAttribute.setAlias(list.get(2));
+                    buildAttribute.setRow(Integer.valueOf(list.get(0)));
+                    buildAttribute.setBuild(build1);
+                    buildAttributes.add(buildAttribute);
+                }
+                writeCoordinateToBuild(build1, buildAttributes, code, wgs84Type);
+                build1.setBuildAttributes(buildAttributes);
+                build1.setProjectId(project.getId());
+                Iterator<Build> iterator = builds1.iterator();
+                while (iterator.hasNext()) {
+                    build2 = iterator.next();
+                    if (build2.getCenterCoor() != null && build1.getCenterCoor() != null) {
+                        if (build2.getCenterCoor().equals(build1.getCenterCoor())) {
+                            iterator.remove();
+                        }
+                    }
+                }
+                builds1.add(build1);
+                if (build1.isErrorMsg()) {
+                    continue;
+                }
+                jsonObject = JSONObject.fromObject(build1.getCenterCoor());
+                if (shapeCoordinate.getLon().equals(jsonObject.get("lon").toString()) && shapeCoordinate.getLat().equals(jsonObject.get("lat").toString())) {
+                    if (shapeCoordinate.getBuild() != null) {
+                        if (!deleteBuilds.contains(shapeCoordinate.getBuild())) {
+                            deleteBuilds.add(shapeCoordinate.getBuild());
+                        }
+                    }
+                    build1.setShapeCoordinate(shapeCoordinate);
                 }
                 if (build1.getShapeCoordinate() == null) {
                     build1.setErrorMsgTrue();
@@ -1549,6 +1681,7 @@ public class ShapeService extends BaseService<Shape, Long> {
             for (ShapeAttribute shapeAttribute1 : attributeList) {
                 if (shapeAttribute.getAlias().equals(shapeAttribute1.getAlias())) {
                     shapeAttribute.setValue(shapeAttribute1.getValue());
+                    shapeAttribute.setId(shapeAttribute1.getId());
                     break;
                 }
             }
@@ -1584,18 +1717,21 @@ public class ShapeService extends BaseService<Shape, Long> {
             jsonObject1.put("lon", shapeCoordinate.getLat());
             jsonObject1.put("lat", shapeCoordinate.getLat());
             jsonObject1.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
-            jsonObject1.put("buildName", shapeCoordinate.getBuild().getName());
+            Build build = buildService.findByShapeCoordinate(shapeCoordinate);
+            if (build != null) {
+                jsonObject1.put("buildName", build.getType().getTypeC());
+            }
 //            if (shapeCoordinate.getNext() != null) {
 //                jsonObject1.put("next", shapeCoordinate.getNext().getId());
 //            }
             jsonArray.add(jsonObject1);
         }
-        jsonObject.put("shapeCoordinate", jsonArray);
+        jsonObject.put("coors", jsonArray);
         if (shape.getChildType() == null) {
             jsonObject.put("childTypes", shapeAttributeService.getModelType());
         } else {
             jsonObject.put("childType", shape.getChildType().getTypeC());
-            JSONArray jsonArray1 = shapeAttributeService.buildJson(shape);
+            jsonObject.put("attribute", shapeAttributeService.buildJson(shape));
         }
         return jsonObject;
     }
@@ -1673,108 +1809,113 @@ public class ShapeService extends BaseService<Shape, Long> {
         return jsonArray;
     }
 
-    public void editShape(Object shape) {
+    public Shape editShape(Object coors, Object shapeId, Object remark) {
         List<ShapeCoordinate> shapeCoordinates = new ArrayList<>();
-        Shape shape1 = null;
+        Shape shape = find(Long.valueOf(shapeId.toString()));
         Line line = null;
         Elevation elevation;
         ShapeCoordinate shapeCoordinate;
-        List<Object> list = (List<Object>) shape;
-        for (Object list1 : list) {
-            List<Map<String, Object>> map = (List<Map<String, Object>>) list1;
-            ShapeCoordinate next = null;
-            for (Map<String, Object> map1 : map) {
-                Object id = map1.get("id");
-                if (id != null) {
-                    shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
-                    next = shapeCoordinate.getNext();
-                    shape1 = shapeCoordinate.getShape();
-                    shapeCoordinate.setLon(map1.get("lon").toString());
-                    shapeCoordinate.setLat(map1.get("lat").toString());
-                    shapeCoordinateService.save(shapeCoordinate);
-                    shapeCoordinates.add(shapeCoordinate);
-                    continue;
-                }
-                shapeCoordinate = new ShapeCoordinate();
-                shapeCoordinate.setLat(map1.get("lat").toString());
-                shapeCoordinate.setLon(map1.get("lon").toString());
-                for (Line line1 : lineService.getLines()) {
-                    if (line1.getCommonType() == shape1.getCommonType()) {
-                        line = (Line) SettingUtils.objectCopy(line1);
-                    }
-                }
-                if (line.getCommonType().getType().equals("line")) {
-                    for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
-                        elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
-                        shapeCoordinate.setElevation(elevation);
-                    }
-                }
-                if (line.getCommonType().getType().equals("area")) {
-                    for (int i = 3; i <= line.getCellProperty().split(",").length; i++) {
-                        elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
-                        shapeCoordinate.setElevation(elevation);
-                    }
-                }
-                shapeCoordinate.setShape(shape1);
-                shapeCoordinateService.save(shapeCoordinate);
+        JSONArray jsonArray = JSONArray.fromObject(coors);
+        JSONObject jsonObject;
+        ShapeCoordinate next = null;
+        for (Object list1 : jsonArray) {
+            jsonObject = JSONObject.fromObject(list1);
+            Object id = jsonObject.get("id");
+            if (id != null) {
                 if (shapeCoordinates.size() != 0) {
-                    shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
-                    shapeCoordinates.get(shapeCoordinates.size()-1).setNext(shapeCoordinate);
+                    shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
                 }
+                shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
+                next = shapeCoordinate.getNext();
+                shapeCoordinate.setLon(jsonObject.get("lon").toString());
+                shapeCoordinate.setLat(jsonObject.get("lat").toString());
+                shapeCoordinateService.save(shapeCoordinate);
                 shapeCoordinates.add(shapeCoordinate);
+                continue;
             }
-            shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
+            shapeCoordinate = new ShapeCoordinate();
+            shapeCoordinate.setLat(jsonObject.get("lat").toString());
+            shapeCoordinate.setLon(jsonObject.get("lon").toString());
+            for (Line line1 : lineService.getLines()) {
+                if (line1.getCommonType() == shape.getCommonType()) {
+                    line = (Line) SettingUtils.objectCopy(line1);
+                }
+            }
+            if (line.getCommonType().getType().equals("line")) {
+                for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
+                    elevation = new Elevation("0", line.getCellProperty(), i, shape,shapeCoordinate);
+                    shapeCoordinate.setElevation(elevation);
+                }
+            }
+            if (line.getCommonType().getType().equals("area")) {
+                for (int i = 3; i <= line.getCellProperty().split(",").length; i++) {
+                    elevation = new Elevation("0", line.getCellProperty(), i, shape,shapeCoordinate);
+                    shapeCoordinate.setElevation(elevation);
+                }
+            }
+            shapeCoordinate.setShape(shape);
+            shapeCoordinateService.save(shapeCoordinate);
+            if (shapeCoordinates.size() != 0) {
+                shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
+                shapeCoordinates.get(shapeCoordinates.size()-1).setNext(shapeCoordinate);
+            }
+            shapeCoordinates.add(shapeCoordinate);
         }
+        shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
         for (ShapeCoordinate shapeCoordinate1 : shapeCoordinates) {
             shapeCoordinateService.save(shapeCoordinate1);
         }
+        if (remark != null) {
+            shape.setRemark(remark.toString());
+            save(shape);
+        }
+        return shape;
     }
 
-    public void newShape(Object shape, Object type, Object remark, Object projectId) {
+    public Shape newShape(Object coors, Object type, Object remark, Object projectId) {
         List<ShapeCoordinate> shapeCoordinates = new ArrayList<>();
         Shape shape1 = new Shape();
-        shape1.setCommonType(CommonEnum.CommonType.valueOf(type.toString()));
+        shape1.setCommonType(CommonEnum.CommonType.valueOf(type.toString().toUpperCase()));
         shape1.setRemark(remark.toString());
         shape1.setProject(projectService.find(Long.valueOf(projectId.toString())));
         Line line = null;
         Elevation elevation;
         ShapeCoordinate shapeCoordinate;
-        List<Object> list = (List<Object>) shape;
-        for (Object list1 : list) {
-            List<Map<String, Object>> map = (List<Map<String, Object>>) list1;
-            ShapeCoordinate next = null;
-            for (Map<String, Object> map1 : map) {
-                shapeCoordinate = new ShapeCoordinate();
-                shapeCoordinate.setLat(map1.get("lat").toString());
-                shapeCoordinate.setLon(map1.get("lon").toString());
-                for (Line line1 : lineService.getLines()) {
-                    if (line1.getCommonType() == shape1.getCommonType()) {
-                        line = (Line) SettingUtils.objectCopy(line1);
-                    }
+        JSONArray jsonArray = JSONArray.fromObject(coors);
+        JSONObject jsonObject;
+        ShapeCoordinate next = null;
+        for (Object list1 : jsonArray) {
+            jsonObject = JSONObject.fromObject(list1);
+            shapeCoordinate = new ShapeCoordinate();
+            shapeCoordinate.setLat(jsonObject.get("lat").toString());
+            shapeCoordinate.setLon(jsonObject.get("lon").toString());
+            for (Line line1 : lineService.getLines()) {
+                if (line1.getCommonType() == shape1.getCommonType()) {
+                    line = (Line) SettingUtils.objectCopy(line1);
                 }
-                if (line.getCommonType().getType().equals("line")) {
-                    for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
-                        elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
-                        shapeCoordinate.setElevation(elevation);
-                    }
-                }
-                if (line.getCommonType().getType().equals("area")) {
-                    for (int i = 3; i <= line.getCellProperty().split(",").length; i++) {
-                        elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
-                        shapeCoordinate.setElevation(elevation);
-                    }
-                }
-                shapeCoordinate.setShape(shape1);
-//                shapeCoordinateService.save(shapeCoordinate);
-                if (shapeCoordinates.size() != 0) {
-                    shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
-                    shapeCoordinates.get(shapeCoordinates.size()-1).setNext(shapeCoordinate);
-                }
-                shapeCoordinates.add(shapeCoordinate);
             }
-            shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
+            if (line.getCommonType().getType().equals("line")) {
+                for (int i = 3; i <= line.getCellProperty().split(",").length-2; i++) {
+                    elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
+                    shapeCoordinate.setElevation(elevation);
+                }
+            }
+            if (line.getCommonType().getType().equals("area")) {
+                for (int i = 3; i <= line.getCellProperty().split(",").length; i++) {
+                    elevation = new Elevation("0", line.getCellProperty(), i, shape1,shapeCoordinate);
+                    shapeCoordinate.setElevation(elevation);
+                }
+            }
+            shapeCoordinate.setShape(shape1);
+            if (shapeCoordinates.size() != 0) {
+                shapeCoordinate.setParent(shapeCoordinates.get(shapeCoordinates.size()-1));
+                shapeCoordinates.get(shapeCoordinates.size()-1).setNext(shapeCoordinate);
+            }
+            shapeCoordinates.add(shapeCoordinate);
         }
+        shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
         shape1.setShapeCoordinates(shapeCoordinates);
         save(shape1);
+        return shape1;
     }
 }

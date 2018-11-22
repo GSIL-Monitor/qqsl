@@ -2,6 +2,7 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.core.dao.ShapeCoordinateDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
+import com.hysw.qqsl.cloud.core.entity.data.Build;
 import com.hysw.qqsl.cloud.core.entity.data.Shape;
 import com.hysw.qqsl.cloud.core.entity.data.ShapeCoordinate;
 import net.sf.json.JSONArray;
@@ -45,5 +46,15 @@ public class ShapeCoordinateService extends BaseService<ShapeCoordinate, Long> {
             jsonArray.add(jsonObject);
         }
         return jsonArray;
+    }
+
+    public ShapeCoordinate findByBuild(Build build) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("build", build));
+        List<ShapeCoordinate> list = shapeCoordinateDao.findList(0, null, filters);
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+        return null;
     }
 }

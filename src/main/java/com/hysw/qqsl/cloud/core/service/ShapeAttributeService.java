@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.google.gson.JsonObject;
 import com.hysw.qqsl.cloud.core.dao.ShapeAttributeDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.buildModel.LineAttributeGroup;
@@ -37,18 +38,15 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
         return shapeAttributeDao.findList(0, null, filters);
     }
 
-    public JSONArray buildJson(Shape shape) {
-        JSONArray jsonArray = new JSONArray();
+    public JSONObject buildJson(Shape shape) {
+        JSONObject jsonObject = new JSONObject();
         LineSectionPlaneModel lineSectionPlaneModel = shapeService.pickedShapeAndSetProperty(shape);
-        if (lineSectionPlaneModel.getShapeAttribute() == null || lineSectionPlaneModel.getShapeAttribute().size() == 0) {
-            return new JSONArray();
-        }
-        jsonArray.add(makeJson(lineSectionPlaneModel.getRemark()));
-        jsonArray.add(makeJson(lineSectionPlaneModel.getLineWaterResource()));
-        jsonArray.add(makeJson(lineSectionPlaneModel.getLineControlSize()));
-        jsonArray.add(makeJson(lineSectionPlaneModel.getLineGroundStress()));
-        jsonArray.add(makeJson(lineSectionPlaneModel.getLineComponent()));
-        return jsonArray;
+        jsonObject.put("remark",makeJson(lineSectionPlaneModel.getRemark()));
+        jsonObject.put("waterResource",makeJson(lineSectionPlaneModel.getLineWaterResource()));
+        jsonObject.put("controlSize",makeJson(lineSectionPlaneModel.getLineControlSize()));
+        jsonObject.put("groundStress",makeJson(lineSectionPlaneModel.getLineGroundStress()));
+        jsonObject.put("component",makeJson(lineSectionPlaneModel.getLineComponent()));
+        return jsonObject;
     }
 
     private JSONObject makeJson(LineAttributeGroup lineAttributeGroup) {
@@ -62,6 +60,7 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
         if (lineAttributeGroup.getShapeAttributes() != null) {
             for (ShapeAttribute shapeAttribute : lineAttributeGroup.getShapeAttributes()) {
                 jsonObject1 = new JSONObject();
+                jsonObject1.put("id", shapeAttribute.getId());
                 jsonObject1.put("name", shapeAttribute.getName());
                 jsonObject1.put("value", shapeAttribute.getValue());
                 jsonObject1.put("alias", shapeAttribute.getAlias());
@@ -70,7 +69,7 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
                 jsonObject1.put("unit", shapeAttribute.getUnit());
                 jsonArray.add(jsonObject1);
             }
-            jsonObject.put("shapeAttribute", jsonArray);
+            jsonObject.put("attribute", jsonArray);
         }
         if (lineAttributeGroup.getChilds() != null) {
             jsonArray = new JSONArray();
