@@ -27,7 +27,7 @@
     </attributeGroup>
     <!--泉室-->
     <attributeGroup name="水力要素" buildAlias="b0003" alias="wr" >
-        <attribute name="容积" unit="m3" type="number" alias="wr00014"/>
+        <attribute name="容积" unit="m3" type="select" select="5,10,20,30,40,50" alias="wr00014"/>
     </attributeGroup>
     <!--渡槽-->
     <attributeGroup name="水力要素" buildAlias="b0061" alias="wr" >
