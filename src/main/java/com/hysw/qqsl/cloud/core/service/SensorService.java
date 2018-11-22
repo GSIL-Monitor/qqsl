@@ -109,7 +109,7 @@ public class SensorService extends BaseService<Sensor,Long>{
         jsonObject.put("factroy",sensor.getFactroy());
         jsonObject.put("measureRange",sensor.getMeasureRange());
         jsonObject.put("name",sensor.getName());
-        jsonObject.put("pictureurl",sensor.getPictureUrl());
+        jsonObject.put("pictureUrl",sensor.getPictureUrl());
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject1;
         for (SensorAttribute sensorAttribute : sensorAttributeService.findBySensor(sensor)) {
