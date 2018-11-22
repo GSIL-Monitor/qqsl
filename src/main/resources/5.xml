@@ -181,7 +181,7 @@
   <attributeGroup name="构件" buildAlias="b0061" alias="ct"> 
     <attributeGroup name="进口渐变段（选型）"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0128"/>  
-      <attribute name="选型" unit="" type="select" select="a,b,c" alias="ct0129"/> 
+      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0129"/>
     </attributeGroup>  
     <attributeGroup name="挡土墙"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0130"/>  
@@ -212,13 +212,13 @@
     <attributeGroup name="金属构件"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0148"/>  
       <attribute name="加劲环－高/间距" unit="mm/m" type="number" alias="ct0149"/>  
-      <attribute name="伸缩节" unit="" type="select" select="a,b,c" alias="ct0150"/>  
-      <attribute name="固定件" unit="" type="select" select="a,b,c" alias="ct0151"/>  
-      <attribute name="锚筋" unit="" type="select" select="a,b,c" alias="ct0152"/> 
+      <attribute name="伸缩节" unit="" type="select" select="圆形,矩形,梯形" alias="ct0150"/>
+      <attribute name="固定件" unit="" type="select" select="圆形,矩形,梯形" alias="ct0151"/>
+      <attribute name="锚筋" unit="" type="select" select="圆形,矩形,梯形" alias="ct0152"/>
     </attributeGroup>  
     <attributeGroup name="出口渐变段"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0153"/>  
-      <attribute name="选型" unit="" type="select" select="a,b,c" alias="ct0154"/> 
+      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0154"/>
     </attributeGroup> 
   </attributeGroup>  
   <!--大口井-->  
