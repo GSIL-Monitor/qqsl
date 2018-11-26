@@ -895,9 +895,9 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(build.getShapeCoordinate().getShape().getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        if (!user.getId().equals(build.getShapeCoordinate().getShape().getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         JSONObject jsonObject = buildService.buildJson(build);
         return MessageService.message(Message.Type.OK,jsonObject);
     }
@@ -917,7 +917,7 @@ public class ShapeController {
             return message;
         }
         Object buildId = objectMap.get("id");
-        Object buildAttributes = objectMap.get("buildAttributes");
+        Object buildAttributes = objectMap.get("attributes");
         if (buildId == null) {
             return MessageService.message(Message.Type.FAIL);
         }

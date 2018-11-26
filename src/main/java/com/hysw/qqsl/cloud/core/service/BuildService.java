@@ -123,9 +123,9 @@ public class BuildService extends BaseService<Build,Long> {
             jsonObject.put("coordinate", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttributeGroup(build.getWaterResources(),jsonObject1);
+        writeAttributeGroup(build.getWaterResource(),jsonObject1);
         if (!jsonObject1.isEmpty()) {
-            jsonObject.put("waterResources", jsonObject1);
+            jsonObject.put("waterResource", jsonObject1);
         }
         jsonObject1 = new JSONObject();
         writeAttributeGroup(build.getControlSize(),jsonObject1);
@@ -253,7 +253,7 @@ public class BuildService extends BaseService<Build,Long> {
         }
         System.out.println();
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getCoordinate(),stringAlias);
-        attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getWaterResources(),stringAlias);
+        attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getWaterResource(),stringAlias);
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getControlSize(),stringAlias);
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getGroundStress(),stringAlias);
         attributeGroupService.initAttributeGroup(buildMap, SettingUtils.getInstance().getSetting().getComponent(), stringAlias);
@@ -300,8 +300,8 @@ public class BuildService extends BaseService<Build,Long> {
                     i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getCoordinate(), s[m], j, k);
                     m++;
                 }
-                if (build.getWaterResources() != null) {
-                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getWaterResources(), s[m], j, k);
+                if (build.getWaterResource() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getWaterResource(), s[m], j, k);
                     m++;
                 }
                 if (build.getControlSize() != null) {
@@ -329,19 +329,19 @@ public class BuildService extends BaseService<Build,Long> {
     private void preBuildModel(Build build,int i) {
         writeToCell3(i, null);
         i = writeAttributeGroup3(i, build.getCoordinate());
-        i = writeAttributeGroup3(i, build.getWaterResources());
+        i = writeAttributeGroup3(i, build.getWaterResource());
         i = writeAttributeGroup3(i, build.getControlSize());
         i = writeAttributeGroup3(i, build.getGroundStress());
         i = writeAttributeGroup3(i, build.getComponent());
         i++;
         List<BuildAttribute> buildAttributes = new ArrayList<>();
         pickedAttribute(build.getCoordinate(),buildAttributes);
-        pickedAttribute(build.getWaterResources(),buildAttributes);
+        pickedAttribute(build.getWaterResource(),buildAttributes);
         pickedAttribute(build.getControlSize(),buildAttributes);
         pickedAttribute(build.getGroundStress(),buildAttributes);
         pickedAttribute(build.getComponent(),buildAttributes);
         replaceFx(build.getCoordinate(),buildAttributes);
-        replaceFx(build.getWaterResources(),buildAttributes);
+        replaceFx(build.getWaterResource(),buildAttributes);
         replaceFx(build.getControlSize(),buildAttributes);
         replaceFx(build.getGroundStress(),buildAttributes);
         replaceFx(build.getComponent(),buildAttributes);
@@ -839,7 +839,7 @@ public class BuildService extends BaseService<Build,Long> {
                 }
                 writeToCell(i, sheet, row, cell, bold(wb), "编号", "名称", "单位", "值", null, null, null, wb, true, null);
                 i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getCoordinate(), "一", j, k);
-                i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getWaterResources(), "二", j, k);
+                i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getWaterResource(), "二", j, k);
                 i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getControlSize(), "三", j, k);
                 i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getGroundStress(), "四", j, k);
                 i = writeAttributeGroup2(i, sheet, row, cell, wb, build.getComponent(), "五", j, k);
@@ -884,7 +884,7 @@ public class BuildService extends BaseService<Build,Long> {
         for (Build build : builds) {
 //            将属性写入attribeGroup
             attributeToAttributeGroup(build.getBuildAttributes(), build.getCoordinate());
-            attributeToAttributeGroup(build.getBuildAttributes(), build.getWaterResources());
+            attributeToAttributeGroup(build.getBuildAttributes(), build.getWaterResource());
             attributeToAttributeGroup(build.getBuildAttributes(), build.getControlSize());
             attributeToAttributeGroup(build.getBuildAttributes(), build.getGroundStress());
             attributeToAttributeGroup(build.getBuildAttributes(), build.getComponent());
@@ -926,7 +926,7 @@ public class BuildService extends BaseService<Build,Long> {
             build.setName(build1.getName());
             build.setAlias(build1.getAlias());
             build.setCoordinate(build1.getCoordinate());
-            build.setWaterResources(build1.getWaterResources());
+            build.setWaterResource(build1.getWaterResource());
             build.setControlSize(build1.getControlSize());
             build.setGroundStress(build1.getGroundStress());
             build.setComponent(build1.getComponent());
@@ -1014,7 +1014,7 @@ public class BuildService extends BaseService<Build,Long> {
             jsonObject1.put("childType", build.getChildType() == null ? null : build.getChildType().name());
             if (flag1) {
                 jsonObject1.put("coordinate", "cooddinate");
-                jsonObject1.put("waterResources", "waterResources");
+                jsonObject1.put("waterResource", "waterResource");
                 jsonObject1.put("controlSize", "controlSize");
                 jsonObject1.put("groundStress", "groundStress");
                 jsonObject1.put("component", "component");

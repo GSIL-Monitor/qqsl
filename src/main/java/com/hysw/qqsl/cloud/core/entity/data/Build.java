@@ -114,7 +114,7 @@ public class Build extends BaseEntity{
     }
 
     private AttributeGroup coordinate;
-    private AttributeGroup waterResources;
+    private AttributeGroup waterResource;
     private AttributeGroup controlSize;
     private AttributeGroup groundStress;
     private AttributeGroup component;
@@ -214,12 +214,12 @@ public class Build extends BaseEntity{
     }
 
     @Transient
-    public AttributeGroup getWaterResources() {
-        return waterResources;
+    public AttributeGroup getWaterResource() {
+        return waterResource;
     }
 
-    public void setWaterResources(AttributeGroup waterResources) {
-        this.waterResources = waterResources;
+    public void setWaterResource(AttributeGroup waterResource) {
+        this.waterResource = waterResource;
     }
 
     @Transient

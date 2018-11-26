@@ -98,7 +98,7 @@ public class LineSectionPlaneModel implements Serializable {
         return lineWaterResource;
     }
 
-    public void setLineWaterResources(LineAttributeGroup lineWaterResource) {
+    public void setLineWaterResource(LineAttributeGroup lineWaterResource) {
         this.lineWaterResource = lineWaterResource;
     }
 

@@ -66,7 +66,7 @@ public class NewBuild extends BaseEntity{
     }
 
     private NewAttributeGroup coordinate;
-    private NewAttributeGroup waterResources;
+    private NewAttributeGroup waterResource;
     private NewAttributeGroup controlSize;
     private NewAttributeGroup groundStress;
     private NewAttributeGroup component;
@@ -174,12 +174,12 @@ public class NewBuild extends BaseEntity{
     }
 
     @Transient
-    public NewAttributeGroup getWaterResources() {
-        return waterResources;
+    public NewAttributeGroup getWaterResource() {
+        return waterResource;
     }
 
-    public void setWaterResources(NewAttributeGroup waterResources) {
-        this.waterResources = waterResources;
+    public void setWaterResource(NewAttributeGroup waterResource) {
+        this.waterResource = waterResource;
     }
 
     @Transient

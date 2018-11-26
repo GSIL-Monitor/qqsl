@@ -177,7 +177,7 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
         build.setBuildAttributes((List<BuildAttribute>) SettingUtils.objectCopy(build1.getBuildAttributes()));
         attributeGroupNotNuLL(build.getCoordinate(), build1.getBuildAttributes());
 
-        attributeGroupNotNuLL(build.getWaterResources(), build1.getBuildAttributes());
+        attributeGroupNotNuLL(build.getWaterResource(), build1.getBuildAttributes());
 
         attributeGroupNotNuLL(build.getControlSize(), build1.getBuildAttributes());
 

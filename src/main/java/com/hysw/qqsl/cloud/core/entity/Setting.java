@@ -41,7 +41,7 @@ public class Setting implements Serializable {
 	 */
 	private String build;
 	private String coordinate;
-	private String waterResources;
+	private String waterResource;
 	private String controlSize;
 	private String groundStress;
 	private String component;
@@ -51,7 +51,7 @@ public class Setting implements Serializable {
 	private String line;
 	private String lineSectionPlaneModel;
 	private String remark;
-	private String lineWaterResources;
+	private String lineWaterResource;
 	private String lineControlSize;
 	private String lineGroundStress;
 	private String lineComponent;
@@ -213,12 +213,12 @@ public class Setting implements Serializable {
 		this.coordinate = coordinate;
 	}
 
-	public String getWaterResources() {
-		return waterResources;
+	public String getWaterResource() {
+		return waterResource;
 	}
 
-	public void setWaterResources(String waterResources) {
-		this.waterResources = waterResources;
+	public void setWaterResource(String waterResource) {
+		this.waterResource = waterResource;
 	}
 
 	public String getControlSize() {
@@ -269,12 +269,12 @@ public class Setting implements Serializable {
 		this.remark = remark;
 	}
 
-	public String getLineWaterResources() {
-		return lineWaterResources;
+	public String getLineWaterResource() {
+		return lineWaterResource;
 	}
 
-	public void setLineWaterResources(String lineWaterResources) {
-		this.lineWaterResources = lineWaterResources;
+	public void setLineWaterResource(String lineWaterResource) {
+		this.lineWaterResource = lineWaterResource;
 	}
 
 	public String getLineControlSize() {
