@@ -1216,15 +1216,4 @@ public class BuildService extends BaseService<Build,Long> {
         }
         return jsonObject;
     }
-
-    public Build findByShapeCoordinate(ShapeCoordinate shapeCoordinate) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("shapeCoordinate", shapeCoordinate));
-        List<Build> list = buildDao.findList(0, null, filters);
-        if (list.size() == 1) {
-            return list.get(0);
-        }
-        return null;
-    }
-
 }

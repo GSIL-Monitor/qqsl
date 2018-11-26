@@ -1717,9 +1717,8 @@ public class ShapeService extends BaseService<Shape, Long> {
             jsonObject1.put("lon", shapeCoordinate.getLat());
             jsonObject1.put("lat", shapeCoordinate.getLat());
             jsonObject1.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
-            Build build = buildService.findByShapeCoordinate(shapeCoordinate);
-            if (build != null) {
-                jsonObject1.put("buildName", build.getType().getTypeC());
+            if (shapeCoordinate.getBuild() != null) {
+                jsonObject1.put("buildName", shapeCoordinate.getBuild().getType().getTypeC());
             }
 //            if (shapeCoordinate.getNext() != null) {
 //                jsonObject1.put("next", shapeCoordinate.getNext().getId());

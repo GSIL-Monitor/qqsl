@@ -45,9 +45,8 @@ public class ShapeCoordinateService extends BaseService<ShapeCoordinate, Long> {
             jsonObject.put("lon", shapeCoordinate.getLon());
             jsonObject.put("lat", shapeCoordinate.getLat());
             jsonObject.put("elevations", shapeCoordinate.getElevations());
-            build = buildService.findByShapeCoordinate(shapeCoordinate);
-            if (build != null) {
-                jsonObject.put("buildId", build.getId());
+            if (shapeCoordinate.getBuild() != null) {
+                jsonObject.put("buildId", shapeCoordinate.getBuild().getId());
             }
             jsonArray.add(jsonObject);
         }
