@@ -193,7 +193,7 @@ public class RSACoderTest {
 
     @Test
     public void testAES111() throws Exception {
-        String data = "9930023";
+        String data = "2315125123515125";
         //String.valueOf(System.currentTimeMillis());
         //String appliactionKey=CommonAttributes.tokenKey;
         //String appliactioniv = CommonAttributes.tokenIv;

@@ -42,6 +42,8 @@ public class BuildService extends BaseService<Build,Long> {
     @Autowired
     private TransFromService transFromService;
     @Autowired
+    private BuildAttributeService buildAttributeService;
+    @Autowired
     public void setBaseDao(BuildDao buildDao) {
         super.setBaseDao( buildDao);
     }
@@ -78,7 +80,7 @@ public class BuildService extends BaseService<Build,Long> {
 
     public List<Build> findByProject(Project project) {
         List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("project", project));
+        filters.add(Filter.eq("projectId", project.getId()));
         List<Build> list = buildDao.findList(0, null, filters);
         return list;
     }
@@ -107,13 +109,13 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("name", build.getName());
         jsonObject.put("alias", build.getAlias());
         jsonObject.put("type", build.getType());
-        ShapeCoordinate shapeCoordinate = build.getShapeCoordinate();
-        jsonObject1 = new JSONObject();
-        jsonObject1.put("lon", shapeCoordinate.getLon());
-        jsonObject1.put("lat", shapeCoordinate.getLat());
-        jsonObject.put("centerCoor", jsonObject1);
-        jsonObject.put("positionCoor", build.getPositionCoor());
-        jsonObject.put("remark", build.getRemark());
+//        ShapeCoordinate shapeCoordinate = build.getShapeCoordinate();
+//        jsonObject1 = new JSONObject();
+//        jsonObject1.put("lon", shapeCoordinate.getLon());
+//        jsonObject1.put("lat", shapeCoordinate.getLat());
+//        jsonObject.put("centerCoor", jsonObject1);
+//        jsonObject.put("positionCoor", build.getPositionCoor());
+//        jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType()==null?null:build.getChildType().name());
         jsonObject1 = new JSONObject();
         writeAttributeGroup(build.getCoordinate(),jsonObject1);
@@ -153,7 +155,7 @@ public class BuildService extends BaseService<Build,Long> {
         if (!jsonArray.isEmpty()) {
             jsonObject.put("name", attributeGroup.getName());
             jsonObject.put("alias", attributeGroup.getAlias());
-            jsonObject.put("attributes", jsonArray);
+            jsonObject.put("attribute", jsonArray);
         }
         jsonArray = new JSONArray();
         writeChild(attributeGroup.getChilds(), jsonArray);
@@ -184,9 +186,9 @@ public class BuildService extends BaseService<Build,Long> {
         }
         JSONObject jsonObject;
         for (BuildAttribute attribute : attributes) {
-            if (attribute.getValue() == null) {
-                continue;
-            }
+//            if (attribute.getValue() == null) {
+//                continue;
+//            }
             jsonObject = new JSONObject();
             jsonObject.put("id", attribute.getId());
             jsonObject.put("name", attribute.getName());
@@ -826,9 +828,9 @@ public class BuildService extends BaseService<Build,Long> {
         for (Map.Entry<String, List<Build>> entry : map.entrySet()) {
             int i = 0, j = 0, k = 0;
             for (Build build : entry.getValue()) {
-                if (build.getCenterCoor() == null) {
-                    continue;
-                }
+//                if (build.getCenterCoor() == null) {
+//                    continue;
+//                }
                 if (build.getBuildAttributes().size() == 3) {
                     continue;
                 }
@@ -934,13 +936,17 @@ public class BuildService extends BaseService<Build,Long> {
     private void makeAttributeToAttributeList(List<Build> builds, String code, Coordinate.WGS84Type wgs84Type) {
         BuildAttribute buildAttribute;
         List<BuildAttribute> buildAttributes;
+        JSONObject jsonObject;
         for (Build build : builds) {
-            if (build.getCenterCoor() == null) {
-                continue;
-            }
-            buildAttributes = build.getBuildAttributes();
+//            if (build.getCenterCoor() == null) {
+//                continue;
+//            }
+            buildAttributes = buildAttributeService.findByBuild(build);
             buildAttribute = new BuildAttribute();
-            buildAttribute.setValue(jsonToCoordinate(build.getCenterCoor(), code, wgs84Type));
+            jsonObject = new JSONObject();
+            jsonObject.put("lon", build.getShapeCoordinate().getLon());
+            jsonObject.put("lat", build.getShapeCoordinate().getLat());
+            buildAttribute.setValue(jsonToCoordinate(jsonObject.toString(), code, wgs84Type));
             buildAttribute.setAlias("center");
             buildAttributes.add(buildAttribute);
             if (build.getPositionCoor() != null) {
@@ -1141,6 +1147,9 @@ public class BuildService extends BaseService<Build,Long> {
             if (!commonType.isModel()) {
                 continue;
             }
+            if (!commonType.getType().equals("buildModel")) {
+               continue;
+            }
             jsonObject = new JSONObject();
             jsonObject.put("typeC", commonType.getTypeC());
             jsonObject.put("commonType", commonType.name());
@@ -1201,7 +1210,9 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType() == null ? null : build.getChildType());
         for (BuildAttribute buildAttribute : build.getBuildAttributes()) {
-            jsonObject.put(buildAttribute.getAlias(), buildAttribute.getValue());
+            if (buildAttribute.getValue() != null) {
+                jsonObject.put(buildAttribute.getAlias(), buildAttribute.getValue());
+            }
         }
         return jsonObject;
     }
@@ -1215,4 +1226,5 @@ public class BuildService extends BaseService<Build,Long> {
         }
         return null;
     }
+
 }

@@ -100,6 +100,9 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
         JSONObject jsonObject;
         JSONArray jsonArray = new JSONArray();
         for (ShapeAttribute shapeAttribute : shapeAttributes) {
+            if (shapeAttribute == null) {
+                continue;
+            }
             jsonObject = new JSONObject();
             jsonObject.put("alias", shapeAttribute.getAlias());
             jsonObject.put("value", shapeAttribute.getValue());

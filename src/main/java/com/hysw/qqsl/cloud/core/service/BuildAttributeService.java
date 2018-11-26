@@ -27,4 +27,10 @@ public class BuildAttributeService extends BaseService<BuildAttribute,Long> {
         filters.add(Filter.eq("build", build1));
         return buildAttributeDao.findList(0,null,filters);
     }
+
+    public List<BuildAttribute> findByBuild(Build build) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("build", build));
+        return buildAttributeDao.findList(0, null, filters);
+    }
 }

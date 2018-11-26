@@ -1329,18 +1329,18 @@ public class ShapeService extends BaseService<Shape, Long> {
                 if (build1.isErrorMsg()) {
                     continue;
                 }
-                jsonObject = JSONObject.fromObject(build1.getCenterCoor());
-                if (shapeCoordinate.getLon().equals(jsonObject.get("lon").toString()) && shapeCoordinate.getLat().equals(jsonObject.get("lat").toString())) {
-                    if (shapeCoordinate.getBuild() != null) {
-                        if (!deleteBuilds.contains(shapeCoordinate.getBuild())) {
-                            deleteBuilds.add(shapeCoordinate.getBuild());
-                        }
+//                jsonObject = JSONObject.fromObject(build1.getCenterCoor());
+////                if (shapeCoordinate.getLon().equals(jsonObject.get("lon").toString()) && shapeCoordinate.getLat().equals(jsonObject.get("lat").toString())) {
+                if (shapeCoordinate.getBuild() != null) {
+                    if (!deleteBuilds.contains(shapeCoordinate.getBuild())) {
+                        deleteBuilds.add(shapeCoordinate.getBuild());
                     }
-                    build1.setShapeCoordinate(shapeCoordinate);
                 }
-                if (build1.getShapeCoordinate() == null) {
-                    build1.setErrorMsgTrue();
-                }
+////                }
+                build1.setShapeCoordinate(shapeCoordinate);
+//                if (build1.getShapeCoordinate() == null) {
+//                    build1.setErrorMsgTrue();
+//                }
             }
             map2.put(entry.getKey(), builds1);
         }
@@ -1403,7 +1403,7 @@ public class ShapeService extends BaseService<Shape, Long> {
                 if (build.isErrorMsg()) {
                     jsonObject = new JSONObject();
                     jsonObject.put("excel", entry.getKey());
-                    jsonObject.put("sheetName", build.getChildType().getTypeC());
+                    jsonObject.put("sheetName", build.getChildType() == null ? build.getType().getTypeC() : build.getChildType().getTypeC());
                     if (build.getCenterCoor() == null || build.getCenterCoor().equals("")) {
                         jsonObject.put("rowNum-center", build.getCenterCoorNum());
                     }
@@ -1823,9 +1823,15 @@ public class ShapeService extends BaseService<Shape, Long> {
             Object id = jsonObject.get("id");
             if (id != null) {
                 if (shapeCoordinates.size() != 0) {
-                    shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
+                    shapeCoordinates.get(shapeCoordinates.size() - 1).setNext(next);     if (next != null) {
+                        next.setParent(shapeCoordinates.get(shapeCoordinates.size() - 1));
+                        shapeCoordinates.add(next);
+                    }
                 }
                 shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
+                if (!shapeCoordinate.getShape().getId().equals(shape.getId())) {
+                    return null;
+                }
                 next = shapeCoordinate.getNext();
                 shapeCoordinate.setLon(jsonObject.get("lon").toString());
                 shapeCoordinate.setLat(jsonObject.get("lat").toString());
@@ -1861,7 +1867,11 @@ public class ShapeService extends BaseService<Shape, Long> {
             }
             shapeCoordinates.add(shapeCoordinate);
         }
-        shapeCoordinates.get(shapeCoordinates.size()-1).setNext(next);
+        shapeCoordinates.get(shapeCoordinates.size() - 1).setNext(next);
+        if (next != null) {
+            next.setParent(shapeCoordinates.get(shapeCoordinates.size() - 1));
+            shapeCoordinates.add(next);
+        }
         for (ShapeCoordinate shapeCoordinate1 : shapeCoordinates) {
             shapeCoordinateService.save(shapeCoordinate1);
         }

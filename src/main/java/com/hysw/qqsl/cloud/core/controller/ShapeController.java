@@ -305,7 +305,9 @@ public class ShapeController {
             return MessageService.message(Message.Type.FAIL);
         }
         Shape shape = shapeService.editShape(coors,shapeId,remark);
-
+        if (shape == null) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
         return MessageService.message(Message.Type.OK,shapeService.buildJson(shape));
     }
 
@@ -328,9 +330,9 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shape.getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        if (!user.getId().equals(shape.getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
         for (ShapeAttribute shapeAttribute : shapeAttributes) {
             shapeAttributeService.remove(shapeAttribute);
@@ -364,9 +366,9 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         if (shapeCoordinate.getBuild() != null) {
             buildService.remove(shapeCoordinate.getBuild());
         }
@@ -402,20 +404,23 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        JSONObject jsonObject = new JSONObject(),jsonObject1;
+//        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
+        JSONObject jsonObject = new JSONObject(), jsonObject1;
+        jsonObject.put("id", shapeCoordinate.getId());
         jsonObject.put("lon", shapeCoordinate.getLon());
         jsonObject.put("lat", shapeCoordinate.getLat());
-        jsonObject.put("elevations", JSONObject.fromObject(shapeCoordinate.getElevations()));
-        Build build = shapeCoordinate.getBuild();
-        jsonObject1 = new JSONObject();
-        jsonObject1.put("id", build.getId());
-        jsonObject1.put("name", build.getName());
-        jsonObject1.put("childType", build.getChildType() == null ? null : build.getChildType());
-        jsonObject1.put("type", build.getType());
-        jsonObject.put("build", jsonObject1);
+        jsonObject.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
+        Build build = buildService.findByShapeCoordinate(shapeCoordinate);
+        if (build != null) {
+            jsonObject1 = new JSONObject();
+            jsonObject1.put("id", build.getId());
+            jsonObject1.put("name", build.getType().getTypeC());
+            jsonObject1.put("childType", build.getChildType() == null ? null : build.getChildType());
+            jsonObject1.put("type", build.getType());
+            jsonObject.put("build", jsonObject1);
+        }
         return MessageService.message(Message.Type.OK,jsonObject);
     }
 
@@ -443,10 +448,11 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         shapeCoordinate.setElevations(elevations.toString());
+        shapeCoordinateService.save(shapeCoordinate);
         return MessageService.message(Message.Type.OK);
     }
 
@@ -471,12 +477,18 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shape.getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        shape.setChildType(LineSectionPlaneModel.Type.valueOf(type.toString()));
+//        if (!user.getId().equals(shape.getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
+        shape.setChildType(LineSectionPlaneModel.Type.valueOf(type.toString().toUpperCase()));
         shapeService.save(shape);
-        return MessageService.message(Message.Type.OK, shapeService.buildJson(shape));
+        JSONObject jsonObject = shapeService.buildJson(shape);
+        jsonObject.remove("remark");
+        jsonObject.remove("id");
+        jsonObject.remove("type");
+        jsonObject.remove("coors");
+        jsonObject.remove("childType");
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
     /**
@@ -494,15 +506,18 @@ public class ShapeController {
         if (id == null) {
             return MessageService.message(Message.Type.FAIL);
         }
-        ShapeAttribute shapeAttribute = shapeAttributeService.find(Long.valueOf(id.toString()));
-        if (shapeAttribute == null) {
+        Shape shape = shapeService.find(Long.valueOf(id.toString()));
+        List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
+        if (shapeAttributes == null || shapeAttributes.size() == 0) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shapeAttribute.getShape().getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
+//        if (!user.getId().equals(shape.getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
+        for (ShapeAttribute shapeAttribute : shapeAttributes) {
+            shapeAttributeService.remove(shapeAttribute);
         }
-        shapeAttributeService.remove(shapeAttribute);
         return MessageService.message(Message.Type.OK);
     }
 
@@ -527,19 +542,22 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shape.getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        if (!user.getId().equals(shape.getProject().getUser().getId())) {
+////            return MessageService.message(Message.Type.DATA_REFUSE);
+////        }
+        JSONObject jsonObject;
         ShapeAttribute shapeAttribute;
-        for (Map<String,Object> attribute : (List<Map<String,Object>>) attributes) {
-            if (attribute.get("id") == null) {
+        for (Object attribute : JSONArray.fromObject(attributes)) {
+            jsonObject = JSONObject.fromObject(attribute);
+            if (jsonObject.get("id") == null) {
                 shapeAttribute = new ShapeAttribute();
-                shapeAttribute.setAlias(attribute.get("alias") == null ? null : attribute.get("alias").toString());
-                shapeAttribute.setValue(attribute.get("value") == null ? null : attribute.get("value").toString());
+                shapeAttribute.setAlias(jsonObject.get("alias") == null ? null : jsonObject.get("alias").toString());
+                shapeAttribute.setValue(jsonObject.get("value") == null ? null : jsonObject.get("value").toString());
+                shapeAttribute.setShape(shape);
                 shapeAttributeService.save(shapeAttribute);
             } else {
-                shapeAttribute = shapeAttributeService.find(Long.valueOf(attribute.get("id").toString()));
-                shapeAttribute.setValue(attribute.get("value") == null ? null : attribute.get("value").toString());
+                shapeAttribute = shapeAttributeService.find(Long.valueOf(jsonObject.get("id").toString()));
+                shapeAttribute.setValue(jsonObject.get("value") == null ? null : jsonObject.get("value").toString());
                 shapeAttributeService.save(shapeAttribute);
             }
         }
@@ -818,7 +836,7 @@ public class ShapeController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/downloadBuild", method = RequestMethod.GET)
+    @RequestMapping(value = "/build/multiple/download", method = RequestMethod.GET)
     public @ResponseBody
     Message downloadBuild(@RequestParam Long projectId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
         Project project = projectService.find(projectId);
@@ -885,9 +903,9 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(build.getShapeCoordinate().getShape().getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        if (!user.getId().equals(build.getShapeCoordinate().getShape().getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         JSONObject jsonObject = buildService.buildJson(build);
         return MessageService.message(Message.Type.OK,jsonObject);
     }
@@ -908,31 +926,56 @@ public class ShapeController {
         }
         Object buildId = objectMap.get("id");
         Object buildAttributes = objectMap.get("buildAttributes");
-        Object positionCoor = objectMap.get("positionCoor");
-        if (buildId == null || buildAttributes == null) {
+        if (buildId == null) {
             return MessageService.message(Message.Type.FAIL);
         }
         Build build = buildService.find(Long.valueOf(buildId.toString()));
         if (build == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        BuildAttribute buildAttribute1;
-        for (Map<String, Object> buildAttribute : (List<Map<String, Object>>) buildAttributes) {
-            if (buildAttribute.get("id") != null) {
-                buildAttribute1 = buildAttributeService.find(Long.valueOf(buildAttribute.get("id").toString()));
-                buildAttribute1.setValue(buildAttribute.get("value").toString());
-            } else {
-                buildAttribute1 = new BuildAttribute();
-                buildAttribute1.setValue(buildAttribute.get("value").toString());
-                buildAttribute1.setAlias(buildAttribute.get("alias").toString());
-                buildAttribute1.setBuild(build);
+        if (buildAttributes != null) {
+            BuildAttribute buildAttribute1 = null;
+            for (Object buildAttribute : JSONArray.fromObject(buildAttributes)) {
+                JSONObject jsonObject1 = JSONObject.fromObject(buildAttribute);
+                if (jsonObject1.get("id") != null) {
+                    buildAttribute1 = buildAttributeService.find(Long.valueOf(jsonObject1.get("id").toString()));
+                    if (!buildAttribute1.getBuild().getId().equals(build.getId())) {
+                        return MessageService.message(Message.Type.DATA_REFUSE);
+                    }
+                    buildAttribute1.setValue(jsonObject1.get("value").toString());
+                } else if (jsonObject1.get("alias").equals("position") || jsonObject1.get("alias").equals("designElevation") || jsonObject1.get("alias").equals("remark")|| jsonObject1.get("alias").equals("center")) {
+                    JSONObject jsonObject;
+                    if (jsonObject1.get("alias").equals("center")) {
+                        continue;
+                    }
+                    if (jsonObject1.get("alias").equals("position") && jsonObject1.get("value") != null) {
+                        String[] centers = jsonObject1.get("value").toString().split(",");
+                        if (centers.length != 2) {
+                            return MessageService.message(Message.Type.FAIL);
+                        }
+                        jsonObject = new JSONObject();
+                        jsonObject.put("lon", centers[0]);
+                        jsonObject.put("lat", centers[1]);
+                        build.setPositionCoor(jsonObject.toString());
+                    }
+                    if (jsonObject1.get("alias").equals("designElevation") && jsonObject1.get("value") != null) {
+                        build.setDesignElevation(jsonObject1.get("value").toString());
+                    }
+                    if (jsonObject1.get("alias").equals("remark") && jsonObject1.get("value") != null) {
+                        build.setRemark(jsonObject1.get("value").toString());
+                    }
+                } else {
+                    buildAttribute1 = new BuildAttribute();
+                    buildAttribute1.setValue(jsonObject1.get("value").toString());
+                    buildAttribute1.setAlias(jsonObject1.get("alias").toString());
+                    buildAttribute1.setBuild(build);
+                }
+                if (buildAttribute1 != null) {
+                    buildAttributeService.save(buildAttribute1);
+                }
             }
-            buildAttributeService.save(buildAttribute1);
         }
-        if (positionCoor != null) {
-            build.setPositionCoor(positionCoor.toString());
-            buildService.save(build);
-        }
+        buildService.save(build);
         return MessageService.message(Message.Type.OK);
     }
 
@@ -955,9 +998,20 @@ public class ShapeController {
             return MessageService.message(Message.Type.FAIL);
         }
         ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(Long.valueOf(shapeCoordinateId.toString()));
+        if (shapeCoordinate == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        Build build1 = buildService.findByShapeCoordinate(shapeCoordinate);
+        if (build1 != null) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        User user = authentService.getUserFromSubject();
+        if (!shapeCoordinate.getShape().getProject().getUser().getId().equals(user.getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
         Build build = new Build();
         build.setShapeCoordinate(shapeCoordinate);
-        build.setType(CommonEnum.CommonType.valueOf(type.toString()));
+        build.setType(CommonEnum.CommonType.valueOf(type.toString().toUpperCase()));
         build.setRemark(remark.toString());
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("lon", shapeCoordinate.getLon());

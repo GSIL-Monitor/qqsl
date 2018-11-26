@@ -21,6 +21,8 @@ import java.util.List;
 public class ShapeCoordinateService extends BaseService<ShapeCoordinate, Long> {
     @Autowired
     private ShapeCoordinateDao shapeCoordinateDao;
+    @Autowired
+    private BuildService buildService;
 
     @Autowired
     public void setBaseDao(ShapeCoordinateDao shapeCoordinateDao) {
@@ -36,13 +38,17 @@ public class ShapeCoordinateService extends BaseService<ShapeCoordinate, Long> {
     public JSONArray toJSON(List<ShapeCoordinate> shapeCoordinates) {
         JSONObject jsonObject;
         JSONArray jsonArray = new JSONArray();
+        Build build;
         for (ShapeCoordinate shapeCoordinate : shapeCoordinates) {
             jsonObject = new JSONObject();
             jsonObject.put("id", shapeCoordinate.getId());
             jsonObject.put("lon", shapeCoordinate.getLon());
             jsonObject.put("lat", shapeCoordinate.getLat());
             jsonObject.put("elevations", shapeCoordinate.getElevations());
-            jsonObject.put("buildId", shapeCoordinate.getBuild().getId());
+            build = buildService.findByShapeCoordinate(shapeCoordinate);
+            if (build != null) {
+                jsonObject.put("buildId", build.getId());
+            }
             jsonArray.add(jsonObject);
         }
         return jsonArray;

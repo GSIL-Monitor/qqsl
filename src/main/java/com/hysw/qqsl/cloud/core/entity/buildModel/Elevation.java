@@ -15,6 +15,7 @@ public class Elevation implements Serializable {
     private String alias;
     private boolean errorMsg=false;
     private int errorCellNum;
+    private String name;
 
     public Elevation(List<String> list, String cellProperty, int i, Shape shape, ShapeCoordinate shapeCoordinate) {
         try {
@@ -32,6 +33,7 @@ public class Elevation implements Serializable {
         }
         String[] split = cellProperty.split(",");
         this.alias = split[i-1].split(":")[1];
+        this.name = split[i - 1].split(":")[0];
     }
 
     public Elevation(String l, String cellProperty, int i, Shape shape, ShapeCoordinate shapeCoordinate) {
@@ -50,11 +52,13 @@ public class Elevation implements Serializable {
         }
         String[] split = cellProperty.split(",");
         this.alias = split[i-1].split(":")[1];
+        this.name = split[i - 1].split(":")[0];
     }
 
-    public Elevation(String ele, String alias) {
+    public Elevation(String ele, String alias,String name) {
         this.ele = ele;
         this.alias = alias;
+        this.name = name;
     }
 
     public String getEle() {
@@ -79,5 +83,13 @@ public class Elevation implements Serializable {
 
     public void setErrorMsg(boolean errorMsg) {
         this.errorMsg = errorMsg;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

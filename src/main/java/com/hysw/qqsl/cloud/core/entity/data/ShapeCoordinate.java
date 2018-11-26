@@ -64,6 +64,7 @@ public class ShapeCoordinate extends BaseEntity {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("alias", elevation.getAlias());
         jsonObject.put("ele", elevation.getEle());
+        jsonObject.put("name", elevation.getName());
         jsonArray.add(jsonObject);
         this.elevations = jsonArray.toString();
     }
@@ -105,7 +106,7 @@ public class ShapeCoordinate extends BaseEntity {
         this.errorMsg = errorMsg;
     }
 
-    @OneToOne(cascade={CascadeType.PERSIST,CascadeType.REMOVE},mappedBy = "shapeCoordinate")
+    @OneToOne(cascade={CascadeType.REMOVE,CascadeType.MERGE},mappedBy = "shapeCoordinate")
     public Build getBuild() {
         return build;
     }

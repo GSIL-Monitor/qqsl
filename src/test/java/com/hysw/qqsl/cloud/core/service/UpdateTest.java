@@ -163,7 +163,7 @@ public class UpdateTest {
             if (jsonObject1.get("elevation") == null) {
                 continue;
             }
-            shapeCoordinate.setElevation(new Elevation(jsonObject1.get("elevation").toString(),"desgin-ele"));
+            shapeCoordinate.setElevation(new Elevation(jsonObject1.get("elevation").toString(),"desgin-ele","设计高程"));
             shapeCoordinate.setLon(jsonObject1.get("longitude").toString());
             shapeCoordinate.setLat(jsonObject1.get("latitude").toString());
             if (shapeCoordinates.size() != 0) {

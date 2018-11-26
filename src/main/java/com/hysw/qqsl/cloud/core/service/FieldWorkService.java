@@ -1,5 +1,6 @@
 package com.hysw.qqsl.cloud.core.service;
 
+import com.google.gson.JsonObject;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.FieldWorkDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
@@ -151,10 +152,30 @@ public class FieldWorkService extends BaseService<FieldWork, Long> {
             return;
         }
         if (build1.getId() != null) {
-            build1.setBuildAttributes(buildAttributeService.findByNewBuild(build1));
+            List<BuildAttribute> attributes = buildAttributeService.findByNewBuild(build1);
+            BuildAttribute buildAttribute = new BuildAttribute();
+            buildAttribute.setValue(build1.getShapeCoordinate().getLon()+","+build1.getShapeCoordinate().getLat());
+            buildAttribute.setAlias("center");
+            attributes.add(buildAttribute);
+            if (build.getPositionCoor() != null) {
+                buildAttribute = new BuildAttribute();
+                JSONObject jsonObject = JSONObject.fromObject(build1.getPositionCoor());
+                buildAttribute.setValue(jsonObject.get("lon")+","+jsonObject.get("lat"));
+                buildAttribute.setAlias("position");
+                attributes.add(buildAttribute);
+            }
+            buildAttribute = new BuildAttribute();
+            buildAttribute.setValue(build1.getDesignElevation());
+            buildAttribute.setAlias("designElevation");
+            attributes.add(buildAttribute);
+            buildAttribute = new BuildAttribute();
+            buildAttribute.setValue(build1.getRemark());
+            buildAttribute.setAlias("remark");
+            attributes.add(buildAttribute);
+            build1.setBuildAttributes(attributes);
         }
         build.setBuildAttributes((List<BuildAttribute>) SettingUtils.objectCopy(build1.getBuildAttributes()));
-//        attributeGroupNotNuLL(build.getCoordinate(), build1.getAttribeList());
+        attributeGroupNotNuLL(build.getCoordinate(), build1.getBuildAttributes());
 
         attributeGroupNotNuLL(build.getWaterResources(), build1.getBuildAttributes());
 
