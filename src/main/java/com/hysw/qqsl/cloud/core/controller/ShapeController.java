@@ -994,7 +994,7 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         if (shapeCoordinate.getBuild() != null) {
-            return MessageService.message(Message.Type.FAIL);
+            return MessageService.message(Message.Type.DATA_EXIST);
         }
         User user = authentService.getUserFromSubject();
         if (!shapeCoordinate.getShape().getProject().getUser().getId().equals(user.getId())) {
