@@ -74,7 +74,7 @@ public class StationController {
      * @return message消息体,附带token令牌
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple","user:abll"}, logical = Logical.OR)
+//    @RequiresRoles(value = {"user:simple","account:simple","user:abll"}, logical = Logical.OR)
     @RequestMapping(value = "/token", method = RequestMethod.GET)
     public @ResponseBody
     Message getToken() {
