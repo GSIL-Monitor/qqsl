@@ -917,7 +917,7 @@ public class ShapeController {
             return message;
         }
         Object buildId = objectMap.get("id");
-        Object buildAttributes = objectMap.get("buildAttributes");
+        Object buildAttributes = objectMap.get("attributes");
         if (buildId == null) {
             return MessageService.message(Message.Type.FAIL);
         }

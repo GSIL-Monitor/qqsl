@@ -61,7 +61,7 @@ public class LineSectionPlaneModelService {
             lineSectionPlaneModelMap.put(lineSectionPlaneModel.getAlias(), lineSectionPlaneModel);
         }
         initLineBuildAttributeGroup(lineSectionPlaneModelMap,SettingUtils.getInstance().getSetting().getRemark());
-        initLineBuildAttributeGroup(lineSectionPlaneModelMap,SettingUtils.getInstance().getSetting().getLineWaterResources());
+        initLineBuildAttributeGroup(lineSectionPlaneModelMap,SettingUtils.getInstance().getSetting().getLineWaterResource());
         initLineBuildAttributeGroup(lineSectionPlaneModelMap,SettingUtils.getInstance().getSetting().getLineControlSize());
         initLineBuildAttributeGroup(lineSectionPlaneModelMap,SettingUtils.getInstance().getSetting().getLineGroundStress());
         initLineBuildAttributeGroup(lineSectionPlaneModelMap,SettingUtils.getInstance().getSetting().getLineComponent());
@@ -98,7 +98,7 @@ public class LineSectionPlaneModelService {
                     lineSectionPlaneModel.setRemark(lineAttributeGroup);
                 }
                 if (lineAttributeGroup.getAlias().equals("wr")) {
-                    lineSectionPlaneModel.setLineWaterResources(lineAttributeGroup);
+                    lineSectionPlaneModel.setLineWaterResource(lineAttributeGroup);
                 }
                 if (lineAttributeGroup.getAlias().equals("cs")) {
                     lineSectionPlaneModel.setLineControlSize(lineAttributeGroup);

@@ -35,13 +35,13 @@
 
 	<setting name="build" value="0.xml" />
 	<setting name="coordinate" value="1.xml" />
-	<setting name="waterResources" value="2.xml" />
+	<setting name="waterResource" value="2.xml" />
 	<setting name="controlSize" value="3.xml" />
 	<setting name="groundStress" value="4.xml" />
 	<setting name="component" value="5.xml" />
 	<setting name="lineSectionPlaneModel" value="6.xml"/>
 	<setting name="remark" value="7.xml"/>
-	<setting name="lineWaterResources" value="8.xml"/>
+	<setting name="lineWaterResource" value="8.xml"/>
 	<setting name="lineControlSize" value="9.xml"/>
 	<setting name="lineGroundStress" value="10.xml"/>
 	<setting name="lineComponent" value="11.xml"/>

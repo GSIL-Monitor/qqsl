@@ -111,6 +111,8 @@ public class SensorService extends BaseService<Sensor,Long>{
         jsonObject.put("name",sensor.getName());
         jsonObject.put("pictureUrl",sensor.getPictureUrl());
         jsonObject.put("activate",sensor.isActivate());
+        jsonObject.put("isMaxValueWaring",sensor.isMaxValueWaring());
+        jsonObject.put("isMinValueWaring",sensor.isMinValueWaring());
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject1;
         for (SensorAttribute sensorAttribute : sensorAttributeService.findBySensor(sensor)) {

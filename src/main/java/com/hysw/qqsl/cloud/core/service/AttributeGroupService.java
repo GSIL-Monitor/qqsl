@@ -51,7 +51,7 @@ public class AttributeGroupService {
                     build.setCoordinate(attributeGroup);
                 }
                 if (attributeGroup.getAlias().equals("wr")) {
-                    build.setWaterResources(attributeGroup);
+                    build.setWaterResource(attributeGroup);
                 }
                 if (attributeGroup.getAlias().equals("cs")) {
                     build.setControlSize(attributeGroup);

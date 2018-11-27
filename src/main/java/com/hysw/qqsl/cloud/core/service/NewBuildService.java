@@ -129,7 +129,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                 }
                 writeToCell(i, sheet, row, cell, bold(wb), "编号", "名称", "单位", "值", null, null, null, wb, true, null);
                 i = writeAttributeGroup2(i, sheet, row, cell, wb, newBuild.getCoordinate(), "一", j, k);
-                i = writeAttributeGroup2(i, sheet, row, cell, wb, newBuild.getWaterResources(), "二", j, k);
+                i = writeAttributeGroup2(i, sheet, row, cell, wb, newBuild.getWaterResource(), "二", j, k);
                 i = writeAttributeGroup2(i, sheet, row, cell, wb, newBuild.getControlSize(), "三", j, k);
                 i = writeAttributeGroup2(i, sheet, row, cell, wb, newBuild.getGroundStress(), "四", j, k);
                 i = writeAttributeGroup2(i, sheet, row, cell, wb, newBuild.getComponent(), "五", j, k);
@@ -350,7 +350,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
     private void makeAttributeToAttributeGroup(NewBuild newBuild) {
 //            将属性写入attribeGroup
         attributeToAttributeGroup(newBuild.getNewBuildAttributes(), newBuild.getCoordinate());
-        attributeToAttributeGroup(newBuild.getNewBuildAttributes(), newBuild.getWaterResources());
+        attributeToAttributeGroup(newBuild.getNewBuildAttributes(), newBuild.getWaterResource());
         attributeToAttributeGroup(newBuild.getNewBuildAttributes(), newBuild.getControlSize());
         attributeToAttributeGroup(newBuild.getNewBuildAttributes(), newBuild.getGroundStress());
         attributeToAttributeGroup(newBuild.getNewBuildAttributes(), newBuild.getComponent());
@@ -478,7 +478,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         newBuild.setName(newBuild1.getName());
         newBuild.setAlias(newBuild1.getAlias());
         newBuild.setCoordinate(newBuild1.getCoordinate());
-        newBuild.setWaterResources(newBuild1.getWaterResources());
+        newBuild.setWaterResource(newBuild1.getWaterResource());
         newBuild.setControlSize(newBuild1.getControlSize());
         newBuild.setGroundStress(newBuild1.getGroundStress());
         newBuild.setComponent(newBuild1.getComponent());
@@ -544,9 +544,9 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
             jsonObject.put("coordinate", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttributeGroup(newBuild.getWaterResources(),jsonObject1);
+        writeAttributeGroup(newBuild.getWaterResource(),jsonObject1);
         if (!jsonObject1.isEmpty()) {
-            jsonObject.put("waterResources", jsonObject1);
+            jsonObject.put("waterResource", jsonObject1);
         }
         jsonObject1 = new JSONObject();
         writeAttributeGroup(newBuild.getControlSize(),jsonObject1);
@@ -650,7 +650,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         newBuild.setNewBuildAttributes((List<NewBuildAttribute>) SettingUtils.objectCopy(newBuild1.getNewBuildAttributes()));
 //        attributeGroupNotNuLL(build.getCoordinate(), build1.getAttribeList());
 
-        attributeGroupNotNuLL(newBuild.getWaterResources(), newBuild1.getNewBuildAttributes());
+        attributeGroupNotNuLL(newBuild.getWaterResource(), newBuild1.getNewBuildAttributes());
 
         attributeGroupNotNuLL(newBuild.getControlSize(), newBuild1.getNewBuildAttributes());
 
@@ -1098,7 +1098,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
             buildMap.put(newBuild.getAlias(),newBuild);
         }
         initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getCoordinate(),stringAlias);
-        initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getWaterResources(),stringAlias);
+        initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getWaterResource(),stringAlias);
         initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getControlSize(),stringAlias);
         initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getGroundStress(),stringAlias);
         initAttributeGroup(buildMap, SettingUtils.getInstance().getSetting().getComponent(), stringAlias);
@@ -1136,7 +1136,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                     newBuild.setCoordinate(newAttributeGroup);
                 }
                 if (newAttributeGroup.getAlias().equals("wr")) {
-                    newBuild.setWaterResources(newAttributeGroup);
+                    newBuild.setWaterResource(newAttributeGroup);
                 }
                 if (newAttributeGroup.getAlias().equals("cs")) {
                     newBuild.setControlSize(newAttributeGroup);
@@ -1264,8 +1264,8 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                     i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getCoordinate(), s[m], j, k);
                     m++;
                 }
-                if (build.getWaterResources() != null) {
-                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getWaterResources(), s[m], j, k);
+                if (build.getWaterResource() != null) {
+                    i = writeAttributeGroup1(i, sheet, row, cell, wb, build.getWaterResource(), s[m], j, k);
                     m++;
                 }
                 if (build.getControlSize() != null) {
@@ -1327,19 +1327,19 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
     private void preBuildModel(NewBuild build,int i) {
         writeToCell3(i, null);
         i = writeAttributeGroup3(i, build.getCoordinate());
-        i = writeAttributeGroup3(i, build.getWaterResources());
+        i = writeAttributeGroup3(i, build.getWaterResource());
         i = writeAttributeGroup3(i, build.getControlSize());
         i = writeAttributeGroup3(i, build.getGroundStress());
         i = writeAttributeGroup3(i, build.getComponent());
         i++;
         List<NewBuildAttribute> buildAttributes = new ArrayList<>();
         pickedAttribute(build.getCoordinate(),buildAttributes);
-        pickedAttribute(build.getWaterResources(),buildAttributes);
+        pickedAttribute(build.getWaterResource(),buildAttributes);
         pickedAttribute(build.getControlSize(),buildAttributes);
         pickedAttribute(build.getGroundStress(),buildAttributes);
         pickedAttribute(build.getComponent(),buildAttributes);
         replaceFx(build.getCoordinate(),buildAttributes);
-        replaceFx(build.getWaterResources(),buildAttributes);
+        replaceFx(build.getWaterResource(),buildAttributes);
         replaceFx(build.getControlSize(),buildAttributes);
         replaceFx(build.getGroundStress(),buildAttributes);
         replaceFx(build.getComponent(),buildAttributes);
