@@ -36,4 +36,28 @@
         <attribute name="防渗材料/厚度c1" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0017"/>
         <attribute name="换基材料/厚度c2" unit="材质（选择）/m" type="select" select="a,b,c,d" alias="gs0018"/>
     </attributeGroup>
+    <!--矩形渠-->
+    <attributeGroup name="地基处理" lineAlias="l0007" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0019"/>
+        <attribute name="防渗材料材质" unit="材质（选择）" type="select" select="a,b,c,d" alias="gs0020"/>
+        <attribute name="防渗材料厚度" unit="m" type="number" alias="gs0021"/>
+        <attribute name="换基材料材质" unit="材质（选择）" type="select" select="a,b,c,d" alias="gs0022"/>
+        <attribute name="换基材料厚度" unit="m" type="number" alias="gs0023"/>
+    </attributeGroup>
+    <!--梯型渠-->
+    <attributeGroup name="地基处理" lineAlias="l0008" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0024"/>
+        <attribute name="防渗材料材质" unit="材质（选择）" type="select" select="a,b,c,d" alias="gs0025"/>
+        <attribute name="防渗材料厚度" unit="m" type="number" alias="gs0026"/>
+        <attribute name="换基材料材质" unit="材质（选择）" type="select" select="a,b,c,d" alias="gs0027"/>
+        <attribute name="换基材料厚度" unit="m" type="number" alias="gs0028"/>
+    </attributeGroup>
+    <!--U型渠-->
+    <attributeGroup name="地基处理" lineAlias="l0009" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0029"/>
+        <attribute name="防渗材料材质" unit="材质（选择）" type="select" select="a,b,c,d" alias="gs0030"/>
+        <attribute name="防渗材料厚度" unit="m" type="number" alias="gs0031"/>
+        <attribute name="换基材料材质" unit="材质（选择）" type="select" select="a,b,c,d" alias="gs0032"/>
+        <attribute name="换基材料厚度" unit="m" type="number" alias="gs0033"/>
+    </attributeGroup>
 </groundStress>

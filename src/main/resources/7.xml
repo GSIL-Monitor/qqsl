@@ -24,4 +24,19 @@
     <attributeGroup name="描述" lineAlias="l0006" alias="remark">
         <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
     </attributeGroup>
+    <!--矩形渠-->
+    <attributeGroup name="描述" lineAlias="l0007" alias="remark">
+        <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
+        <attribute name="类型" unit="选择渠道类别" type="select" select="干渠,支渠,斗渠,农渠" alias="channelType" />
+    </attributeGroup>
+    <!--梯型渠-->
+    <attributeGroup name="描述" lineAlias="l0008" alias="remark">
+        <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
+        <attribute name="类型" unit="选择渠道类别" type="select" select="干渠,支渠,斗渠,农渠" alias="channelType" />
+    </attributeGroup>
+    <!--U型渠-->
+    <attributeGroup name="描述" lineAlias="l0009" alias="remark">
+        <attribute name="描述" unit="对应的导线坐标名称" type="text" alias="remark"/>
+        <attribute name="类型" unit="选择渠道类别" type="select" select="干渠,支渠,斗渠,农渠" alias="channelType" />
+    </attributeGroup>
 </remark>

@@ -24,4 +24,25 @@
     <attributeGroup name="控制尺寸" lineAlias="l0006" alias="cs" >
         <attribute name="安全超高H’" unit="m" type="number" alias="cs0006"/>
     </attributeGroup>
+    <!--矩形渠-->
+    <attributeGroup name="控制尺寸" lineAlias="l0007" alias="cs" >
+        <attribute name="设计水深H" unit="m" type="number" alias="cs0007"/>
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0008"/>
+        <attribute name="设计底宽B" unit="m" type="number" alias="cs0009"/>
+        <attribute name="渠道纵比" unit="" type="text" alias="cs0010"/>
+    </attributeGroup>
+    <!--梯型渠-->
+    <attributeGroup name="控制尺寸" lineAlias="l0008" alias="cs" >
+        <attribute name="设计水深H" unit="m" type="number" alias="cs0011"/>
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0012"/>
+        <attribute name="设计底宽B" unit="m" type="number" alias="cs0013"/>
+        <attribute name="设计边坡" unit="" type="text" alias="cs0014"/>
+        <attribute name="渠道纵比" unit="" type="text" alias="cs0015"/>
+    </attributeGroup>
+    <!--U型渠-->
+    <attributeGroup name="控制尺寸" lineAlias="l0009" alias="cs" >
+        <attribute name="设计水深H" unit="m" type="number" alias="cs0016"/>
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0017"/>
+        <attribute name="渠道纵比" unit="" type="text" alias="cs0018"/>
+    </attributeGroup>
 </controlSize>

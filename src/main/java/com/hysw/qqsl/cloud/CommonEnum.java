@@ -360,7 +360,11 @@ public class CommonEnum {
         /**
          * 水表井
          */
-        SHUIBJ("buildModel","水表井","sbj","管道建筑物",true);
+        SHUIBJ("buildModel","水表井","sbj","管道建筑物",true),
+        /**
+         * 渠道
+         */
+        QUD("line","渠道","qd","渠系建筑物",true);
         //必须增加一个构造函数,变量,得到该变量的值
         private String  type="";
         private String typeC = "";

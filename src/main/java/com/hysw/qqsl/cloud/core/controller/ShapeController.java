@@ -472,6 +472,9 @@ public class ShapeController {
         if (!user.getId().equals(shape.getProject().getUser().getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
+        if (shape.getChildType() != null) {
+            return MessageService.message(Message.Type.DATA_EXIST);
+        }
         shape.setChildType(LineSectionPlaneModel.Type.valueOf(type.toString().toUpperCase()));
         shapeService.save(shape);
         JSONObject jsonObject = shapeService.buildJson(shape);

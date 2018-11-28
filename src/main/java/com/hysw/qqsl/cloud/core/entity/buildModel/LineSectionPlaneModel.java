@@ -31,6 +31,9 @@ public class LineSectionPlaneModel implements Serializable {
         FUXSDQ(CommonEnum.CommonType.DANGQ,"sectionPlane","俯斜式挡墙","fxsdq"),
         FUBSDQ(CommonEnum.CommonType.DANGQ,"sectionPlane","扶臂式挡墙","fbsdq"),
         ANPSDQ(CommonEnum.CommonType.DANGQ,"sectionPlane","岸坡式挡墙","apsdq"),
+        JUXQ(CommonEnum.CommonType.QUD,"sectionPlane", "矩型渠", "jxq"),
+        TIXQ(CommonEnum.CommonType.QUD,"sectionPlane", "梯型渠", "txq"),
+        UXQ(CommonEnum.CommonType.QUD,"sectionPlane", "U型渠", "uxq"),
         ;
         //必须增加一个构造函数,变量,得到该变量的值
         private CommonEnum.CommonType commonType;

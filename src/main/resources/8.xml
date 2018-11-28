@@ -24,4 +24,16 @@
     <attributeGroup name="水力要素" lineAlias="l0006" alias="wr" >
         <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0006"/>
     </attributeGroup>
+    <!--矩形渠-->
+    <attributeGroup name="水力要素" lineAlias="l0007" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0007"/>
+    </attributeGroup>
+    <!--梯型渠-->
+    <attributeGroup name="水力要素" lineAlias="l0008" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0008"/>
+    </attributeGroup>
+    <!--U型渠-->
+    <attributeGroup name="水力要素" lineAlias="l0009" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0009"/>
+    </attributeGroup>
 </waterResources>

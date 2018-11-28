@@ -6,4 +6,7 @@
     <line name="俯斜式挡墙" type="FUXSDQ" alias="l0004" number="1"/>
     <line name="扶臂式挡墙" type="FUBSDQ" alias="l0005" number="1"/>
     <line name="岸坡式挡墙" type="ANPSDQ" alias="l0006" number="1"/>
+    <line name="矩形渠" type="JUXQ" alias="l0007" number="1"/>
+    <line name="梯型渠" type="TIXQ" alias="l0008" number="1"/>
+    <line name="U型渠" type="UXQ" alias="l0009" number="1"/>
 </lineBuilds>
