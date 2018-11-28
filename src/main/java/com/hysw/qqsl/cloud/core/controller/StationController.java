@@ -568,7 +568,6 @@ public class StationController {
     public @ResponseBody Message uploadModel(HttpServletRequest request){
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         Long id = Long.valueOf(request.getParameter("id"));
-        String fileName = request.getParameter("fileName");
         Station station = stationService.find(id);
         if(station==null||station.getId()==null){
             return MessageService.message(Message.Type.DATA_NOEXIST);
@@ -580,7 +579,7 @@ public class StationController {
             //转换成多部分request
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
             Map<String, MultipartFile> map = multiRequest.getFileMap();
-            MultipartFile mFile = map.get(fileName);
+            MultipartFile mFile = map.get("file");
             try{
                 return MessageService.message(Message.Type.OK, stationService.readModelFile(mFile, station));
             }catch (Exception e){
@@ -605,9 +604,9 @@ public class StationController {
         if(station==null||station.getId()==null){
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        if(!isOperate(station)){
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        if(!isOperate(station)){
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         Workbook workbook = stationService.makeStationModelData(station);
         ByteArrayOutputStream bos = null;
         InputStream is = null;
