@@ -604,9 +604,9 @@ public class StationController {
         if(station==null||station.getId()==null){
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-//        if(!isOperate(station)){
-//            return MessageService.message(Message.Type.DATA_REFUSE);
-//        }
+        if(!isOperate(station)){
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
         Workbook workbook = stationService.makeStationModelData(station);
         ByteArrayOutputStream bos = null;
         InputStream is = null;
