@@ -215,7 +215,7 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("id", station.getId());
         jsonObject.put("pId", "999999");
         jsonObject.put("name", station.getName());
-        jsonObject.put("open", true);
+        jsonObject.put("open", false);
         jsonObject.put("type", "station");
         jsonArray.add(jsonObject);
         getCameraFromStation(station,jsonArray);
