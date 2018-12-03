@@ -65,7 +65,7 @@ public class ShapeServiceTest extends BaseTest {
      */
     @Test
     public void test0005(){
-
+        System.out.println();
     }
 
     /**
