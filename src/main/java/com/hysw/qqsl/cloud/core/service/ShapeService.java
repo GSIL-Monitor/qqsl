@@ -1901,6 +1901,7 @@ public class ShapeService extends BaseService<Shape, Long> {
             for (Line line1 : lineService.getLines()) {
                 if (line1.getCommonType() == shape1.getCommonType()) {
                     line = (Line) SettingUtils.objectCopy(line1);
+                    break;
                 }
             }
             if (line.getCommonType().getType().equals("line")) {
