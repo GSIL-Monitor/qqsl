@@ -2,7 +2,10 @@ package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
+import com.hysw.qqsl.cloud.core.entity.data.Build;
 import com.hysw.qqsl.cloud.core.entity.data.Shape;
+import com.hysw.qqsl.cloud.core.entity.data.ShapeAttribute;
+import com.hysw.qqsl.cloud.core.entity.data.ShapeCoordinate;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Assert;
@@ -10,6 +13,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * @author Administrator
@@ -19,6 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ShapeServiceTest extends BaseTest {
     @Autowired
     private ShapeService shapeService;
+    @Autowired
+    private ShapeCoordinateService shapeCoordinateService;
+    @Autowired
+    private ShapeAttributeService shapeAttributeService;
+    @Autowired
+    private BuildService buildService;
 
     /**
      * 获取所有图形线面类型
@@ -65,7 +76,11 @@ public class ShapeServiceTest extends BaseTest {
      */
     @Test
     public void test0005(){
-        System.out.println();
+        Object id = "29";
+        Object remark="test";
+        Object coors = "[{\"id\":\"165\",\"lon\":\"105\",\"lat\":\"39\"},{\"lon\":\"106\",\"lat\":\"38\"},{\"lon\":\"107\",\"lat\":\"40\"},{\"id\":\"166\",\"lon\":\"105\",\"lat\":\"39\"},{\"lon\":\"106\",\"lat\":\"38\"},{\"lon\":\"107\",\"lat\":\"40\"}]";
+        Shape shape = shapeService.editShape(coors,id,remark);
+        Assert.assertTrue(shape != null && shape.getId() != null);
     }
 
     /**
@@ -81,7 +96,11 @@ public class ShapeServiceTest extends BaseTest {
      */
     @Test
     public void test0007(){
-
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(173l);
+        shapeCoordinateService.deleteShapeCoordinateById(shapeCoordinate);
+        shapeCoordinateService.flush();
+        ShapeCoordinate shapeCoordinate1 = shapeCoordinateService.find(173l);
+        Assert.assertTrue(shapeCoordinate1 == null);
     }
 
     /**
@@ -89,23 +108,22 @@ public class ShapeServiceTest extends BaseTest {
      */
     @Test
     public void test0008(){
-
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(173l);
+        JSONObject jsonObject = shapeCoordinateService.getCoordinateDetails(shapeCoordinate);
+        Assert.assertTrue(!jsonObject.isEmpty());
     }
 
     /**
      * 编辑图形线面下某点高程组
      */
 
-    /**
-     * 新建图形线面剖面属性
-     */
     @Test
     public void test0009(){
 
     }
 
     /**
-     * 删除图形剖面属性
+     * 新建图形线面剖面属性
      */
     @Test
     public void test0010(){
@@ -113,7 +131,7 @@ public class ShapeServiceTest extends BaseTest {
     }
 
     /**
-     * 编辑图形线面剖面属性
+     * 删除图形剖面属性
      */
     @Test
     public void test0011(){
@@ -121,23 +139,28 @@ public class ShapeServiceTest extends BaseTest {
     }
 
     /**
-     * 获取建筑物类型
+     * 编辑图形线面剖面属性
      */
     @Test
     public void test0012(){
+        Shape shape = shapeService.find(31l);
+        Object attributes = "[{\"alias\":\"ct0004\",\"value\":\"11\"},{\"alias\":\"remark\",\"value\":\"11\"}]";
+        shapeAttributeService.editShapeAttribute(shape,attributes);
+        List<ShapeAttribute> shapeAttributeList = shapeAttributeService.findByShape(shape);
+        Assert.assertTrue(shapeAttributeList.size() != 0);
+    }
 
+    /**
+     * 获取建筑物类型
+     */
+    @Test
+    public void test0013(){
+        JSONArray modelType = buildService.getModelType();
+        Assert.assertTrue(!modelType.isEmpty());
     }
 
     /**
      * 单建筑物上传
-     */
-    @Test
-    public void test0013(){
-
-    }
-
-    /**
-     * 多建筑物上传
      */
     @Test
     public void test0014(){
@@ -145,7 +168,7 @@ public class ShapeServiceTest extends BaseTest {
     }
 
     /**
-     * 获取建筑物详情
+     * 多建筑物上传
      */
     @Test
     public void test0015(){
@@ -153,15 +176,17 @@ public class ShapeServiceTest extends BaseTest {
     }
 
     /**
-     * 编辑建筑物
+     * 获取建筑物详情
      */
     @Test
     public void test0016(){
-
+        Build build = buildService.find(58l);
+        JSONObject jsonObject = buildService.buildJson(build);
+        Assert.assertTrue(!jsonObject.isEmpty());
     }
 
     /**
-     * 地图上新建建筑物
+     * 编辑建筑物
      */
     @Test
     public void test0017(){
@@ -169,7 +194,7 @@ public class ShapeServiceTest extends BaseTest {
     }
 
     /**
-     * 地图上编辑建筑物
+     * 地图上新建建筑物
      */
     @Test
     public void test0018(){
@@ -177,7 +202,7 @@ public class ShapeServiceTest extends BaseTest {
     }
 
     /**
-     * BIM取得建筑物详情
+     * 地图上编辑建筑物
      */
     @Test
     public void test0019(){
@@ -185,10 +210,18 @@ public class ShapeServiceTest extends BaseTest {
     }
 
     /**
-     * BIM获取图形及其属性信息
+     * BIM取得建筑物详情
      */
     @Test
     public void test0020(){
+
+    }
+
+    /**
+     * BIM获取图形及其属性信息
+     */
+    @Test
+    public void test0021(){
 
     }
 

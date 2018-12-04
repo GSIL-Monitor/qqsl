@@ -361,23 +361,7 @@ public class ShapeController {
 //        if (shapeCoordinate.getBuild() != null) {
 //            buildService.remove(shapeCoordinate.getBuild());
 //        }
-        if (shapeCoordinate.getParent()==null) {
-            ShapeCoordinate next = shapeCoordinate.getNext();
-            next.setParent(null);
-            shapeCoordinateService.save(next);
-        } else {
-            ShapeCoordinate parent = shapeCoordinate.getParent();
-            ShapeCoordinate next = shapeCoordinate.getNext();
-            if (parent != null) {
-                parent.setNext(next);
-                shapeCoordinateService.save(parent);
-            }
-            if (next != null) {
-                next.setParent(parent);
-                shapeCoordinateService.save(next);
-            }
-        }
-        shapeCoordinateService.remove(shapeCoordinate);
+        shapeCoordinateService.deleteShapeCoordinateById(shapeCoordinate);
         return MessageService.message(Message.Type.OK);
     }
 
@@ -400,19 +384,7 @@ public class ShapeController {
         if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        JSONObject jsonObject = new JSONObject(), jsonObject1;
-        jsonObject.put("id", shapeCoordinate.getId());
-        jsonObject.put("lon", shapeCoordinate.getLon());
-        jsonObject.put("lat", shapeCoordinate.getLat());
-        jsonObject.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
-        if (shapeCoordinate.getBuild() != null) {
-            jsonObject1 = new JSONObject();
-            jsonObject1.put("id", shapeCoordinate.getBuild().getId());
-            jsonObject1.put("name", shapeCoordinate.getBuild().getType().getTypeC());
-            jsonObject1.put("childType", shapeCoordinate.getBuild().getChildType() == null ? null : shapeCoordinate.getBuild().getChildType());
-            jsonObject1.put("type", shapeCoordinate.getBuild().getType());
-            jsonObject.put("build", jsonObject1);
-        }
+        JSONObject jsonObject = shapeCoordinateService.getCoordinateDetails(shapeCoordinate);
         return MessageService.message(Message.Type.OK,jsonObject);
     }
 
@@ -540,22 +512,7 @@ public class ShapeController {
         if (!user.getId().equals(shape.getProject().getUser().getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        JSONObject jsonObject;
-        ShapeAttribute shapeAttribute;
-        for (Object attribute : JSONArray.fromObject(attributes)) {
-            jsonObject = JSONObject.fromObject(attribute);
-            if (jsonObject.get("id") == null) {
-                shapeAttribute = new ShapeAttribute();
-                shapeAttribute.setAlias(jsonObject.get("alias") == null ? null : jsonObject.get("alias").toString());
-                shapeAttribute.setValue(jsonObject.get("value") == null ? null : jsonObject.get("value").toString());
-                shapeAttribute.setShape(shape);
-                shapeAttributeService.save(shapeAttribute);
-            } else {
-                shapeAttribute = shapeAttributeService.find(Long.valueOf(jsonObject.get("id").toString()));
-                shapeAttribute.setValue(jsonObject.get("value") == null ? null : jsonObject.get("value").toString());
-                shapeAttributeService.save(shapeAttribute);
-            }
-        }
+        shapeAttributeService.editShapeAttribute(shape,attributes);
         return MessageService.message(Message.Type.OK);
     }
 

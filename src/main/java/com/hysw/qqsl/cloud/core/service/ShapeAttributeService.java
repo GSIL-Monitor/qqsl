@@ -111,4 +111,23 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
         }
         return jsonArray;
     }
+
+    public void editShapeAttribute(Shape shape, Object attributes) {
+        JSONObject jsonObject;
+        ShapeAttribute shapeAttribute;
+        for (Object attribute : JSONArray.fromObject(attributes)) {
+            jsonObject = JSONObject.fromObject(attribute);
+            if (jsonObject.get("id") == null) {
+                shapeAttribute = new ShapeAttribute();
+                shapeAttribute.setAlias(jsonObject.get("alias") == null ? null : jsonObject.get("alias").toString());
+                shapeAttribute.setValue(jsonObject.get("value") == null ? null : jsonObject.get("value").toString());
+                shapeAttribute.setShape(shape);
+                save(shapeAttribute);
+            } else {
+                shapeAttribute = find(Long.valueOf(jsonObject.get("id").toString()));
+                shapeAttribute.setValue(jsonObject.get("value") == null ? null : jsonObject.get("value").toString());
+                save(shapeAttribute);
+            }
+        }
+    }
 }

@@ -423,7 +423,8 @@ public class StationController {
     public @ResponseBody Message extraCreate(@RequestBody Map<String,Object> map){
         Object id = map.get("id");
         Object displayName = map.get("displayName");
-        if (id == null || displayName == null) {
+        Object value = map.get("value");
+        if (id == null || displayName == null || value == null) {
             return MessageService.message(Message.Type.FAIL);
         }
         Sensor sensor = sensorService.find(Long.valueOf(id.toString()));
@@ -440,6 +441,7 @@ public class StationController {
         SensorAttribute sensorAttribute = new SensorAttribute();
         sensorAttribute.setDisplayName(displayName.toString());
         sensorAttribute.setType(SensorAttribute.Type.CUSTOM);
+        sensorAttribute.setValue(value.toString());
         sensorAttribute.setSensor(sensor);
         sensorAttributeService.save(sensorAttribute);
         return MessageService.message(Message.Type.OK);

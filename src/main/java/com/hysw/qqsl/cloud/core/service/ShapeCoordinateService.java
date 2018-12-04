@@ -53,13 +53,44 @@ public class ShapeCoordinateService extends BaseService<ShapeCoordinate, Long> {
         return jsonArray;
     }
 
-    public ShapeCoordinate findByBuild(Build build) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(Filter.eq("build", build));
-        List<ShapeCoordinate> list = shapeCoordinateDao.findList(0, null, filters);
-        if (list.size() == 1) {
-            return list.get(0);
+    /**
+     * 根据shapeCoordinateId删除对应数据
+     * @param shapeCoordinate
+     */
+    public void deleteShapeCoordinateById(ShapeCoordinate shapeCoordinate) {
+        if (shapeCoordinate.getParent()==null) {
+            ShapeCoordinate next = shapeCoordinate.getNext();
+            next.setParent(null);
+            save(next);
+        } else {
+            ShapeCoordinate parent = shapeCoordinate.getParent();
+            ShapeCoordinate next = shapeCoordinate.getNext();
+            if (parent != null) {
+                parent.setNext(next);
+                save(parent);
+            }
+            if (next != null) {
+                next.setParent(parent);
+                save(next);
+            }
         }
-        return null;
+        remove(shapeCoordinate);
+    }
+
+    public JSONObject getCoordinateDetails(ShapeCoordinate shapeCoordinate) {
+        JSONObject jsonObject = new JSONObject(), jsonObject1;
+        jsonObject.put("id", shapeCoordinate.getId());
+        jsonObject.put("lon", shapeCoordinate.getLon());
+        jsonObject.put("lat", shapeCoordinate.getLat());
+        jsonObject.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
+        if (shapeCoordinate.getBuild() != null) {
+            jsonObject1 = new JSONObject();
+            jsonObject1.put("id", shapeCoordinate.getBuild().getId());
+            jsonObject1.put("name", shapeCoordinate.getBuild().getType().getTypeC());
+            jsonObject1.put("childType", shapeCoordinate.getBuild().getChildType() == null ? null : shapeCoordinate.getBuild().getChildType());
+            jsonObject1.put("type", shapeCoordinate.getBuild().getType());
+            jsonObject.put("build", jsonObject1);
+        }
+        return jsonObject;
     }
 }
