@@ -43,6 +43,9 @@ public class BuildAttributeService extends BaseService<BuildAttribute,Long> {
                 JSONObject jsonObject1 = JSONObject.fromObject(buildAttribute);
                 if (jsonObject1.get("id") != null) {
                     buildAttribute1 = find(Long.valueOf(jsonObject1.get("id").toString()));
+                    if (buildAttribute1 == null) {
+                        return "2";
+                    }
                     if (!buildAttribute1.getBuild().getId().equals(build.getId())) {
                         return null;
                     }

@@ -30,6 +30,8 @@ public class ShapeServiceTest extends BaseTest {
     private ShapeAttributeService shapeAttributeService;
     @Autowired
     private BuildService buildService;
+    @Autowired
+    private BuildAttributeService buildAttributeService;
 
     /**
      * 获取所有图形线面类型
@@ -190,7 +192,10 @@ public class ShapeServiceTest extends BaseTest {
      */
     @Test
     public void test0017(){
-
+        Build build = buildService.find(58l);
+        Object buildAttributes = "[{\"alias\":\"center\",\"value\":\"102,36\"},{\"alias\":\"wr0003\",\"value\":\"10\"},{\"alias\":\"wr0006\",\"value\":\"10\"}]";
+        String s = buildAttributeService.editBuildAttribute(build, buildAttributes);
+        Assert.assertTrue(s.equals("1"));
     }
 
     /**

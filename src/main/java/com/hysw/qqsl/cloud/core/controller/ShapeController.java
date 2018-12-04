@@ -892,6 +892,9 @@ public class ShapeController {
         if (s.equals("")) {
             return MessageService.message(Message.Type.FAIL);
         }
+        if (s.equals("2")) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
         buildService.save(build);
         return MessageService.message(Message.Type.OK);
     }
