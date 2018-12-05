@@ -51,7 +51,7 @@ public class BuildServiceTest extends BaseTest {
     public void save(){
         Build build = new Build();
         build.setAlias("11");
-        Project project = projectService.find(531l);
+        Project project = projectService.find(848l);
         build.setProjectId(project.getId());
         build.setType(CommonEnum.CommonType.QS);
         build.setName("泉室");
@@ -91,7 +91,7 @@ public class BuildServiceTest extends BaseTest {
 
     @Test
     public void testBuildJson(){
-        Build build = buildService.find(6106l);
+        Build build = buildService.find(65l);
         JSONObject jsonObject = buildService.buildJson(build);
         Assert.assertNotNull(jsonObject);
     }
@@ -182,5 +182,14 @@ public class BuildServiceTest extends BaseTest {
         writer.write(document);// 把document写入xmlFile指定的文件(可以为被解析的文件或者新创建的文件)
         writer.flush();
         writer.close();
+    }
+
+    /**
+     * 获取建筑物模板
+     */
+    @Test
+    public void test0005(){
+        List<Build> builds = buildService.getBuilds();
+        Assert.assertTrue(builds.size() != 0);
     }
 }

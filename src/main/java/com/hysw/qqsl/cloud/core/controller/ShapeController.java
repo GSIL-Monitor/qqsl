@@ -59,7 +59,17 @@ public class ShapeController {
 
     Log logger = LogFactory.getLog(getClass());
 
-
+    /**
+     * 获取所有图形线面类型
+     * @return OK：请求成功
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/shape/lists", method = RequestMethod.GET)
+    public @ResponseBody Message lists(@RequestParam long projectId) {
+        Project project = projectService.find(projectId);
+        return MessageService.message(Message.Type.OK,shapeService.getLists(project));
+    }
 
     /**
      * 获取所有图形线面类型

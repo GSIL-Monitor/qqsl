@@ -45,6 +45,9 @@ public class AccountManager{
         Iterator<String> iterator = accountCache.iterator();
         while (iterator.hasNext()) {
             Account account = accountService.findByPhone(iterator.next());
+            if (account == null) {
+                continue;
+            }
             if (account.getStatus() == Account.Status.CONFIRMED) {
                 iterator.remove();
                 continue;

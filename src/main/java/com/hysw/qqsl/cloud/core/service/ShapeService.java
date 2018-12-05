@@ -1650,4 +1650,24 @@ public class ShapeService extends BaseService<Shape, Long> {
         save(shape1);
         return shape1;
     }
+
+    /**
+     * 获取图形线面列表
+     * @param project
+     * @return
+     */
+    public JSONArray getLists(Project project) {
+        List<Shape> shapes = findByProject(project);
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject;
+        for (Shape shape : shapes) {
+            jsonObject = new JSONObject();
+            jsonObject.put("id", shape.getId());
+            jsonObject.put("remark", shape.getRemark());
+            jsonObject.put("type", shape.getCommonType());
+            jsonObject.put("childType", shape.getChildType());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
 }
