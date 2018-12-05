@@ -145,7 +145,6 @@ public class Message implements Serializable{
 		}
 	}
 
-	@JsonIgnore
 	public Type getType() {
 		return type;
 	}
