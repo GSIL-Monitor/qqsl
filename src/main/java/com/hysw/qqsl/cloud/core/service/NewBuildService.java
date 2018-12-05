@@ -969,7 +969,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                         continue;
                     }
                     if (b.trim().equals("center")) {
-                        String[] split = c.split(",");
+                        String[] split = c.split(",").length == 1 ? c.split("，") : c.split(",");
                         if (split.length != 2) {
                             return null;
                         }
@@ -980,7 +980,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
                         continue;
                     }
                     if (b.trim().equals("position")) {
-                        String[] split = c.split(",");
+                        String[] split = c.split(",").length == 1 ? c.split("，") : c.split(",");
                         if (split.length != 2) {
                             continue;
                         }
@@ -1045,7 +1045,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
     }
 
     public List<NewBuild> getBuilds(){
-        Cache cache = cacheManager.getCache("buildModelCache");
+        Cache cache = cacheManager.getCache("buildModelCache1");
         net.sf.ehcache.Element element = cache.get("buildModel");
         if (element == null) {
             try {

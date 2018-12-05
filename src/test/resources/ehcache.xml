@@ -44,6 +44,8 @@
 
 	<cache name="buildModelCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
+	<cache name="buildModelCache1" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
+
 	<cache name="lineSectionPlaneModelCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
 
 	<cache name="linesCache" maxElementsInMemory="1000" eternal="true"   overflowToDisk="false" />
