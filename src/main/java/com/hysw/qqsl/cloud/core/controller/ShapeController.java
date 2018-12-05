@@ -68,6 +68,10 @@ public class ShapeController {
     @RequestMapping(value = "/shape/lists", method = RequestMethod.GET)
     public @ResponseBody Message lists(@RequestParam long projectId) {
         Project project = projectService.find(projectId);
+        User user = authentService.getUserFromSubject();
+        if (!user.getId().equals(project.getUser().getId())) {
+            return MessageService.message(Message.Type.DATA_REFUSE);
+        }
         return MessageService.message(Message.Type.OK,shapeService.getLists(project));
     }
 
