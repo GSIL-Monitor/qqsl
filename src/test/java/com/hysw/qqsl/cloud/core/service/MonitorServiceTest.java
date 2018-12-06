@@ -64,7 +64,7 @@ public class MonitorServiceTest extends BaseTest{
         monitorService.isActivation();
         sensorService.flush();
         List<Sensor> sensors = sensorService.findAll();
-        Assert.assertTrue(sensors.size() == 1);
+        Assert.assertTrue(sensors.size() == 24);
         Assert.assertTrue(sensors.get(0).isActivate());
     }
 

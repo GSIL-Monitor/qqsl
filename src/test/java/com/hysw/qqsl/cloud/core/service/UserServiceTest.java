@@ -104,11 +104,11 @@ public class UserServiceTest extends BaseTest{
         List<User> users = userService.findAll();
 		assertTrue(users.size()>0);
         User user = users.get(0);
-		String userName = user.getUserName();
+		String userName1 = user.getUserName();
 		String password = user.getPassword();
 		//用户名密码是否正确
 		user = userService.findByPhoneOrEmial("18661925010");
-		assertEquals(userName,user.getUserName());
+		assertEquals("qqsl",user.getUserName());
 		assertEquals(password,user.getPassword());
 		//是否第一次登陆
 //		assertNotNull(user.getLoginIp());

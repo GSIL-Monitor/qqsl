@@ -500,7 +500,7 @@ public class ProjectServiceTest extends BaseTest {
 		assertTrue(projects.size()==1);
 		jsonUnits = new ArrayList<>();
 		jsonUnits =  projectService.getExportValues(user,Project.Type.DRINGING_WATER,jsonUnits,aliass.get(0));
-		assertTrue(jsonUnits.size()==3);
+		assertTrue(jsonUnits.size()==4);
 
 	}
 
@@ -517,7 +517,7 @@ public class ProjectServiceTest extends BaseTest {
 		assertTrue(projects.size()==1);
 		jsonUnits = new ArrayList<>();
 		jsonUnits =  projectService.getExportValues(user,Project.Type.AGRICULTURAL_IRRIGATION,jsonUnits,aliass.get(0));
-		assertTrue(jsonUnits.size()==3);
+		assertTrue(jsonUnits.size()==4);
 	}
 
 	/**
@@ -534,7 +534,7 @@ public class ProjectServiceTest extends BaseTest {
 		assertTrue(projects.size()==1);
 		jsonUnits = new ArrayList<>();
 		jsonUnits =  projectService.getExportValues(user,Project.Type.FLOOD_DEFENCES,jsonUnits,aliass.get(0));
-		assertTrue(jsonUnits.size()==1);
+		assertTrue(jsonUnits.size()==2);
 	}
 
 	/**
@@ -555,7 +555,7 @@ public class ProjectServiceTest extends BaseTest {
 			}
 			jsonUnits = new ArrayList<>();
 			jsonUnits =  projectService.getExportValues(user,Project.Type.CONSERVATION,jsonUnits,aliass.get(i));
-			assertTrue(jsonUnits.size()==1);
+			assertTrue(jsonUnits.size()==2);
 		}
 	}
 
@@ -577,7 +577,7 @@ public class ProjectServiceTest extends BaseTest {
 				continue;
 			}
 			jsonUnits =  projectService.getExportValues(user,Project.Type.HYDROPOWER_ENGINEERING,jsonUnits,aliass.get(i));
-			assertTrue(jsonUnits.size()==1);
+			assertTrue(jsonUnits.size()==2);
 		}
 	}
 
@@ -599,7 +599,7 @@ public class ProjectServiceTest extends BaseTest {
 				continue;
 			}
 			jsonUnits =  projectService.getExportValues(user,Project.Type.WATER_SUPPLY,jsonUnits,aliass.get(i));
-			assertTrue(jsonUnits.size()==1);
+			assertTrue(jsonUnits.size()==2);
 		}
 	}
 

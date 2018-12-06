@@ -38,7 +38,7 @@ public class CoordinateServiceTest extends BaseTest {
 	private BuildService buildService;
 	@Autowired
 	private FieldWorkService fieldWorkService;
-	String str = "泉室,QS,截水廊道,JSLD,大口井,DKJ,土井,TJ,机井,JJ,涝池,LC,闸,FSZ,倒虹吸,DHX,跌水,DS,消力池,XIAOLC,护坦,HUT,海漫,HAIM,渡槽,DC,涵洞,HD,隧洞,SD,农口,NK,斗门,DM,公路桥,GLQ,车便桥,CBQ,各级渠道,GJQD,检查井,JCJ,分水井,FSJ,供水井,GSJ,减压井,JYJ,减压池,JYC,排气井,PAIQJ,放水井,FANGSJ,蓄水池,XSC,各级管道,GJGD,防洪堤,FHD,排洪渠,PHQ,挡墙,DANGQ,淤地坝,YDB,谷坊,GF,滴灌,DG,喷头,PT,给水栓,JSS,施肥设施,SFSS,过滤系统,GLXT,林地,LD,耕地,GD,草地,CD,居民区,JMQ,工矿区,GKQ,电力,DL,次级交通,CJJT,河床,HEC,水面,SHUIM,水位,SHUIW,水文,SHUIWEN,雨量,YUL,水质,SHUIZ,泵站,BZ,电站厂房,DZCF,地质点,DIZD,其他,TSD,普通点,POINT,供水干管,GSGG,供水支管,GSZG,供水斗管,GSDG,供水干渠,GSGQ,供水支渠,GSZQ,供水斗渠,GSDQ,排水干管,PSGG,排水支管,PSZG,排水斗管,PSDG,排水干渠,PSGQ,排水支渠,PSZQ,排水斗渠,PSDQ,灌溉范围,GGFW,保护范围,BHFW,供水区域,GSQY,治理范围,ZLFW,库区淹没范围,KQYMFW,水域,SHUIY,公共线面,GONGGXM";
+	String str = "泉室,QS,截水廊道,JSLD,大口井,DKJ,土井,TJ,机井,JJ,涝池,LC,闸,FSZ,倒虹吸,DHX,跌水,DS,消力池,XIAOLC,护坦,HUT,海漫,HAIM,渡槽,DC,涵洞,HD,隧洞,SD,农口,NK,斗门,DM,公路桥,GLQ,车便桥,CBQ,各级渠道,GJQD,检查井,JCJ,分水井,FSJ,供水井,GSJ,减压井,JYJ,减压池,JYC,排气井,PAIQJ,放水井,FANGSJ,蓄水池,XSC,各级管道,GJGD,防洪堤,FHD,排洪渠,PHQ,挡墙,DANGQ,淤地坝,YDB,谷坊,GF,滴灌,DG,喷头,PT,给水栓,JSS,施肥设施,SFSS,过滤系统,GLXT,林地,LD,耕地,GD,草地,CD,居民区,JMQ,工矿区,GKQ,电力,DL,次级交通,CJJT,河床,HEC,水面,SHUIM,水位,SHUIW,水文,SHUIWEN,雨量,YUL,水质,SHUIZ,泵站,BZ,电站厂房,DZCF,地质点,DIZD,其他,TSD,普通点,POINT,供水干管,GSGG,供水支管,GSZG,供水斗管,GSDG,供水干渠,GSGQ,供水支渠,GSZQ,供水斗渠,GSDQ,排水干管,PSGG,排水支管,PSZG,排水斗管,PSDG,排水干渠,PSGQ,排水支渠,PSZQ,排水斗渠,PSDQ,灌溉范围,GGFW,保护范围,BHFW,供水区域,GSQY,治理范围,ZLFW,库区淹没范围,KQYMFW,水域,SHUIY,公共线面,GONGGXM,管井,GUANJ,铺盖,PUG,水表井,SHUIBJ,渠道,QUD";
 
 	/**
 	 * 测试点线面类型数据长度以及分类是否一一对应
@@ -98,437 +98,437 @@ public class CoordinateServiceTest extends BaseTest {
 //		Assert.assertTrue(jsonObject.get(fileName).equals(Message.Type.OK.getStatus()));
 	}
 
-	/**
-	 * 测试损坏文件
-	 * 
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa1xls() throws IOException {
-		boolean flag = false;
+//	/**
+//	 * 测试损坏文件
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa1xls() throws IOException {
+//		boolean flag = false;
+//
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "123.xls");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/123.xls").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		try {
+//			String fileName=testFile.getOriginalFilename();
+//			String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//					fileName.length());
+//			JSONObject jsonObject = new JSONObject();
+////			coordinateService.readExcels(testFile.getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//        Assert.assertTrue(flag);
+//	}
 
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "123.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/123.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		try {
-			String fileName=testFile.getOriginalFilename();
-			String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-					fileName.length());
-			JSONObject jsonObject = new JSONObject();
-//			coordinateService.readExcels(testFile.getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.DEGREE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-        Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试过滤数据
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa2xlsx() throws IOException {
-        boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "2.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/2.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-        try {
-//        	coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-        } catch (Exception e) {
-            flag = true;
-        }
-        Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试过滤数据
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa2xls() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "2.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/2.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试经度向下越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa3xlsx() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "3.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/3.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试经度向下越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa3xls() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "3.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/3.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试经度向上越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa4xlsx() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "4.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/4.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试经度向上越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa4xls() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "4.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/4.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试纬度向下越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa5xlsx() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "5.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/5.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试纬度向下越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa5xls() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "5.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/5.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试纬度向上越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa6xlsx() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "6.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/6.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE, fileName, jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试纬度向上越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa6xls() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "6.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/6.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试高程越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa7xlsx() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "7.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/7.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试高程越界
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa7xls() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "7.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/7.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(flag);
-	}
-
-	/**
-	 * 测试成功文件
-	 * 
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa8xlsx() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "8.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/8.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(!flag);
-	}
-
-	/**
-	 * 测试成功文件
-	 * 
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa8xls() throws IOException {
-		boolean flag = false;
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "8.xls");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/8.xls").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-		try {
-//			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		} catch (Exception e) {
-			flag = true;
-		}
-		Assert.assertTrue(!flag);
-	}
-
-	/**
-	 * 测试后缀不在解析范围内的文件
-	 * 
-	 * @throws IOException
-	 */
-	@Test
-	public void aaaaa9txt() throws Exception {
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "9.txt");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/9.txt").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
-		String fileName=testFile.getOriginalFilename();
-		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
-				fileName.length());
-		JSONObject jsonObject = new JSONObject();
-//		coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
-		Assert.assertTrue(jsonObject.get(fileName).equals(Message.Type.COOR_FORMAT_ERROR.getStatus()));
-	}
+//	/**
+//	 * 测试过滤数据
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa2xlsx() throws IOException {
+//        boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "2.xlsx");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/2.xlsx").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//        try {
+////        	coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//        } catch (Exception e) {
+//            flag = true;
+//        }
+//        Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试过滤数据
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa2xls() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "2.xls");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/2.xls").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试经度向下越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa3xlsx() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "3.xlsx");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/3.xlsx").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试经度向下越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa3xls() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "3.xls");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/3.xls").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试经度向上越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa4xlsx() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "4.xlsx");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/4.xlsx").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试经度向上越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa4xls() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "4.xls");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/4.xls").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试纬度向下越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa5xlsx() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "5.xlsx");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/5.xlsx").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试纬度向下越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa5xls() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "5.xls");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/5.xls").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试纬度向上越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa6xlsx() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "6.xlsx");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/6.xlsx").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE, fileName, jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试纬度向上越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa6xls() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "6.xls");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/6.xls").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试高程越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa7xlsx() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "7.xlsx");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/7.xlsx").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试高程越界
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa7xls() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "7.xls");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/7.xls").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(flag);
+//	}
+//
+//	/**
+//	 * 测试成功文件
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa8xlsx() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "8.xlsx");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/8.xlsx").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(!flag);
+//	}
+//
+//	/**
+//	 * 测试成功文件
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa8xls() throws IOException {
+//		boolean flag = false;
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "8.xls");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/8.xls").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+//		try {
+////			coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		} catch (Exception e) {
+//			flag = true;
+//		}
+//		Assert.assertTrue(!flag);
+//	}
+//
+//	/**
+//	 * 测试后缀不在解析范围内的文件
+//	 *
+//	 * @throws IOException
+//	 */
+//	@Test
+//	public void aaaaa9txt() throws Exception {
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "9.txt");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/9.txt").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile testFile = new CommonsMultipartFile(fileItem);
+//		String fileName=testFile.getOriginalFilename();
+//		String s = fileName.substring(fileName.lastIndexOf(".") + 1,
+//				fileName.length());
+//		JSONObject jsonObject = new JSONObject();
+////		coordinateService.readExcels(testFile.getFileItem().getInputStream(), "102", s, projectService.find(222l), Coordinate.WGS84Type.PLANE_COORDINATE,fileName,jsonObject);
+//		Assert.assertTrue(jsonObject.get(fileName).equals(Message.Type.COOR_FORMAT_ERROR.getStatus()));
+//	}
 
 	/**
 	 * 测试坐标文件成功
@@ -554,51 +554,51 @@ public class CoordinateServiceTest extends BaseTest {
 	}*/
 
 
-	/**
-	 * 测试写入数据库service
-	 * @throws IOException
-	 * @throws QQSLException 
-	 */
-	@Test
-	public void testUploadCoordinateToData() throws IOException, QQSLException {
-		User user =userService.findByUserName("qqsl");
-		List<Project> projectses=projectService.findByCode("123456711",1l);
-		String treePath;
-		long id;
-		if(projectses.size()==0){
-			Project project = new Project();
-			project.setCode("123456711");
-			project.setUser(user);
-			project.setName("同仁县");
-			project.setPlanning(2l);
-			projectService.setType(project,2);
-			projectService.createProject(project);
-			List<Project> projects=projectService.findByCode("123456711",1l);
-			treePath=projects.get(0).getTreePath();
-			id=projects.get(0).getId();
-			ElementDB elementDB=new ElementDB();
-			elementDB.setAlias("23A11");
-			elementDB.setValue("102,35,2002");
-			elementDB.setProject(projects.get(0));
-			elementDBService.save(elementDB);	
-		}else{
-			treePath=projectses.get(0).getTreePath();
-			id=projectses.get(0).getId();
-		}
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		FileItem fileItem = factory.createItem("file",
-				"application/octet-stream", false, "8.xlsx");
-		OutputStream str = fileItem.getOutputStream();
-		File str2 = new ClassPathResource("/excelTest/8.xlsx").getFile();
-		IOUtils.copy(new FileInputStream(str2), str);
-		CommonsMultipartFile mFile = new CommonsMultipartFile(fileItem);
-		String str1="线坐标,供水干管,"+treePath+"/2,"+id;
-		String[] fileInfos =str1.split(",");
-		String fileName = mFile.getOriginalFilename();
-//			Message me = coordinateService.uploadCoordinateToData(mFile.getFileItem().getInputStream(), fileInfos,
-//				fileName);
-//		Assert.assertTrue(me==null);
-	}
+//	/**
+//	 * 测试写入数据库service
+//	 * @throws IOException
+//	 * @throws QQSLException
+//	 */
+//	@Test
+//	public void testUploadCoordinateToData() throws IOException, QQSLException {
+//		User user =userService.findByUserName("qqsl");
+//		List<Project> projectses=projectService.findByCode("123456711",1l);
+//		String treePath;
+//		long id;
+//		if(projectses.size()==0){
+//			Project project = new Project();
+//			project.setCode("123456711");
+//			project.setUser(user);
+//			project.setName("同仁县");
+//			project.setPlanning(2l);
+//			projectService.setType(project,2);
+//			projectService.createProject(project);
+//			List<Project> projects=projectService.findByCode("123456711",1l);
+//			treePath=projects.get(0).getTreePath();
+//			id=projects.get(0).getId();
+//			ElementDB elementDB=new ElementDB();
+//			elementDB.setAlias("23A11");
+//			elementDB.setValue("102,35,2002");
+//			elementDB.setProject(projects.get(0));
+//			elementDBService.save(elementDB);
+//		}else{
+//			treePath=projectses.get(0).getTreePath();
+//			id=projectses.get(0).getId();
+//		}
+//		DiskFileItemFactory factory = new DiskFileItemFactory();
+//		FileItem fileItem = factory.createItem("file",
+//				"application/octet-stream", false, "8.xlsx");
+//		OutputStream str = fileItem.getOutputStream();
+//		File str2 = new ClassPathResource("/excelTest/8.xlsx").getFile();
+//		IOUtils.copy(new FileInputStream(str2), str);
+//		CommonsMultipartFile mFile = new CommonsMultipartFile(fileItem);
+//		String str1="线坐标,供水干管,"+treePath+"/2,"+id;
+//		String[] fileInfos =str1.split(",");
+//		String fileName = mFile.getOriginalFilename();
+////			Message me = coordinateService.uploadCoordinateToData(mFile.getFileItem().getInputStream(), fileInfos,
+////				fileName);
+////		Assert.assertTrue(me==null);
+//	}
 
 
 

@@ -11,6 +11,7 @@ import com.hysw.qqsl.cloud.core.entity.data.Camera;
 import com.hysw.qqsl.cloud.core.entity.station.Cooperate;
 import com.hysw.qqsl.cloud.core.entity.station.Share;
 import com.hysw.qqsl.cloud.util.SettingUtils;
+import com.hysw.qqsl.cloud.util.TradeUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -31,6 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -54,6 +57,8 @@ public class StationService extends BaseService<Station, Long> {
     private UserMessageService userMessageService;
     @Autowired
     private AccountMessageService accountMessageService;
+    private final String sDate = "2099/12/31";
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 
     @Autowired
     public void setBaseDao(StationDao stationDao) {
@@ -844,6 +849,33 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("shares", station.getShares());
         jsonObject.put("cooperate", station.getCooperate());
         jsonObject.put("userId", station.getUser().getId());
+        return jsonObject;
+    }
+
+    /**
+     * abll创建测站
+     * @param user
+     * @param name
+     * @param type
+     * @param description
+     * @return
+     */
+    public JSONObject abllCreateStation(User user, Object name, Object type, Object description) {
+        Station station = new Station();
+        station.setName(name.toString());
+        station.setType(CommonEnum.StationType.valueOf(type.toString().toUpperCase()));
+        station.setDescription(description.toString());
+        station.setUser(user);
+        station.setInstanceId(TradeUtil.buildInstanceId());
+        try {
+            station.setExpireDate(sdf.parse(sDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        save(station);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", station.getId());
+        jsonObject.put("name", station.getName());
         return jsonObject;
     }
 }

@@ -3,10 +3,7 @@ package com.hysw.qqsl.cloud.core.service;
 import com.hysw.qqsl.cloud.BaseTest;
 import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.entity.StationModel;
-import com.hysw.qqsl.cloud.core.entity.data.Account;
-import com.hysw.qqsl.cloud.core.entity.data.Sensor;
-import com.hysw.qqsl.cloud.core.entity.data.Station;
-import com.hysw.qqsl.cloud.core.entity.data.User;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.Assert;
@@ -34,6 +31,14 @@ public class StationServiceTest extends BaseTest {
     private UserService userService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private SensorService sensorService;
+    @Autowired
+    private CameraService cameraService;
+    @Autowired
+    private SensorAttributeService sensorAttributeService;
+    @Autowired
+    private ApplicationTokenService applicationTokenService;
     // 宏电水位站
     private String huangshh01_instanceId = "0010000001";
     private String huangshh02_instanceId = "0010000002";
@@ -318,6 +323,141 @@ public class StationServiceTest extends BaseTest {
             station.getUser();
             station.setPictureUrl("https://qqsl.oss-cn-hangzhou.aliyuncs.com/user/16/station/"+station.getId()+".jpg");
         }
+    }
+
+    /**
+     * 获取token
+     */
+    @Test
+    public void test0001(){
+        JSONObject jsonObject = applicationTokenService.makeIntendedEffectToken();
+        Assert.assertTrue(!jsonObject.isEmpty());
+    }
+
+    /**
+     * 获取测站列表包括分享的测站
+     */
+    @Test
+    public void test0002(){
+        User user = userService.find(1l);
+        List<JSONObject> jsonObjectList = stationService.getStations(user);
+        Assert.assertTrue(!jsonObjectList.isEmpty());
+    }
+
+    /**
+     * 取得站点详情
+     */
+    @Test
+    public  void test0003(){
+        Station station = stationService.find(1l);
+        JSONObject jsonObject = stationService.toJSON(station);
+        Assert.assertTrue(!jsonObject.isEmpty());
+    }
+
+    /**
+     * 取得仪表详情
+     */
+    @Test
+    public void test0004(){
+        Sensor sensor = sensorService.find(2l);
+        JSONObject jsonObject = sensorService.makeSensorJson(sensor);
+        Assert.assertTrue(!jsonObject.isEmpty());
+    }
+
+    /**
+     * 取得摄像头详情
+     */
+    @Test
+    public void test0005(){
+        Camera camera = cameraService.find(1l);
+        JSONObject jsonObject = cameraService.makeCameraJson(camera);
+        Assert.assertTrue(!jsonObject.isEmpty());
+    }
+
+    /**
+     * 安布雷拉水文用户新建站点
+     */
+    @Test
+    public void test0006(){
+        User user = userService.find(1l);
+        Object name = "test";
+        Object type = "NORMAL_STATION";
+        Object description = "test1";
+        JSONObject jsonObject = stationService.abllCreateStation(user, name, type, description);
+        Assert.assertTrue(!jsonObject.isEmpty());
+    }
+
+    /**
+     * 编辑仪表
+     */
+    @Test
+    public void test0007(){
+        String aaa="{\n" +
+                "\t\"id\":\"23\",\n" +
+                "\t\"name\":\"asfasf\",\n" +
+                "\t\"description\":\"12341\",\n" +
+                "\t\"factory\":\"etqw\",\n" +
+                "\t\"contact\":\"qwetq\",\n" +
+                "\t\"phone\":\"qwetq\",\n" +
+                "\t\"settingHeight\":\"\",\n" +
+                "\t\"settingElevation\":\"1\",\n" +
+                "\t\"settingAddress\":\"1\",\n" +
+                "\t\"measureRange\":\"\",\n" +
+                "\t\"maxValue\":\"\",\n" +
+                "\t\"isMaxValueWaring\":\"false\",\n" +
+                "\t\"minValue\":\"11\",\n" +
+                "\t\"isMinValueWaring\":\"false\",\n" +
+                "\t\"extraParameters\":\"[{\\\"id\\\":\\\"1\\\",\\\"value\\\":\\\"41141\\\"}]\"\n" +
+                "}";
+        JSONObject map = JSONObject.fromObject(aaa);
+        Object id = map.get("id");
+        Sensor sensor = sensorService.find(Long.valueOf(id.toString()));
+        Object name = map.get("name");
+        Object description = map.get("description");
+        Object factory = map.get("factory");
+        Object contact = map.get("contact");
+        Object phone = map.get("phone");
+        Object settingHeight = map.get("settingHeight");
+        Object settingElevation = map.get("settingElevation");
+        Object settingAddress = map.get("settingAddress");
+        Object measureRange = map.get("measureRange");
+        Object maxValue = map.get("maxValue");
+        Object isMaxValueWaring = map.get("isMaxValueWaring");
+        Object minValue = map.get("minValue");
+        Object isMinValueWaring = map.get("isMinValueWaring");
+        sensorService.editSensor(sensor, name, description, factory, contact, phone, settingHeight, settingElevation, settingAddress, measureRange, maxValue, isMaxValueWaring, minValue, isMinValueWaring);
+        Sensor sensor1 = sensorService.find(Long.valueOf(id.toString()));
+        Assert.assertTrue(sensor.getName().equals(sensor1.getName()));
+    }
+
+    /**
+     * 编辑摄像头
+     */
+    @Test
+    public void test0008(){
+        String aaa = "{\n" +
+                "\t\"id\":\"1\",\n" +
+                "\t\"name\":\"12414\",\n" +
+                "\t\"description\":\"1231\",\n" +
+                "\t\"factory\":\"1231\",\n" +
+                "\t\"contact\":\"123\",\n" +
+                "\t\"phone\":\"1231\",\n" +
+                "\t\"settingAddress\":\"123\",\n" +
+                "\t\"password\":\"13131\"\n" +
+                "}";
+        JSONObject map = JSONObject.fromObject(aaa);
+        Object id = map.get("id");
+        Object name = map.get("name");
+        Object description = map.get("description");
+        Object factory = map.get("factory");
+        Object contact = map.get("contact");
+        Object phone = map.get("phone");
+        Object settingAddress = map.get("settingAddress");
+        Object password = map.get("password");
+        Camera camera = cameraService.find(Long.valueOf(id.toString()));
+        cameraService.editCamera(camera, name, description, factory, contact, phone, settingAddress, password);
+        Camera camera1 = cameraService.find(Long.valueOf(id.toString()));
+        Assert.assertTrue(camera.getName().equals(camera1.getName()));
     }
 
 }

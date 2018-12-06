@@ -12,6 +12,7 @@ import com.hysw.qqsl.cloud.wechat.util.WeChatHttpRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -87,6 +88,7 @@ public class WeiXinRequest extends BaseTest{
     }
 
     @Test
+    @Ignore
     public void getFodderList(){
         getAccessTokenService.getAccessToken();
         JSONObject news = uploadFodderService.getFodderList("news", 0, 19);
@@ -111,21 +113,23 @@ public class WeiXinRequest extends BaseTest{
         System.out.println(accessTokenByCode);
     }
 
-    /**
-     * 测试登录
-     */
-    @Test
-    public void testWeChatLogin() throws UnsupportedEncodingException {
-        System.out.println("https://open.weixin.qq.com/connect/oauth2/authorize?appid="+ CommonAttributes.APPID+"&redirect_uri="+ URLEncoder.encode("http://www.qingqingshuili.com/hot-update/weChat/auth.html","utf-8")+"&response_type=code&scope="+"snsapi_base"+"&state=STATE#wechat_redirect");
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("phone", "13519779005");
-        jsonObject.put("password", DigestUtils.md5Hex("77460038"));
-        jsonObject.put("loginType", "wechat");
-        JSONObject jsonObject1 = WeChatHttpRequest.jsonObjectHttpRequest("localhost:8080/qqsl/user/login", "POST", jsonObject.toString());
-        System.out.println(jsonObject1);
-    }
+//    /**
+//     * 测试登录
+//     */
+//    @Test
+//    public void testWeChatLogin() throws UnsupportedEncodingException {
+//        System.out.println("https://open.weixin.qq.com/connect/oauth2/authorize?appid="+ CommonAttributes.APPID+"&redirect_uri="+ URLEncoder.encode("http://www.qingqingshuili.com/hot-update/weChat/auth.html","utf-8")+"&response_type=code&scope="+"snsapi_base"+"&state=STATE#wechat_redirect");
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("phone", "13519779005");
+//        jsonObject.put("password", DigestUtils.md5Hex("77460038"));
+//        jsonObject.put("loginType", "wechat");
+//        JSONObject jsonObject1 = WeChatHttpRequest.jsonObjectHttpRequest("localhost:8080/qqsl/user/login", "POST", jsonObject.toString());
+//        System.out.println(jsonObject1);
+//    }
+
 
     @Test
+    @Ignore
     public void getJsapiTicket() {
         getAccessTokenService.getAccessToken();
         String jsapiTicket = getAccessTokenService.getJsapiTicket();

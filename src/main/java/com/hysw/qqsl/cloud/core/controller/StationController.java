@@ -66,9 +66,6 @@ public class StationController {
     private CameraService cameraService;
     @Autowired
     private SensorAttributeService sensorAttributeService;
-
-    private final String sDate = "2099/12/31";
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     /**
      * 获取token
      * @return message消息体,附带token令牌
@@ -194,21 +191,7 @@ public class StationController {
         if (byUser.size() > 1000) {
             return MessageService.message(Message.Type.DATA_LOCK);
         }
-        Station station = new Station();
-        station.setName(name.toString());
-        station.setType(CommonEnum.StationType.valueOf(type.toString().toUpperCase()));
-        station.setDescription(description.toString());
-        station.setUser(user);
-        station.setInstanceId(TradeUtil.buildInstanceId());
-        try {
-            station.setExpireDate(sdf.parse(sDate));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        stationService.save(station);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", station.getId());
-        jsonObject.put("name", station.getName());
+        JSONObject jsonObject = stationService.abllCreateStation(user, name, type, description);
         return MessageService.message(Message.Type.OK,jsonObject);
     }
 

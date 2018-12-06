@@ -51,22 +51,22 @@ public class ElementGroupServiceTest extends BaseTest {
 	public void testRefreshElementGroupXML(){
 		List<ElementGroup> agrElementGroups = elementGroupService.getAgrElementGroups();
 		List<ElementGroup> watElementGroups = elementGroupService.getWatElementGroups();
-		assertEquals(agrElementGroups.size(), 67);
-		assertEquals(watElementGroups.size(), 67);
+		assertEquals(agrElementGroups.size(), 68);
+		assertEquals(watElementGroups.size(), 68);
 		List<ElementGroup> conElementGroups = elementGroupService.getConElementGroups();
 		List<ElementGroup> hydElementGroups = elementGroupService.getHydElementGroups();
 		assertEquals(conElementGroups.size(), hydElementGroups.size());
 		List<ElementGroup> driElementGroups = elementGroupService.getDriElementGroups();
 		List<ElementGroup> floElementGroups = elementGroupService.getFloElementGroups();
-		assertEquals(driElementGroups.size(),67);
-		assertEquals(floElementGroups.size(),67);
+		assertEquals(driElementGroups.size(),68);
+		assertEquals(floElementGroups.size(),68);
 		ElementGroup elementGroup = new ElementGroup();
 		elementGroup.setName("test");
 		agrElementGroups.add(elementGroup);
 //		elementGroupService.refreshElementGroupXML();
-		assertEquals(agrElementGroups.size(),68);
+		assertEquals(agrElementGroups.size(),69);
 	    List<ElementGroup> elementGroups = elementGroupService.getAgrElementGroups();
-	    assertEquals(elementGroups.size(),68);
+	    assertEquals(elementGroups.size(),69);
 	}
 	@Test
 	public void testMakeElementGroup1() {
@@ -76,7 +76,7 @@ public class ElementGroupServiceTest extends BaseTest {
 		} catch (XMLFileException e) {
 			e.printStackTrace();
 		}
-		assertEquals(67, elementGroupModels.size());
+		assertEquals(68, elementGroupModels.size());
 	}
 
 	@Test
