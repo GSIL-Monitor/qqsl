@@ -250,4 +250,20 @@ public class SensorService extends BaseService<Sensor,Long>{
         filters.add(Filter.eq("station", station));
         return sensorDao.findList(0, null, filters);
     }
+
+    /**
+     * 获取仪表Json数据
+     * @param sensor
+     * @return
+     */
+    public JSONObject makeSensorSimpleJson(Sensor sensor) {
+        JSONObject jsonObject = new JSONObject();
+        if(sensor==null){
+            return jsonObject;
+        }
+        jsonObject.put("id",sensor.getId());
+        jsonObject.put("code",sensor.getCode());
+        jsonObject.put("name",sensor.getName());
+        return jsonObject;
+    }
 }

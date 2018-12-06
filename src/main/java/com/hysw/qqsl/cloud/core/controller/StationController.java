@@ -92,10 +92,24 @@ public class StationController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @RequestMapping(value = "/zTree/list",method = RequestMethod.GET)
     public @ResponseBody Message getStations(){
         User user = authentService.getUserFromSubject();
         List<JSONObject> jsonObjectList = stationService.getStations(user);
+//        pollingService.changeStationStatus(user, false);
+        return MessageService.message(Message.Type.OK,jsonObjectList);
+    }
+
+    /**
+     * 获取测站列表包括分享的测站
+     * @return message消息体,OK:获取成功
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    public @ResponseBody Message getLists(){
+        User user = authentService.getUserFromSubject();
+        List<JSONObject> jsonObjectList = stationService.getList(user);
         pollingService.changeStationStatus(user, false);
         return MessageService.message(Message.Type.OK,jsonObjectList);
     }

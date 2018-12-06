@@ -279,8 +279,6 @@ public class StationService extends BaseService<Station, Long> {
         return jsonObject;
     }
 
-
-
     /**
      * 根据用户查找水文测站
      *
@@ -878,4 +876,71 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("name", station.getName());
         return jsonObject;
     }
+
+    public List<JSONObject> getList(User user) {
+        List<Station> stations = findAll();
+        List<JSONObject> jsonObjects = new ArrayList<>();
+        Station station;
+        JSONObject jsonObject;
+        for (int i = 0; i < stations.size(); i++) {
+            station = stations.get(i);
+            if(station.getUser().getId().equals(user.getId())||isShare(user,station)){
+                jsonObject = makeStationJson(stations.get(i));
+                jsonObjects.add(jsonObject);
+            }
+        }
+        return jsonObjects;
+    }
+
+    private JSONObject makeStationJson(Station station) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", station.getId());
+        jsonObject.put("name", station.getName());
+        jsonObject.put("type", station.getType());
+        jsonObject.put("coor", station.getCoor());
+        jsonObject.put("picture", station.getPictureUrl());
+        JSONArray cameras = getCameraFromStation(station);
+        jsonObject.put("cameras", cameras.isEmpty() ? null : cameras);
+        JSONArray sensors = getSensorFromStation(station);
+        jsonObject.put("sensors", sensors.isEmpty() ? null : sensors);
+        return jsonObject;
+    }
+
+    private JSONArray getSensorFromStation(Station station) {
+        List<Sensor> sensors = station.getSensors();
+        if (sensors == null || sensors.size() == 0) {
+            return new JSONArray();
+        }
+        JSONArray jsonArray = new JSONArray();
+        for (Sensor sensor : sensors) {
+            jsonArray.add(sensorService.makeSensorSimpleJson(sensor));
+        }
+        return jsonArray;
+    }
+
+    private JSONArray getCameraFromStation(Station station) {
+        List<Camera> cameras = station.getCameras();
+        if (cameras == null) {
+            return new JSONArray();
+        }
+        JSONArray jsonArray = new JSONArray();
+        for (Camera camera : cameras) {
+            jsonArray.add(makeCameraSimpleJson(camera));
+        }
+
+        return jsonArray;
+    }
+
+    private JSONObject makeCameraSimpleJson(Camera camera) {
+        JSONObject jsonObject = new JSONObject();
+        if(camera==null){
+            return jsonObject;
+        }
+        jsonObject.put("id",camera.getId());
+        jsonObject.put("code",camera.getCode());
+        jsonObject.put("name",camera.getName());
+        return jsonObject;
+    }
+
+
 }
