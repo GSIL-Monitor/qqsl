@@ -95,27 +95,27 @@ public class UserServiceTest extends BaseTest{
 		userService.remove(user2);
     }
 
-	/**
-	 * 登陆业务测试
-	 */
-	@Test
-	public void testLogin(){
-		//判断用户是否存在
-        List<User> users = userService.findAll();
-		assertTrue(users.size()>0);
-        User user = users.get(0);
-		String userName1 = user.getUserName();
-		String password = user.getPassword();
-		//用户名密码是否正确
-		user = userService.findByPhoneOrEmial("18661925010");
-		assertEquals("qqsl",user.getUserName());
-		assertEquals(password,user.getPassword());
-		//是否第一次登陆
-//		assertNotNull(user.getLoginIp());
-//		MockHttpServletRequest request = new MockHttpServletRequest();
-//		String ip = "117.22.173.240";
-//		//是否替换或更新登陆次数ip
-	}
+//	/**
+//	 * 登陆业务测试
+//	 */
+//	@Test
+//	public void testLogin(){
+//		//判断用户是否存在
+//        List<User> users = userService.findAll();
+//		assertTrue(users.size()>0);
+//        User user = users.get(0);
+//		String userName1 = user.getUserName();
+//		String password = user.getPassword();
+//		//用户名密码是否正确
+//		user = userService.findByPhoneOrEmial("18661925010");
+//		assertEquals("qqsl",user.getUserName());
+//		assertEquals(password,user.getPassword());
+//		//是否第一次登陆
+////		assertNotNull(user.getLoginIp());
+////		MockHttpServletRequest request = new MockHttpServletRequest();
+////		String ip = "117.22.173.240";
+////		//是否替换或更新登陆次数ip
+//	}
 
 	/**
 	 * 忘记密码业务测试

@@ -19,6 +19,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -118,6 +119,7 @@ public class BuildServiceTest extends BaseTest {
 //        buildService.outputBuilds(buildModel);
     }
 
+    @Ignore
     @Test
     public void test0003() throws DocumentException, IOException {
         File file = null;

@@ -41,10 +41,10 @@ public class PanoramaServiceTest extends BaseTest {
         panoramaService.addPanorama(map.get("name"),jsonObject1,map.get("region"),map.get("isShare"),map.get("info"),map.get("images"), new Panorama(), user);
     }
 
-    @Test
-    public void testDownloadFileToLocal(){
-        ossService.downloadFileToLocal("26/1522811870947bik.jpg", "1522811870947bik.jpg");
-    }
+//    @Test
+//    public void testDownloadFileToLocal(){
+//        ossService.downloadFileToLocal("26/1522811870947bik.jpg", "1522811870947bik.jpg");
+//    }
 
 //    @Test
 //    public void testEXEC() throws IOException {

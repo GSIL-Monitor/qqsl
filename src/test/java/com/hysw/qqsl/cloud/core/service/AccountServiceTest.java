@@ -34,7 +34,7 @@ public class AccountServiceTest extends BaseTest{
 
     @Test
     public void testRepeatCreate(){
-        User user = userService.find(90l);
+        User user = userService.findByDao(90l);
         JSONObject jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
         accountService.flush();
         Assert.assertTrue(!jsonObject.isEmpty());
@@ -48,7 +48,7 @@ public class AccountServiceTest extends BaseTest{
     @Test
     public void testCreateAgree() {
         userService.flush();
-        User user = userService.find(90l);
+        User user = userService.findByDao(90l);
         JSONObject jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
         accountService.flush();
         Assert.assertTrue(!jsonObject.isEmpty());
@@ -68,7 +68,7 @@ public class AccountServiceTest extends BaseTest{
 
     @Test
     public void testCreateRefused() {
-        User user = userService.find(90l);
+        User user = userService.findByDao(90l);
         JSONObject jsonObject = accountService.create("13007781310", user, "陈雷", null, null);
         accountService.flush();
         Assert.assertTrue(!jsonObject.isEmpty());
