@@ -8,9 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.osgeo.proj4j.ProjCoordinate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
-//@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 public class TransFromServiceTest extends BaseTest {
 	Log logger = LogFactory.getLog(getClass());
 	@Autowired
