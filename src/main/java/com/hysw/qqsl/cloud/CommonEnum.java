@@ -77,7 +77,7 @@ public class CommonEnum {
         /**
          * 截水廊道
          */
-        JSLD("buildModel","截水廊道","jsld","水源建筑物",false),
+        JSLD("buildModel","截水廊道","jsld","水源建筑物",true),
         /**
          * 大口井
          */
