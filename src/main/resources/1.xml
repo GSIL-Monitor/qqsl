@@ -88,4 +88,11 @@
         <attribute name="设计标高" unit="进口堰顶（m）" type="number" alias="designElevation"/>
         <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
     </attributeGroup>
+    <!--截水廊道-->
+    <attributeGroup name="坐标" buildAlias="b0004" alias="coor">
+        <attribute name="中心点坐标（底板上游边中心）" unit="经度,纬度" type="text" alias="center"/>
+        <attribute name="定向点坐标（底板下游边中心）" unit="经度,纬度" type="text" alias="position"/>
+        <attribute name="设计标高" unit="廊道底板顶（m）" type="number" alias="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+    </attributeGroup>
 </coordinate>

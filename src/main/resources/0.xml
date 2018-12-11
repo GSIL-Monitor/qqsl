@@ -3,7 +3,7 @@
     <build name="底流式消力池" childType="DILSXLC" alias="b0001" number="1"/>
     <build name="谷坊" type="GF" alias="b0002" number="1"/>
     <build name="泉室" type="QS" alias="b0003" number="1"/>
-    <!--<build name="截水廊道" type="JSLD" alias="b0004" number="1"/>-->
+    <build name="截水廊道" type="JSLD" alias="b0004" number="1"/>
     <build name="大口井" type="DKJ" alias="b0005" number="1"/>
     <!--<build name="土井" type="TJ" alias="b0006" number="1"/>-->
     <!--<build name="机井" type="JJ" alias="b0007" number="1"/>-->

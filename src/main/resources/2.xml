@@ -69,4 +69,8 @@
     <attributeGroup name="水力要素" buildAlias="b0065" alias="wr" >
         <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0030"/>
     </attributeGroup>
+    <!--截水廊道-->
+    <attributeGroup name="水力要素" buildAlias="b0004" alias="wr" >
+        <attribute name="长度" unit="m" type="select" select="a,b,c,d" alias="wr00031"/>
+    </attributeGroup>
 </waterResources>
