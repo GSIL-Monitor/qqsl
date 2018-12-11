@@ -416,6 +416,7 @@ public class UserService extends BaseService<User, Long> {
 		userJson.put("prefixOrderStr",user.getPrefixOrderStr());
 		userJson.put("personalStatus", user.getPersonalStatus());
 		userJson.put("companyStatus", user.getCompanyStatus());
+		userJson.put("roles", user.getRoles());
 		if (user.getCompanyName() != null) {
 			userJson.put("companyName", user.getCompanyName());
 		}
