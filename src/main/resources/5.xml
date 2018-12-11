@@ -263,7 +263,7 @@
       <attribute name="厚度" unit="m" type="number" alias="ct0178"/> 
     </attributeGroup>  
     <attributeGroup name="井壁管"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0179"/>  
+      <attribute name="材质" unit="" type="select" select="混凝土,铸铁,钢管" alias="ct0179"/>
       <attribute name="垂直桩段（例0～-5，-10～-15）" unit="mm" type="number" alias="ct0180"/>  
       <attribute name="公称规格（选择）" unit="英寸" type="number" alias="ct0181"/>  
       <attribute name="管箍（自动匹配）" unit="个" type="number" alias="ct0182"/> 
