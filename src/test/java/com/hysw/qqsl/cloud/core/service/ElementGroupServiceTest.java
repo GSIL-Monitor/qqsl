@@ -7,7 +7,6 @@ import com.hysw.qqsl.cloud.core.service.ElementGroupService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -295,6 +295,7 @@ public class StationServiceTest extends BaseTest {
         Assert.assertNotNull(array);
     }
 
+    @Ignore
     @Test
     public void cooperateMul() {
         List<Station> stations = new ArrayList<>();
