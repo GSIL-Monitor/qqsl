@@ -181,7 +181,7 @@
   <attributeGroup name="构件" buildAlias="b0061" alias="ct"> 
     <attributeGroup name="进口渐变段（选型）"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0128"/>  
-      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0129"/>
+      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0129"/> 
     </attributeGroup>  
     <attributeGroup name="挡土墙"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0130"/>  
@@ -212,13 +212,13 @@
     <attributeGroup name="金属构件"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0148"/>  
       <attribute name="加劲环－高/间距" unit="mm/m" type="number" alias="ct0149"/>  
-      <attribute name="伸缩节" unit="" type="select" select="圆形,矩形,梯形" alias="ct0150"/>
-      <attribute name="固定件" unit="" type="select" select="圆形,矩形,梯形" alias="ct0151"/>
-      <attribute name="锚筋" unit="" type="select" select="圆形,矩形,梯形" alias="ct0152"/>
+      <attribute name="伸缩节" unit="" type="select" select="圆形,矩形,梯形" alias="ct0150"/>  
+      <attribute name="固定件" unit="" type="select" select="圆形,矩形,梯形" alias="ct0151"/>  
+      <attribute name="锚筋" unit="" type="select" select="圆形,矩形,梯形" alias="ct0152"/> 
     </attributeGroup>  
     <attributeGroup name="出口渐变段"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0153"/>  
-      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0154"/>
+      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0154"/> 
     </attributeGroup> 
   </attributeGroup>  
   <!--大口井-->  
@@ -263,7 +263,7 @@
       <attribute name="厚度" unit="m" type="number" alias="ct0178"/> 
     </attributeGroup>  
     <attributeGroup name="井壁管"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,铸铁,钢管" alias="ct0179"/>
+      <attribute name="材质" unit="" type="select" select="混凝土,铸铁,钢管" alias="ct0179"/>  
       <attribute name="垂直桩段（例0～-5，-10～-15）" unit="mm" type="number" alias="ct0180"/>  
       <attribute name="公称规格（选择）" unit="英寸" type="number" alias="ct0181"/>  
       <attribute name="管箍（自动匹配）" unit="个" type="number" alias="ct0182"/> 
@@ -441,6 +441,66 @@
     </attributeGroup>  
     <attributeGroup name="出口渐变段（选型）"> 
       <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0287"/> 
+    </attributeGroup> 
+  </attributeGroup>  
+  <!--陡坡-->  
+  <attributeGroup name="构件" buildAlias="b0066" alias="ct"> 
+    <attributeGroup name="进口渐变段（选型）"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0288"/> 
+    </attributeGroup>  
+    <attributeGroup name="陡坡段"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0289"/>  
+      <attribute name="渠宽" unit="m" type="number" alias="ct0290"/>  
+      <attribute name="底板厚" unit="m" type="number" alias="ct0291"/>  
+      <attribute name="边墙进口高" unit="m" type="number" alias="ct0292"/>  
+      <attribute name="进口墙顶宽" unit="m" type="number" alias="ct0293"/>  
+      <attribute name="进口墙底宽" unit="m" type="number" alias="ct0294"/>  
+      <attribute name="边墙出口高" unit="m" type="number" alias="ct0295"/>  
+      <attribute name="出口墙顶宽" unit="m" type="number" alias="ct0296"/>  
+      <attribute name="出口墙底宽" unit="m" type="number" alias="ct0297"/>  
+      <attribute name="托角宽" unit="m" type="number" alias="ct0298"/> 
+    </attributeGroup>  
+    <attributeGroup name="齿墙"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0299"/>  
+      <attribute name="齿墙宽" unit="m" type="number" alias="ct0300"/>  
+      <attribute name="齿墙高" unit="m" type="number" alias="ct0301"/>  
+      <attribute name="反坡比" unit="" type="text" alias="ct0302"/> 
+    </attributeGroup>  
+    <attributeGroup name="挡土墙B"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0303"/>  
+      <attribute name="顶宽b4" unit="m" type="number" alias="ct0304"/>  
+      <attribute name="高h5" unit="m" type="number" alias="ct0305"/>  
+      <attribute name="背坡比" unit="" type="number" alias="ct0306"/>  
+      <attribute name="基础高h6" unit="m" type="number" alias="ct0307"/>  
+      <attribute name="挡墙长a1" unit="m" type="number" alias="ct0308"/> 
+    </attributeGroup>  
+    <attributeGroup name="消力池底板"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0309"/>  
+      <attribute name="长a3" unit="m" type="number" alias="ct0310"/>  
+      <attribute name="宽b5" unit="m" type="number" alias="ct0311"/>  
+      <attribute name="高c1" unit="m" type="number" alias="ct0312"/> 
+    </attributeGroup>  
+    <attributeGroup name="消力池边墙"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0313"/>  
+      <attribute name="进口高h7" unit="m" type="number" alias="ct0314"/>  
+      <attribute name="出口高h8" unit="m" type="number" alias="ct0315"/>  
+      <attribute name="进口水平段长a4" unit="m" type="number" alias="ct0316"/>  
+      <attribute name="出口水平段长a5" unit="m" type="number" alias="ct0317"/> 
+    </attributeGroup>  
+    <attributeGroup name="消能尾坎"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0318"/>  
+      <attribute name="高h9" unit="m" type="number" alias="ct0319"/>  
+      <attribute name="顶宽b6" unit="m" type="number" alias="ct0320"/>  
+      <attribute name="前坡比" unit="" type="text" alias="ct0321"/> 
+    </attributeGroup>  
+    <attributeGroup name="排水管"> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0322"/>  
+      <attribute name="直径" unit="m" type="number" alias="ct0323"/>  
+      <attribute name="间距" unit="m" type="number" alias="ct0324"/> 
+    </attributeGroup>  
+    <attributeGroup name="出口渐变段"> 
+      <attribute name="选型" unit="" type="select" select="a,b,c,d" alias="ct0325"/>  
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0326"/> 
     </attributeGroup> 
   </attributeGroup> 
 </component>

@@ -62,4 +62,5 @@
     <build name="铺盖" type="PUG" alias="b0063" number="1"/>
     <build name="水表井" type="SHUIBJ" alias="b0064" number="1"/>
     <build name="曲线式倒虹吸" childType="QUXSDHX" alias="b0065" number="1"/>
+    <build name="陡坡" type="DOUP" alias="b0066" number="1" />
 </builds>

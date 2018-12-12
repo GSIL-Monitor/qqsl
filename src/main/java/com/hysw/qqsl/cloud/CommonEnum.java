@@ -364,7 +364,12 @@ public class CommonEnum {
         /**
          * 渠道
          */
-        QUD("line","渠道","qd","渠系建筑物",true);
+        QUD("line","渠道","qd","渠系建筑物",true),
+        /**
+         * 陡坡
+         */
+        DOUP("buildModel","陡坡","dp","渠系建筑物",true),
+        ;
         //必须增加一个构造函数,变量,得到该变量的值
         private String  type="";
         private String typeC = "";
