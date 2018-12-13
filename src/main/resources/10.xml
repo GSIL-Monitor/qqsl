@@ -60,4 +60,12 @@
         <attribute name="换基材料材质" unit="材质（选择）" type="select" select="a,b,c,d" alias="gs0032"/>
         <attribute name="换基材料厚度" unit="m" type="number" alias="gs0033"/>
     </attributeGroup>
+    <!--涵洞-->
+    <attributeGroup name="地基处理" lineAlias="l0010" alias="gs">
+        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0034"/>
+        <attribute name="垫层材质" unit="材质（选择）" type="select" select="a,b,c,d" alias="gs0035"/>
+        <attribute name="垫层厚度" unit="m" type="number" alias="gs0036"/>
+        <attribute name="换基材质" unit="材质（选择）" type="select" select="a,b,c,d" alias="gs0037"/>
+        <attribute name="换基厚度" unit="m" type="number" alias="gs0038"/>
+    </attributeGroup>
 </groundStress>

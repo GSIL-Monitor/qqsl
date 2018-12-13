@@ -34,6 +34,7 @@ public class LineSectionPlaneModel implements Serializable {
         JUXQ(CommonEnum.CommonType.QUD,"sectionPlane", "矩型渠", "jxq"),
         TIXQ(CommonEnum.CommonType.QUD,"sectionPlane", "梯型渠", "txq"),
         UXQ(CommonEnum.CommonType.QUD,"sectionPlane", "U型渠", "uxq"),
+        HAND(CommonEnum.CommonType.HD,"sectionPlane","涵洞","hd"),
         ;
         //必须增加一个构造函数,变量,得到该变量的值
         private CommonEnum.CommonType commonType;

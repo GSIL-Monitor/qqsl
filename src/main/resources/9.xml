@@ -45,4 +45,10 @@
         <attribute name="安全超高H’" unit="m" type="number" alias="cs0017"/>
         <attribute name="渠道纵比" unit="" type="text" alias="cs0018"/>
     </attributeGroup>
+    <!--涵洞-->
+    <attributeGroup name="控制尺寸" lineAlias="l0010" alias="cs" >
+        <attribute name="设计水深H" unit="m" type="number" alias="cs0019"/>
+        <attribute name="安全超高H’" unit="m" type="number" alias="cs0020"/>
+        <attribute name="设计底宽B" unit="m" type="text" alias="cs0021"/>
+    </attributeGroup>
 </controlSize>

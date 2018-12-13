@@ -120,7 +120,7 @@ public class CommonEnum {
         /**
          * 涵洞
          */
-        HD("buildModel","涵洞","hd","渠系建筑物",false),
+        HD("line","涵洞","hd","渠系建筑物",true),
         /**
          * 隧洞
          */

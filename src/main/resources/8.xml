@@ -36,4 +36,8 @@
     <attributeGroup name="水力要素" lineAlias="l0009" alias="wr" >
         <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0009"/>
     </attributeGroup>
+    <!--涵洞-->
+    <attributeGroup name="水力要素" lineAlias="l0010" alias="wr" >
+        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0010"/>
+    </attributeGroup>
 </waterResources>

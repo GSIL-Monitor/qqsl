@@ -3,4 +3,5 @@
     <line name="挡墙" type="DANGQ" cellProperty="经度:lon,纬度:lat,墙顶高程:top-ele,设计高程:desgin-ele,齿墙顶高程:key-wall-ele:,基础底高程:bottom-ele,类型:type,描述:description"/>
     <line name="灌溉范围" type="GGFW" cellProperty="经度:lon,纬度:lat,高程:ele" />
     <line name="渠道" type="QUD" cellProperty="经度:lon,纬度:lat,渠顶高程:top-ele,设计渠底高程:desgin-ele,类型:type,描述:description"/>
+    <line name="涵洞" type="HD" cellProperty="经度:lon,纬度:lat,涵顶高程:top-ele,设计涵底高程:desgin-ele,类型:type,描述:description"/>
 </lines>
