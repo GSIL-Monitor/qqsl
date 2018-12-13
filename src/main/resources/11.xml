@@ -238,45 +238,45 @@
       <attribute name="砂井宽b6" unit="m" type="number" alias="ct0129"/>  
       <attribute name="砂井高h2" unit="m" type="number" alias="ct0130"/> 
     </attributeGroup> 
-  </attributeGroup>
-  <!--涵洞-->
-  <attributeGroup name="构件" lineAlias="l0010" alias="ct">
-    <attributeGroup name="底板">
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0113"/>
-      <attribute name="厚" unit="m" type="number" alias="ct0114"/>
-      <attribute name="宽" unit="m" type="number" alias="ct0115"/>
-    </attributeGroup>
-    <attributeGroup name="边墙">
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0119"/>
-      <!--<attribute name="高h" unit="m" type="text"  alias="ct0071"/>-->
-      <attribute name="厚" unit="m" type="number" alias="ct0120"/>
-    </attributeGroup>
-    <attributeGroup name="顶板">
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0119"/>
-      <attribute name="宽" unit="m" type="text"  alias="ct0071"/>
-      <attribute name="厚" unit="m" type="number" alias="ct0120"/>
-    </attributeGroup>
-    <attributeGroup name="托角">
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0119"/>
-      <attribute name="宽" unit="m" type="text"  alias="ct0071"/>
-    </attributeGroup>
-    <attributeGroup name="伸缩缝">
-      <attribute name="横向伸缩缝（通缝）选型" unit="" type="select" select="a,b,c,d" alias="ct0122"/>
-      <attribute name="横向伸缩缝（通缝）间距" unit="m" type="number" alias="ct0123"/>
-    </attributeGroup>
-    <attributeGroup name="进口挡土墙">
-      <attribute name="选型" unit="" type="select" select="a,b,c,d" alias="ct0124"/>
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0124"/>
-      <attribute name="左侧角" unit="度" type="number" alias="ct0127"/>
-      <attribute name="右侧角" unit="度" type="number" alias="ct0128"/>
-      <attribute name="墙高" unit="m" type="number" alias="ct0129"/>
-    </attributeGroup>
-    <attributeGroup name="出口挡土墙">
-      <attribute name="选型" unit="" type="select" select="a,b,c,d" alias="ct0124"/>
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0124"/>
-      <attribute name="左侧角" unit="度" type="number" alias="ct0127"/>
-      <attribute name="右侧角" unit="度" type="number" alias="ct0128"/>
-      <attribute name="墙高" unit="m" type="number" alias="ct0129"/>
-    </attributeGroup>
-  </attributeGroup>
+  </attributeGroup>  
+  <!--涵洞-->  
+  <attributeGroup name="构件" lineAlias="l0010" alias="ct"> 
+    <attributeGroup name="底板"> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0131"/>  
+      <attribute name="厚" unit="m" type="number" alias="ct0132"/>  
+      <attribute name="宽" unit="m" type="number" alias="ct0133"/> 
+    </attributeGroup>  
+    <attributeGroup name="边墙"> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0134"/>  
+      <!--<attribute name="高h" unit="m" type="text"  alias="ct0071"/>-->  
+      <attribute name="厚" unit="m" type="number" alias="ct0135"/> 
+    </attributeGroup>  
+    <attributeGroup name="顶板"> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0136"/>  
+      <attribute name="宽" unit="m" type="text" alias="ct0137"/>  
+      <attribute name="厚" unit="m" type="number" alias="ct0138"/> 
+    </attributeGroup>  
+    <attributeGroup name="托角"> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0139"/>  
+      <attribute name="宽" unit="m" type="text" alias="ct0140"/> 
+    </attributeGroup>  
+    <attributeGroup name="伸缩缝"> 
+      <attribute name="横向伸缩缝（通缝）选型" unit="" type="select" select="a,b,c,d" alias="ct0141"/>  
+      <attribute name="横向伸缩缝（通缝）间距" unit="m" type="number" alias="ct0142"/> 
+    </attributeGroup>  
+    <attributeGroup name="进口挡土墙"> 
+      <attribute name="选型" unit="" type="select" select="a,b,c,d" alias="ct0143"/>  
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0144"/>  
+      <attribute name="左侧角" unit="度" type="number" alias="ct0145"/>  
+      <attribute name="右侧角" unit="度" type="number" alias="ct0146"/>  
+      <attribute name="墙高" unit="m" type="number" alias="ct0147"/> 
+    </attributeGroup>  
+    <attributeGroup name="出口挡土墙"> 
+      <attribute name="选型" unit="" type="select" select="a,b,c,d" alias="ct0148"/>  
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0149"/>  
+      <attribute name="左侧角" unit="度" type="number" alias="ct0150"/>  
+      <attribute name="右侧角" unit="度" type="number" alias="ct0151"/>  
+      <attribute name="墙高" unit="m" type="number" alias="ct0152"/> 
+    </attributeGroup> 
+  </attributeGroup> 
 </component>
