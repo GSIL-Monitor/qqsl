@@ -1449,7 +1449,7 @@ public class ShapeService extends BaseService<Shape, Long> {
         }
         jsonObject.put("coors", jsonArray);
         if (shape.getChildType() == null) {
-            jsonObject.put("childTypes", shapeAttributeService.getModelType());
+            jsonObject.put("childTypes", shapeAttributeService.getModelType(shape.getCommonType()));
         } else {
             jsonObject.put("childType", shape.getChildType().getTypeC());
             jsonObject.put("attribute", shapeAttributeService.buildJson(shape));

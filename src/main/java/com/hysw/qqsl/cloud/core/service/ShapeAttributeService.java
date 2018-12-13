@@ -1,6 +1,7 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.google.gson.JsonObject;
+import com.hysw.qqsl.cloud.CommonEnum;
 import com.hysw.qqsl.cloud.core.dao.ShapeAttributeDao;
 import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.buildModel.LineAttributeGroup;
@@ -81,10 +82,13 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
         return jsonObject;
     }
 
-    public JSONArray getModelType() {
+    public JSONArray getModelType(CommonEnum.CommonType type) {
         JSONObject jsonObject;
         JSONArray jsonArray = new JSONArray();
         for (LineSectionPlaneModel.Type value : LineSectionPlaneModel.Type.values()) {
+            if (value.getCommonType() != type) {
+                continue;
+            }
             jsonObject = new JSONObject();
             jsonObject.put("typeC", value.getTypeC());
             jsonObject.put("lineSectionPlaneModelType", value.name());
