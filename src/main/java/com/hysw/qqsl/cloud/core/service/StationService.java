@@ -271,7 +271,7 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("code",camera.getCode());
         jsonObject.put("contact",camera.getContact());
         jsonObject.put("description",camera.getDescription());
-        jsonObject.put("factroy",camera.getFactroy());
+        jsonObject.put("factory",camera.getFactory());
         jsonObject.put("name",camera.getName());
         jsonObject.put("password",camera.getPassword());
         jsonObject.put("phone",camera.getPhone());
@@ -493,7 +493,7 @@ public class StationService extends BaseService<Station, Long> {
      */
     public boolean sensorVerify(Map<String, Object> map, Sensor sensor) {
         if(map.get("factory")!=null&&StringUtils.hasText(map.get("factory").toString())){
-            sensor.setFactroy(map.get("factory").toString());
+            sensor.setFactory(map.get("factory").toString());
         }
         if(map.get("contact")!=null&&StringUtils.hasText(map.get("contact").toString())){
             sensor.setContact(map.get("contact").toString());

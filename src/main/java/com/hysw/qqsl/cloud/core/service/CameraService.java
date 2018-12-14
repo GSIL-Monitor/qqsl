@@ -41,9 +41,9 @@ public class CameraService extends BaseService<Camera, Long> {
         }
         if (factory != null) {
             if (factory.equals("")) {
-                camera.setFactroy(null);
+                camera.setFactory(null);
             } else {
-                camera.setFactroy(factory.toString());
+                camera.setFactory(factory.toString());
             }
         }
         if (contact != null) {
@@ -83,7 +83,7 @@ public class CameraService extends BaseService<Camera, Long> {
         jsonObject.put("settingAddress", camera.getSettingAddress());
         jsonObject.put("phone", camera.getPhone());
         jsonObject.put("password", camera.getPassword());
-        jsonObject.put("factroy", camera.getFactroy());
+        jsonObject.put("factory", camera.getFactory());
         jsonObject.put("description", camera.getDescription());
         jsonObject.put("contact", camera.getContact());
         jsonObject.put("code", camera.getCode());

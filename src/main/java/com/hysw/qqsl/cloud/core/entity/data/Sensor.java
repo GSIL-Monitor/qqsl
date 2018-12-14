@@ -33,7 +33,7 @@ public class Sensor extends BaseEntity {
     /**　是否激活 */
     private boolean activate;
     /** 厂家 */
-    private String factroy;
+    private String factory;
     /** 联系人 */
     private String contact;
     /** 电话 */
@@ -153,12 +153,12 @@ public class Sensor extends BaseEntity {
         this.description = description;
     }
 
-    public String getFactroy() {
-        return factroy;
+    public String getFactory() {
+        return factory;
     }
 
-    public void setFactroy(String factroy) {
-        this.factroy = factroy;
+    public void setFactory(String factory) {
+        this.factory = factory;
     }
 
     public String getContact() {

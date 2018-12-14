@@ -106,7 +106,7 @@ public class SensorService extends BaseService<Sensor,Long>{
         jsonObject.put("type",sensor.getType());
         jsonObject.put("settingHeight",sensor.getSettingHeight());
         jsonObject.put("description",sensor.getDescription());
-        jsonObject.put("factroy",sensor.getFactroy());
+        jsonObject.put("factory",sensor.getFactory());
         jsonObject.put("measureRange",sensor.getMeasureRange());
         jsonObject.put("name",sensor.getName());
         jsonObject.put("pictureUrl",sensor.getPictureUrl());
@@ -166,9 +166,9 @@ public class SensorService extends BaseService<Sensor,Long>{
         }
         if (factory != null) {
             if (factory.equals("")) {
-                sensor.setFactroy(null);
+                sensor.setFactory(null);
             } else {
-                sensor.setFactroy(factory.toString());
+                sensor.setFactory(factory.toString());
             }
         }
         if (contact != null) {
