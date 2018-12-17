@@ -249,7 +249,7 @@ public class SettingUtils {
 		if(!StringUtils.hasText(userName)){
 			return false;
 		}
-		String regex = "^[a-zA-Z\u4E00-\u9FA5]+$";
+		String regex = "^[a-zA-Z0-9\u4E00-\u9FA5]+$";
 		return regexResult(userName,regex);
 	}
 
