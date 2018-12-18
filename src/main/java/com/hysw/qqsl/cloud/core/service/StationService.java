@@ -901,10 +901,13 @@ public class StationService extends BaseService<Station, Long> {
         jsonObject.put("picture", station.getPictureUrl());
         jsonObject.put("description", station.getDescription());
         jsonObject.put("address", station.getAddress());
+        jsonObject.put("shares", station.getShares());
+        jsonObject.put("cooperate", station.getCooperate());
         JSONArray cameras = getCameraFromStation(station);
         jsonObject.put("cameras", cameras.isEmpty() ? null : cameras);
         JSONArray sensors = getSensorFromStation(station);
         jsonObject.put("sensors", sensors.isEmpty() ? null : sensors);
+        jsonObject.put("userId", station.getUser().getId());
         return jsonObject;
     }
 
