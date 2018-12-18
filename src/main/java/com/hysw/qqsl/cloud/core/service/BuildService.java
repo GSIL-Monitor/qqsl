@@ -467,7 +467,7 @@ public class BuildService extends BaseService<Build,Long> {
         cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         cell = row.createCell(3);
         if (fx != null) {
-            cell.setCellType(Cell.CELL_TYPE_FORMULA);
+            cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
             cell.setCellFormula(fx);
         } else {
             if (d != null) {
@@ -476,7 +476,7 @@ public class BuildService extends BaseService<Build,Long> {
         }
         if (locked) {
             cell.setCellStyle(style);
-            cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+//            cell.setCellType(XSSFCell.CELL_TYPE_STRING);
         } else {
             cell.setCellStyle(noBoldAndLocked(wb));
         }

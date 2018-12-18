@@ -189,8 +189,8 @@ public class StationController {
      * @return
      */
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:abll"}, logical = Logical.OR)
-    @RequestMapping(value = "/abll/create", method = RequestMethod.POST)
+    @RequiresRoles(value = {"user:simple","user:abll"}, logical = Logical.OR)
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     public @ResponseBody
     Message abllCreate(@RequestBody Map<String, Object> map) {
         User user = authentService.getUserFromSubject();

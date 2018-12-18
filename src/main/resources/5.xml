@@ -5,7 +5,7 @@
   <!--底流式消力池-->  
   <attributeGroup name="构件" buildAlias="b0001" alias="ct"> 
     <attributeGroup name="底板"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0001"/>  
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0001"/>
       <attribute name="长a1" unit="m" type="number" alias="ct0002"/>  
       <attribute name="长a2" unit="m" type="number" alias="ct0003"/>  
       <attribute name="长a2轴线偏移量△a" unit="m" type="number" alias="ct0004"/>  
@@ -16,13 +16,13 @@
       <attribute name="反坡比" unit="" type="text" alias="ct0009"/> 
     </attributeGroup>  
     <attributeGroup name="齿墙"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0010"/>  
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0010"/>
       <attribute name="高h1" unit="m" type="number" alias="ct0011"/>  
       <attribute name="宽b3" unit="m" type="number" alias="ct0012"/>  
       <attribute name="反坡比" unit="" type="text" alias="ct0013"/> 
     </attributeGroup>  
     <attributeGroup name="消力墩"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0014"/>  
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0014"/>
       <attribute name="高h2" unit="m" type="number" alias="ct0015"/>  
       <attribute name="宽b4" unit="m" type="number" alias="ct0016"/>  
       <attribute name="厚c3" unit="m" type="number" alias="ct0017"/>  
@@ -33,12 +33,12 @@
       <attribute name="纵向间距" unit="m" type="number" alias="ct0022"/> 
     </attributeGroup>  
     <attributeGroup name="尾坎"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0023"/>  
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0023"/>
       <attribute name="宽b5" unit="m" type="number" alias="ct0024"/>  
       <attribute name="反坡比" unit="" type="text" alias="ct0025"/> 
     </attributeGroup>  
     <attributeGroup name="渗管"> 
-      <attribute name="材质" unit="" type="select" select="PVC,PE" alias="ct0026"/>  
+      <attribute name="材质" unit="选择" type="select" select="PVC,PE" alias="ct0026"/>
       <attribute name="管径" unit="mm" type="number" alias="ct0027"/>  
       <attribute name="间距" unit="m" type="number" alias="ct0028"/> 
     </attributeGroup>  
