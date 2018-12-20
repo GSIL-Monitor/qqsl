@@ -262,22 +262,22 @@ public class StationService extends BaseService<Station, Long> {
     }
 
 
-    private JSONObject makeCameraJson(Camera camera) {
-        JSONObject jsonObject = new JSONObject();
-        if(camera==null){
-            return jsonObject;
-        }
-        jsonObject.put("id",camera.getId());
-        jsonObject.put("code",camera.getCode());
-        jsonObject.put("contact",camera.getContact());
-        jsonObject.put("description",camera.getDescription());
-        jsonObject.put("factory",camera.getFactory());
-        jsonObject.put("name",camera.getName());
-        jsonObject.put("password",camera.getPassword());
-        jsonObject.put("phone",camera.getPhone());
-        jsonObject.put("settingAddress",camera.getSettingAddress());
-        return jsonObject;
-    }
+//    private JSONObject makeCameraJson(Camera camera) {
+//        JSONObject jsonObject = new JSONObject();
+//        if(camera==null){
+//            return jsonObject;
+//        }
+//        jsonObject.put("id",camera.getId());
+//        jsonObject.put("code",camera.getCode());
+//        jsonObject.put("contact",camera.getContact());
+//        jsonObject.put("description",camera.getDescription());
+//        jsonObject.put("factory",camera.getFactory());
+//        jsonObject.put("name",camera.getName());
+//        jsonObject.put("password",camera.getPassword());
+//        jsonObject.put("phone",camera.getPhone());
+//        jsonObject.put("settingAddress",camera.getSettingAddress());
+//        return jsonObject;
+//    }
 
     /**
      * 根据用户查找水文测站

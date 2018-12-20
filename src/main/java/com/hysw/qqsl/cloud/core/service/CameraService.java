@@ -24,7 +24,7 @@ public class CameraService extends BaseService<Camera, Long> {
         super.setBaseDao( cameraDao);
     }
 
-    public void editCamera(Camera camera, Object name, Object description, Object factory, Object contact, Object phone, Object settingAddress, Object password) {
+    public void editCamera(Camera camera, Object name, Object description, Object factory, Object contact, Object phone, Object settingAddress, Object code) {
         if (name != null) {
             if (name.equals("")) {
                 camera.setName(null);
@@ -67,11 +67,11 @@ public class CameraService extends BaseService<Camera, Long> {
                 camera.setSettingAddress(settingAddress.toString());
             }
         }
-        if (password != null) {
-            if (password.equals("")) {
-                camera.setPassword(null);
+        if (code != null) {
+            if (code.equals("")) {
+                camera.setCode(null);
             } else {
-                camera.setPassword(password.toString());
+                camera.setCode(code.toString());
             }
         }
         save(camera);
@@ -82,7 +82,7 @@ public class CameraService extends BaseService<Camera, Long> {
         jsonObject.put("name", camera.getName());
         jsonObject.put("settingAddress", camera.getSettingAddress());
         jsonObject.put("phone", camera.getPhone());
-        jsonObject.put("password", camera.getPassword());
+//        jsonObject.put("password", camera.getPassword());
         jsonObject.put("factory", camera.getFactory());
         jsonObject.put("description", camera.getDescription());
         jsonObject.put("contact", camera.getContact());
@@ -95,5 +95,15 @@ public class CameraService extends BaseService<Camera, Long> {
         List<Filter> filters = new ArrayList<>();
         filters.add(Filter.eq("station", station));
         return cameraDao.findList(0, null, filters);
+    }
+
+    public Camera findByCode(String code) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("code", code));
+        List<Camera> list = cameraDao.findList(0, null, filters);
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+        return null;
     }
 }

@@ -33,8 +33,8 @@ public class Camera extends BaseEntity{
     private String phone;
     /** 编码 */
     private String code;
-    /** 密码 */
-    private String password;
+//    /** 密码 */
+//    private String password;
     /** 安装位置 */
     private String settingAddress;
 
@@ -89,13 +89,13 @@ public class Camera extends BaseEntity{
         this.code = code;
     }
 
-    public String getPassword() {
-        return password;
-    }
+//    public String getPassword() {
+//        return password;
+//    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
     @ManyToOne(fetch= FetchType.EAGER)
     public Station getStation() {

@@ -327,19 +327,22 @@ public class StationController {
         Object id = map.get("id");
         Object name = map.get("name");
         Object code = map.get("code");
-        Object password = map.get("password");
-        if (id == null || name == null || code == null || password == null) {
+//        Object password = map.get("password");
+        if (id == null || name == null || code == null) {
             return MessageService.message(Message.Type.FAIL);
         }
         Station station = stationService.find(Long.valueOf(id.toString()));
         if(!isOperate(station)){
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        Camera camera = new Camera();
+        Camera camera = cameraService.findByCode(code.toString());
+        if (camera != null) {
+            return MessageService.message(Message.Type.DATA_EXIST);
+        }
         camera.setName(name.toString());
         camera.setStation(station);
         camera.setCode(code.toString());
-        camera.setPassword(password.toString());
+//        camera.setPassword(password.toString());
         cameraService.save(camera);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", camera.getId());
@@ -495,7 +498,7 @@ public class StationController {
         Object contact = map.get("contact");
         Object phone = map.get("phone");
         Object settingAddress = map.get("settingAddress");
-        Object password = map.get("password");
+        Object code = map.get("code");
         if (id == null) {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -506,7 +509,15 @@ public class StationController {
         if(!isOperate(camera.getStation())){
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        cameraService.editCamera(camera,name,description,factory,contact,phone,settingAddress,password);
+        try {
+            Camera camera1 = cameraService.findByCode(code.toString());
+            if (camera1 != null) {
+                return MessageService.message(Message.Type.DATA_EXIST);
+            }
+        } catch (Exception e) {
+            return MessageService.message(Message.Type.FAIL);
+        }
+        cameraService.editCamera(camera,name,description,factory,contact,phone,settingAddress,code);
         return MessageService.message(Message.Type.OK);
     }
 
