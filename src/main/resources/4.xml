@@ -5,9 +5,9 @@
         <attribute name="地基应力" unit="Mpa" type="number" alias="gs0001"/>
     </attributeGroup>
     <!--谷坊-->
-    <attributeGroup name="地基处理" buildAlias="b0002" alias="gs">
-        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0002"/>
-    </attributeGroup>
+    <!--<attributeGroup name="地基处理" buildAlias="b0002" alias="gs">-->
+        <!--<attribute name="地基应力" unit="Mpa" type="number" alias="gs0002"/>-->
+    <!--</attributeGroup>-->
     <!--开敞式水闸-->
     <attributeGroup name="地基处理" buildAlias="b0056" alias="gs">
         <attribute name="地基应力" unit="Mpa" type="number" alias="gs0003"/>

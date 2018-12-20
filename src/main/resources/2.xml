@@ -10,10 +10,10 @@
         <attribute name="尾坎顶水头" unit="m" type="number" alias="wr0006"/>
     </attributeGroup>
     <!--谷坊-->
-    <attributeGroup name="水力要素" buildAlias="b0002" alias="wr" >
-        <attribute name="设计洪水流量Q" unit="m3/s" type="number" alias="wr0007"/>
-        <attribute name="堰上临界水深hc" unit="m" type="number" alias="wr0008"/>
-    </attributeGroup>
+    <!--<attributeGroup name="水力要素" buildAlias="b0002" alias="wr" >-->
+        <!--<attribute name="设计洪水流量Q" unit="m3/s" type="number" alias="wr0007"/>-->
+        <!--<attribute name="堰上临界水深hc" unit="m" type="number" alias="wr0008"/>-->
+    <!--</attributeGroup>-->
     <!--开敞式水闸-->
     <attributeGroup name="水力要素" buildAlias="b0056" alias="wr" >
         <attribute name="过闸总流量Q" unit="m3/s" type="number" alias="wr0009"/>

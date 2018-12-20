@@ -7,11 +7,11 @@
         <attribute name="尾坎高c" unit="m" type="number" alias="cs0003" locked="true" formula="wr0003*wr0001-wr0006"/>
     </attributeGroup>
     <!--谷坊-->
-    <attributeGroup name="控制尺寸" buildAlias="b0002" alias="cs">
-        <attribute name="溢流口底宽a" unit="m" type="number" alias="cs0004" locked="false" formula=""/>
-        <attribute name="溢流口高度h1" unit="m" type="number" alias="cs0005" locked="false" formula=""/>
-        <attribute name="堰口边坡系数" unit="1：0.5～1：1.5" type="number" alias="cs0006" locked="false" formula=""/>
-    </attributeGroup>
+    <!--<attributeGroup name="控制尺寸" buildAlias="b0002" alias="cs">-->
+        <!--<attribute name="溢流口底宽a" unit="m" type="number" alias="cs0004" locked="false" formula=""/>-->
+        <!--<attribute name="溢流口高度h1" unit="m" type="number" alias="cs0005" locked="false" formula=""/>-->
+        <!--<attribute name="堰口边坡系数" unit="1：0.5～1：1.5" type="number" alias="cs0006" locked="false" formula=""/>-->
+    <!--</attributeGroup>-->
     <!--开敞式水闸-->
     <attributeGroup name="控制尺寸" buildAlias="b0056" alias="cs">
         <attribute name="闸孔数" unit="" type="number" alias="cs0007" locked="false" formula=""/>
