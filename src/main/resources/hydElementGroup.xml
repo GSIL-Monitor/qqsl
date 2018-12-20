@@ -499,4 +499,13 @@
 	<elementGroup name="水文模型数据" alias="21D">
 		<element name="水文模型数据" type="file_upload" alias="21D1"/>
 	</elementGroup>
+	<elementGroup name="上传" alias="21-1A">
+		<element name="上传" type="design_manager" alias="21-1A1"/>
+	</elementGroup>
+	<elementGroup name="线面详情" alias="21-1B">
+		<element name="线面详情" type="design_shape" alias="21-1B1"/>
+	</elementGroup>
+	<elementGroup name="点详情" alias="21-1C">
+		<element name="点详情" type="design_point" alias="21-1C1"/>
+	</elementGroup>
 </elementGroups>

@@ -134,20 +134,20 @@ public final class CommonAttributes {
      * unitService 用于测试的验证数据
      */
     //单元别名
-    public static final String ALIAS = "1,11,111,112,12,121,122,13,131,132,14,141,142,15,151,152,2,21,211,212,22,23,231,232,24,241,242,25,3,31,32,4,41";
+    public static final String ALIAS = "1,11,111,112,12,121,122,13,131,132,14,141,142,15,151,152,2,21,21-1,211,212,22,23,231,232,24,241,242,25,3,31,32,4,41";
     //单元下的复合要素名
     public static final String ALIASES = "1;11;111,111A;112,112A;12;121,121A;122,122A;13;131,131A;132,132A;14;141,141A;142,142A;15;151,151A;152,152A;"
-            + "2;2,2A;21A,21B;21A,21B,21C,21D;211A,211B;211A,211B,211C;212A,212B,212C,212D,212E;212A,212B;212A,212B,212C;22,22A;23A,23B,23C;231A,231B,231C,231D;232,232A,232B,232C;241A,241B,241C,241D;242,242A,242B,242C;25A,25B;31,31A,31B,31C,31D,31E;232;24A,24B,24C;242;3;31;32,32A;4;41";
+            + "2;2,2A;21A,21B;21A,21B,21D;21A,21B,21C,21D;21-1A,21-1B,21-1C;211A,211B;211A,211B,211C;212A,212B,212C,212D,212E;212A,212B;212A,212B,212C;22,22A;23A,23B,23C;231A,231B,231C,231D;232,232A,232B,232C;241A,241B,241C,241D;242,242A,242B,242C;25A,25B;31,31A,31B,31C,31D,31E;232;24A,24B,24C;242;3;31;32,32A;4;41";
     //单元名
     public static final String UNIT_NAME = "招投标;设计;招投标文件;委托书-合同;施工;招投标文件;委托书-合同;监理;招投标文件;委托书-合同;质检;招投标文件;委托书-合同;其他;招投标文件;委托书-合同;项目前期;外业勘测;测量;水工建筑物;"
-            + "地理信息;项目建议书;可研;设计文件;报告;估算书;图册;附件-地勘报告等;批复;国土-水利-专项批复;省发改委批复;财政批复;初设(实施);设计文件;报告;概算书;图册;附件-地勘报告等;"
+            + "地理信息;工程布置;项目建议书;可研;设计文件;报告;估算书;图册;附件-地勘报告等;批复;国土-水利-专项批复;省发改委批复;财政批复;初设(实施);设计文件;报告;概算书;图册;附件-地勘报告等;"
             + "批复;国土-水利-专项批复;省发改委批复;财政批复;施工图;施工图设计文件;审查文件;建设期;施工阶段;业主;设计;施工;监理;质检;验收阶段;运营维护期;运营阶段";
     /**
      * elementGroupService 用于测试的数据
      */
     //要素类型
     public static final String[] ELEMENT_TYPE = {"text", "number", "date_region", "select", "area", "date", "tel", "email",
-            "text_area", "label", "select_text", "coordinate", "coordinate_upload", "map", "checkBox", "file_upload", "DAQ", "section_upload", "field", "design"};
+            "text_area", "label", "select_text", "coordinate", "coordinate_upload", "map", "checkBox", "file_upload", "DAQ", "section_upload", "field", "design","design_manager","design_shape","design_point"};
     //要素数据类型
     public static final String[] DATA_TYPE = {"", "agricultural", "buoymethod", "fixedvVolume", "motor", "getBuliding", "chamber", "reservair", "pipeline",
             "other", "investment", "agrDistrictSelect", "agrStyleSelect", "agrAreaSelect", "channel", "channelBuild", "diversion", "protection", "fence", "bridge",

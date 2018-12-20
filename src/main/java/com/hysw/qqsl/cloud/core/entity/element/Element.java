@@ -366,7 +366,19 @@ public class Element implements Serializable {
         /**
          * 工程布置
          */
-        DESIGN
+        DESIGN,
+        /**
+         * 图形线面上传
+         */
+        DESIGN_MANAGER,
+        /**
+         * 图形线面详情
+         */
+        DESIGN_SHAPE,
+        /**
+         * 图形线面点详情
+         */
+        DESIGN_POINT
     }
 
     /**
