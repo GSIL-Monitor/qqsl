@@ -339,6 +339,7 @@ public class StationController {
         if (camera != null) {
             return MessageService.message(Message.Type.DATA_EXIST);
         }
+        camera = new Camera();
         camera.setName(name.toString());
         camera.setStation(station);
         camera.setCode(code.toString());
