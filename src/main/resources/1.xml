@@ -9,10 +9,10 @@
     </attributeGroup>
     <!--谷坊-->
     <attributeGroup name="坐标" buildAlias="b0002" alias="coor">
-        <attribute name="中心点" unit="经度,纬度" type="text" alias="center"/>
-        <attribute name="定位点" unit="经度,纬度" type="text" alias="position"/>
-        <attribute name="设计标高" unit="(坝顶）m" type="number" alias="designElevation"/>
-        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark"/>
+        <attribute name="中心点" unit="经度,纬度" type="text" alias="center" fieldName="center" />
+        <attribute name="定位点" unit="经度,纬度" type="text" alias="position" fieldName="position"/>
+        <attribute name="设计标高" unit="(坝顶）m" type="number" alias="designElevation" fieldName="designElevation"/>
+        <attribute name="描述" unit="建筑物名称或标记" type="text" alias="remark" fieldName="remark"/>
     </attributeGroup>
     <!--开敞式水闸-->
     <attributeGroup name="坐标" buildAlias="b0056" alias="coor">
