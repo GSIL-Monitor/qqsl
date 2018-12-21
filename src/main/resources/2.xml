@@ -54,13 +54,13 @@
         <attribute name="上下游水头差△Ｈ" unit="m" type="number" alias="wr00023"/>
     </attributeGroup>
     <!--跌水-->
-    <attributeGroup name="水力要素" buildAlias="b0011" alias="wr" >
-        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0024"/>
-        <attribute name="流量系数m" unit="" type="number" alias="wr0025"/>
-        <attribute name="侧收缩系数ε" unit="0.85～0.95" type="number" alias="wr0026"/>
-        <attribute name="水跃长度Lj" unit="m" type="number" alias="wr0027"/>
-        <attribute name="水舌射流长度L1" unit="m" type="number" alias="wr0028"/>
-    </attributeGroup>
+    <!--<attributeGroup name="水力要素" buildAlias="b0011" alias="wr" >-->
+        <!--<attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0024"/>-->
+        <!--<attribute name="流量系数m" unit="" type="number" alias="wr0025"/>-->
+        <!--<attribute name="侧收缩系数ε" unit="0.85～0.95" type="number" alias="wr0026"/>-->
+        <!--<attribute name="水跃长度Lj" unit="m" type="number" alias="wr0027"/>-->
+        <!--<attribute name="水舌射流长度L1" unit="m" type="number" alias="wr0028"/>-->
+    <!--</attributeGroup>-->
     <!--水表井-->
     <attributeGroup name="水力要素" buildAlias="b0064" alias="wr" >
         <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0029"/>

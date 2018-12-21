@@ -226,28 +226,32 @@ public class ShapeService extends BaseService<Shape, Long> {
     public JSONArray pickedErrorMsg(PLACache plaCache) {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject;
-        for (Map.Entry<String, List<Shape>> entry : plaCache.getLineShape().entrySet()) {
-            for (Shape shape : entry.getValue()) {
-                for (ShapeCoordinate shapeCoordinate : shape.getShapeCoordinates()) {
-                    if (shapeCoordinate.isErrorMsg()) {
-                        jsonObject = new JSONObject();
-                        jsonObject.put("rowNum", shapeCoordinate.getCellNum());
-                        jsonObject.put("sheetName", shapeCoordinate.getShape().getCommonType().getTypeC());
-                        jsonObject.put("excel", entry.getKey());
-                        jsonArray.add(jsonObject);
+        if (plaCache.getLineShape() != null) {
+            for (Map.Entry<String, List<Shape>> entry : plaCache.getLineShape().entrySet()) {
+                for (Shape shape : entry.getValue()) {
+                    for (ShapeCoordinate shapeCoordinate : shape.getShapeCoordinates()) {
+                        if (shapeCoordinate.isErrorMsg()) {
+                            jsonObject = new JSONObject();
+                            jsonObject.put("rowNum", shapeCoordinate.getCellNum());
+                            jsonObject.put("sheetName", shapeCoordinate.getShape().getCommonType().getTypeC());
+                            jsonObject.put("excel", entry.getKey());
+                            jsonArray.add(jsonObject);
+                        }
                     }
                 }
             }
         }
-        for (Map.Entry<String, List<Shape>> entry : plaCache.getAreaShape().entrySet()) {
-            for (Shape shape : entry.getValue()) {
-                for (ShapeCoordinate shapeCoordinate : shape.getShapeCoordinates()) {
-                    if (shapeCoordinate.isErrorMsg()) {
-                        jsonObject = new JSONObject();
-                        jsonObject.put("rowNum", shapeCoordinate.getCellNum());
-                        jsonObject.put("sheetName", shapeCoordinate.getShape().getRemark());
-                        jsonObject.put("excel", entry.getKey());
-                        jsonArray.add(jsonObject);
+        if (plaCache.getAreaShape() != null) {
+            for (Map.Entry<String, List<Shape>> entry : plaCache.getAreaShape().entrySet()) {
+                for (Shape shape : entry.getValue()) {
+                    for (ShapeCoordinate shapeCoordinate : shape.getShapeCoordinates()) {
+                        if (shapeCoordinate.isErrorMsg()) {
+                            jsonObject = new JSONObject();
+                            jsonObject.put("rowNum", shapeCoordinate.getCellNum());
+                            jsonObject.put("sheetName", shapeCoordinate.getShape().getRemark());
+                            jsonObject.put("excel", entry.getKey());
+                            jsonArray.add(jsonObject);
+                        }
                     }
                 }
             }
