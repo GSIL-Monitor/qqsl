@@ -1208,7 +1208,7 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("designElevation", build.getDesignElevation());
         jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType() == null ? null : build.getChildType());
-        getValue(build.getCoordinate(),jsonObject);
+//        getValue(build.getCoordinate(),jsonObject);
         getValue(build.getWaterResource(),jsonObject);
         getValue(build.getControlSize(),jsonObject);
         getValue(build.getGroundStress(),jsonObject);
