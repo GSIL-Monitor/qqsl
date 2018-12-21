@@ -738,7 +738,7 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         jsonObject.put("designElevation", newBuild.getDesignElevation());
         jsonObject.put("remark", newBuild.getRemark());
         jsonObject.put("childType", newBuild.getChildType() == null ? null : newBuild.getChildType());
-        getValue(newBuild.getCoordinate(),jsonObject);
+//        getValue(newBuild.getCoordinate(),jsonObject);
         getValue(newBuild.getWaterResource(),jsonObject);
         getValue(newBuild.getControlSize(),jsonObject);
         getValue(newBuild.getGroundStress(),jsonObject);
