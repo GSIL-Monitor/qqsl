@@ -251,7 +251,6 @@ public class BuildService extends BaseService<Build,Long> {
             }
             buildMap.put(build.getAlias(),build);
         }
-        System.out.println();
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getCoordinate(),stringAlias);
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getWaterResource(),stringAlias);
         attributeGroupService.initAttributeGroup(buildMap,SettingUtils.getInstance().getSetting().getControlSize(),stringAlias);
@@ -1209,11 +1208,30 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("designElevation", build.getDesignElevation());
         jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType() == null ? null : build.getChildType());
-        for (BuildAttribute buildAttribute : build.getBuildAttributes()) {
-            if (buildAttribute.getValue() != null) {
-                jsonObject.put(buildAttribute.getAlias(), buildAttribute.getValue());
-            }
-        }
+        getValue(build.getCoordinate(),jsonObject);
+        getValue(build.getWaterResource(),jsonObject);
+        getValue(build.getControlSize(),jsonObject);
+        getValue(build.getGroundStress(),jsonObject);
+        getValue(build.getComponent(),jsonObject);
         return jsonObject;
     }
+
+    private void getValue(AttributeGroup attributeGroup, JSONObject jsonObject) {
+        if (attributeGroup == null) {
+            return;
+        }
+        if (attributeGroup.getBuildAttributes() != null) {
+            for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                if (buildAttribute.getFieldName() != null) {
+                    jsonObject.put(buildAttribute.getFieldName(), buildAttribute.getValue());
+                }
+            }
+        }
+        if (attributeGroup.getChilds() != null) {
+            for (AttributeGroup child : attributeGroup.getChilds()) {
+                getValue(child, jsonObject);
+            }
+        }
+    }
+
 }

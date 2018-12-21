@@ -738,10 +738,30 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         jsonObject.put("designElevation", newBuild.getDesignElevation());
         jsonObject.put("remark", newBuild.getRemark());
         jsonObject.put("childType", newBuild.getChildType() == null ? null : newBuild.getChildType());
-        for (NewBuildAttribute newBuildAttribute : newBuild.getNewBuildAttributes()) {
-            jsonObject.put(newBuildAttribute.getAlias(), newBuildAttribute.getValue());
-        }
+        getValue(newBuild.getCoordinate(),jsonObject);
+        getValue(newBuild.getWaterResource(),jsonObject);
+        getValue(newBuild.getControlSize(),jsonObject);
+        getValue(newBuild.getGroundStress(),jsonObject);
+        getValue(newBuild.getComponent(),jsonObject);
         return jsonObject;
+    }
+
+    private void getValue(NewAttributeGroup newAttributeGroup, JSONObject jsonObject) {
+        if (newAttributeGroup == null) {
+            return;
+        }
+        if (newAttributeGroup.getNewBuildAttributes() != null) {
+            for (NewBuildAttribute newBuildAttribute : newAttributeGroup.getNewBuildAttributes()) {
+                if (newBuildAttribute.getFieldName() != null) {
+                    jsonObject.put(newBuildAttribute.getFieldName(), newBuildAttribute.getValue());
+                }
+            }
+        }
+        if (newAttributeGroup.getChilds() != null) {
+            for (NewAttributeGroup child : newAttributeGroup.getChilds()) {
+                getValue(child, jsonObject);
+            }
+        }
     }
 
     /**
@@ -1180,6 +1200,9 @@ public class NewBuildService extends BaseService<NewBuild, Long> {
         }
         if (element.attributeValue("formula") != null && !element.attributeValue("formula").equals("")) {
             newBuildAttribute.setFormula(element.attributeValue("formula"));
+        }
+        if (element.attributeValue("fieldName") != null && !element.attributeValue("fieldName").equals("")) {
+            newBuildAttribute.setFieldName(element.attributeValue("fieldName"));
         }
         newBuildAttributes.add(newBuildAttribute);
     }
