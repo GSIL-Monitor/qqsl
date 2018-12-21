@@ -128,6 +128,9 @@ public class AttributeGroupService {
         if (element.attributeValue("formula") != null && !element.attributeValue("formula").equals("")) {
             buildAttribute.setFormula(element.attributeValue("formula"));
         }
+        if (element.attributeValue("fieldName") != null && !element.attributeValue("fieldName").equals("")) {
+            buildAttribute.setFieldName(element.attributeValue("fieldName"));
+        }
         buildAttributes.add(buildAttribute);
     }
 }

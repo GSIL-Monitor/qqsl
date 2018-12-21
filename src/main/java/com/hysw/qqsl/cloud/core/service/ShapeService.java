@@ -272,31 +272,37 @@ public class ShapeService extends BaseService<Shape, Long> {
      */
     private void saveEvery(PLACache plaCache) {
         Shape shape1;
-        for (Map.Entry<String, List<Shape>> entry : plaCache.getLineShape().entrySet()) {
-            for (Shape shape : entry.getValue()) {
-                shape1 = findByProjectAndRemark(shape.getProject(), shape.getRemark());
-                if (shape1 == null) {
-                    save(shape);
-                } else {
-                    remove(shape1);
-                    save(shape);
+        if (plaCache.getLineShape() != null) {
+            for (Map.Entry<String, List<Shape>> entry : plaCache.getLineShape().entrySet()) {
+                for (Shape shape : entry.getValue()) {
+                    shape1 = findByProjectAndRemark(shape.getProject(), shape.getRemark());
+                    if (shape1 == null) {
+                        save(shape);
+                    } else {
+                        remove(shape1);
+                        save(shape);
+                    }
                 }
             }
         }
-        for (Map.Entry<String, List<Shape>> entry : plaCache.getAreaShape().entrySet()) {
-            for (Shape shape : entry.getValue()) {
-                shape1 = findByProjectAndRemark(shape.getProject(), shape.getRemark());
-                if (shape1 == null) {
-                    save(shape);
-                } else {
-                    remove(shape1);
-                    save(shape);
+        if (plaCache.getAreaShape() != null) {
+            for (Map.Entry<String, List<Shape>> entry : plaCache.getAreaShape().entrySet()) {
+                for (Shape shape : entry.getValue()) {
+                    shape1 = findByProjectAndRemark(shape.getProject(), shape.getRemark());
+                    if (shape1 == null) {
+                        save(shape);
+                    } else {
+                        remove(shape1);
+                        save(shape);
+                    }
                 }
             }
         }
-        for (Map.Entry<String, List<Build>> entry : plaCache.getBuildsMap().entrySet()) {
-            for (Build build : entry.getValue()) {
-                buildService.save(build);
+        if (plaCache.getBuildsMap() != null) {
+            for (Map.Entry<String, List<Build>> entry : plaCache.getBuildsMap().entrySet()) {
+                for (Build build : entry.getValue()) {
+                    buildService.save(build);
+                }
             }
         }
     }
@@ -307,17 +313,21 @@ public class ShapeService extends BaseService<Shape, Long> {
      * @return
      */
     private boolean isAllFalse(PLACache plaCache) {
-        for (Map.Entry<String, List<Shape>> entry : plaCache.getLineShape().entrySet()) {
-            for (Shape shape : entry.getValue()) {
-                if (shape.isErrorMsg()) {
-                    return false;
+        if (plaCache.getLineShape() != null) {
+            for (Map.Entry<String, List<Shape>> entry : plaCache.getLineShape().entrySet()) {
+                for (Shape shape : entry.getValue()) {
+                    if (shape.isErrorMsg()) {
+                        return false;
+                    }
                 }
             }
         }
-        for (Map.Entry<String, List<Shape>> entry : plaCache.getAreaShape().entrySet()) {
-            for (Shape shape : entry.getValue()) {
-                if (shape.isErrorMsg()) {
-                    return false;
+        if (plaCache.getAreaShape() != null) {
+            for (Map.Entry<String, List<Shape>> entry : plaCache.getAreaShape().entrySet()) {
+                for (Shape shape : entry.getValue()) {
+                    if (shape.isErrorMsg()) {
+                        return false;
+                    }
                 }
             }
         }

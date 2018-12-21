@@ -41,6 +41,7 @@ public class BuildAttribute extends BaseEntity {
     private String formula;
     /** excel行数 */
     private int row;
+    private String fieldName;
     /**属性值类型*/
     public enum Type{
         /**
@@ -198,5 +199,14 @@ public class BuildAttribute extends BaseEntity {
 
     public void setFormula(String formula) {
         this.formula = formula;
+    }
+
+    @Transient
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 }
