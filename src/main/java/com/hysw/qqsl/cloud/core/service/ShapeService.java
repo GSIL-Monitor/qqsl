@@ -1450,7 +1450,7 @@ public class ShapeService extends BaseService<Shape, Long> {
         for (ShapeCoordinate shapeCoordinate : sortShapeCoordinate(shapeCoordinates)) {
             jsonObject1 = new JSONObject();
             jsonObject1.put("id", shapeCoordinate.getId());
-            jsonObject1.put("lon", shapeCoordinate.getLat());
+            jsonObject1.put("lon", shapeCoordinate.getLon());
             jsonObject1.put("lat", shapeCoordinate.getLat());
             jsonObject1.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
             if (shapeCoordinate.getBuild() != null) {
@@ -1678,7 +1678,7 @@ public class ShapeService extends BaseService<Shape, Long> {
             jsonObject = new JSONObject();
             jsonObject.put("id", shape.getId());
             jsonObject.put("remark", shape.getRemark());
-            jsonObject.put("type", shape.getCommonType());
+            jsonObject.put("type", shape.getCommonType().getTypeC());
             jsonObject.put("childType", shape.getChildType());
             jsonArray.add(jsonObject);
         }
