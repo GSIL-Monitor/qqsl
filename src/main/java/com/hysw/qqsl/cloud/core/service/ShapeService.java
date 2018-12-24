@@ -1456,6 +1456,7 @@ public class ShapeService extends BaseService<Shape, Long> {
             jsonObject1.put("elevations", JSONArray.fromObject(shapeCoordinate.getElevations()));
             if (shapeCoordinate.getBuild() != null) {
                 jsonObject1.put("buildName", shapeCoordinate.getBuild().getType().getTypeC());
+                jsonObject1.put("buildRemark", shapeCoordinate.getBuild().getRemark());
             }
 //            if (shapeCoordinate.getNext() != null) {
 //                jsonObject1.put("next", shapeCoordinate.getNext().getId());
