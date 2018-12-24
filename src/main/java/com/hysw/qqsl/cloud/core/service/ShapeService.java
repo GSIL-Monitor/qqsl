@@ -1445,6 +1445,7 @@ public class ShapeService extends BaseService<Shape, Long> {
         jsonObject.put("remark", shape.getRemark());
         jsonObject.put("type", shape.getCommonType().getTypeC());
         jsonObject.put("id", shape.getId());
+        jsonObject.put("createDate", shape.getCreateDate().getTime());
         List<ShapeCoordinate> shapeCoordinates = shapeCoordinateService.findByShape(shape);
         JSONArray jsonArray = new JSONArray();
         for (ShapeCoordinate shapeCoordinate : sortShapeCoordinate(shapeCoordinates)) {
