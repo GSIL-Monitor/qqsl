@@ -391,8 +391,8 @@
     <attributeGroup name="消力池边墙"> 
       <attribute name="材质" unit="选择" type="select" select="a,b,c,d" alias="ct0265"/>  
       <attribute name="e2" unit="m" type="number" alias="ct0266"/>  
-      <attribute name="i6" unit="1:?" type="number" alias="ct0267"/>  
-      <attribute name="h14" unit="m" type="number" alias="ct0268"/> 
+      <!--<attribute name="i6" unit="1:?" type="number" alias="ct0267"/>  -->
+      <!--<attribute name="h14" unit="m" type="number" alias="ct0268"/> -->
     </attributeGroup>  
     <attributeGroup name="消能尾坎"> 
       <attribute name="材质" unit="选择" type="select" select="a,b,c,d" alias="ct0269"/>  
