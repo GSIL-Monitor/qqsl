@@ -1,4 +1,15 @@
 <!--动态属性-->
 <dyn>
-
+    <attributeGroup name="井壁管" groupAlias="ag0001">
+        <attribute name="材质" unit="" type="select" select="混凝土,铸铁,钢管" alias="dyn0001"/>
+        <attribute name="垂直桩段（例0～-5，-10～-15）" unit="mm" type="number" alias="dyn0002"/>
+        <attribute name="公称规格（选择）" unit="英寸" type="number" alias="dyn0003"/>
+        <attribute name="管箍（自动匹配）" unit="个" type="number" alias="dyn0004"/>
+    </attributeGroup>
+    <attributeGroup name="过滤器" groupAlias="ag0002">
+        <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="dyn0005"/>
+        <attribute name="垂直桩段（例-5～-10，-15～-20）" unit="m" type="text" alias="dyn0006"/>
+        <attribute name="公称规格（选择）" unit="英寸" type="text" alias="dyn0007"/>
+        <attribute name="管箍（自动匹配）" unit="个" type="text" alias="dyn0008"/>
+    </attributeGroup>
 </dyn>

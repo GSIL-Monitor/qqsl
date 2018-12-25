@@ -152,10 +152,14 @@ public class BuildService extends BaseService<Build,Long> {
         JSONArray jsonArray;
         jsonArray = new JSONArray();
         writeAttribute(attributeGroup.getBuildAttributes(),jsonArray);
-        if (!jsonArray.isEmpty()) {
+        if (!jsonArray.isEmpty() || attributeGroup.isDyn()) {
             jsonObject.put("name", attributeGroup.getName());
             jsonObject.put("alias", attributeGroup.getAlias());
-            jsonObject.put("attribute", jsonArray);
+            if (attributeGroup.isDyn()) {
+                jsonObject.put("dyn", attributeGroup.isDyn());
+                jsonObject.put("groupAlias", attributeGroup.getGroupAlias());
+            }
+            jsonObject.put("attribute", jsonArray.isEmpty()?null:jsonArray);
         }
         jsonArray = new JSONArray();
         writeChild(attributeGroup.getChilds(), jsonArray);

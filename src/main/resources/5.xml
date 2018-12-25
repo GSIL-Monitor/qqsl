@@ -262,17 +262,9 @@
       <attribute name="深度" unit="m" type="number" alias="ct0177"/>  
       <attribute name="厚度" unit="m" type="number" alias="ct0178"/> 
     </attributeGroup>  
-    <attributeGroup name="井壁管"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,铸铁,钢管" alias="ct0179"/>  
-      <attribute name="垂直桩段（例0～-5，-10～-15）" unit="mm" type="number" alias="ct0180"/>  
-      <attribute name="公称规格（选择）" unit="英寸" type="number" alias="ct0181"/>  
-      <attribute name="管箍（自动匹配）" unit="个" type="number" alias="ct0182"/> 
+    <attributeGroup name="井壁管" dyn="true" groupAlias="ag0001">
     </attributeGroup>  
-    <attributeGroup name="过滤器"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0183"/>  
-      <attribute name="垂直桩段（例-5～-10，-15～-20）" unit="m" type="text" alias="ct0184"/>  
-      <attribute name="公称规格（选择）" unit="英寸" type="text" alias="ct0185"/>  
-      <attribute name="管箍（自动匹配）" unit="个" type="text" alias="ct0186"/> 
+    <attributeGroup name="过滤器" dyn="true" groupAlias="ag0002">
     </attributeGroup>  
     <attributeGroup name="沉砂管"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0187"/>  
@@ -286,9 +278,9 @@
     </attributeGroup> 
   </attributeGroup>  
   <!--泉室-->  
-  <attributeGroup name="构件" buildAlias="b0003" alias="ct"> 
-    <attributeGroup name="八字墙"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0193"/>  
+  <attributeGroup name="构件" buildAlias="b0003" alias="ct">
+    <attributeGroup name="八字墙">
+    <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0193"/>
       <attribute name="夹角1" unit="度" type="number" alias="ct0194"/>  
       <attribute name="夹角2" unit="度" type="number" alias="ct0195"/>  
       <attribute name="八字墙1长" unit="m" type="number" alias="ct0196"/>  
@@ -297,7 +289,8 @@
       <attribute name="墙身高" unit="m" type="number" alias="ct0199"/>  
       <attribute name="基础高" unit="m" type="number" alias="ct0200"/>  
       <attribute name="背水面坡比" unit="" type="text" alias="ct0201"/> 
-    </attributeGroup> 
+    </attributeGroup>
+    <attributeGroup name="test" dyn="true" groupAlias="ag0005"></attributeGroup>
   </attributeGroup>  
   <!--海漫-->  
   <attributeGroup name="构件" buildAlias="b0014" alias="ct"> 

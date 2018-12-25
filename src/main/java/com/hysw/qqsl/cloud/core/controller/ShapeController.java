@@ -56,6 +56,8 @@ public class ShapeController {
     private BuildAttributeService buildAttributeService;
     @Autowired
     private AuthentService authentService;
+    @Autowired
+    private BuildDynAttributeService buildDynAttributeService;
 
     Log logger = LogFactory.getLog(getClass());
 
@@ -1034,6 +1036,18 @@ public class ShapeController {
         }
 //        超过限制数量，返回已达到最大限制数量
         return MessageService.message(Message.Type.PACKAGE_LIMIT);
+    }
+
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/build/dyn", method = RequestMethod.GET)
+    public @ResponseBody Message builDDyn(@RequestParam String alias) {
+        AttributeGroup attributeGroup = buildDynAttributeService.getAttributeGroup(alias);
+        if (attributeGroup == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        JSONArray jsonArray = buildDynAttributeService.toJSON(attributeGroup);
+        return MessageService.message(Message.Type.OK,jsonArray);
     }
 
 }

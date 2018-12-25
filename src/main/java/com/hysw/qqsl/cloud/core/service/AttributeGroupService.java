@@ -76,6 +76,12 @@ public class AttributeGroupService {
                 if (element.attributeValue("name") != null&&!element.attributeValue("name").equals("")) {
                     child.setName(element.attributeValue("name"));
                 }
+                if (element.attributeValue("dyn") != null&&!element.attributeValue("dyn").equals("")) {
+                    child.setDyn(Boolean.valueOf(element.attributeValue("dyn")));
+                }
+                if (element.attributeValue("groupAlias") != null&&!element.attributeValue("groupAlias").equals("")) {
+                    child.setGroupAlias(element.attributeValue("groupAlias"));
+                }
                 if (element.attributeValue("alias") != null&&!element.attributeValue("alias").equals("")) {
                     child.setAlias(element.attributeValue("alias"));
                     if (stringAlias.contains(element.attributeValue("alias"))) {
@@ -98,7 +104,7 @@ public class AttributeGroupService {
         }
     }
 
-    private void initAttributes(Element element,List<BuildAttribute> buildAttributes,List<String> stringAlias,AttributeGroup attributeGroup) throws QQSLException {
+    public void initAttributes(Element element,List<BuildAttribute> buildAttributes,List<String> stringAlias,AttributeGroup attributeGroup) throws QQSLException {
         BuildAttribute buildAttribute = new BuildAttribute();
         if (element.attributeValue("alias") != null&&!element.attributeValue("alias").equals("")) {
             buildAttribute.setAlias(element.attributeValue("alias"));

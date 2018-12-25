@@ -22,6 +22,10 @@ public class AttributeGroup implements Serializable{
     private AttributeGroup parent;
     /**属性组子级*/
     private List<AttributeGroup> childs;
+    /** 是否为动态属性*/
+    private boolean dyn;
+    /** 动态属性组别名 */
+    private String groupAlias;
 
     public String getName() {
         return name;
@@ -63,4 +67,19 @@ public class AttributeGroup implements Serializable{
         this.childs = childs;
     }
 
+    public boolean isDyn() {
+        return dyn;
+    }
+
+    public void setDyn(boolean dyn) {
+        this.dyn = dyn;
+    }
+
+    public String getGroupAlias() {
+        return groupAlias;
+    }
+
+    public void setGroupAlias(String groupAlias) {
+        this.groupAlias = groupAlias;
+    }
 }

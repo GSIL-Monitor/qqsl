@@ -45,6 +45,7 @@ public class Setting implements Serializable {
 	private String controlSize;
 	private String groundStress;
 	private String component;
+	private String dyn;
 	/**
 	 * 线及线的剖面
 	 */
@@ -299,5 +300,13 @@ public class Setting implements Serializable {
 
 	public void setLineComponent(String lineComponent) {
 		this.lineComponent = lineComponent;
+	}
+
+	public String getDyn() {
+		return dyn;
+	}
+
+	public void setDyn(String dyn) {
+		this.dyn = dyn;
 	}
 }

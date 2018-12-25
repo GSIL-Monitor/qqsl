@@ -46,7 +46,7 @@
 	<setting name="lineGroundStress" value="10.xml"/>
 	<setting name="lineComponent" value="11.xml"/>
 	<setting name="line" value="12.xml"/>
-
+	<setting name="dyn" value="13.xml"/>
 </qqsl>
 
 
