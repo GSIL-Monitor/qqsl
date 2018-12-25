@@ -894,7 +894,7 @@ public class ShapeController {
         }
         Object buildId = objectMap.get("id");
         Object buildAttributes = objectMap.get("attributes");
-        Object dyn = objectMap.get("dyn");
+        Object dyn = objectMap.get("dynAttributes");
         if (buildId == null) {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -1070,14 +1070,14 @@ public class ShapeController {
 
     /**
      * 建筑物动态组属性获取
-     * @param alias 组别名
+     * @param groupAlias 组别名
      * @return
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/dyn/create", method = RequestMethod.GET)
-    public @ResponseBody Message builDDyn(@RequestParam String alias) {
-        AttributeGroup attributeGroup = buildDynAttributeService.getAttributeGroup(alias);
+    @RequestMapping(value = "/build/dyn", method = RequestMethod.GET)
+    public @ResponseBody Message builDDyn(@RequestParam String groupAlias) {
+        AttributeGroup attributeGroup = buildDynAttributeService.getAttributeGroup(groupAlias);
         if (attributeGroup == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
@@ -1089,7 +1089,7 @@ public class ShapeController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/build/dyn/remove", method = RequestMethod.POST)
     public @ResponseBody Message deleteDyn(@RequestBody  Map<String,Object> objectMap) {
-        Object buildId = objectMap.get("buildId");
+        Object buildId = objectMap.get("id");
         Object code = objectMap.get("code");
         Object groupAlias = objectMap.get("groupAlias");
         if (buildId == null || code == null || groupAlias == null) {
