@@ -1038,8 +1038,13 @@ public class ShapeController {
         return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    /**
+     * 建筑物动态组属性获取
+     * @param alias 组别名
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/build/dyn", method = RequestMethod.GET)
     public @ResponseBody Message builDDyn(@RequestParam String alias) {
         AttributeGroup attributeGroup = buildDynAttributeService.getAttributeGroup(alias);
