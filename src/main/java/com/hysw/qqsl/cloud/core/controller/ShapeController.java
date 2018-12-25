@@ -894,6 +894,7 @@ public class ShapeController {
         }
         Object buildId = objectMap.get("id");
         Object buildAttributes = objectMap.get("attributes");
+        Object dyn = objectMap.get("dyn");
         if (buildId == null) {
             return MessageService.message(Message.Type.FAIL);
         }
@@ -912,6 +913,35 @@ public class ShapeController {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         buildService.save(build);
+        if (dyn != null) {
+            JSONArray jsonArray = JSONArray.fromObject(dyn);
+            BuildDynAttribute buildDynAttribute;
+            JSONObject jsonObject;
+            for (Object o : jsonArray) {
+                jsonObject = JSONObject.fromObject(o);
+                Object id = jsonObject.get("id");
+                Object groupAlias = jsonObject.get("groupAlias");
+                Object alias = jsonObject.get("alias");
+                Object code = jsonObject.get("code");
+                Object value = jsonObject.get("value");
+                if (groupAlias == null || alias == null || code == null || value == null) {
+                    return MessageService.message(Message.Type.PARAMETER_ERROR);
+                }
+                if (id != null) {
+                    buildDynAttribute = buildDynAttributeService.find(Long.valueOf(id.toString()));
+                    buildDynAttribute.setCode(Integer.valueOf(code.toString()));
+                    buildDynAttribute.setValue(value.toString());
+                } else {
+                    buildDynAttribute = new BuildDynAttribute();
+                    buildDynAttribute.setValue(value.toString());
+                    buildDynAttribute.setCode(Integer.valueOf(code.toString()));
+                    buildDynAttribute.setAlias(alias.toString());
+                    buildDynAttribute.setGroupAlias(groupAlias.toString());
+                    buildDynAttribute.setBuild(build);
+                }
+                buildDynAttributeService.save(buildDynAttribute);
+            }
+        }
         return MessageService.message(Message.Type.OK);
     }
 
@@ -1053,6 +1083,28 @@ public class ShapeController {
         }
         JSONArray jsonArray = buildDynAttributeService.toJSON(attributeGroup);
         return MessageService.message(Message.Type.OK,jsonArray);
+    }
+
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/build/dyn/delete", method = RequestMethod.POST)
+    public @ResponseBody Message deleteDyn(@RequestBody  Map<String,Object> objectMap) {
+        Object buildId = objectMap.get("buildId");
+        Object code = objectMap.get("code");
+        Object groupAlias = objectMap.get("groupAlias");
+        if (buildId == null || code == null || groupAlias == null) {
+            return MessageService.message(Message.Type.PARAMETER_ERROR);
+        }
+        Build build = buildService.find(Long.valueOf(buildId.toString()));
+        List<BuildDynAttribute> buildDynAttributes = buildDynAttributeService.findByBuildAndCodeAndGroupAlias(build, code, groupAlias);
+        if (buildDynAttributes.size() == 0) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        for (BuildDynAttribute buildDynAttribute : buildDynAttributes) {
+            buildDynAttributeService.remove(buildDynAttribute);
+        }
+        buildDynAttributeService.changeCode(build, code, groupAlias);
+        return MessageService.message(Message.Type.OK);
     }
 
 }

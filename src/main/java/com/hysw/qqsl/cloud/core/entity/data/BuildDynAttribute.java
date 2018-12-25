@@ -1,10 +1,9 @@
 package com.hysw.qqsl.cloud.core.entity.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author Administrator
@@ -19,6 +18,8 @@ public class BuildDynAttribute extends BaseEntity {
     private String groupAlias;
     private int code;
     private String value;
+
+    private Build build;
 
     public String getAlias() {
         return alias;
@@ -50,5 +51,15 @@ public class BuildDynAttribute extends BaseEntity {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    public Build getBuild() {
+        return build;
+    }
+
+    public void setBuild(Build build) {
+        this.build = build;
     }
 }

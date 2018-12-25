@@ -290,7 +290,8 @@
       <attribute name="基础高" unit="m" type="number" alias="ct0200"/>  
       <attribute name="背水面坡比" unit="" type="text" alias="ct0201"/> 
     </attributeGroup>
-    <attributeGroup name="test" dyn="true" groupAlias="ag0005"></attributeGroup>
+    <attributeGroup name="test" dyn="true" groupAlias="ag0001">
+    </attributeGroup>
   </attributeGroup>  
   <!--海漫-->  
   <attributeGroup name="构件" buildAlias="b0014" alias="ct"> 

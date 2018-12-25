@@ -33,6 +33,8 @@ public class Build extends BaseEntity{
     private ChildType childType;
     /**建筑物属性*/
     private List<BuildAttribute> buildAttributes;
+    /** 建筑物动态属性 */
+    private List<BuildDynAttribute> buildDynAttributes;
     /** 所属项目 */
     private Long projectId;
     /** 中心坐标 */
@@ -331,5 +333,15 @@ public class Build extends BaseEntity{
 
     public void setRemarkNum(int remarkNum) {
         this.remarkNum = remarkNum;
+    }
+
+    @OneToMany(cascade={CascadeType.PERSIST,CascadeType.REMOVE},  fetch=FetchType.LAZY, mappedBy="build")
+    @JsonIgnore
+    public List<BuildDynAttribute> getBuildDynAttributes() {
+        return buildDynAttributes;
+    }
+
+    public void setBuildDynAttributes(List<BuildDynAttribute> buildDynAttributes) {
+        this.buildDynAttributes = buildDynAttributes;
     }
 }

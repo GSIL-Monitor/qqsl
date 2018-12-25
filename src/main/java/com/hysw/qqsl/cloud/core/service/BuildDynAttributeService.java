@@ -1,9 +1,9 @@
 package com.hysw.qqsl.cloud.core.service;
 
 import com.hysw.qqsl.cloud.core.dao.BuildDynAttributeDao;
+import com.hysw.qqsl.cloud.core.entity.Filter;
 import com.hysw.qqsl.cloud.core.entity.buildModel.AttributeGroup;
-import com.hysw.qqsl.cloud.core.entity.data.BuildAttribute;
-import com.hysw.qqsl.cloud.core.entity.data.BuildDynAttribute;
+import com.hysw.qqsl.cloud.core.entity.data.*;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -14,9 +14,7 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Administrator
@@ -129,7 +127,7 @@ public class BuildDynAttributeService extends BaseService<BuildDynAttribute, Lon
             jsonObject.put("id", buildAttribute.getId());
             jsonObject.put("name", buildAttribute.getName());
             jsonObject.put("alias", buildAttribute.getAlias());
-            jsonObject.put("groupAlias", attributeGroup.getGroupAlias());
+//            jsonObject.put("groupAlias", attributeGroup.getGroupAlias());
             jsonObject.put("type", buildAttribute.getType());
             jsonObject.put("value", buildAttribute.getValue());
             jsonObject.put("formula", buildAttribute.getFormula());
@@ -142,5 +140,88 @@ public class BuildDynAttributeService extends BaseService<BuildDynAttribute, Lon
             jsonArray.add(jsonObject);
         }
         return jsonArray;
+    }
+
+    public List<BuildDynAttribute> findByBuild(Build build) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("build", build));
+        return  buildDynAttributeDao.findList(0, null, filters);
+    }
+
+    public JSONArray toJSON(List<BuildDynAttribute> dynAttributeList) {
+        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        Map<Integer, List<BuildDynAttribute>> map = new TreeMap<>(
+                new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1.compareTo(o2);
+            }
+        });
+        for (BuildDynAttribute buildDynAttribute : dynAttributeList) {
+            List<BuildDynAttribute> buildDynAttributes = map.get(buildDynAttribute.getCode());
+            if (buildDynAttributes == null) {
+                buildDynAttributes = new ArrayList<>();
+                buildDynAttributes.add(buildDynAttribute);
+                map.put(buildDynAttribute.getCode(), buildDynAttributes);
+            } else {
+                buildDynAttributes.add(buildDynAttribute);
+                map.put(buildDynAttribute.getCode(), buildDynAttributes);
+            }
+        }
+        JSONArray jsonArray1;
+        for (Map.Entry<Integer, List<BuildDynAttribute>> entry : map.entrySet()) {
+            jsonArray1 = new JSONArray();
+            List<BuildDynAttribute> dynAttributes = entry.getValue();
+            if (dynAttributes == null || dynAttributes.size() == 0) {
+                continue;
+            }
+            AttributeGroup attributeGroup = getAttributeGroup(dynAttributes.get(0).getGroupAlias());
+            for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                for (BuildDynAttribute dynAttribute : dynAttributes) {
+                    if (buildAttribute.getAlias().equals(dynAttribute.getAlias())) {
+                        jsonObject = new JSONObject();
+                        jsonObject.put("id", dynAttribute.getId());
+                        jsonObject.put("name", buildAttribute.getName());
+                        jsonObject.put("alias", buildAttribute.getAlias());
+                        //            jsonObject.put("groupAlias", attributeGroup.getGroupAlias());
+                        jsonObject.put("type", buildAttribute.getType());
+                        jsonObject.put("value", buildAttribute.getValue());
+                        jsonObject.put("formula", buildAttribute.getFormula());
+                        jsonObject.put("code", dynAttribute.getCode());
+                        jsonObject.put("value", dynAttribute.getValue());
+                        if (buildAttribute.getSelects() != null && buildAttribute.getSelects().size() != 0) {
+                            jsonObject.put("selects", buildAttribute.getSelects());
+                        }
+                        if (buildAttribute.getUnit() != null && !buildAttribute.getUnit().equals("")) {
+                            jsonObject.put("unit", buildAttribute.getUnit());
+                        }
+                        jsonArray1.add(jsonObject);
+                    }
+                }
+            }
+            jsonArray.add(jsonArray1);
+        }
+        return jsonArray;
+    }
+
+    public List<BuildDynAttribute> findByBuildAndCodeAndGroupAlias(Build build, Object code, Object groupAlias) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(Filter.eq("build", build));
+        filters.add(Filter.eq("code", code));
+        filters.add(Filter.eq("groupAlias", groupAlias));
+        return buildDynAttributeDao.findList(0, null, filters);
+    }
+
+    public void changeCode(Build build, Object code, Object groupAlias) {
+        List<BuildDynAttribute> buildDynAttributes = findByBuildAndCodeAndGroupAlias(build, Integer.valueOf(code.toString()) + 1, groupAlias);
+        if (buildDynAttributes.size() == 0) {
+            return;
+        }
+        for (BuildDynAttribute buildDynAttribute : buildDynAttributes) {
+            buildDynAttribute.setCode(Integer.valueOf(code.toString()));
+            save(buildDynAttribute);
+        }
+        changeCode(build,Integer.valueOf(code.toString()) + 1,groupAlias);
     }
 }

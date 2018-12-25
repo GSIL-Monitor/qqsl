@@ -44,6 +44,8 @@ public class BuildService extends BaseService<Build,Long> {
     @Autowired
     private BuildAttributeService buildAttributeService;
     @Autowired
+    private BuildDynAttributeService buildDynAttributeService;
+    @Autowired
     public void setBaseDao(BuildDao buildDao) {
         super.setBaseDao( buildDao);
     }
@@ -118,34 +120,34 @@ public class BuildService extends BaseService<Build,Long> {
 //        jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType()==null?null:build.getChildType().name());
         jsonObject1 = new JSONObject();
-        writeAttributeGroup(build.getCoordinate(),jsonObject1);
+        writeAttributeGroup(build.getCoordinate(),jsonObject1,build);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("coordinate", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttributeGroup(build.getWaterResource(),jsonObject1);
+        writeAttributeGroup(build.getWaterResource(),jsonObject1,build);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("waterResource", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttributeGroup(build.getControlSize(),jsonObject1);
+        writeAttributeGroup(build.getControlSize(),jsonObject1,build);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("controlSize", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttributeGroup(build.getGroundStress(),jsonObject1);
+        writeAttributeGroup(build.getGroundStress(),jsonObject1,build);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("groundStress", jsonObject1);
         }
         jsonObject1 = new JSONObject();
-        writeAttributeGroup(build.getComponent(),jsonObject1);
+        writeAttributeGroup(build.getComponent(),jsonObject1,build);
         if (!jsonObject1.isEmpty()) {
             jsonObject.put("component", jsonObject1);
         }
         return jsonObject;
     }
 
-    private void writeAttributeGroup(AttributeGroup attributeGroup, JSONObject jsonObject) {
+    private void writeAttributeGroup(AttributeGroup attributeGroup, JSONObject jsonObject,Build build) {
         if (attributeGroup == null) {
             return;
         }
@@ -158,11 +160,15 @@ public class BuildService extends BaseService<Build,Long> {
             if (attributeGroup.isDyn()) {
                 jsonObject.put("dyn", attributeGroup.isDyn());
                 jsonObject.put("groupAlias", attributeGroup.getGroupAlias());
+                List<BuildDynAttribute> dynAttributeList = buildDynAttributeService.findByBuild(build);
+                jsonArray = buildDynAttributeService.toJSON(dynAttributeList);
+                jsonObject.put("attribute", jsonArray);
+            } else {
+                jsonObject.put("attribute", jsonArray.isEmpty()?null:jsonArray);
             }
-            jsonObject.put("attribute", jsonArray.isEmpty()?null:jsonArray);
         }
         jsonArray = new JSONArray();
-        writeChild(attributeGroup.getChilds(), jsonArray);
+        writeChild(attributeGroup.getChilds(), jsonArray, build);
         if (!jsonArray.isEmpty()) {
             jsonObject.put("name", attributeGroup.getName());
             jsonObject.put("alias", attributeGroup.getAlias());
@@ -170,14 +176,14 @@ public class BuildService extends BaseService<Build,Long> {
         }
     }
 
-    private void writeChild(List<AttributeGroup> attributeGroups, JSONArray jsonArray) {
+    private void writeChild(List<AttributeGroup> attributeGroups, JSONArray jsonArray,Build build) {
         JSONObject jsonObject;
         if (attributeGroups == null) {
             return;
         }
         for (AttributeGroup attributeGroup : attributeGroups) {
             jsonObject = new JSONObject();
-            writeAttributeGroup(attributeGroup, jsonObject);
+            writeAttributeGroup(attributeGroup, jsonObject,build);
             if (!jsonObject.isEmpty()) {
                 jsonArray.add(jsonObject);
             }
