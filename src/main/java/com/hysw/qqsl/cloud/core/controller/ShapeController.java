@@ -1075,7 +1075,7 @@ public class ShapeController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/dyn", method = RequestMethod.GET)
+    @RequestMapping(value = "/build/dyn/create", method = RequestMethod.GET)
     public @ResponseBody Message builDDyn(@RequestParam String alias) {
         AttributeGroup attributeGroup = buildDynAttributeService.getAttributeGroup(alias);
         if (attributeGroup == null) {
@@ -1087,7 +1087,7 @@ public class ShapeController {
 
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/dyn/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/build/dyn/remove", method = RequestMethod.POST)
     public @ResponseBody Message deleteDyn(@RequestBody  Map<String,Object> objectMap) {
         Object buildId = objectMap.get("buildId");
         Object code = objectMap.get("code");
