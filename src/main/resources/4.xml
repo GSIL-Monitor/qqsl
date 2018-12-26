@@ -59,9 +59,9 @@
         <attribute name="地基应力（挡土墙）" unit="Mpa" type="number" alias="gs0025"/>
     </attributeGroup>
     <!--截水廊道-->
-    <attributeGroup name="地基处理" buildAlias="b0004" alias="gs">
-        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0026"/>
-    </attributeGroup>
+    <!--<attributeGroup name="地基处理" buildAlias="b0004" alias="gs">-->
+        <!--<attribute name="地基应力" unit="Mpa" type="number" alias="gs0026"/>-->
+    <!--</attributeGroup>-->
     <!--陡坡-->
     <attributeGroup name="地基处理" buildAlias="b0066" alias="gs">
         <attribute name="地基应力" unit="Mpa" type="number" alias="gs0027"/>
