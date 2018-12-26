@@ -46,7 +46,7 @@
     </attributeGroup>
     <!--跌水-->
     <attributeGroup name="控制尺寸" buildAlias="b0011" alias="cs">
-        <attribute name="级数" unit="" type="number" alias="cs0021" locked="false" formula=""/>
+        <attribute name="级数" unit="" type="number" alias="cs0021" locked="false" formula="" fieldName="layer" />
         <!--<attribute name="跌水口宽B" unit="m" type="number" alias="cs0022" locked="false" formula=""/>-->
         <!--<attribute name="堰前水头H" unit="m" type="number" alias="cs0023" locked="false" formula=""/>-->
         <!--<attribute name="行近流速水头Hv" unit="m" type="number" alias="cs0024" locked="false" formula=""/>-->
