@@ -119,7 +119,7 @@ public class BuildServiceTest extends BaseTest {
 //        buildService.outputBuilds(buildModel);
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void test0003() throws DocumentException, IOException {
         File file = null;
