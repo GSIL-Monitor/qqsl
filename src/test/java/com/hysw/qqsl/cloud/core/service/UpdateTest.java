@@ -8,18 +8,27 @@ import com.hysw.qqsl.cloud.pay.service.PackageService;
 import com.hysw.qqsl.cloud.util.SettingUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.xml.sax.SAXException;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,6 +74,10 @@ public class UpdateTest {
     private FieldWorkService fieldWorkService;
     @Autowired
     private ShapeService shapeService;
+    @Autowired
+    private StationService stationService;
+    @Autowired
+    private CameraService cameraService;
 
     /**
      * 1.删除attribute表
@@ -78,7 +91,7 @@ public class UpdateTest {
      * 9.模板补全时需对迁移数据进行多高程处理
      */
 
-    @Test
+//    @Test
     public void test00001(){
         List<Coordinate> all = coordinateService.findAll();
         for (Coordinate coordinate : all) {
@@ -197,6 +210,128 @@ public class UpdateTest {
         shape.setRemark(coordinate.getDescription());
         shape.setCommonType(CommonEnum.CommonType.valueOf(baseType.toString()));
         shapeService.save(shape);
+    }
+
+    /**
+     * 测站导入
+     */
+//    @Test
+    public void test0001() throws DocumentException {
+        File file = null;
+        try {
+            file = new ClassPathResource("/stationtest.xml").getFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SAXReader reader = new SAXReader();
+        try {
+            reader.setFeature(
+                    "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+                    false);
+        } catch (SAXException e1) {
+            e1.printStackTrace();
+        }
+        Document doc = reader.read(file);
+        Element elem = doc.getRootElement();
+        List<Element> elements = elem.elements();
+        for (Element element : elements) {
+            String instanceId = element.attributeValue("instanceId");
+            Station station = stationService.findByInstanceId(instanceId);
+            if (station == null) {
+                station = new Station();
+            }
+            if (element.attributeValue("name") != null && !element.attributeValue("name").equals("")) {
+                station.setName(element.attributeValue("name"));
+            }
+            if (element.attributeValue("description") != null && !element.attributeValue("description").equals("")) {
+                station.setDescription(element.attributeValue("description"));
+            }
+            station.setType(CommonEnum.StationType.NORMAL_STATION);
+            if (element.attributeValue("coor") != null && !element.attributeValue("coor").equals("")) {
+                station.setCoor(element.attributeValue("coor"));
+            }
+            if (element.attributeValue("address") != null && !element.attributeValue("address").equals("")) {
+                station.setAddress(element.attributeValue("address"));
+            }
+            if (element.attributeValue("riverModel") != null && !element.attributeValue("riverModel").equals("")) {
+                station.setRiverModel(element.attributeValue("riverModel"));
+            }
+            if (element.attributeValue("flowModel") != null && !element.attributeValue("flowModel").equals("")) {
+                station.setFlowModel(element.attributeValue("flowModel"));
+            }
+
+            if (element.attributeValue("instanceId") != null && !element.attributeValue("instanceId").equals("")) {
+                station.setInstanceId(element.attributeValue("instanceId"));
+            }
+            if (element.attributeValue("shares") != null && !element.attributeValue("shares").equals("")) {
+                station.setShares(element.attributeValue("shares"));
+            }
+            if (element.attributeValue("expireDate") != null && !element.attributeValue("expireDate").equals("")) {
+                station.setExpireDate(new Date(Long.valueOf(element.attributeValue("expireDate"))));
+            }
+            if (element.attributeValue("user") != null && !element.attributeValue("user").equals("")) {
+                User user = userService.find(Long.valueOf(element.attributeValue("user")));
+                station.setUser(user);
+            }
+            if (element.attributeValue("cooperate") != null && !element.attributeValue("cooperate").equals("")) {
+                station.setCooperate(element.attributeValue("cooperate"));
+            }
+            if (element.attributeValue("bottomElevation") != null && !element.attributeValue("bottomElevation").equals("")) {
+                station.setBottomElevation(Double.valueOf(element.attributeValue("bottomElevation")));
+            }
+            stationService.save(station);
+            List<Element> elements1 = element.elements();
+            for (Element child : elements1) {
+                String code = child.attributeValue("code");
+                if (code != null && !code.equals("")) {
+                    Sensor sensor = sensorService.findByCode(code);
+                    if (sensor == null) {
+                        sensor = new Sensor();
+                    }
+                    if (child.attributeValue("code") != null && !child.attributeValue("code").equals("")) {
+                        sensor.setCode(child.attributeValue("code"));
+                    }
+                    if (child.attributeValue("type") != null && !child.attributeValue("type").equals("")) {
+                        sensor.setType(Sensor.Type.valueOf(child.attributeValue("type")));
+                    }
+                    if (child.attributeValue("activate") != null && !child.attributeValue("activate").equals("")) {
+                        sensor.setActivate(Boolean.valueOf(child.attributeValue("activate")));
+                    }
+
+                    if (child.attributeValue("info") != null && !child.attributeValue("info").equals("")) {
+                        String info = child.attributeValue("info");
+                        JSONObject jsonObject = JSONObject.fromObject(info);
+                        sensor.setFactory(jsonObject.get("factory").toString());
+                        sensor.setContact(jsonObject.get("contact").toString());
+                        sensor.setPhone(jsonObject.get("phone").toString());
+                    }
+//
+                    if (child.attributeValue("settingHeight") != null && !child.attributeValue("settingHeight").equals("")) {
+                        sensor.setSettingHeight(Double.valueOf(child.attributeValue("settingHeight")));
+                    }
+                    sensor.setStation(station);
+                    sensorService.save(sensor);
+                } else {
+                    String cameraUrl = child.attributeValue("cameraUrl");
+                    Camera camera = cameraService.findByCode(cameraUrl);
+                    if (camera == null) {
+                        camera = new Camera();
+                    }
+                    if (child.attributeValue("cameraUrl") != null && !child.attributeValue("cameraUrl").equals("")) {
+                        camera.setCode(child.attributeValue("cameraUrl"));
+                    }
+                    if (child.attributeValue("info") != null && !child.attributeValue("info").equals("")) {
+                        String info = child.attributeValue("info");
+                        JSONObject jsonObject = JSONObject.fromObject(info);
+                        camera.setFactory(jsonObject.get("factory").toString());
+                        camera.setContact(jsonObject.get("contact").toString());
+                        camera.setPhone(jsonObject.get("phone").toString());
+                    }
+                    camera.setStation(station);
+                    cameraService.save(camera);
+                }
+            }
+        }
     }
 
 }
