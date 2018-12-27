@@ -262,8 +262,8 @@
       <attribute name="深度" unit="m" type="number" alias="ct0177"/>  
       <attribute name="厚度" unit="m" type="number" alias="ct0178"/> 
     </attributeGroup>  
-    <attributeGroup name="井壁管" dyn="true" groupAlias="ag0001"></attributeGroup>  
-    <attributeGroup name="过滤器" dyn="true" groupAlias="ag0002"></attributeGroup>  
+    <attributeGroup name="井壁管" dyn="true" groupAlias="ag0001"/>  
+    <attributeGroup name="过滤器" dyn="true" groupAlias="ag0002"/>  
     <attributeGroup name="沉砂管"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0179"/>  
       <attribute name="公称规格（选择）" unit="英寸" type="number" alias="ct0180"/>  
@@ -288,7 +288,7 @@
       <attribute name="基础高" unit="m" type="number" alias="ct0192"/>  
       <attribute name="背水面坡比" unit="" type="text" alias="ct0193"/> 
     </attributeGroup>  
-    <attributeGroup name="test" dyn="true" groupAlias="ag0001"></attributeGroup> 
+    <attributeGroup name="test" dyn="true" groupAlias="ag0001"/> 
   </attributeGroup>  
   <!--海漫-->  
   <attributeGroup name="构件" buildAlias="b0014" alias="ct"> 
@@ -370,21 +370,21 @@
       <attribute name="i2" unit="1:?" type="number" alias="ct0242" fieldName="ratio_tuQiang1"/>  
       <attribute name="i3" unit="1:?" type="number" alias="ct0243" fieldName="ratio_tuQiang2"/>  
       <attribute name="h8" unit="m" type="number" alias="ct0244" fieldName="high_tuQiangWaiZhiB"/>  
-      <attribute name="h13" unit="m" type="number" alias="ct0245" fieldName="high_xiaoLiKan"/>
-      <attribute name="h7" unit="m" type="number" alias="ct0246" fieldName="high_tuQiangB"/>  
-      <attribute name="l7" unit="m" type="number" alias="ct0247" fieldName="length_tuQiangB"/> 
+      <attribute name="h7" unit="m" type="number" alias="ct0245" fieldName="high_tuQiangB"/>  
+      <attribute name="l7" unit="m" type="number" alias="ct0246" fieldName="length_tuQiangB"/> 
     </attributeGroup>  
     <attributeGroup name="消力池底板"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0248"/>  
-      <attribute name="l3" unit="m" type="number" alias="ct0249" fieldName="length_inportPingA"/>  
-      <attribute name="l14" unit="m" type="number" alias="ct0250" fieldName="length_xiePoA"/>  
-      <attribute name="l6" unit="m" type="number" alias="ct0251" fieldName="length_exportPingA"/>  
-      <attribute name="h5" unit="m" type="number" alias="ct0252" fieldName="high_dieCha"/>  
-      <attribute name="d2" unit="m" type="number" alias="ct0253" fieldName="thickness_chiDiBan"/>  
-      <attribute name="h6" unit="m" type="number" alias="ct0254" fieldName="high_exportBianQiang"/>  
-      <attribute name="l15" unit="m" type="number" alias="ct0255" fieldName="length_xiePoB"/>  
-      <attribute name="l9" unit="m" type="number" alias="ct0256" fieldName="length_exportPingB"/>  
-      <attribute name="l17" unit="m" type="number" alias="ct0257" fieldName="length_xiaoLiKan"/>
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0247"/>  
+      <attribute name="l3" unit="m" type="number" alias="ct0248" fieldName="length_inportPingA"/>  
+      <attribute name="l14" unit="m" type="number" alias="ct0249" fieldName="length_xiePoA"/>  
+      <attribute name="l6" unit="m" type="number" alias="ct0250" fieldName="length_exportPingA"/>  
+      <attribute name="h5" unit="m" type="number" alias="ct0251" fieldName="high_dieCha"/>  
+      <attribute name="d2" unit="m" type="number" alias="ct0252" fieldName="thickness_chiDiBan"/>  
+      <attribute name="h6" unit="m" type="number" alias="ct0253" fieldName="high_exportBianQiang"/>  
+      <attribute name="l15" unit="m" type="number" alias="ct0254" fieldName="length_xiePoB"/>  
+      <attribute name="l9" unit="m" type="number" alias="ct0255" fieldName="length_exportPingB"/>  
+      <attribute name="l17" unit="m" type="number" alias="ct0256" fieldName="length_xiaoLiKan"/>  
+      <attribute name="h13" unit="m" type="number" alias="ct0257" fieldName="high_xiaoLiKan"/> 
     </attributeGroup>  
     <attributeGroup name="消力池边墙"> 
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0258"/>  
