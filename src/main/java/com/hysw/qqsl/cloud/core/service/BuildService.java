@@ -164,6 +164,7 @@ public class BuildService extends BaseService<Build,Long> {
                 jsonArray = buildDynAttributeService.toJSON(dynAttributeList);
                 jsonObject.put("attribute", jsonArray);
             } else {
+                jsonObject.put("dyn", attributeGroup.isDyn());
                 jsonObject.put("attribute", jsonArray.isEmpty()?null:jsonArray);
             }
         }
@@ -1161,23 +1162,23 @@ public class BuildService extends BaseService<Build,Long> {
             }
             jsonObject = new JSONObject();
             jsonObject.put("typeC", commonType.getTypeC());
-            jsonObject.put("commonType", commonType.name());
-            jsonObject.put("type", commonType.getType());
-            jsonObject.put("buildType", commonType.getBuildType());
-            jsonObject.put("abbreviate", commonType.getAbbreviate());
+            jsonObject.put("type", commonType.name());
+//            jsonObject.put("type", commonType.getType());
+//            jsonObject.put("buildType", commonType.getBuildType());
+//            jsonObject.put("abbreviate", commonType.getAbbreviate());
             jsonArray1 = new JSONArray();
             for (Build.ChildType childType : Build.ChildType.values()) {
                 if (childType.getCommonType() == commonType) {
                     jsonObject1 = new JSONObject();
                     jsonObject1.put("typeC", childType.getTypeC());
-                    jsonObject1.put("childType", childType.name());
-                    jsonObject1.put("type", childType.getType());
-                    jsonObject1.put("abbreviate", childType.getAbbreviate());
+                    jsonObject1.put("type", childType.name());
+//                    jsonObject1.put("type", childType.getType());
+//                    jsonObject1.put("abbreviate", childType.getAbbreviate());
                     jsonArray1.add(jsonObject1);
                 }
             }
             if (!jsonArray1.isEmpty()) {
-                jsonObject.put("child", jsonArray1);
+                jsonObject.put("childType", jsonArray1);
             }
             jsonArray.add(jsonObject);
         }

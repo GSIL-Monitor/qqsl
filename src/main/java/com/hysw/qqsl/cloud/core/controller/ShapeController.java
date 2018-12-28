@@ -381,60 +381,60 @@ public class ShapeController {
         return MessageService.message(Message.Type.OK);
     }
 
-    /**
-     * 取得图形线面下某点详情
-     *
-     * @param id 线面点id
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/coordinate/details/{id}", method = RequestMethod.GET)
-    public @ResponseBody
-    Message coordinateDetailsId(@PathVariable("id") Long id) {
-        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(id);
-        if (shapeCoordinate == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        JSONObject jsonObject = shapeCoordinateService.getCoordinateDetails(shapeCoordinate);
-        return MessageService.message(Message.Type.OK,jsonObject);
-    }
+//    /**
+//     * 取得图形线面下某点详情
+//     *
+//     * @param id 线面点id
+//     * @return
+//     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/coordinate/details/{id}", method = RequestMethod.GET)
+//    public @ResponseBody
+//    Message coordinateDetailsId(@PathVariable("id") Long id) {
+//        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(id);
+//        if (shapeCoordinate == null) {
+//            return MessageService.message(Message.Type.DATA_NOEXIST);
+//        }
+//        User user = authentService.getUserFromSubject();
+//        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
+//        JSONObject jsonObject = shapeCoordinateService.getCoordinateDetails(shapeCoordinate);
+//        return MessageService.message(Message.Type.OK,jsonObject);
+//    }
 
-    /**
-     * 编辑图形线面下某点高程组
-     *
-     * @param objectMap <ul>
-     *                  <li>id：线面点id</li>
-     *                  <li>elevations:[{{top-ele:xxx,name:xxx,value:xxx}}, {...}]</li>
-     *                  </ul>
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/coordinate/elevation/edit", method = RequestMethod.POST)
-    public @ResponseBody
-    Message coordinateElevationEdit(@RequestBody Map<String, Object> objectMap) {
-        Object id = objectMap.get("id");
-        Object elevations = objectMap.get("elevations");
-        if (id == null || elevations == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
-        if (shapeCoordinate == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
-        shapeCoordinate.setElevations(elevations.toString());
-        shapeCoordinateService.save(shapeCoordinate);
-        return MessageService.message(Message.Type.OK);
-    }
+//    /**
+//     * 编辑图形线面下某点高程组
+//     *
+//     * @param objectMap <ul>
+//     *                  <li>id：线面点id</li>
+//     *                  <li>elevations:[{{top-ele:xxx,name:xxx,value:xxx}}, {...}]</li>
+//     *                  </ul>
+//     * @return
+//     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/coordinate/elevation/edit", method = RequestMethod.POST)
+//    public @ResponseBody
+//    Message coordinateElevationEdit(@RequestBody Map<String, Object> objectMap) {
+//        Object id = objectMap.get("id");
+//        Object elevations = objectMap.get("elevations");
+//        if (id == null || elevations == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
+//        if (shapeCoordinate == null) {
+//            return MessageService.message(Message.Type.DATA_NOEXIST);
+//        }
+//        User user = authentService.getUserFromSubject();
+//        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
+//        shapeCoordinate.setElevations(elevations.toString());
+//        shapeCoordinateService.save(shapeCoordinate);
+//        return MessageService.message(Message.Type.OK);
+//    }
 
     /**
      * 新建图形线面剖面属性
@@ -538,320 +538,320 @@ public class ShapeController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/type/download", method = RequestMethod.GET)
+    @RequestMapping(value = "/build/type/list", method = RequestMethod.GET)
     public @ResponseBody Message buildTemplateInfo() {
         return MessageService.message(Message.Type.OK,buildService.getModelType());
     }
 
-    /**
-     * 建筑物模板下载
-     * @param types  [a,b,c]
-     * @param response 响应
-     * @return OK:下载成功 Fail:下载失败
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/template/download", method = RequestMethod.GET)
-    public @ResponseBody
-    Message downloadBuildModel(@RequestParam String[] types, HttpServletResponse response) {
-        List<String> list = Arrays.asList(types);
-        Workbook wb = buildService.downloadBuildModel(list);
-        if (wb == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        ByteArrayOutputStream bos = null;
-        InputStream is = null;
-        OutputStream output = null;
-        try {
-            bos = new ByteArrayOutputStream();
-            wb.write(bos);
-            is = new ByteArrayInputStream(bos.toByteArray());
-            String contentType = "application/vnd.ms-excel";
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
-            output = response.getOutputStream();
-            byte b[] = new byte[1024];
-            while (true) {
-                int length = is.read(b);
-                if (length == -1) {
-                    break;
-                }
-                output.write(b, 0, length);
-            }
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            return MessageService.message(Message.Type.FAIL);
-        } finally {
-            IOUtils.safeClose(bos);
-            IOUtils.safeClose(is);
-            IOUtils.safeClose(output);
-        }
-        return MessageService.message(Message.Type.OK);
-    }
+//    /**
+//     * 建筑物模板下载
+//     * @param types  [a,b,c]
+//     * @param response 响应
+//     * @return OK:下载成功 Fail:下载失败
+//     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/build/template/download", method = RequestMethod.GET)
+//    public @ResponseBody
+//    Message downloadBuildModel(@RequestParam String[] types, HttpServletResponse response) {
+//        List<String> list = Arrays.asList(types);
+//        Workbook wb = buildService.downloadBuildModel(list);
+//        if (wb == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        ByteArrayOutputStream bos = null;
+//        InputStream is = null;
+//        OutputStream output = null;
+//        try {
+//            bos = new ByteArrayOutputStream();
+//            wb.write(bos);
+//            is = new ByteArrayInputStream(bos.toByteArray());
+//            String contentType = "application/vnd.ms-excel";
+//            response.setContentType(contentType);
+//            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+//            output = response.getOutputStream();
+//            byte b[] = new byte[1024];
+//            while (true) {
+//                int length = is.read(b);
+//                if (length == -1) {
+//                    break;
+//                }
+//                output.write(b, 0, length);
+//            }
+//        } catch (Exception e) {
+//            e.fillInStackTrace();
+//            return MessageService.message(Message.Type.FAIL);
+//        } finally {
+//            IOUtils.safeClose(bos);
+//            IOUtils.safeClose(is);
+//            IOUtils.safeClose(output);
+//        }
+//        return MessageService.message(Message.Type.OK);
+//    }
 
-    /**
-     * 单建筑物上传
-     * @param request projectId项目Id，baseLevelType坐标转换基准面类型，WGS84Type-WGS84坐标格式
-     * @return FAIL参数验证失败，EXIST项目不存在或者中心点为空，OTHER已达到最大限制数量，OK上传成功
-     */
-    @PackageIsExpire(value = "request")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/single/uploadBuild", method = RequestMethod.POST)
-    public @ResponseBody
-    Message singleUploadBuild(HttpServletRequest request) {
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-        String shapeCoordinateId = request.getParameter("shapeCoordinateId");
-        String baseLevelType = request.getParameter("baseLevelType");
-        String WGS84Type = request.getParameter("WGS84Type");
-        Message message;
-        JSONObject jsonObject = new JSONObject();
-        if (shapeCoordinateId == null || baseLevelType == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        ShapeCoordinate shapeCoordinate;
-        Coordinate.WGS84Type wgs84Type = null;
-        Coordinate.BaseLevelType levelType;
-        try {
-            shapeCoordinate = shapeCoordinateService.find(Long.valueOf(shapeCoordinateId));
-            message=isAllowUploadCoordinateFile(shapeCoordinate.getShape().getProject());
-            levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
-            if (!WGS84Type.equals("")) {
-                wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
-            }
-        } catch (Exception e) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        if (shapeCoordinate == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
-            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
-        }
-        String central = coordinateService.getCoordinateBasedatum(shapeCoordinate.getShape().getProject());
-        if (central == null) {
-            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
-        }
-        Map<String, Workbook> wbs = new HashMap<>();
-        if(multipartResolver.isMultipart(request)) {
-            //转换成多部分request
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-            Map<String, MultipartFile> map = multiRequest.getFileMap();
-            MultipartFile file = map.get("file");
-            shapeService.uploadCoordinate(file,jsonObject,wbs);
-        }
-        if (wbs.size() != 1) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        if (!jsonObject.isEmpty()) {
-            return MessageService.message(Message.Type.COOR_FORMAT_ERROR, jsonObject);
-        }
-        SheetObject sheetObject = new SheetObject();
-        shapeService.getAllSheet(wbs,sheetObject);
-//		进入错误处理环节
-        if (sheetObject.getUnknowWBs().size() != 0) {
-            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
-        }
-        PLACache plaCache = shapeService.reslove(sheetObject, central, wgs84Type, shapeCoordinate.getShape().getProject(), shapeCoordinate);
-        if (plaCache == null) {
-            return MessageService.message(Message.Type.OK);
-        }
-        JSONArray jsonArray = shapeService.pickedErrorMsg1(plaCache);
-        return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
-    }
+//    /**
+//     * 单建筑物上传
+//     * @param request projectId项目Id，baseLevelType坐标转换基准面类型，WGS84Type-WGS84坐标格式
+//     * @return FAIL参数验证失败，EXIST项目不存在或者中心点为空，OTHER已达到最大限制数量，OK上传成功
+//     */
+//    @PackageIsExpire(value = "request")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/single/uploadBuild", method = RequestMethod.POST)
+//    public @ResponseBody
+//    Message singleUploadBuild(HttpServletRequest request) {
+//        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+//        String shapeCoordinateId = request.getParameter("shapeCoordinateId");
+//        String baseLevelType = request.getParameter("baseLevelType");
+//        String WGS84Type = request.getParameter("WGS84Type");
+//        Message message;
+//        JSONObject jsonObject = new JSONObject();
+//        if (shapeCoordinateId == null || baseLevelType == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        ShapeCoordinate shapeCoordinate;
+//        Coordinate.WGS84Type wgs84Type = null;
+//        Coordinate.BaseLevelType levelType;
+//        try {
+//            shapeCoordinate = shapeCoordinateService.find(Long.valueOf(shapeCoordinateId));
+//            message=isAllowUploadCoordinateFile(shapeCoordinate.getShape().getProject());
+//            levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+//            if (!WGS84Type.equals("")) {
+//                wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+//            }
+//        } catch (Exception e) {
+//            return MessageService.message(Message.Type.DATA_NOEXIST);
+//        }
+//        if (message.getType() != Message.Type.OK) {
+//            return message;
+//        }
+//        if (shapeCoordinate == null) {
+//            return MessageService.message(Message.Type.DATA_NOEXIST);
+//        }
+//        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
+//            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+//        }
+//        String central = coordinateService.getCoordinateBasedatum(shapeCoordinate.getShape().getProject());
+//        if (central == null) {
+//            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
+//        }
+//        Map<String, Workbook> wbs = new HashMap<>();
+//        if(multipartResolver.isMultipart(request)) {
+//            //转换成多部分request
+//            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+//            Map<String, MultipartFile> map = multiRequest.getFileMap();
+//            MultipartFile file = map.get("file");
+//            shapeService.uploadCoordinate(file,jsonObject,wbs);
+//        }
+//        if (wbs.size() != 1) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        if (!jsonObject.isEmpty()) {
+//            return MessageService.message(Message.Type.COOR_FORMAT_ERROR, jsonObject);
+//        }
+//        SheetObject sheetObject = new SheetObject();
+//        shapeService.getAllSheet(wbs,sheetObject);
+////		进入错误处理环节
+//        if (sheetObject.getUnknowWBs().size() != 0) {
+//            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
+//        }
+//        PLACache plaCache = shapeService.reslove(sheetObject, central, wgs84Type, shapeCoordinate.getShape().getProject(), shapeCoordinate);
+//        if (plaCache == null) {
+//            return MessageService.message(Message.Type.OK);
+//        }
+//        JSONArray jsonArray = shapeService.pickedErrorMsg1(plaCache);
+//        return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
+//    }
 
-    /**
-     * 多建筑物上传
-     * @param request projectId项目Id，baseLevelType坐标转换基准面类型，WGS84Type-WGS84坐标格式
-     * @return FAIL参数验证失败，EXIST项目不存在或者中心点为空，OTHER已达到最大限制数量，OK上传成功
-     */
-    @PackageIsExpire(value = "request")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/multiple/uploadBuild", method = RequestMethod.POST)
-    public @ResponseBody
-    Message uploadBuildAttribute(HttpServletRequest request) {
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-        String shapeId = request.getParameter("shapeId");
-        String baseLevelType = request.getParameter("baseLevelType");
-        String WGS84Type = request.getParameter("WGS84Type");
-        Message message;
-        JSONObject jsonObject = new JSONObject();
-        if (shapeId == null || baseLevelType == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Shape shape;
-        Coordinate.WGS84Type wgs84Type = null;
-        Coordinate.BaseLevelType levelType;
-        try {
-            shape = shapeService.find(Long.valueOf(shapeId));
-            message=isAllowUploadCoordinateFile(shape.getProject());
-            levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
-            if (!WGS84Type.equals("")) {
-                wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
-            }
-        } catch (Exception e) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
-        if (shape == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
-            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
-        }
-        String central = coordinateService.getCoordinateBasedatum(shape.getProject());
-        if (central == null) {
-            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
-        }
-        Map<String, Workbook> wbs = new HashMap<>();
-        if(multipartResolver.isMultipart(request)) {
-            //转换成多部分request
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-            Map<String, MultipartFile> map = multiRequest.getFileMap();
-            for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
-                shapeService.uploadCoordinate(entry,jsonObject,wbs);
-            }
-        }
-        if (!jsonObject.isEmpty()) {
-            return MessageService.message(Message.Type.COOR_FORMAT_ERROR, jsonObject);
-        }
-        SheetObject sheetObject = new SheetObject();
-        shapeService.getAllSheet(wbs,sheetObject);
-//		进入错误处理环节
-        if (sheetObject.getUnknowWBs().size() != 0) {
-            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
-        }
-        PLACache plaCache = shapeService.reslove(sheetObject, central, wgs84Type, shape.getProject(), shape);
-        if (plaCache == null) {
-            return MessageService.message(Message.Type.OK);
-        }
-        JSONArray jsonArray = shapeService.pickedErrorMsg1(plaCache);
-        return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
-    }
+//    /**
+//     * 多建筑物上传
+//     * @param request projectId项目Id，baseLevelType坐标转换基准面类型，WGS84Type-WGS84坐标格式
+//     * @return FAIL参数验证失败，EXIST项目不存在或者中心点为空，OTHER已达到最大限制数量，OK上传成功
+//     */
+//    @PackageIsExpire(value = "request")
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/multiple/uploadBuild", method = RequestMethod.POST)
+//    public @ResponseBody
+//    Message uploadBuildAttribute(HttpServletRequest request) {
+//        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+//        String shapeId = request.getParameter("shapeId");
+//        String baseLevelType = request.getParameter("baseLevelType");
+//        String WGS84Type = request.getParameter("WGS84Type");
+//        Message message;
+//        JSONObject jsonObject = new JSONObject();
+//        if (shapeId == null || baseLevelType == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        Shape shape;
+//        Coordinate.WGS84Type wgs84Type = null;
+//        Coordinate.BaseLevelType levelType;
+//        try {
+//            shape = shapeService.find(Long.valueOf(shapeId));
+//            message=isAllowUploadCoordinateFile(shape.getProject());
+//            levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+//            if (!WGS84Type.equals("")) {
+//                wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+//            }
+//        } catch (Exception e) {
+//            return MessageService.message(Message.Type.DATA_NOEXIST);
+//        }
+//        if (message.getType() != Message.Type.OK) {
+//            return message;
+//        }
+//        if (shape == null) {
+//            return MessageService.message(Message.Type.DATA_NOEXIST);
+//        }
+//        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
+//            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+//        }
+//        String central = coordinateService.getCoordinateBasedatum(shape.getProject());
+//        if (central == null) {
+//            return MessageService.message(Message.Type.COOR_PROJECT_NO_CENTER);
+//        }
+//        Map<String, Workbook> wbs = new HashMap<>();
+//        if(multipartResolver.isMultipart(request)) {
+//            //转换成多部分request
+//            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+//            Map<String, MultipartFile> map = multiRequest.getFileMap();
+//            for (Map.Entry<String, MultipartFile> entry : map.entrySet()) {
+//                shapeService.uploadCoordinate(entry,jsonObject,wbs);
+//            }
+//        }
+//        if (!jsonObject.isEmpty()) {
+//            return MessageService.message(Message.Type.COOR_FORMAT_ERROR, jsonObject);
+//        }
+//        SheetObject sheetObject = new SheetObject();
+//        shapeService.getAllSheet(wbs,sheetObject);
+////		进入错误处理环节
+//        if (sheetObject.getUnknowWBs().size() != 0) {
+//            return MessageService.message(Message.Type.COOR_UNKONW_SHEET_TYPE,shapeService.errorMsg(sheetObject.getUnknowWBs()));
+//        }
+//        PLACache plaCache = shapeService.reslove(sheetObject, central, wgs84Type, shape.getProject(), shape);
+//        if (plaCache == null) {
+//            return MessageService.message(Message.Type.OK);
+//        }
+//        JSONArray jsonArray = shapeService.pickedErrorMsg1(plaCache);
+//        return MessageService.message(Message.Type.COOR_RETURN_PROMPT, jsonArray);
+//    }
 
-    /**
-     * 单建筑物下载
-     *
-     * @param coordinateId
-     * @param response
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/single/download", method = RequestMethod.GET)
-    public @ResponseBody
-    Message buildSingleDownload(@RequestParam Long coordinateId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
-        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(coordinateId);
-        if (shapeCoordinate == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
-        Coordinate.WGS84Type wgs84Type = null;
-        if (!WGS84Type.equals("")) {
-            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
-        }
-        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
-            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
-        }
-        if (wgs84Type == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Workbook wb = buildService.downloadBuild(shapeCoordinate,wgs84Type);
-        if (wb == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        ByteArrayOutputStream bos = null;
-        InputStream is = null;
-        OutputStream output = null;
-        try {
-            bos = new ByteArrayOutputStream();
-            wb.write(bos);
-            is = new ByteArrayInputStream(bos.toByteArray());
-            String contentType = "application/vnd.ms-excel";
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
-            output = response.getOutputStream();
-            byte b[] = new byte[1024];
-            while (true) {
-                int length = is.read(b);
-                if (length == -1) {
-                    break;
-                }
-                output.write(b, 0, length);
-            }
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            return MessageService.message(Message.Type.FAIL);
-        } finally {
-            IOUtils.safeClose(bos);
-            IOUtils.safeClose(is);
-            IOUtils.safeClose(output);
-        }
-        return MessageService.message(Message.Type.OK);
-    }
+//    /**
+//     * 单建筑物下载
+//     *
+//     * @param coordinateId
+//     * @param response
+//     * @return
+//     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/build/single/download", method = RequestMethod.GET)
+//    public @ResponseBody
+//    Message buildSingleDownload(@RequestParam Long coordinateId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
+//        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(coordinateId);
+//        if (shapeCoordinate == null) {
+//            return MessageService.message(Message.Type.DATA_NOEXIST);
+//        }
+//        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+//        Coordinate.WGS84Type wgs84Type = null;
+//        if (!WGS84Type.equals("")) {
+//            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+//        }
+//        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
+//            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+//        }
+//        if (wgs84Type == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        Workbook wb = buildService.downloadBuild(shapeCoordinate,wgs84Type);
+//        if (wb == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        ByteArrayOutputStream bos = null;
+//        InputStream is = null;
+//        OutputStream output = null;
+//        try {
+//            bos = new ByteArrayOutputStream();
+//            wb.write(bos);
+//            is = new ByteArrayInputStream(bos.toByteArray());
+//            String contentType = "application/vnd.ms-excel";
+//            response.setContentType(contentType);
+//            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+//            output = response.getOutputStream();
+//            byte b[] = new byte[1024];
+//            while (true) {
+//                int length = is.read(b);
+//                if (length == -1) {
+//                    break;
+//                }
+//                output.write(b, 0, length);
+//            }
+//        } catch (Exception e) {
+//            e.fillInStackTrace();
+//            return MessageService.message(Message.Type.FAIL);
+//        } finally {
+//            IOUtils.safeClose(bos);
+//            IOUtils.safeClose(is);
+//            IOUtils.safeClose(output);
+//        }
+//        return MessageService.message(Message.Type.OK);
+//    }
 
-    /**
-     * 多建筑物下载
-     * @param projectId  projectId
-     * @param response 响应
-     * @return OK:下载成功 Fail:下载失败
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/multiple/download", method = RequestMethod.GET)
-    public @ResponseBody
-    Message downloadBuild(@RequestParam Long projectId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
-        Project project = projectService.find(projectId);
-        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
-        Coordinate.WGS84Type wgs84Type = null;
-        if (!WGS84Type.equals("")) {
-            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
-        }
-        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
-            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
-        }
-        if (wgs84Type == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        Workbook wb = buildService.downloadBuild(project,wgs84Type);
-        if (wb == null) {
-            return MessageService.message(Message.Type.FAIL);
-        }
-        ByteArrayOutputStream bos = null;
-        InputStream is = null;
-        OutputStream output = null;
-        try {
-            bos = new ByteArrayOutputStream();
-            wb.write(bos);
-            is = new ByteArrayInputStream(bos.toByteArray());
-            String contentType = "application/vnd.ms-excel";
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
-            output = response.getOutputStream();
-            byte b[] = new byte[1024];
-            while (true) {
-                int length = is.read(b);
-                if (length == -1) {
-                    break;
-                }
-                output.write(b, 0, length);
-            }
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            return MessageService.message(Message.Type.FAIL);
-        } finally {
-            IOUtils.safeClose(bos);
-            IOUtils.safeClose(is);
-            IOUtils.safeClose(output);
-        }
-        return MessageService.message(Message.Type.OK);
-    }
+//    /**
+//     * 多建筑物下载
+//     * @param projectId  projectId
+//     * @param response 响应
+//     * @return OK:下载成功 Fail:下载失败
+//     */
+//    @RequiresAuthentication
+//    @RequiresRoles(value = {"user:simple", "account:simple"}, logical = Logical.OR)
+//    @RequestMapping(value = "/build/multiple/download", method = RequestMethod.GET)
+//    public @ResponseBody
+//    Message downloadBuild(@RequestParam Long projectId, @RequestParam String baseLevelType, @RequestParam String WGS84Type, HttpServletResponse response) {
+//        Project project = projectService.find(projectId);
+//        Coordinate.BaseLevelType levelType = Coordinate.BaseLevelType.valueOf(baseLevelType);
+//        Coordinate.WGS84Type wgs84Type = null;
+//        if (!WGS84Type.equals("")) {
+//            wgs84Type = Coordinate.WGS84Type.valueOf(WGS84Type);
+//        }
+//        if (levelType == Coordinate.BaseLevelType.CGCS2000) {
+//            wgs84Type = Coordinate.WGS84Type.PLANE_COORDINATE;
+//        }
+//        if (wgs84Type == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        Workbook wb = buildService.downloadBuild(project,wgs84Type);
+//        if (wb == null) {
+//            return MessageService.message(Message.Type.FAIL);
+//        }
+//        ByteArrayOutputStream bos = null;
+//        InputStream is = null;
+//        OutputStream output = null;
+//        try {
+//            bos = new ByteArrayOutputStream();
+//            wb.write(bos);
+//            is = new ByteArrayInputStream(bos.toByteArray());
+//            String contentType = "application/vnd.ms-excel";
+//            response.setContentType(contentType);
+//            response.setHeader("Content-Disposition", "attachment; filename=\"" + "buildsTemplate"+ ".xlsx" + "\"");
+//            output = response.getOutputStream();
+//            byte b[] = new byte[1024];
+//            while (true) {
+//                int length = is.read(b);
+//                if (length == -1) {
+//                    break;
+//                }
+//                output.write(b, 0, length);
+//            }
+//        } catch (Exception e) {
+//            e.fillInStackTrace();
+//            return MessageService.message(Message.Type.FAIL);
+//        } finally {
+//            IOUtils.safeClose(bos);
+//            IOUtils.safeClose(is);
+//            IOUtils.safeClose(output);
+//        }
+//        return MessageService.message(Message.Type.OK);
+//    }
 
     /**
      * 获取建筑物详情
@@ -860,23 +860,51 @@ public class ShapeController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/details/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/shape/point/details/{id}", method = RequestMethod.GET)
     public @ResponseBody Message getBuild(@PathVariable("id") Long id) {
         Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
             return message;
         }
-        Build build = buildService.find(id);
-        if (build == null) {
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(id);
+        if (shapeCoordinate == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
         User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(build.getShapeCoordinate().getShape().getProject().getUser().getId())) {
+        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
         }
-        JSONObject jsonObject = buildService.buildJson(build);
+        JSONObject jsonObject = shapeCoordinateService.buildJson(shapeCoordinate);
         return MessageService.message(Message.Type.OK,jsonObject);
     }
+
+    /**
+     * 新建建筑物
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/build/create", method = RequestMethod.POST)
+    public @ResponseBody Message buildCreate(@RequestBody  Map<String,Object> objectMap) {
+        Object id = objectMap.get("id");
+        Object type = objectMap.get("type");
+        Object childType = objectMap.get("childType");
+        if (id == null && type == null) {
+            return MessageService.message(Message.Type.PARAMETER_ERROR);
+        }
+        ShapeCoordinate shapeCoordinate = shapeCoordinateService.find(Long.valueOf(id.toString()));
+        if (shapeCoordinate.getBuild() != null) {
+            return MessageService.message(Message.Type.DATA_EXIST);
+        }
+        Build build = new Build();
+        build.setType(CommonEnum.CommonType.valueOf(type.toString()));
+        if (childType != null && !childType.toString().equals("")) {
+            build.setChildType(Build.ChildType.valueOf(childType.toString()));
+        }
+        build.setShapeCoordinate(shapeCoordinate);
+        buildService.save(build);
+        return MessageService.message(Message.Type.OK);
+    }
+
 
     /**
      * 编辑建筑物
@@ -944,6 +972,51 @@ public class ShapeController {
         }
         return MessageService.message(Message.Type.OK);
     }
+
+    /**
+     * 建筑物动态组属性获取
+     * @param groupAlias 组别名
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/build/dyn", method = RequestMethod.GET)
+    public @ResponseBody Message builDDyn(@RequestParam String groupAlias) {
+        AttributeGroup attributeGroup = buildDynAttributeService.getAttributeGroup(groupAlias);
+        if (attributeGroup == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        JSONArray jsonArray = buildDynAttributeService.toJSON(attributeGroup);
+        return MessageService.message(Message.Type.OK,jsonArray);
+    }
+
+    /**
+     * 删除建筑物动态属性
+     * @param objectMap
+     * @return
+     */
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/build/dyn/remove", method = RequestMethod.POST)
+    public @ResponseBody Message deleteDyn(@RequestBody  Map<String,Object> objectMap) {
+        Object buildId = objectMap.get("id");
+        Object code = objectMap.get("code");
+        Object groupAlias = objectMap.get("groupAlias");
+        if (buildId == null || code == null || groupAlias == null) {
+            return MessageService.message(Message.Type.PARAMETER_ERROR);
+        }
+        Build build = buildService.find(Long.valueOf(buildId.toString()));
+        List<BuildDynAttribute> buildDynAttributes = buildDynAttributeService.findByBuildAndCodeAndGroupAlias(build, code, groupAlias);
+        if (buildDynAttributes.size() == 0) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        for (BuildDynAttribute buildDynAttribute : buildDynAttributes) {
+            buildDynAttributeService.remove(buildDynAttribute);
+        }
+        buildDynAttributeService.changeCode(build, code, groupAlias);
+        return MessageService.message(Message.Type.OK);
+    }
+
 
 
     /**
@@ -1068,43 +1141,7 @@ public class ShapeController {
         return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
-    /**
-     * 建筑物动态组属性获取
-     * @param groupAlias 组别名
-     * @return
-     */
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/dyn", method = RequestMethod.GET)
-    public @ResponseBody Message builDDyn(@RequestParam String groupAlias) {
-        AttributeGroup attributeGroup = buildDynAttributeService.getAttributeGroup(groupAlias);
-        if (attributeGroup == null) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        JSONArray jsonArray = buildDynAttributeService.toJSON(attributeGroup);
-        return MessageService.message(Message.Type.OK,jsonArray);
-    }
 
-    @RequiresAuthentication
-    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/build/dyn/remove", method = RequestMethod.POST)
-    public @ResponseBody Message deleteDyn(@RequestBody  Map<String,Object> objectMap) {
-        Object buildId = objectMap.get("id");
-        Object code = objectMap.get("code");
-        Object groupAlias = objectMap.get("groupAlias");
-        if (buildId == null || code == null || groupAlias == null) {
-            return MessageService.message(Message.Type.PARAMETER_ERROR);
-        }
-        Build build = buildService.find(Long.valueOf(buildId.toString()));
-        List<BuildDynAttribute> buildDynAttributes = buildDynAttributeService.findByBuildAndCodeAndGroupAlias(build, code, groupAlias);
-        if (buildDynAttributes.size() == 0) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
-        for (BuildDynAttribute buildDynAttribute : buildDynAttributes) {
-            buildDynAttributeService.remove(buildDynAttribute);
-        }
-        buildDynAttributeService.changeCode(build, code, groupAlias);
-        return MessageService.message(Message.Type.OK);
-    }
+
 
 }

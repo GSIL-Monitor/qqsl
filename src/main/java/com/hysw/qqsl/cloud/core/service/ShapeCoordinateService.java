@@ -93,4 +93,16 @@ public class ShapeCoordinateService extends BaseService<ShapeCoordinate, Long> {
         }
         return jsonObject;
     }
+
+    public JSONObject buildJson(ShapeCoordinate shapeCoordinate) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", shapeCoordinate.getId());
+        jsonObject.put("lon", shapeCoordinate.getLon());
+        jsonObject.put("lat", shapeCoordinate.getLat());
+        jsonObject.put("elevation", shapeCoordinate.getElevations());
+        Build build = shapeCoordinate.getBuild();
+        JSONObject jsonObject2 = buildService.buildJson(build);
+        jsonObject.put("build", jsonObject2);
+        return jsonObject;
+    }
 }
