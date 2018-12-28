@@ -388,7 +388,7 @@
     </attributeGroup>  
     <attributeGroup name="消力池边墙"> 
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0258"/>  
-      <attribute name="e2" unit="m" type="number" alias="ct0259"/>  
+      <attribute name="e2" unit="m" type="number" alias="ct0259" fieldName="thickness_bianQiang"/>
       <!--<attribute name="i6" unit="1:?" type="number" alias="ct0267"/>  -->  
       <!--<attribute name="h14" unit="m" type="number" alias="ct0268"/> --> 
     </attributeGroup>  
