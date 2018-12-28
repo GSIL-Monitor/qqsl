@@ -860,7 +860,7 @@ public class ShapeController {
      */
     @RequiresAuthentication
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
-    @RequestMapping(value = "/shape/point/details/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/point/details/{id}", method = RequestMethod.GET)
     public @ResponseBody Message getBuild(@PathVariable("id") Long id) {
         Message message = CommonController.parametersCheck(id);
         if (message.getType() != Message.Type.OK) {
