@@ -224,4 +224,45 @@ public class BuildDynAttributeService extends BaseService<BuildDynAttribute, Lon
         }
         changeCode(build,Integer.valueOf(code.toString()) + 1,groupAlias);
     }
+
+
+    public JSONArray toJSONSimple(List<BuildDynAttribute> dynAttributeList) {
+        JSONObject jsonObject;
+        JSONArray jsonArray = new JSONArray();
+        Map<Integer, List<BuildDynAttribute>> map = new TreeMap<>(
+                new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer o1, Integer o2) {
+                        return o1.compareTo(o2);
+                    }
+                });
+        for (BuildDynAttribute buildDynAttribute : dynAttributeList) {
+            List<BuildDynAttribute> buildDynAttributes = map.get(buildDynAttribute.getCode());
+            if (buildDynAttributes == null) {
+                buildDynAttributes = new ArrayList<>();
+                buildDynAttributes.add(buildDynAttribute);
+                map.put(buildDynAttribute.getCode(), buildDynAttributes);
+            } else {
+                buildDynAttributes.add(buildDynAttribute);
+                map.put(buildDynAttribute.getCode(), buildDynAttributes);
+            }
+        }
+        for (Map.Entry<Integer, List<BuildDynAttribute>> entry : map.entrySet()) {
+            List<BuildDynAttribute> dynAttributes = entry.getValue();
+            if (dynAttributes == null || dynAttributes.size() == 0) {
+                continue;
+            }
+            AttributeGroup attributeGroup = getAttributeGroup(dynAttributes.get(0).getGroupAlias());
+            jsonObject = new JSONObject();
+            for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                for (BuildDynAttribute dynAttribute : dynAttributes) {
+                    if (buildAttribute.getAlias().equals(dynAttribute.getAlias())) {
+                        jsonObject.put(dynAttribute.getAlias(), dynAttribute.getValue());
+                    }
+                }
+            }
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
 }

@@ -1209,9 +1209,7 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("name", build.getName());
         jsonObject.put("type", build.getType());
         jsonObject1 = new JSONObject();
-        jsonObject1.put("lon", build.getShapeCoordinate().getLon());
-        jsonObject1.put("lat", build.getShapeCoordinate().getLat());
-        jsonObject.put("center", jsonObject1);
+        jsonObject.put("center", build.getShapeCoordinate().getLon()+","+build.getShapeCoordinate().getLat());
         if (build.getPositionCoor() != null) {
             jsonObject1 = JSONObject.fromObject(build.getPositionCoor());
             jsonObject.put("position", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
@@ -1220,14 +1218,14 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("remark", build.getRemark());
         jsonObject.put("childType", build.getChildType() == null ? null : build.getChildType());
 //        getValue(build.getCoordinate(),jsonObject);
-        getValue(build.getWaterResource(),jsonObject);
-        getValue(build.getControlSize(),jsonObject);
-        getValue(build.getGroundStress(),jsonObject);
-        getValue(build.getComponent(),jsonObject);
+        getValue(build.getWaterResource(),jsonObject,build);
+        getValue(build.getControlSize(),jsonObject,build);
+        getValue(build.getGroundStress(),jsonObject,build);
+        getValue(build.getComponent(),jsonObject,build);
         return jsonObject;
     }
 
-    private void getValue(AttributeGroup attributeGroup, JSONObject jsonObject) {
+    private void getValue(AttributeGroup attributeGroup, JSONObject jsonObject,Build build) {
         if (attributeGroup == null) {
             return;
         }
@@ -1238,9 +1236,14 @@ public class BuildService extends BaseService<Build,Long> {
                 }
             }
         }
+        if (attributeGroup.isDyn()) {
+            List<BuildDynAttribute> dynAttributes = buildDynAttributeService.findByBuild(build);
+            JSONArray jsonArray = buildDynAttributeService.toJSONSimple(dynAttributes);
+            jsonObject.put(attributeGroup.getGroupAlias(), jsonArray);
+        }
         if (attributeGroup.getChilds() != null) {
             for (AttributeGroup child : attributeGroup.getChilds()) {
-                getValue(child, jsonObject);
+                getValue(child, jsonObject,build);
             }
         }
     }
