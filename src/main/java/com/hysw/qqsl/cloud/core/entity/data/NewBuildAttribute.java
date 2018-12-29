@@ -81,6 +81,7 @@ public class NewBuildAttribute extends BaseEntity{
          * 文本域
          */
         TEXT_AREA,
+        COOR,
     }
 
     public NewBuildAttribute() {
