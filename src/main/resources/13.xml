@@ -12,4 +12,9 @@
         <attribute name="公称规格（选择）" unit="英寸" type="text" alias="dyn0007"/>
         <attribute name="管箍（自动匹配）" unit="个" type="text" alias="dyn0008"/>
     </attributeGroup>
+    <attributeGroup name="排架立柱" groupAlias="ag0003">
+        <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="dyn0009"/>
+        <attribute name="柱高" unit="m" type="number" alias="dyn0010"/>
+        <attribute name="直径" unit="m" type="number" alias="dyn0011"/>
+    </attributeGroup>
 </dyn>

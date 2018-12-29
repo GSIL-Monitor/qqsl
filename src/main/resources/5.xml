@@ -198,10 +198,7 @@
       <attribute name="下台直径" unit="m" type="number" alias="ct0139"/>  
       <attribute name="下台高" unit="m" type="number" alias="ct0140"/> 
     </attributeGroup>  
-    <attributeGroup name="排架立柱"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0141"/>  
-      <attribute name="柱高" unit="m(第一立柱高度,第二立柱高度...)" type="number" alias="ct0142"/>  
-      <attribute name="直径" unit="m" type="number" alias="ct0143"/> 
+    <attributeGroup name="排架立柱" dyn="true" groupAlias="ag0003">
     </attributeGroup>  
     <attributeGroup name="排架支墩"> 
       <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0144"/>  
