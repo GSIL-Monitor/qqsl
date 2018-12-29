@@ -80,6 +80,10 @@ public class BuildAttribute extends BaseEntity {
          * 文本域
          */
         TEXT_AREA,
+        /**
+         * 坐标
+         */
+        COOR,
     }
 
     public BuildAttribute() {
