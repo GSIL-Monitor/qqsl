@@ -170,16 +170,22 @@ public class BuildDynAttributeService extends BaseService<BuildDynAttribute, Lon
             }
         }
         JSONArray jsonArray1;
+        boolean flag = false;
+        int code;
         for (Map.Entry<Integer, List<BuildDynAttribute>> entry : map.entrySet()) {
             jsonArray1 = new JSONArray();
             List<BuildDynAttribute> dynAttributes = entry.getValue();
             if (dynAttributes == null || dynAttributes.size() == 0) {
                 continue;
             }
+            code = 0;
             AttributeGroup attributeGroup = getAttributeGroup(dynAttributes.get(0).getGroupAlias());
             for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                flag = true;
                 for (BuildDynAttribute dynAttribute : dynAttributes) {
                     if (buildAttribute.getAlias().equals(dynAttribute.getAlias())) {
+                        flag = false;
+                        code = dynAttribute.getCode();
                         jsonObject = new JSONObject();
                         jsonObject.put("id", dynAttribute.getId());
                         jsonObject.put("name", buildAttribute.getName());
@@ -198,6 +204,23 @@ public class BuildDynAttributeService extends BaseService<BuildDynAttribute, Lon
                         }
                         jsonArray1.add(jsonObject);
                     }
+                }
+                if (flag) {
+                    jsonObject = new JSONObject();
+                    jsonObject.put("name", buildAttribute.getName());
+                    jsonObject.put("alias", buildAttribute.getAlias());
+                    //            jsonObject.put("groupAlias", attributeGroup.getGroupAlias());
+                    jsonObject.put("type", buildAttribute.getType());
+                    jsonObject.put("value", buildAttribute.getValue());
+                    jsonObject.put("formula", buildAttribute.getFormula());
+                    jsonObject.put("code", code);
+                    if (buildAttribute.getSelects() != null && buildAttribute.getSelects().size() != 0) {
+                        jsonObject.put("selects", buildAttribute.getSelects());
+                    }
+                    if (buildAttribute.getUnit() != null && !buildAttribute.getUnit().equals("")) {
+                        jsonObject.put("unit", buildAttribute.getUnit());
+                    }
+                    jsonArray1.add(jsonObject);
                 }
             }
             jsonArray.add(jsonArray1);
