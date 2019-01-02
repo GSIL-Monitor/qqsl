@@ -916,10 +916,6 @@ public class ShapeController {
     @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/build/edit", method = RequestMethod.POST)
     public @ResponseBody Message editBuildAttribute(@RequestBody  Map<String,Object> objectMap) {
-        Message message = CommonController.parameterCheck(objectMap);
-        if (message.getType() != Message.Type.OK) {
-            return message;
-        }
         Object buildId = objectMap.get("id");
         Object buildAttributes = objectMap.get("attributes");
         Object dyn = objectMap.get("dynAttributes");
