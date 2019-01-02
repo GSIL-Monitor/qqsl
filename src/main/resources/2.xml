@@ -1,14 +1,14 @@
 <!--水力要素-->
 <waterResources>
     <!--底流式消力池-->
-    <attributeGroup name="水力要素" buildAlias="b0001" alias="wr" >
-        <attribute name='跃后水深h"c' unit="m" type="number" alias="wr0001"/>
-        <attribute name="下游水深ht" unit="m" type="number" alias="wr0002"/>
-        <attribute name="水跃淹没系数σ" unit="1.05～1.1" type="number" alias="wr0003"/>
-        <attribute name="池出口水面落差△z" unit="m" type="number" alias="wr0004"/>
-        <attribute name="水跃长度Lj" unit="m" type="number" alias="wr0005"/>
-        <attribute name="尾坎顶水头" unit="m" type="number" alias="wr0006"/>
-    </attributeGroup>
+    <!--<attributeGroup name="水力要素" buildAlias="b0001" alias="wr" >-->
+        <!--<attribute name='跃后水深h"c' unit="m" type="number" alias="wr0001"/>-->
+        <!--<attribute name="下游水深ht" unit="m" type="number" alias="wr0002"/>-->
+        <!--<attribute name="水跃淹没系数σ" unit="1.05～1.1" type="number" alias="wr0003"/>-->
+        <!--<attribute name="池出口水面落差△z" unit="m" type="number" alias="wr0004"/>-->
+        <!--<attribute name="水跃长度Lj" unit="m" type="number" alias="wr0005"/>-->
+        <!--<attribute name="尾坎顶水头" unit="m" type="number" alias="wr0006"/>-->
+    <!--</attributeGroup>-->
     <!--谷坊-->
     <!--<attributeGroup name="水力要素" buildAlias="b0002" alias="wr" >-->
         <!--<attribute name="设计洪水流量Q" unit="m3/s" type="number" alias="wr0007"/>-->
