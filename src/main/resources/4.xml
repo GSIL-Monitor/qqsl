@@ -1,9 +1,9 @@
 <!--地基应力-->
 <groundStress>
     <!--底流式消力池-->
-    <attributeGroup name="地基处理" buildAlias="b0001" alias="gs">
-        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0001"/>
-    </attributeGroup>
+    <!--<attributeGroup name="地基处理" buildAlias="b0001" alias="gs">-->
+        <!--<attribute name="地基应力" unit="Mpa" type="number" alias="gs0001"/>-->
+    <!--</attributeGroup>-->
     <!--谷坊-->
     <!--<attributeGroup name="地基处理" buildAlias="b0002" alias="gs">-->
         <!--<attribute name="地基应力" unit="Mpa" type="number" alias="gs0002"/>-->

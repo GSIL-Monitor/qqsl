@@ -1,11 +1,11 @@
 <!--控制尺寸-->
 <controlSize>
     <!--底流式消力池-->
-    <attributeGroup name="控制尺寸" buildAlias="b0001" alias="cs">
-        <attribute name="池深d" unit="m" type="number" alias="cs0001" locked="true" formula="wr0003*wr0001-wr0002-wr0004"/>
-        <attribute name="池长Lk" unit="m" type="number" alias="cs0002" locked="true" formula="wr0005*0.75"/>
-        <attribute name="尾坎高c" unit="m" type="number" alias="cs0003" locked="true" formula="wr0003*wr0001-wr0006"/>
-    </attributeGroup>
+    <!--<attributeGroup name="控制尺寸" buildAlias="b0001" alias="cs">-->
+        <!--<attribute name="池深d" unit="m" type="number" alias="cs0001" locked="true" formula="wr0003*wr0001-wr0002-wr0004"/>-->
+        <!--<attribute name="池长Lk" unit="m" type="number" alias="cs0002" locked="true" formula="wr0005*0.75"/>-->
+        <!--<attribute name="尾坎高c" unit="m" type="number" alias="cs0003" locked="true" formula="wr0003*wr0001-wr0006"/>-->
+    <!--</attributeGroup>-->
     <!--谷坊-->
     <!--<attributeGroup name="控制尺寸" buildAlias="b0002" alias="cs">-->
         <!--<attribute name="溢流口底宽a" unit="m" type="number" alias="cs0004" locked="false" formula=""/>-->
