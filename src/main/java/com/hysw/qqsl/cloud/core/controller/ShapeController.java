@@ -970,7 +970,8 @@ public class ShapeController {
                 buildDynAttributeService.save(buildDynAttribute);
             }
         }
-        return MessageService.message(Message.Type.OK);
+        JSONObject jsonObject = buildService.buildJson(build);
+        return MessageService.message(Message.Type.OK,jsonObject);
     }
 
     /**

@@ -37,7 +37,7 @@ public class BuildAttributeService extends BaseService<BuildAttribute,Long> {
     }
 
     public String editBuildAttribute(Build build, Object buildAttributes) {
-        if (buildAttributes != null) {
+        if (buildAttributes != null && !buildAttributes.toString().equals("")) {
             BuildAttribute buildAttribute1 = null;
             for (Object buildAttribute : JSONArray.fromObject(buildAttributes)) {
                 JSONObject jsonObject1 = JSONObject.fromObject(buildAttribute);
@@ -50,7 +50,7 @@ public class BuildAttributeService extends BaseService<BuildAttribute,Long> {
                         return null;
                     }
                     buildAttribute1.setValue(jsonObject1.get("value").toString());
-                } else if (jsonObject1.get("alias").equals("position") || jsonObject1.get("alias").equals("designElevation") || jsonObject1.get("alias").equals("remark")|| jsonObject1.get("alias").equals("center")) {
+                } else if (jsonObject1.get("alias").equals("position") || jsonObject1.get("alias").equals("designElevation") || jsonObject1.get("alias").equals("remark") || jsonObject1.get("alias").equals("center")) {
                     JSONObject jsonObject;
                     if (jsonObject1.get("alias").equals("center")) {
                         continue;
