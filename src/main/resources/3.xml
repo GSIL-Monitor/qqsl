@@ -69,17 +69,17 @@
     </attributeGroup>
     <!--截水廊道-->
     <attributeGroup name="控制尺寸" buildAlias="b0004" alias="cs">
-        <attribute name="b1" unit="m" type="number" alias="cs0035" locked="false" formula=""/>
-        <attribute name="l1" unit="m" type="number"  alias="cs0036" locked="false" formula=""/>
-        <attribute name="h1" unit="m" type="number"  alias="cs0037" locked="false" formula=""/>
-        <attribute name="e1" unit="m" type="number"  alias="cs0038" locked="false" formula=""/>
-        <attribute name="l2" unit="m" type="number"  alias="cs0039" locked="false" formula=""/>
-        <attribute name="i" unit="1:?" type="number"  alias="cs0040" locked="false" formula=""/>
+        <attribute name="b1" unit="m" type="number" alias="cs0035" locked="false" formula="" fieldName="length"/>
+        <attribute name="l1" unit="m" type="number"  alias="cs0036" locked="false" formula="" fieldName="width"/>
+        <attribute name="h1" unit="m" type="number"  alias="cs0037" locked="false" formula="" fieldName="high"/>
+        <attribute name="e1" unit="m" type="number"  alias="cs0038" locked="false" formula="" fieldName="ratio"/>
+        <attribute name="l2" unit="m" type="number"  alias="cs0039" locked="false" formula="" fieldName=""/>
+        <attribute name="i" unit="1:?" type="number"  alias="cs0040" locked="false"/>
         <attribute name="渗管直径" unit="mm" type="number"  alias="cs0041" locked="false" formula=""/>
         <attribute name="渗管数量" unit="个" type="number"  alias="cs0042" locked="false" formula=""/>
-        <attribute name="h2" unit="m" type="number"  alias="cs0043" locked="false" formula=""/>
-        <attribute name="b2" unit="m" type="number"  alias="cs0044" locked="false" formula=""/>
-        <attribute name="△x" unit="m" type="number"  alias="cs0045" locked="false" formula=""/>
+        <attribute name="h2" unit="m" type="number"  alias="cs0043" locked="false" formula="" fieldName="high_chaoGao"/>
+        <attribute name="b2" unit="m" type="number"  alias="cs0044" locked="false" formula="" fieldName="length_bottom"/>
+        <attribute name="△x" unit="m" type="number"  alias="cs0045" locked="false" formula="" fieldName="offset"/>
         <attribute name="出水管直径" unit="mm" type="number"  alias="cs0046" locked="false" formula=""/>
     </attributeGroup>
     <!--陡坡-->
