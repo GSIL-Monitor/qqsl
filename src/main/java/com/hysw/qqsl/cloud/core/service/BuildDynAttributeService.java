@@ -170,7 +170,7 @@ public class BuildDynAttributeService extends BaseService<BuildDynAttribute, Lon
             }
         }
         JSONArray jsonArray1;
-        boolean flag = false;
+        boolean flag;
         int code;
         for (Map.Entry<Integer, List<BuildDynAttribute>> entry : map.entrySet()) {
             jsonArray1 = new JSONArray();
@@ -180,12 +180,18 @@ public class BuildDynAttributeService extends BaseService<BuildDynAttribute, Lon
             }
             code = 0;
             AttributeGroup attributeGroup = getAttributeGroup(dynAttributes.get(0).getGroupAlias());
+            for (BuildDynAttribute dynAttribute : dynAttributes) {
+                for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
+                    if (buildAttribute.getAlias().equals(dynAttribute.getAlias())) {
+                        code = dynAttribute.getCode();
+                    }
+                }
+            }
             for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
                 flag = true;
                 for (BuildDynAttribute dynAttribute : dynAttributes) {
                     if (buildAttribute.getAlias().equals(dynAttribute.getAlias())) {
                         flag = false;
-                        code = dynAttribute.getCode();
                         jsonObject = new JSONObject();
                         jsonObject.put("id", dynAttribute.getId());
                         jsonObject.put("name", buildAttribute.getName());
