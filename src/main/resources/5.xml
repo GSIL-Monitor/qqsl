@@ -366,9 +366,10 @@
       <attribute name="h2" unit="m" type="number" alias="ct0248"/> 
     </attributeGroup>  
     <attributeGroup name="上游护坡"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0249"/>  
-      <attribute name="e1" unit="m" type="number" alias="ct0250"/>  
-      <attribute name="i5" unit="1:?" type="number" alias="ct0251"/> 
+        <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0249"/>
+        <attribute name="e1" unit="m" type="number" alias="ct0250"/>
+        <attribute name="i5" unit="1:?" type="number" alias="ct0251"/>
+        <attribute name="l8" unit="m" type="number" alias="ct0251"/>
     </attributeGroup> 
   </attributeGroup>  
   <!--跌水-->  

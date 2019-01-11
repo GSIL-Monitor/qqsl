@@ -90,11 +90,11 @@ public class ShapeAttributeService extends BaseService<ShapeAttribute,Long> {
                 continue;
             }
             jsonObject = new JSONObject();
-            jsonObject.put("typeC", value.getTypeC());
-            jsonObject.put("lineSectionPlaneModelType", value.name());
-            jsonObject.put("abbreviate", value.getAbbreviate());
-            jsonObject.put("type", value.getType());
-            jsonObject.put("commonType", value.getCommonType());
+            jsonObject.put("text", value.getTypeC());
+            jsonObject.put("type", value.name());
+//            jsonObject.put("abbreviate", value.getAbbreviate());
+//            jsonObject.put("type", value.getType());
+//            jsonObject.put("commonType", value.getCommonType());
             jsonArray.add(jsonObject);
         }
         return jsonArray;
