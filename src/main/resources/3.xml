@@ -1,11 +1,11 @@
 <!--控制尺寸-->
 <controlSize>
     <!--底流式消力池-->
-    <attributeGroup name="控制尺寸" buildAlias="b0001" alias="cs">
-        <attribute name="池深d" unit="m" type="number" alias="cs0001" locked="true" formula="wr0003*wr0001-wr0002-wr0004"/>
-        <attribute name="池长Lk" unit="m" type="number" alias="cs0002" locked="true" formula="wr0005*0.75"/>
-        <attribute name="尾坎高c" unit="m" type="number" alias="cs0003" locked="true" formula="wr0003*wr0001-wr0006"/>
-    </attributeGroup>
+    <!--<attributeGroup name="控制尺寸" buildAlias="b0001" alias="cs">-->
+        <!--<attribute name="池深d" unit="m" type="number" alias="cs0001" locked="true" formula="wr0003*wr0001-wr0002-wr0004"/>-->
+        <!--<attribute name="池长Lk" unit="m" type="number" alias="cs0002" locked="true" formula="wr0005*0.75"/>-->
+        <!--<attribute name="尾坎高c" unit="m" type="number" alias="cs0003" locked="true" formula="wr0003*wr0001-wr0006"/>-->
+    <!--</attributeGroup>-->
     <!--谷坊-->
     <!--<attributeGroup name="控制尺寸" buildAlias="b0002" alias="cs">-->
         <!--<attribute name="溢流口底宽a" unit="m" type="number" alias="cs0004" locked="false" formula=""/>-->
@@ -69,18 +69,18 @@
     </attributeGroup>
     <!--截水廊道-->
     <attributeGroup name="控制尺寸" buildAlias="b0004" alias="cs">
-        <attribute name="b1" unit="m" type="number" alias="cs0035" locked="false" formula=""/>
-        <attribute name="l1" unit="m" type="number"  alias="cs0036" locked="false" formula=""/>
-        <attribute name="h1" unit="m" type="number"  alias="cs0037" locked="false" formula=""/>
-        <attribute name="e1" unit="m" type="number"  alias="cs0038" locked="false" formula=""/>
-        <attribute name="l2" unit="m" type="number"  alias="cs0039" locked="false" formula=""/>
-        <attribute name="i" unit="1:?" type="number"  alias="cs0040" locked="false" formula=""/>
-        <attribute name="渗管直径" unit="mm" type="number"  alias="cs0041" locked="false" formula=""/>
-        <attribute name="渗管数量" unit="个" type="number"  alias="cs0042" locked="false" formula=""/>
-        <attribute name="h2" unit="m" type="number"  alias="cs0043" locked="false" formula=""/>
-        <attribute name="b2" unit="m" type="number"  alias="cs0044" locked="false" formula=""/>
-        <attribute name="△x" unit="m" type="number"  alias="cs0045" locked="false" formula=""/>
-        <attribute name="出水管直径" unit="mm" type="number"  alias="cs0046" locked="false" formula=""/>
+        <attribute name="b1" unit="m" type="number" alias="cs0035" locked="false" formula="" fieldName="length"/>
+        <attribute name="l1" unit="m" type="number"  alias="cs0036" locked="false" formula="" fieldName="width"/>
+        <attribute name="h1" unit="m" type="number"  alias="cs0037" locked="false" formula="" fieldName="high"/>
+        <attribute name="e1" unit="m" type="number"  alias="cs0038" locked="false" formula="" fieldName="thickness"/>
+        <attribute name="l2" unit="m" type="number"  alias="cs0039" locked="false" formula="" fieldName="length_shenGuan" />
+        <attribute name="i" unit="1:?" type="number"  alias="cs0040" locked="false" fieldName="ratio"/>
+        <attribute name="渗管直径" unit="mm" type="number"  alias="cs0041" locked="false" formula="" fieldName="diameter_shenGuan"/>
+        <attribute name="渗管数量" unit="个" type="number"  alias="cs0042" locked="false" formula="" fieldName="number_shenGuan"/>
+        <attribute name="h2" unit="m" type="number"  alias="cs0043" locked="false" formula="" fieldName="high_chaoGao"/>
+        <attribute name="b2" unit="m" type="number"  alias="cs0044" locked="false" formula="" fieldName="length_bottom"/>
+        <attribute name="△x" unit="m" type="number"  alias="cs0045" locked="false" formula="" fieldName="offset"/>
+        <attribute name="出水管直径" unit="mm" type="number"  alias="cs0046" locked="false" formula="" fieldName="diameter_chuShui"/>
     </attributeGroup>
     <!--陡坡-->
     <attributeGroup name="控制尺寸" buildAlias="b0066" alias="cs">
