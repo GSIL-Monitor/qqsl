@@ -50,9 +50,9 @@
         <attribute name="长度系数Ｋｓ" unit="14～7" type="number" alias="wr00022"/>
     </attributeGroup>
     <!--铺盖-->
-    <attributeGroup name="水力要素" buildAlias="b0063" alias="wr" >
-        <attribute name="上下游水头差△Ｈ" unit="m" type="number" alias="wr00023"/>
-    </attributeGroup>
+    <!--<attributeGroup name="水力要素" buildAlias="b0063" alias="wr" >-->
+        <!--<attribute name="上下游水头差△Ｈ" unit="m" type="number" alias="wr00023"/>-->
+    <!--</attributeGroup>-->
     <!--跌水-->
     <!--<attributeGroup name="水力要素" buildAlias="b0011" alias="wr" >-->
         <!--<attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0024"/>-->
