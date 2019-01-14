@@ -503,7 +503,9 @@ public class ShapeController {
         }
         shape.setChildType(null);
         shapeService.save(shape);
-        return MessageService.message(Message.Type.OK);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("childTypes", shapeAttributeService.getModelType(shape.getCommonType()));
+        return MessageService.message(Message.Type.OK, jsonObject);
     }
 
     /**
