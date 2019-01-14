@@ -56,6 +56,8 @@ public class MyTask {
     private AccountService accountService;
     @Autowired
     private CoordinateService coordinateService;
+    @Autowired
+    private DatumPortService datumPortService;
 
 //    @Autowired
 //    private CustomRealm customRealm;
@@ -176,6 +178,12 @@ public class MyTask {
     public void expiredIntendedEffectToken(){
         applicationTokenService.expiredIntendedEffectToken();
         logger.info("效验token过期");
+    }
+
+    @Scheduled(fixedDelay = 60000 * 5)
+    public void dautmPort(){
+        datumPortService.datumPort();
+        logger.info("提交引、泄数据");
     }
 
 }
