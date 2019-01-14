@@ -491,9 +491,9 @@ public class ShapeController {
         }
         Shape shape = shapeService.find(Long.valueOf(id.toString()));
         List<ShapeAttribute> shapeAttributes = shapeAttributeService.findByShape(shape);
-        if (shapeAttributes == null || shapeAttributes.size() == 0) {
-            return MessageService.message(Message.Type.DATA_NOEXIST);
-        }
+//        if (shapeAttributes == null || shapeAttributes.size() == 0) {
+//            return MessageService.message(Message.Type.DATA_NOEXIST);
+//        }
         User user = authentService.getUserFromSubject();
         if (!user.getId().equals(shape.getProject().getUser().getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
