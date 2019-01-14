@@ -10,7 +10,7 @@
       <attribute name="b1" unit="m" type="number" alias="ct0003"/>  
       <attribute name="b2" unit="m" type="number" alias="ct0004"/>  
       <attribute name="△x" unit="m" type="number" alias="ct0005"/>  
-      <attribute name="l" unit="m" type="number" alias="ct0006"/>  
+      <attribute name="l1" unit="m" type="number" alias="ct0006"/>  
       <attribute name="h1" unit="m" type="number" alias="ct0007"/>  
       <attribute name="h2" unit="m" type="number" alias="ct0008"/>  
       <attribute name="l4" unit="m" type="number" alias="ct0009"/>  
@@ -19,537 +19,537 @@
       <attribute name="d3" unit="m" type="number" alias="ct0012"/>  
       <attribute name="i2" unit="1:?" type="number" alias="ct0013"/>  
       <attribute name="l5" unit="m" type="number" alias="ct0014"/>  
-      <attribute name="h3" unit="m" type="number" alias="ct0015"/>  
-      <attribute name="i7" unit="1:?" type="number" alias="ct0016"/> 
+      <attribute name="h3" unit="m" type="number" alias="ct0015"/>
+      <attribute name="i7" unit="1:?" type="number" alias="ct0016"/>
     </attributeGroup>  
     <attributeGroup name="底板"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0017"/>  
-      <attribute name="l2" unit="m" type="number" alias="ct0018"/>  
-      <attribute name="h6" unit="m" type="number" alias="ct0019"/>  
-      <attribute name="d2" unit="m" type="number" alias="ct0020"/>  
-      <attribute name="h4" unit="m" type="number" alias="ct0021"/>  
-      <attribute name="l6" unit="m" type="number" alias="ct0022"/>  
-      <attribute name="i3" unit="?:1" type="number" alias="ct0023"/>  
-      <attribute name="i4" unit="1:?" type="number" alias="ct0024"/>  
-      <attribute name="l7" unit="m" type="number" alias="ct0025"/>  
-      <attribute name="h5" unit="m" type="number" alias="ct0026"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0016"/>  
+      <attribute name="l2" unit="m" type="number" alias="ct0017"/>  
+      <attribute name="h6" unit="m" type="number" alias="ct0018"/>  
+      <attribute name="d2" unit="m" type="number" alias="ct0019"/>  
+      <attribute name="h4" unit="m" type="number" alias="ct0020"/>  
+      <attribute name="l6" unit="m" type="number" alias="ct0021"/>  
+      <attribute name="i3" unit="?:1" type="number" alias="ct0022"/>  
+      <attribute name="i4" unit="1:?" type="number" alias="ct0023"/>  
+      <attribute name="l7" unit="m" type="number" alias="ct0024"/>  
+      <attribute name="h5" unit="m" type="number" alias="ct0025"/> 
     </attributeGroup>  
     <attributeGroup name="消力墩"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0027"/>  
-      <attribute name="l9" unit="m" type="number" alias="ct0028"/>  
-      <attribute name="h8" unit="m" type="number" alias="ct0029"/>  
-      <attribute name="i6" unit="?:1" type="number" alias="ct0030"/>  
-      <attribute name="l3" unit="m" type="number" alias="ct0031"/>  
-      <attribute name="l10" unit="m" type="number" alias="ct0032"/>  
-      <attribute name="b3" unit="m" type="number" alias="ct0033"/>  
-      <attribute name="b4" unit="m" type="number" alias="ct0034"/>  
-      <attribute name="b5" unit="m" type="number" alias="ct0035"/>  
-      <attribute name="层数" unit="层" type="number" alias="ct0036"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0026"/>  
+      <attribute name="l9" unit="m" type="number" alias="ct0027"/>  
+      <attribute name="h8" unit="m" type="number" alias="ct0028"/>  
+      <attribute name="i6" unit="?:1" type="number" alias="ct0029"/>  
+      <attribute name="l3" unit="m" type="number" alias="ct0030"/>  
+      <attribute name="l10" unit="m" type="number" alias="ct0031"/>  
+      <attribute name="b3" unit="m" type="number" alias="ct0032"/>  
+      <attribute name="b4" unit="m" type="number" alias="ct0033"/>  
+      <attribute name="b5" unit="m" type="number" alias="ct0034"/>  
+      <attribute name="层数" unit="层" type="number" alias="ct0035"/> 
     </attributeGroup>  
     <attributeGroup name="尾坎"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0037"/>  
-      <attribute name="l8" unit="m" type="number" alias="ct0038"/>  
-      <attribute name="h7" unit="m" type="number" alias="ct0039"/>  
-      <attribute name="i5" unit="1:?" type="number" alias="ct0040"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0036"/>  
+      <attribute name="l8" unit="m" type="number" alias="ct0037"/>  
+      <attribute name="h7" unit="m" type="number" alias="ct0038"/>  
+      <attribute name="i5" unit="1:?" type="number" alias="ct0039"/> 
     </attributeGroup>  
     <attributeGroup name="渗管"> 
-      <attribute name="材质" unit="选择" type="select" select="PVC,PE" alias="ct0041"/>  
-      <attribute name="管径" unit="mm" type="number" alias="ct0042"/>  
-      <attribute name="间距" unit="m" type="number" alias="ct0043"/> 
+      <attribute name="材质" unit="选择" type="select" select="PVC,PE" alias="ct0040"/>  
+      <attribute name="管径" unit="mm" type="number" alias="ct0041"/>  
+      <attribute name="间距" unit="m" type="number" alias="ct0042"/> 
     </attributeGroup>  
     <attributeGroup name="滤料"> 
       <!--<attribute name="材质" unit="" type="select" select="" alias=""/>-->  
-      <attribute name="上层粒径" unit="mm" type="number" alias="ct0044"/>  
-      <attribute name="上层层厚" unit="m" type="number" alias="ct0045"/>  
-      <attribute name="中层粒径" unit="mm" type="number" alias="ct0046"/>  
-      <attribute name="中层层厚" unit="m" type="number" alias="ct0047"/>  
-      <attribute name="下层粒径" unit="mm" type="number" alias="ct0048"/>  
-      <attribute name="下层层厚" unit="m" type="number" alias="ct0049"/> 
+      <attribute name="上层粒径" unit="mm" type="number" alias="ct0043"/>  
+      <attribute name="上层层厚" unit="m" type="number" alias="ct0044"/>  
+      <attribute name="中层粒径" unit="mm" type="number" alias="ct0045"/>  
+      <attribute name="中层层厚" unit="m" type="number" alias="ct0046"/>  
+      <attribute name="下层粒径" unit="mm" type="number" alias="ct0047"/>  
+      <attribute name="下层层厚" unit="m" type="number" alias="ct0048"/> 
     </attributeGroup> 
   </attributeGroup>  
   <!--谷坊-->  
   <attributeGroup name="构件" buildAlias="b0002" alias="ct"> 
     <attributeGroup name="墙身"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0050"/>  
-      <attribute name="b1" unit="m" type="number" alias="ct0051" fieldName="length_jiChu"/>  
-      <attribute name="b2" unit="m" type="number" alias="ct0052" fieldName="length_yiKou"/>  
-      <attribute name="i1" unit="1:?" type="number" alias="ct0053" fieldName="ratio_yiKou"/>  
-      <attribute name="i2" unit="1:?" type="number" alias="ct0054" fieldName="ratio_leftPo"/>  
-      <attribute name="i3" unit="?:1" type="number" alias="ct0055" fieldName="ratio_rightPo"/>  
-      <attribute name="h" unit="m" type="number" alias="ct0056" fieldName="high_yiKou"/>  
-      <attribute name="H" unit="m" type="number" alias="ct0057" fieldName="high_qiang"/>  
-      <attribute name="△x" unit="m" type="number" alias="ct0058" fieldName="offset_qiang"/>  
-      <attribute name="l1" unit="m" type="number" alias="ct0059" fieldName="width_jiChu"/>  
-      <attribute name="i4" unit="1:?" type="number" alias="ct0060" fieldName="ratio_yinShui"/>  
-      <attribute name="i5" unit="?:1" type="number" alias="ct0061" fieldName="ratio_beiShui"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0049"/>  
+      <attribute name="b1" unit="m" type="number" alias="ct0050" fieldName="length_jiChu"/>  
+      <attribute name="b2" unit="m" type="number" alias="ct0051" fieldName="length_yiKou"/>  
+      <attribute name="i1" unit="1:?" type="number" alias="ct0052" fieldName="ratio_yiKou"/>  
+      <attribute name="i2" unit="1:?" type="number" alias="ct0053" fieldName="ratio_leftPo"/>  
+      <attribute name="i3" unit="?:1" type="number" alias="ct0054" fieldName="ratio_rightPo"/>  
+      <attribute name="h" unit="m" type="number" alias="ct0055" fieldName="high_yiKou"/>  
+      <attribute name="H" unit="m" type="number" alias="ct0056" fieldName="high_qiang"/>  
+      <attribute name="△x" unit="m" type="number" alias="ct0057" fieldName="offset_qiang"/>  
+      <attribute name="l1" unit="m" type="number" alias="ct0058" fieldName="width_jiChu"/>  
+      <attribute name="i4" unit="1:?" type="number" alias="ct0059" fieldName="ratio_yinShui"/>  
+      <attribute name="i5" unit="?:1" type="number" alias="ct0060" fieldName="ratio_beiShui"/> 
     </attributeGroup>  
     <attributeGroup name="基础"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0062"/>  
-      <attribute name="h1" unit="m" type="number" alias="ct0063" fieldName="high_jiChu"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0061"/>  
+      <attribute name="h1" unit="m" type="number" alias="ct0062" fieldName="high_jiChu"/> 
     </attributeGroup>  
     <attributeGroup name="铺盖"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0064"/>  
-      <attribute name="b3" unit="m" type="number" alias="ct0065" fieldName="width_puGai"/>  
-      <attribute name="l2" unit="m" type="number" alias="ct0066" fieldName="length_puGai"/>  
-      <attribute name="h2" unit="m" type="number" alias="ct0067" fieldName="high_puGai"/>  
-      <attribute name="h3" unit="m" type="number" alias="ct0068" fieldName="high_gaiChiQiang"/>  
-      <attribute name="l3" unit="m" type="number" alias="ct0069" fieldName="width_gaiChiQiang"/>  
-      <attribute name="i6" unit="?:1" type="number" alias="ct0070" fieldName="ratio_puGai"/>  
-      <attribute name="△y1" unit="m" type="number" alias="ct0071" fieldName="offset_puGai"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0063"/>  
+      <attribute name="b3" unit="m" type="number" alias="ct0064" fieldName="width_puGai"/>  
+      <attribute name="l2" unit="m" type="number" alias="ct0065" fieldName="length_puGai"/>  
+      <attribute name="h2" unit="m" type="number" alias="ct0066" fieldName="high_puGai"/>  
+      <attribute name="h3" unit="m" type="number" alias="ct0067" fieldName="high_gaiChiQiang"/>  
+      <attribute name="l3" unit="m" type="number" alias="ct0068" fieldName="width_gaiChiQiang"/>  
+      <attribute name="i6" unit="?:1" type="number" alias="ct0069" fieldName="ratio_puGai"/>  
+      <attribute name="△y1" unit="m" type="number" alias="ct0070" fieldName="offset_puGai"/> 
     </attributeGroup>  
     <attributeGroup name="护坦"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0072"/>  
-      <attribute name="b4" unit="m" type="number" alias="ct0073" fieldName="width_huTan"/>  
-      <attribute name="l4" unit="m" type="number" alias="ct0074" fieldName="length_huTan"/>  
-      <attribute name="h4" unit="m" type="number" alias="ct0075" fieldName="high_huTan"/>  
-      <attribute name="h5" unit="m" type="number" alias="ct0076" fieldName="high_tanChiQiang"/>  
-      <attribute name="l5" unit="m" type="number" alias="ct0077" fieldName="width_tanChiQiang"/>  
-      <attribute name="i7" unit="1:?" type="number" alias="ct0078" fieldName="ratio_huTan"/>  
-      <attribute name="△y2" unit="m" type="text" alias="ct0079" fieldName="offset_huTan"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0071"/>  
+      <attribute name="b4" unit="m" type="number" alias="ct0072" fieldName="width_huTan"/>  
+      <attribute name="l4" unit="m" type="number" alias="ct0073" fieldName="length_huTan"/>  
+      <attribute name="h4" unit="m" type="number" alias="ct0074" fieldName="high_huTan"/>  
+      <attribute name="h5" unit="m" type="number" alias="ct0075" fieldName="high_tanChiQiang"/>  
+      <attribute name="l5" unit="m" type="number" alias="ct0076" fieldName="width_tanChiQiang"/>  
+      <attribute name="i7" unit="1:?" type="number" alias="ct0077" fieldName="ratio_huTan"/>  
+      <attribute name="△y2" unit="m" type="text" alias="ct0078" fieldName="offset_huTan"/> 
     </attributeGroup> 
   </attributeGroup>  
   <!--开敞式水闸-->  
   <attributeGroup name="构件" buildAlias="b0056" alias="ct"> 
     <attributeGroup name="闸底板"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0080"/>  
-      <attribute name="长a1" unit="m" type="number" alias="ct0081"/>  
-      <attribute name="宽b1" unit="m" type="number" alias="ct0082"/>  
-      <attribute name="厚c1" unit="m" type="number" alias="ct0083"/>  
-      <attribute name="挖孔长a2" unit="m" type="number" alias="ct0084"/>  
-      <attribute name="挖孔高h2" unit="m" type="number" alias="ct0085"/>  
-      <attribute name="厚c2（抗冲层）" unit="m" type="number" alias="ct0086"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0079"/>  
+      <attribute name="长a1" unit="m" type="number" alias="ct0080"/>  
+      <attribute name="宽b1" unit="m" type="number" alias="ct0081"/>  
+      <attribute name="厚c1" unit="m" type="number" alias="ct0082"/>  
+      <attribute name="挖孔长a2" unit="m" type="number" alias="ct0083"/>  
+      <attribute name="挖孔高h2" unit="m" type="number" alias="ct0084"/>  
+      <attribute name="厚c2（抗冲层）" unit="m" type="number" alias="ct0085"/> 
     </attributeGroup>  
     <attributeGroup name="齿墙"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0087"/>  
-      <attribute name="高h3" unit="m" type="number" alias="ct0088"/>  
-      <attribute name="宽b2" unit="m" type="number" alias="ct0089"/>  
-      <attribute name="反坡比" unit="" type="number" alias="ct0090"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0086"/>  
+      <attribute name="高h3" unit="m" type="number" alias="ct0087"/>  
+      <attribute name="宽b2" unit="m" type="number" alias="ct0088"/>  
+      <attribute name="反坡比" unit="" type="number" alias="ct0089"/> 
     </attributeGroup>  
     <attributeGroup name="闸墩"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0091"/>  
-      <attribute name="边墩长a3" unit="m" type="number" alias="ct0092"/>  
-      <attribute name="边墩高h3" unit="m" type="number" alias="ct0093"/>  
-      <attribute name="边墩宽b3" unit="m" type="number" alias="ct0094"/>  
-      <attribute name="中墩长a4" unit="m" type="number" alias="ct0095"/>  
-      <attribute name="中墩高h4" unit="m" type="number" alias="ct0096"/>  
-      <attribute name="中墩宽b4" unit="m" type="number" alias="ct0097"/>  
-      <attribute name="中墩尾流线半径r1" unit="m" type="number" alias="ct0098"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0090"/>  
+      <attribute name="边墩长a3" unit="m" type="number" alias="ct0091"/>  
+      <attribute name="边墩高h3" unit="m" type="number" alias="ct0092"/>  
+      <attribute name="边墩宽b3" unit="m" type="number" alias="ct0093"/>  
+      <attribute name="中墩长a4" unit="m" type="number" alias="ct0094"/>  
+      <attribute name="中墩高h4" unit="m" type="number" alias="ct0095"/>  
+      <attribute name="中墩宽b4" unit="m" type="number" alias="ct0096"/>  
+      <attribute name="中墩尾流线半径r1" unit="m" type="number" alias="ct0097"/> 
     </attributeGroup>  
     <attributeGroup name="闸顶板"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0099"/>  
-      <attribute name="长a5" unit="m" type="number" alias="ct0100"/>  
-      <attribute name="厚c3" unit="m" type="number" alias="ct0101"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0098"/>  
+      <attribute name="长a5" unit="m" type="number" alias="ct0099"/>  
+      <attribute name="厚c3" unit="m" type="number" alias="ct0100"/> 
     </attributeGroup>  
     <attributeGroup name="驼峰堰（实用堰选填）"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0102"/>  
-      <attribute name="反弧1" unit="半径m/角度" type="text" alias="ct0103"/>  
-      <attribute name="正弧2" unit="半径m/角度" type="text" alias="ct0104"/>  
-      <attribute name="正弧3" unit="半径m/角度" type="text" alias="ct0105"/>  
-      <attribute name="反坡段长a6/坡比" unit="m/1:4～1：6" type="text" alias="ct0106"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0101"/>  
+      <attribute name="反弧1" unit="半径m/角度" type="text" alias="ct0102"/>  
+      <attribute name="正弧2" unit="半径m/角度" type="text" alias="ct0103"/>  
+      <attribute name="正弧3" unit="半径m/角度" type="text" alias="ct0104"/>  
+      <attribute name="反坡段长a6/坡比" unit="m/1:4～1：6" type="text" alias="ct0105"/> 
     </attributeGroup>  
     <attributeGroup name="闸槽二期砼"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0107"/>  
-      <attribute name="拦污栅槽宽b6" unit="m" type="number" alias="ct0108"/>  
-      <attribute name="拦污栅槽深d1" unit="m" type="number" alias="ct0109"/>  
-      <attribute name="二期砼厚c4" unit="m" type="number" alias="ct0110"/>  
-      <attribute name="拦污栅槽距闸前距离（定位）△a" unit="m" type="number" alias="ct0111"/>  
-      <attribute name="检修闸槽宽b7" unit="m" type="number" alias="ct0112"/>  
-      <attribute name="检修闸槽深d2" unit="m" type="number" alias="ct0113"/>  
-      <attribute name="二期砼厚c5" unit="m" type="number" alias="ct0114"/>  
-      <attribute name="检修闸槽距闸前距离（定位）△a1" unit="m" type="number" alias="ct0115"/>  
-      <attribute name="工作闸槽宽b8" unit="m" type="number" alias="ct0116"/>  
-      <attribute name="工作闸槽深d3" unit="m" type="number" alias="ct0117"/>  
-      <attribute name="二期砼厚c6" unit="m" type="number" alias="ct0118"/>  
-      <attribute name="工作闸槽距闸前距离（定位）△a2" unit="m" type="number" alias="ct0119"/>  
-      <attribute name="弧形工作闸二期砼宽b9" unit="m" type="number" alias="ct0120"/>  
-      <attribute name="弧形工作闸二期砼厚c7" unit="m" type="number" alias="ct0121"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0106"/>  
+      <attribute name="拦污栅槽宽b6" unit="m" type="number" alias="ct0107"/>  
+      <attribute name="拦污栅槽深d1" unit="m" type="number" alias="ct0108"/>  
+      <attribute name="二期砼厚c4" unit="m" type="number" alias="ct0109"/>  
+      <attribute name="拦污栅槽距闸前距离（定位）△a" unit="m" type="number" alias="ct0110"/>  
+      <attribute name="检修闸槽宽b7" unit="m" type="number" alias="ct0111"/>  
+      <attribute name="检修闸槽深d2" unit="m" type="number" alias="ct0112"/>  
+      <attribute name="二期砼厚c5" unit="m" type="number" alias="ct0113"/>  
+      <attribute name="检修闸槽距闸前距离（定位）△a1" unit="m" type="number" alias="ct0114"/>  
+      <attribute name="工作闸槽宽b8" unit="m" type="number" alias="ct0115"/>  
+      <attribute name="工作闸槽深d3" unit="m" type="number" alias="ct0116"/>  
+      <attribute name="二期砼厚c6" unit="m" type="number" alias="ct0117"/>  
+      <attribute name="工作闸槽距闸前距离（定位）△a2" unit="m" type="number" alias="ct0118"/>  
+      <attribute name="弧形工作闸二期砼宽b9" unit="m" type="number" alias="ct0119"/>  
+      <attribute name="弧形工作闸二期砼厚c7" unit="m" type="number" alias="ct0120"/> 
     </attributeGroup>  
     <attributeGroup name="检修闸胸墙（选填）"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0122"/>  
-      <attribute name="墙高h5" unit="m" type="number" alias="ct0123"/>  
-      <attribute name="墙宽b10" unit="m" type="number" alias="ct0124"/>  
-      <attribute name="墙厚c8" unit="m" type="number" alias="ct0125"/>  
-      <attribute name="梁高h6" unit="m" type="number" alias="ct0126"/>  
-      <attribute name="梁宽b11" unit="m" type="number" alias="ct0127"/>  
-      <attribute name="梁数" unit="个" type="number" alias="ct0128"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0121"/>  
+      <attribute name="墙高h5" unit="m" type="number" alias="ct0122"/>  
+      <attribute name="墙宽b10" unit="m" type="number" alias="ct0123"/>  
+      <attribute name="墙厚c8" unit="m" type="number" alias="ct0124"/>  
+      <attribute name="梁高h6" unit="m" type="number" alias="ct0125"/>  
+      <attribute name="梁宽b11" unit="m" type="number" alias="ct0126"/>  
+      <attribute name="梁数" unit="个" type="number" alias="ct0127"/> 
     </attributeGroup>  
     <attributeGroup name="工作闸胸墙（选填）"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0129"/>  
-      <attribute name="墙高h7" unit="m" type="number" alias="ct0130"/>  
-      <attribute name="墙宽b12" unit="m" type="number" alias="ct0131"/>  
-      <attribute name="墙厚c9" unit="m" type="number" alias="ct0132"/>  
-      <attribute name="梁高h8" unit="m" type="number" alias="ct0133"/>  
-      <attribute name="梁宽b13" unit="m" type="number" alias="ct0134"/>  
-      <attribute name="梁数" unit="个" type="number" alias="ct0135"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0128"/>  
+      <attribute name="墙高h7" unit="m" type="number" alias="ct0129"/>  
+      <attribute name="墙宽b12" unit="m" type="number" alias="ct0130"/>  
+      <attribute name="墙厚c9" unit="m" type="number" alias="ct0131"/>  
+      <attribute name="梁高h8" unit="m" type="number" alias="ct0132"/>  
+      <attribute name="梁宽b13" unit="m" type="number" alias="ct0133"/>  
+      <attribute name="梁数" unit="个" type="number" alias="ct0134"/> 
     </attributeGroup>  
     <attributeGroup name="弧门支墩（选填）"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0136"/>  
-      <attribute name="支铰定位X" unit="m" type="number" alias="ct0137"/>  
-      <attribute name="支铰定位Y" unit="m" type="number" alias="ct0138"/>  
-      <attribute name="弧门半径R" unit="m" type="number" alias="ct0139"/>  
-      <attribute name="对应支铰的旋转角度" unit="m" type="number" alias="ct0140"/>  
-      <attribute name="对应支铰的平行偏移量△z" unit="m" type="number" alias="ct0141"/>  
-      <attribute name="支墩高h9" unit="m" type="number" alias="ct0142"/>  
-      <attribute name="支墩底宽b14" unit="m" type="number" alias="ct0143"/>  
-      <attribute name="支墩顶宽b15" unit="m" type="number" alias="ct0144"/>  
-      <attribute name="支墩厚c10" unit="m" type="number" alias="ct0145"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0135"/>  
+      <attribute name="支铰定位X" unit="m" type="number" alias="ct0136"/>  
+      <attribute name="支铰定位Y" unit="m" type="number" alias="ct0137"/>  
+      <attribute name="弧门半径R" unit="m" type="number" alias="ct0138"/>  
+      <attribute name="对应支铰的旋转角度" unit="m" type="number" alias="ct0139"/>  
+      <attribute name="对应支铰的平行偏移量△z" unit="m" type="number" alias="ct0140"/>  
+      <attribute name="支墩高h9" unit="m" type="number" alias="ct0141"/>  
+      <attribute name="支墩底宽b14" unit="m" type="number" alias="ct0142"/>  
+      <attribute name="支墩顶宽b15" unit="m" type="number" alias="ct0143"/>  
+      <attribute name="支墩厚c10" unit="m" type="number" alias="ct0144"/> 
     </attributeGroup> 
   </attributeGroup>  
   <!--渡槽-->  
   <attributeGroup name="构件" buildAlias="b0061" alias="ct"> 
     <attributeGroup name="进口渐变段（选型）"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0146"/>  
-      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0147"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0145"/>  
+      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0146"/> 
     </attributeGroup>  
     <attributeGroup name="挡土墙"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0148"/>  
-      <attribute name="顶宽" unit="m" type="number" alias="ct0149"/>  
-      <attribute name="高" unit="m" type="number" alias="ct0150"/>  
-      <attribute name="背坡比" unit="" type="number" alias="ct0151"/>  
-      <attribute name="基础高" unit="m" type="number" alias="ct0152"/>  
-      <attribute name="挡墙长" unit="m" type="number" alias="ct0153"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0147"/>  
+      <attribute name="顶宽" unit="m" type="number" alias="ct0148"/>  
+      <attribute name="高" unit="m" type="number" alias="ct0149"/>  
+      <attribute name="背坡比" unit="" type="number" alias="ct0150"/>  
+      <attribute name="基础高" unit="m" type="number" alias="ct0151"/>  
+      <attribute name="挡墙长" unit="m" type="number" alias="ct0152"/> 
     </attributeGroup>  
     <attributeGroup name="排架基础"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0154"/>  
-      <attribute name="上台直径" unit="m" type="number" alias="ct0155"/>  
-      <attribute name="上台高" unit="m" type="number" alias="ct0156"/>  
-      <attribute name="下台直径" unit="m" type="number" alias="ct0157"/>  
-      <attribute name="下台高" unit="m" type="number" alias="ct0158"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0153"/>  
+      <attribute name="上台直径" unit="m" type="number" alias="ct0154"/>  
+      <attribute name="上台高" unit="m" type="number" alias="ct0155"/>  
+      <attribute name="下台直径" unit="m" type="number" alias="ct0156"/>  
+      <attribute name="下台高" unit="m" type="number" alias="ct0157"/> 
     </attributeGroup>  
     <attributeGroup name="排架立柱" dyn="true" groupAlias="ag0003"/>  
     <attributeGroup name="排架支墩"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0159"/>  
-      <attribute name="长" unit="m" type="number" alias="ct0160"/>  
-      <attribute name="宽" unit="m" type="number" alias="ct0161"/>  
-      <attribute name="高" unit="m" type="number" alias="ct0162"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0158"/>  
+      <attribute name="长" unit="m" type="number" alias="ct0159"/>  
+      <attribute name="宽" unit="m" type="number" alias="ct0160"/>  
+      <attribute name="高" unit="m" type="number" alias="ct0161"/> 
     </attributeGroup>  
     <attributeGroup name="金属构件"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0163"/>  
-      <attribute name="加劲环－高/间距" unit="mm/m" type="number" alias="ct0164"/>  
-      <attribute name="伸缩节" unit="" type="select" select="圆形,矩形,梯形" alias="ct0165"/>  
-      <attribute name="固定件" unit="" type="select" select="圆形,矩形,梯形" alias="ct0166"/>  
-      <attribute name="锚筋" unit="" type="select" select="圆形,矩形,梯形" alias="ct0167"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0162"/>  
+      <attribute name="加劲环－高/间距" unit="mm/m" type="number" alias="ct0163"/>  
+      <attribute name="伸缩节" unit="" type="select" select="圆形,矩形,梯形" alias="ct0164"/>  
+      <attribute name="固定件" unit="" type="select" select="圆形,矩形,梯形" alias="ct0165"/>  
+      <attribute name="锚筋" unit="" type="select" select="圆形,矩形,梯形" alias="ct0166"/> 
     </attributeGroup>  
     <attributeGroup name="出口渐变段"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0168"/>  
-      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0169"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0167"/>  
+      <attribute name="选型" unit="" type="select" select="圆形,矩形,梯形" alias="ct0168"/> 
     </attributeGroup> 
   </attributeGroup>  
   <!--大口井-->  
   <attributeGroup name="构件" buildAlias="b0005" alias="ct"> 
     <attributeGroup name="井壁"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0170"/>  
-      <attribute name="厚" unit="m" type="number" alias="ct0171"/>  
-      <attribute name="刃脚高" unit="m" type="number" alias="ct0172"/>  
-      <attribute name="上倒角" unit="m" type="number" alias="ct0173"/>  
-      <attribute name="下倒角高" unit="m" type="number" alias="ct0174"/>  
-      <attribute name="下倒角反坡比" unit="" type="text" alias="ct0175"/>  
-      <attribute name="刃脚宽" unit="m" type="number" alias="ct0176"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0169"/>  
+      <attribute name="厚" unit="m" type="number" alias="ct0170"/>  
+      <attribute name="刃脚高" unit="m" type="number" alias="ct0171"/>  
+      <attribute name="上倒角" unit="m" type="number" alias="ct0172"/>  
+      <attribute name="下倒角高" unit="m" type="number" alias="ct0173"/>  
+      <attribute name="下倒角反坡比" unit="" type="text" alias="ct0174"/>  
+      <attribute name="刃脚宽" unit="m" type="number" alias="ct0175"/> 
     </attributeGroup>  
     <attributeGroup name="井壁进水孔"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0177"/>  
-      <attribute name="孔径" unit="mm" type="number" alias="ct0178"/>  
-      <attribute name="横向间距" unit="m" type="number" alias="ct0179"/>  
-      <attribute name="竖向间距" unit="m" type="number" alias="ct0180"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0176"/>  
+      <attribute name="孔径" unit="mm" type="number" alias="ct0177"/>  
+      <attribute name="横向间距" unit="m" type="number" alias="ct0178"/>  
+      <attribute name="竖向间距" unit="m" type="number" alias="ct0179"/> 
     </attributeGroup>  
     <attributeGroup name="井底滤料"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0181"/>  
-      <attribute name="上层" unit="厚m/粒径mm" type="text" alias="ct0182"/>  
-      <attribute name="中层" unit="厚m/粒径mm" type="text" alias="ct0183"/>  
-      <attribute name="下层" unit="厚m/粒径mm" type="text" alias="ct0184"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0180"/>  
+      <attribute name="上层" unit="厚m/粒径mm" type="text" alias="ct0181"/>  
+      <attribute name="中层" unit="厚m/粒径mm" type="text" alias="ct0182"/>  
+      <attribute name="下层" unit="厚m/粒径mm" type="text" alias="ct0183"/> 
     </attributeGroup>  
     <attributeGroup name="顶板"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0185"/>  
-      <attribute name="厚" unit="m" type="number" alias="ct0186"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0184"/>  
+      <attribute name="厚" unit="m" type="number" alias="ct0185"/> 
     </attributeGroup>  
     <attributeGroup name="顶梁"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0187"/>  
-      <attribute name="梁高" unit="m" type="number" alias="ct0188"/>  
-      <attribute name="梁宽" unit="m" type="number" alias="ct0189"/>  
-      <attribute name="梁轴线" unit="" type="number" alias="ct0190"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0186"/>  
+      <attribute name="梁高" unit="m" type="number" alias="ct0187"/>  
+      <attribute name="梁宽" unit="m" type="number" alias="ct0188"/>  
+      <attribute name="梁轴线" unit="" type="number" alias="ct0189"/> 
     </attributeGroup> 
   </attributeGroup>  
   <!--管井-->  
   <attributeGroup name="构件" buildAlias="b0062" alias="ct"> 
     <attributeGroup name="人工封闭物"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0191"/>  
-      <attribute name="深度" unit="m" type="number" alias="ct0192"/>  
-      <attribute name="厚度" unit="m" type="number" alias="ct0193"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0190"/>  
+      <attribute name="深度" unit="m" type="number" alias="ct0191"/>  
+      <attribute name="厚度" unit="m" type="number" alias="ct0192"/> 
     </attributeGroup>  
     <attributeGroup name="井壁管" dyn="true" groupAlias="ag0001"/>  
     <attributeGroup name="过滤器" dyn="true" groupAlias="ag0002"/>  
     <attributeGroup name="沉砂管"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0194"/>  
-      <attribute name="公称规格（选择）" unit="英寸" type="number" alias="ct0195"/>  
-      <attribute name="长度" unit="m" type="number" alias="ct0196"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0193"/>  
+      <attribute name="公称规格（选择）" unit="英寸" type="number" alias="ct0194"/>  
+      <attribute name="长度" unit="m" type="number" alias="ct0195"/> 
     </attributeGroup>  
     <attributeGroup name="人工填料"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0197"/>  
-      <attribute name="深度" unit="m" type="number" alias="ct0198"/>  
-      <attribute name="厚度" unit="m" type="number" alias="ct0199"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0196"/>  
+      <attribute name="深度" unit="m" type="number" alias="ct0197"/>  
+      <attribute name="厚度" unit="m" type="number" alias="ct0198"/> 
     </attributeGroup> 
   </attributeGroup>  
   <!--泉室-->  
   <attributeGroup name="构件" buildAlias="b0003" alias="ct"> 
     <attributeGroup name="八字墙"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0200"/>  
-      <attribute name="夹角1" unit="度" type="number" alias="ct0201"/>  
-      <attribute name="夹角2" unit="度" type="number" alias="ct0202"/>  
-      <attribute name="八字墙1长" unit="m" type="number" alias="ct0203"/>  
-      <attribute name="八字墙2长" unit="m" type="number" alias="ct0204"/>  
-      <attribute name="平行墙长" unit="m" type="number" alias="ct0205"/>  
-      <attribute name="墙身高" unit="m" type="number" alias="ct0206"/>  
-      <attribute name="基础高" unit="m" type="number" alias="ct0207"/>  
-      <attribute name="背水面坡比" unit="" type="text" alias="ct0208"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0199"/>  
+      <attribute name="夹角1" unit="度" type="number" alias="ct0200"/>  
+      <attribute name="夹角2" unit="度" type="number" alias="ct0201"/>  
+      <attribute name="八字墙1长" unit="m" type="number" alias="ct0202"/>  
+      <attribute name="八字墙2长" unit="m" type="number" alias="ct0203"/>  
+      <attribute name="平行墙长" unit="m" type="number" alias="ct0204"/>  
+      <attribute name="墙身高" unit="m" type="number" alias="ct0205"/>  
+      <attribute name="基础高" unit="m" type="number" alias="ct0206"/>  
+      <attribute name="背水面坡比" unit="" type="text" alias="ct0207"/> 
     </attributeGroup>  
     <attributeGroup name="test" dyn="true" groupAlias="ag0001"/> 
   </attributeGroup>  
   <!--海漫-->  
   <attributeGroup name="构件" buildAlias="b0014" alias="ct"> 
     <attributeGroup name="海漫底板"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0209"/>  
-      <attribute name="厚" unit="m" type="number" alias="ct0210"/>  
-      <attribute name="坡度" unit="" type="text" alias="ct0211"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0208"/>  
+      <attribute name="厚" unit="m" type="number" alias="ct0209"/>  
+      <attribute name="坡度" unit="" type="text" alias="ct0210"/> 
     </attributeGroup>  
     <attributeGroup name="齿墙"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0212"/>  
-      <attribute name="高h1" unit="m" type="number" alias="ct0213"/>  
-      <attribute name="宽b3" unit="m" type="number" alias="ct0214"/>  
-      <attribute name="反坡比" unit="" type="text" alias="ct0215"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0211"/>  
+      <attribute name="高h1" unit="m" type="number" alias="ct0212"/>  
+      <attribute name="宽b3" unit="m" type="number" alias="ct0213"/>  
+      <attribute name="反坡比" unit="" type="text" alias="ct0214"/> 
     </attributeGroup>  
     <attributeGroup name="防冲槽"> 
-      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0216"/>  
-      <attribute name="顶宽" unit="m" type="number" alias="ct0217"/>  
-      <attribute name="高" unit="m" type="number" alias="ct0218"/>  
-      <attribute name="反坡比" unit="" type="text" alias="ct0219"/> 
+      <attribute name="材质" unit="" type="select" select="混凝土,浆砌石" alias="ct0215"/>  
+      <attribute name="顶宽" unit="m" type="number" alias="ct0216"/>  
+      <attribute name="高" unit="m" type="number" alias="ct0217"/>  
+      <attribute name="反坡比" unit="" type="text" alias="ct0218"/> 
     </attributeGroup> 
   </attributeGroup>  
   <!--铺盖-->  
   <attributeGroup name="构件" buildAlias="b0063" alias="ct"> 
     <attributeGroup name="铺盖"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0220"/>  
-      <attribute name="l3" unit="m" type="number" alias="ct0221"/>  
-      <attribute name="b3" unit="m" type="number" alias="ct0222"/>  
-      <attribute name="b4" unit="m" type="number" alias="ct0223"/>  
-      <attribute name="d2" unit="m" type="number" alias="ct0224"/>  
-      <attribute name="h4" unit="m" type="number" alias="ct0225"/>  
-      <attribute name="l6" unit="m" type="number" alias="ct0226"/>  
-      <attribute name="i3" unit="?:1" type="number" alias="ct0227"/>  
-      <attribute name="i4" unit="1:?" type="number" alias="ct0228"/>  
-      <attribute name="l7" unit="m" type="number" alias="ct0229"/>  
-      <attribute name="h5" unit="m" type="number" alias="ct0230"/>  
-      <attribute name="△x1" unit="m" type="number" alias="ct0231"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0219"/>  
+      <attribute name="l3" unit="m" type="number" alias="ct0220"/>  
+      <attribute name="b3" unit="m" type="number" alias="ct0221"/>  
+      <attribute name="b4" unit="m" type="number" alias="ct0222"/>  
+      <attribute name="d2" unit="m" type="number" alias="ct0223"/>  
+      <attribute name="h4" unit="m" type="number" alias="ct0224"/>  
+      <attribute name="l6" unit="m" type="number" alias="ct0225"/>  
+      <attribute name="i3" unit="?:1" type="number" alias="ct0226"/>  
+      <attribute name="i4" unit="1:?" type="number" alias="ct0227"/>  
+      <attribute name="l7" unit="m" type="number" alias="ct0228"/>  
+      <attribute name="h5" unit="m" type="number" alias="ct0229"/>  
+      <attribute name="△x1" unit="m" type="number" alias="ct0230"/> 
     </attributeGroup>  
     <attributeGroup name="翼墙"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0232"/>  
-      <attribute name="e2" unit="m" type="number" alias="ct0233"/>  
-      <attribute name="h1" unit="m" type="number" alias="ct0234"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0231"/>  
+      <attribute name="e2" unit="m" type="number" alias="ct0232"/>  
+      <attribute name="h1" unit="m" type="number" alias="ct0233"/> 
     </attributeGroup>  
     <attributeGroup name="伸缩缝"> 
-      <attribute name="材质" unit="选择" type="select" select="a,b,c,d" alias="ct0235"/>  
-      <attribute name="伸缩缝间距" unit="m" type="number" alias="ct0236"/> 
+      <attribute name="材质" unit="选择" type="select" select="a,b,c,d" alias="ct0234"/>  
+      <attribute name="伸缩缝间距" unit="m" type="number" alias="ct0235"/> 
     </attributeGroup>  
     <attributeGroup name="上游护底"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0237"/>  
-      <attribute name="l2" unit="m" type="number" alias="ct0238"/>  
-      <attribute name="b2" unit="m" type="number" alias="ct0239"/>  
-      <attribute name="d1" unit="m" type="number" alias="ct0240"/>  
-      <attribute name="i2" unit="1:?" type="number" alias="ct0241"/>  
-      <attribute name="h3" unit="m" type="number" alias="ct0242"/>  
-      <attribute name="l5" unit="m" type="number" alias="ct0243"/>  
-      <attribute name="△x2" unit="m" type="number" alias="ct0244"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0236"/>  
+      <attribute name="l2" unit="m" type="number" alias="ct0237"/>  
+      <attribute name="b2" unit="m" type="number" alias="ct0238"/>  
+      <attribute name="d1" unit="m" type="number" alias="ct0239"/>  
+      <attribute name="i2" unit="1:?" type="number" alias="ct0240"/>  
+      <attribute name="h3" unit="m" type="number" alias="ct0241"/>  
+      <attribute name="l5" unit="m" type="number" alias="ct0242"/>  
+      <attribute name="△x2" unit="m" type="number" alias="ct0243"/> 
     </attributeGroup>  
     <attributeGroup name="上游防冲槽"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0245"/>  
-      <attribute name="b1" unit="m" type="number" alias="ct0246"/>  
-      <attribute name="i1" unit="1:?" type="number" alias="ct0247"/>  
-      <attribute name="l4" unit="m" type="number" alias="ct0248"/>  
-      <attribute name="h2" unit="m" type="number" alias="ct0249"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0244"/>  
+      <attribute name="b1" unit="m" type="number" alias="ct0245"/>  
+      <attribute name="i1" unit="1:?" type="number" alias="ct0246"/>  
+      <attribute name="l4" unit="m" type="number" alias="ct0247"/>  
+      <attribute name="h2" unit="m" type="number" alias="ct0248"/> 
     </attributeGroup>  
     <attributeGroup name="上游护坡"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0250"/>  
-      <attribute name="e1" unit="m" type="number" alias="ct0251"/>  
-      <attribute name="i5" unit="1:?" type="number" alias="ct0252"/>  
-      <attribute name="l8" unit="m" type="number" alias="ct0253"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0249"/>
+      <attribute name="e1" unit="m" type="number" alias="ct0250"/>
+      <attribute name="i5" unit="1:?" type="number" alias="ct0251"/>
+      <attribute name="l8" unit="m" type="number" alias="ct0252"/>
     </attributeGroup> 
   </attributeGroup>  
   <!--跌水-->  
   <attributeGroup name="构件" buildAlias="b0011" alias="ct"> 
     <attributeGroup name="进口渐变段"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0254"/>  
-      <attribute name="选型" unit="选择" type="select" select="a,b,c,d" alias="ct0255"/>  
-      <attribute name="l1" unit="m" type="number" alias="ct0256" fieldName="length_inport"/>  
-      <attribute name="l2" unit="m" type="number" alias="ct0257" fieldName="length_chiQiang1"/>  
-      <attribute name="h1" unit="m" type="number" alias="ct0258" fieldName="high_inport"/>  
-      <attribute name="h2" unit="m" type="number" alias="ct0259" fieldName="high_chiQiang1"/>  
-      <attribute name="i1" unit="1:?" type="number" alias="ct0260" fieldName="ratio_chiQiang1"/>  
-      <attribute name="d1" unit="m" type="number" alias="ct0261" fieldName="thickness_inportDiBan"/>  
-      <attribute name="b1" unit="m" type="number" alias="ct0262" fieldName="width_inport"/>  
-      <attribute name="b2" unit="m" type="number" alias="ct0263" fieldName="width_diBan"/>  
-      <attribute name="e1" unit="m" type="number" alias="ct0264" fieldName="thickness_inportBianQiang"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0253"/>
+      <attribute name="选型" unit="选择" type="select" select="a,b,c,d" alias="ct0254"/>
+      <attribute name="l1" unit="m" type="number" alias="ct0255" fieldName="length_inport"/>
+      <attribute name="l2" unit="m" type="number" alias="ct0256" fieldName="length_chiQiang1"/>
+      <attribute name="h1" unit="m" type="number" alias="ct0257" fieldName="high_inport"/>
+      <attribute name="h2" unit="m" type="number" alias="ct0258" fieldName="high_chiQiang1"/>
+      <attribute name="i1" unit="1:?" type="number" alias="ct0259" fieldName="ratio_chiQiang1"/>
+      <attribute name="d1" unit="m" type="number" alias="ct0260" fieldName="thickness_inportDiBan"/>
+      <attribute name="b1" unit="m" type="number" alias="ct0261" fieldName="width_inport"/>
+      <attribute name="b2" unit="m" type="number" alias="ct0262" fieldName="width_diBan"/>
+      <attribute name="e1" unit="m" type="number" alias="ct0263" fieldName="thickness_inportBianQiang"/>
     </attributeGroup>  
     <attributeGroup name="挡土墙A"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0265"/>  
-      <attribute name="l4" unit="m" type="number" alias="ct0266" fieldName="width_tuQiangA"/>  
-      <attribute name="h3" unit="m" type="number" alias="ct0267" fieldName="high_tuQiangJiChuA"/>  
-      <attribute name="h4" unit="m" type="number" alias="ct0268" fieldName="high_tuQiangA"/>  
-      <attribute name="l5" unit="m" type="number" alias="ct0269" fieldName="length_tuQiangA"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0264"/>
+      <attribute name="l4" unit="m" type="number" alias="ct0265" fieldName="width_tuQiangA"/>
+      <attribute name="h3" unit="m" type="number" alias="ct0266" fieldName="high_tuQiangJiChuA"/>
+      <attribute name="h4" unit="m" type="number" alias="ct0267" fieldName="high_tuQiangA"/>
+      <attribute name="l5" unit="m" type="number" alias="ct0268" fieldName="length_tuQiangA"/>
     </attributeGroup>  
     <attributeGroup name="挡土墙B"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0270"/>  
-      <attribute name="l8" unit="m" type="number" alias="ct0271" fieldName="width_tuQiangB"/>  
-      <attribute name="i2" unit="1:?" type="number" alias="ct0272" fieldName="ratio_tuQiang1"/>  
-      <attribute name="i3" unit="1:?" type="number" alias="ct0273" fieldName="ratio_tuQiang2"/>  
-      <attribute name="h8" unit="m" type="number" alias="ct0274" fieldName="high_tuQiangWaiZhiB"/>  
-      <attribute name="h7" unit="m" type="number" alias="ct0275" fieldName="high_tuQiangB"/>  
-      <attribute name="l7" unit="m" type="number" alias="ct0276" fieldName="length_tuQiangB"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0269"/>
+      <attribute name="l8" unit="m" type="number" alias="ct0270" fieldName="width_tuQiangB"/>
+      <attribute name="i2" unit="1:?" type="number" alias="ct0271" fieldName="ratio_tuQiang1"/>
+      <attribute name="i3" unit="1:?" type="number" alias="ct0272" fieldName="ratio_tuQiang2"/>
+      <attribute name="h8" unit="m" type="number" alias="ct0273" fieldName="high_tuQiangWaiZhiB"/>
+      <attribute name="h7" unit="m" type="number" alias="ct0274" fieldName="high_tuQiangB"/>
+      <attribute name="l7" unit="m" type="number" alias="ct0275" fieldName="length_tuQiangB"/>
     </attributeGroup>  
     <attributeGroup name="消力池底板"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0277"/>  
-      <attribute name="l3" unit="m" type="number" alias="ct0278" fieldName="length_inportPingA"/>  
-      <attribute name="l14" unit="m" type="number" alias="ct0279" fieldName="length_xiePoA"/>  
-      <attribute name="l6" unit="m" type="number" alias="ct0280" fieldName="length_exportPingA"/>  
-      <attribute name="h5" unit="m" type="number" alias="ct0281" fieldName="high_dieCha"/>  
-      <attribute name="d2" unit="m" type="number" alias="ct0282" fieldName="thickness_chiDiBan"/>  
-      <attribute name="h6" unit="m" type="number" alias="ct0283" fieldName="high_exportBianQiang"/>  
-      <attribute name="l15" unit="m" type="number" alias="ct0284" fieldName="length_xiePoB"/>  
-      <attribute name="l9" unit="m" type="number" alias="ct0285" fieldName="length_exportPingB"/>  
-      <attribute name="l17" unit="m" type="number" alias="ct0286" fieldName="length_xiaoLiKan"/>  
-      <attribute name="h13" unit="m" type="number" alias="ct0287" fieldName="high_xiaoLiKan"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0276"/>
+      <attribute name="l3" unit="m" type="number" alias="ct0277" fieldName="length_inportPingA"/>
+      <attribute name="l14" unit="m" type="number" alias="ct0278" fieldName="length_xiePoA"/>
+      <attribute name="l6" unit="m" type="number" alias="ct0279" fieldName="length_exportPingA"/>
+      <attribute name="h5" unit="m" type="number" alias="ct0280" fieldName="high_dieCha"/>
+      <attribute name="d2" unit="m" type="number" alias="ct0281" fieldName="thickness_chiDiBan"/>
+      <attribute name="h6" unit="m" type="number" alias="ct0282" fieldName="high_exportBianQiang"/>
+      <attribute name="l15" unit="m" type="number" alias="ct0283" fieldName="length_xiePoB"/>
+      <attribute name="l9" unit="m" type="number" alias="ct0284" fieldName="length_exportPingB"/>
+      <attribute name="l17" unit="m" type="number" alias="ct0285" fieldName="length_xiaoLiKan"/>
+      <attribute name="h13" unit="m" type="number" alias="ct0286" fieldName="high_xiaoLiKan"/>
     </attributeGroup>  
     <attributeGroup name="消力池边墙"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0288"/>  
-      <attribute name="e2" unit="m" type="number" alias="ct0289" fieldName="thickness_bianQiang"/>  
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0287"/>
+      <attribute name="e2" unit="m" type="number" alias="ct0288" fieldName="thickness_bianQiang"/>
       <!--<attribute name="i6" unit="1:?" type="number" alias="ct0267"/>  -->  
       <!--<attribute name="h14" unit="m" type="number" alias="ct0268"/> --> 
     </attributeGroup>  
     <attributeGroup name="消能尾坎"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0290"/>  
-      <attribute name="l12" unit="m" type="number" alias="ct0291" fieldName="length_weikanDing"/>  
-      <attribute name="h9" unit="m" type="number" alias="ct0292" fieldName="high_weiKanJiChu"/>  
-      <attribute name="l10" unit="m" type="number" alias="ct0293" fieldName="length_weiKanDi"/>  
-      <attribute name="h15" unit="m" type="number" alias="ct0294" fieldName="high_weikan"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0289"/>
+      <attribute name="l12" unit="m" type="number" alias="ct0290" fieldName="length_weikanDing"/>
+      <attribute name="h9" unit="m" type="number" alias="ct0291" fieldName="high_weiKanJiChu"/>
+      <attribute name="l10" unit="m" type="number" alias="ct0292" fieldName="length_weiKanDi"/>
+      <attribute name="h15" unit="m" type="number" alias="ct0293" fieldName="high_weikan"/>
     </attributeGroup>  
     <attributeGroup name="排水管"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0295"/>  
-      <attribute name="直径" unit="mm" type="number" alias="ct0296" fieldName="diameter"/>  
-      <attribute name="间距" unit="m" type="number" alias="ct0297" fieldName="distance"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0294"/>
+      <attribute name="直径" unit="mm" type="number" alias="ct0295" fieldName="diameter"/>
+      <attribute name="间距" unit="m" type="number" alias="ct0296" fieldName="distance"/>
     </attributeGroup>  
     <attributeGroup name="出口渐变段"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0298"/>  
-      <attribute name="选型" unit="选择" type="select" select="a,b,c,d" alias="ct0299"/>  
-      <attribute name="d3" unit="m" type="number" alias="ct0300" fieldName="thickness_exportDiBan"/>  
-      <attribute name="h10" unit="m" type="number" alias="ct0301" fieldName="high_chiQiang2"/>  
-      <attribute name="l11" unit="m" type="number" alias="ct0302" fieldName="length_chiQiang2"/>  
-      <attribute name="i4" unit="1:?" type="number" alias="ct0303" fieldName="ratio_chiQiang2"/>  
-      <attribute name="i5" unit="?:1" type="number" alias="ct0304" fieldName="ratio_chiQiang3"/>  
-      <attribute name="l13" unit="m" type="number" alias="ct0305" fieldName="length_chiQiang3"/>  
-      <attribute name="h12" unit="m" type="number" alias="ct0306" fieldName="high_chiQiang3"/>  
-      <attribute name="e3" unit="m" type="number" alias="ct0307" fieldName="thickness_exportBianQiang"/>  
-      <attribute name="b3" unit="m" type="number" alias="ct0308" fieldName="width_export"/>  
-      <attribute name="l16" unit="m" type="number" alias="ct0309" fieldName="length_export"/> 
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0297"/>
+      <attribute name="选型" unit="选择" type="select" select="a,b,c,d" alias="ct0298"/>
+      <attribute name="d3" unit="m" type="number" alias="ct0299" fieldName="thickness_exportDiBan"/>
+      <attribute name="h10" unit="m" type="number" alias="ct0300" fieldName="high_chiQiang2"/>
+      <attribute name="l11" unit="m" type="number" alias="ct0301" fieldName="length_chiQiang2"/>
+      <attribute name="i4" unit="1:?" type="number" alias="ct0302" fieldName="ratio_chiQiang2"/>
+      <attribute name="i5" unit="?:1" type="number" alias="ct0303" fieldName="ratio_chiQiang3"/>
+      <attribute name="l13" unit="m" type="number" alias="ct0304" fieldName="length_chiQiang3"/>
+      <attribute name="h12" unit="m" type="number" alias="ct0305" fieldName="high_chiQiang3"/>
+      <attribute name="e3" unit="m" type="number" alias="ct0306" fieldName="thickness_exportBianQiang"/>
+      <attribute name="b3" unit="m" type="number" alias="ct0307" fieldName="width_export"/>
+      <attribute name="l16" unit="m" type="number" alias="ct0308" fieldName="length_export"/>
     </attributeGroup> 
   </attributeGroup>  
   <!--曲线式倒虹吸-->  
   <attributeGroup name="构件" buildAlias="b0065" alias="ct"> 
     <attributeGroup name="进口渐变段（选型）"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0310"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0309"/>
     </attributeGroup>  
     <attributeGroup name="挡土墙"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0311"/>  
-      <attribute name="顶宽" unit="m" type="number" alias="ct0312"/>  
-      <attribute name="高" unit="m" type="number" alias="ct0313"/>  
-      <attribute name="背坡比" unit="" type="number" alias="ct0314"/>  
-      <attribute name="基础高" unit="m" type="number" alias="ct0315"/>  
-      <attribute name="挡墙长" unit="m" type="number" alias="ct0316"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0310"/>
+      <attribute name="顶宽" unit="m" type="number" alias="ct0311"/>
+      <attribute name="高" unit="m" type="number" alias="ct0312"/>
+      <attribute name="背坡比" unit="" type="number" alias="ct0313"/>
+      <attribute name="基础高" unit="m" type="number" alias="ct0314"/>
+      <attribute name="挡墙长" unit="m" type="number" alias="ct0315"/>
     </attributeGroup>  
     <attributeGroup name="排架基础"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0317"/>  
-      <attribute name="上台直径" unit="m" type="number" alias="ct0318"/>  
-      <attribute name="上台高" unit="m" type="number" alias="ct0319"/>  
-      <attribute name="下台直径" unit="m" type="number" alias="ct0320"/>  
-      <attribute name="下台高" unit="m" type="number" alias="ct0321"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0316"/>
+      <attribute name="上台直径" unit="m" type="number" alias="ct0317"/>
+      <attribute name="上台高" unit="m" type="number" alias="ct0318"/>
+      <attribute name="下台直径" unit="m" type="number" alias="ct0319"/>
+      <attribute name="下台高" unit="m" type="number" alias="ct0320"/>
     </attributeGroup>  
     <attributeGroup name="排架立柱"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0322"/>  
-      <attribute name="柱高" unit="m" type="number" alias="ct0323"/>  
-      <attribute name="直径" unit="m" type="number" alias="ct0324"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0321"/>
+      <attribute name="柱高" unit="m" type="number" alias="ct0322"/>
+      <attribute name="直径" unit="m" type="number" alias="ct0323"/>
     </attributeGroup>  
     <attributeGroup name="排架支墩"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0325"/>  
-      <attribute name="长" unit="m" type="number" alias="ct0326"/>  
-      <attribute name="宽" unit="m" type="number" alias="ct0327"/>  
-      <attribute name="高" unit="m" type="number" alias="ct0328"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0324"/>
+      <attribute name="长" unit="m" type="number" alias="ct0325"/>
+      <attribute name="宽" unit="m" type="number" alias="ct0326"/>
+      <attribute name="高" unit="m" type="number" alias="ct0327"/>
     </attributeGroup>  
     <attributeGroup name="金属构件"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0329"/>  
-      <attribute name="加劲环－高/间距" unit="m" type="number" alias="ct0330"/>  
-      <attribute name="伸缩节" unit="m" type="select" select="a,b,c,d" alias="ct0331"/>  
-      <attribute name="固定件" unit="" type="select" select="a,b,c,d" alias="ct0332"/>  
-      <attribute name="锚筋" unit="" type="select" select="a,b,c,d" alias="ct0333"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0328"/>
+      <attribute name="加劲环－高/间距" unit="m" type="number" alias="ct0329"/>
+      <attribute name="伸缩节" unit="m" type="select" select="a,b,c,d" alias="ct0330"/>
+      <attribute name="固定件" unit="" type="select" select="a,b,c,d" alias="ct0331"/>
+      <attribute name="锚筋" unit="" type="select" select="a,b,c,d" alias="ct0332"/>
     </attributeGroup>  
     <attributeGroup name="出口渐变段（选型）"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0334"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0333"/>
     </attributeGroup> 
   </attributeGroup>  
   <!--陡坡-->  
   <attributeGroup name="构件" buildAlias="b0066" alias="ct"> 
     <attributeGroup name="进口渐变段（选型）"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0335"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0334"/>
     </attributeGroup>  
     <attributeGroup name="陡坡段"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0336"/>  
-      <attribute name="渠宽" unit="m" type="number" alias="ct0337"/>  
-      <attribute name="底板厚" unit="m" type="number" alias="ct0338"/>  
-      <attribute name="边墙进口高" unit="m" type="number" alias="ct0339"/>  
-      <attribute name="进口墙顶宽" unit="m" type="number" alias="ct0340"/>  
-      <attribute name="进口墙底宽" unit="m" type="number" alias="ct0341"/>  
-      <attribute name="边墙出口高" unit="m" type="number" alias="ct0342"/>  
-      <attribute name="出口墙顶宽" unit="m" type="number" alias="ct0343"/>  
-      <attribute name="出口墙底宽" unit="m" type="number" alias="ct0344"/>  
-      <attribute name="托角宽" unit="m" type="number" alias="ct0345"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0335"/>
+      <attribute name="渠宽" unit="m" type="number" alias="ct0336"/>
+      <attribute name="底板厚" unit="m" type="number" alias="ct0337"/>
+      <attribute name="边墙进口高" unit="m" type="number" alias="ct0338"/>
+      <attribute name="进口墙顶宽" unit="m" type="number" alias="ct0339"/>
+      <attribute name="进口墙底宽" unit="m" type="number" alias="ct0340"/>
+      <attribute name="边墙出口高" unit="m" type="number" alias="ct0341"/>
+      <attribute name="出口墙顶宽" unit="m" type="number" alias="ct0342"/>
+      <attribute name="出口墙底宽" unit="m" type="number" alias="ct0343"/>
+      <attribute name="托角宽" unit="m" type="number" alias="ct0344"/>
     </attributeGroup>  
     <attributeGroup name="齿墙"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0346"/>  
-      <attribute name="齿墙宽" unit="m" type="number" alias="ct0347"/>  
-      <attribute name="齿墙高" unit="m" type="number" alias="ct0348"/>  
-      <attribute name="反坡比" unit="" type="text" alias="ct0349"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0345"/>
+      <attribute name="齿墙宽" unit="m" type="number" alias="ct0346"/>
+      <attribute name="齿墙高" unit="m" type="number" alias="ct0347"/>
+      <attribute name="反坡比" unit="" type="text" alias="ct0348"/>
     </attributeGroup>  
     <attributeGroup name="挡土墙B"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0350"/>  
-      <attribute name="顶宽b4" unit="m" type="number" alias="ct0351"/>  
-      <attribute name="高h5" unit="m" type="number" alias="ct0352"/>  
-      <attribute name="背坡比" unit="" type="number" alias="ct0353"/>  
-      <attribute name="基础高h6" unit="m" type="number" alias="ct0354"/>  
-      <attribute name="挡墙长a1" unit="m" type="number" alias="ct0355"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0349"/>
+      <attribute name="顶宽b4" unit="m" type="number" alias="ct0350"/>
+      <attribute name="高h5" unit="m" type="number" alias="ct0351"/>
+      <attribute name="背坡比" unit="" type="number" alias="ct0352"/>
+      <attribute name="基础高h6" unit="m" type="number" alias="ct0353"/>
+      <attribute name="挡墙长a1" unit="m" type="number" alias="ct0354"/>
     </attributeGroup>  
     <attributeGroup name="消力池底板"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0356"/>  
-      <attribute name="长a3" unit="m" type="number" alias="ct0357"/>  
-      <attribute name="宽b5" unit="m" type="number" alias="ct0358"/>  
-      <attribute name="高c1" unit="m" type="number" alias="ct0359"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0355"/>
+      <attribute name="长a3" unit="m" type="number" alias="ct0356"/>
+      <attribute name="宽b5" unit="m" type="number" alias="ct0357"/>
+      <attribute name="高c1" unit="m" type="number" alias="ct0358"/>
     </attributeGroup>  
     <attributeGroup name="消力池边墙"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0360"/>  
-      <attribute name="进口高h7" unit="m" type="number" alias="ct0361"/>  
-      <attribute name="出口高h8" unit="m" type="number" alias="ct0362"/>  
-      <attribute name="进口水平段长a4" unit="m" type="number" alias="ct0363"/>  
-      <attribute name="出口水平段长a5" unit="m" type="number" alias="ct0364"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0359"/>
+      <attribute name="进口高h7" unit="m" type="number" alias="ct0360"/>
+      <attribute name="出口高h8" unit="m" type="number" alias="ct0361"/>
+      <attribute name="进口水平段长a4" unit="m" type="number" alias="ct0362"/>
+      <attribute name="出口水平段长a5" unit="m" type="number" alias="ct0363"/>
     </attributeGroup>  
     <attributeGroup name="消能尾坎"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0365"/>  
-      <attribute name="高h9" unit="m" type="number" alias="ct0366"/>  
-      <attribute name="顶宽b6" unit="m" type="number" alias="ct0367"/>  
-      <attribute name="前坡比" unit="" type="text" alias="ct0368"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0364"/>
+      <attribute name="高h9" unit="m" type="number" alias="ct0365"/>
+      <attribute name="顶宽b6" unit="m" type="number" alias="ct0366"/>
+      <attribute name="前坡比" unit="" type="text" alias="ct0367"/>
     </attributeGroup>  
     <attributeGroup name="排水管"> 
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0369"/>  
-      <attribute name="直径" unit="m" type="number" alias="ct0370"/>  
-      <attribute name="间距" unit="m" type="number" alias="ct0371"/> 
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0368"/>
+      <attribute name="直径" unit="m" type="number" alias="ct0369"/>
+      <attribute name="间距" unit="m" type="number" alias="ct0370"/>
     </attributeGroup>  
     <attributeGroup name="出口渐变段"> 
-      <attribute name="选型" unit="" type="select" select="a,b,c,d" alias="ct0372"/>  
-      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0373"/> 
+      <attribute name="选型" unit="" type="select" select="a,b,c,d" alias="ct0371"/>
+      <attribute name="材质" unit="" type="select" select="a,b,c,d" alias="ct0372"/>
     </attributeGroup> 
   </attributeGroup> 
 </component>
