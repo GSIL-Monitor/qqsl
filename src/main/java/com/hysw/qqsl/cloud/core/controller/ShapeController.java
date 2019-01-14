@@ -501,6 +501,8 @@ public class ShapeController {
         for (ShapeAttribute shapeAttribute : shapeAttributes) {
             shapeAttributeService.remove(shapeAttribute);
         }
+        shape.setChildType(null);
+        shapeService.save(shape);
         return MessageService.message(Message.Type.OK);
     }
 
