@@ -127,10 +127,10 @@ public class StationController {
         if (station == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(station.getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        User user = authentService.getUserFromSubject();
+//        if (!user.getId().equals(station.getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         JSONObject jsonObject = stationService.toJSON(station);
         return MessageService.message(Message.Type.OK, jsonObject);
     }
@@ -149,10 +149,10 @@ public class StationController {
         if (sensor == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(sensor.getStation().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        User user = authentService.getUserFromSubject();
+//        if (!user.getId().equals(sensor.getStation().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         JSONObject jsonObject = sensorService.makeSensorJson(sensor);
         return MessageService.message(Message.Type.OK, jsonObject);
     }
@@ -171,10 +171,10 @@ public class StationController {
         if (camera == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(camera.getStation().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        User user = authentService.getUserFromSubject();
+//        if (!user.getId().equals(camera.getStation().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         JSONObject jsonObject = cameraService.makeCameraJson(camera);
         return MessageService.message(Message.Type.OK, jsonObject);
     }
