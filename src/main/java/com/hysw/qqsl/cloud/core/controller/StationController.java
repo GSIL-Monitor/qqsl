@@ -249,6 +249,7 @@ public class StationController {
         if (station == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
+
         User user = authentService.getUserFromSubject();
         if (!user.getId().equals(station.getUser().getId())) {
             return MessageService.message(Message.Type.DATA_REFUSE);
