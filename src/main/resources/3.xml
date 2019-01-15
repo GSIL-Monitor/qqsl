@@ -37,9 +37,9 @@
         <attribute name="井深" unit="m" type="number" alias="cs0018" locked="false" formula=""/>
     </attributeGroup>
     <!--海漫-->
-    <attributeGroup name="控制尺寸" buildAlias="b0014" alias="cs">
-        <attribute name="海漫长Ｌp" unit="m" type="number" alias="cs0019" locked="false" formula=""/>
-    </attributeGroup>
+    <!--<attributeGroup name="控制尺寸" buildAlias="b0014" alias="cs">-->
+        <!--<attribute name="海漫长Ｌp" unit="m" type="number" alias="cs0019" locked="false" formula=""/>-->
+    <!--</attributeGroup>-->
     <!--铺盖-->
     <!--<attributeGroup name="控制尺寸" buildAlias="b0063" alias="cs">-->
         <!--<attribute name="铺盖长" unit="m" type="number" alias="cs0020" locked="false" formula=""/>-->
