@@ -43,7 +43,7 @@ public class AuthentController {
      * 拒绝访问
      * @return message消息体,NO_AUTHORIZE:没有访问权限
      */
-    @RequestMapping(value = "/refuse", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/refuse", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.DELETE})
     public
     @ResponseBody
     Message refuse() {
@@ -54,7 +54,7 @@ public class AuthentController {
      * session失效
      * @return message消息体,NO_SESSION:session过期或失效
      */
-    @RequestMapping(value = "/session", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/session", method = {RequestMethod.GET, RequestMethod.POST,RequestMethod.DELETE})
     public
     @ResponseBody
     Message checkSession() {
