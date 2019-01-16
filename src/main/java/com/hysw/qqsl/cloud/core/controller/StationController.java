@@ -242,7 +242,7 @@ public class StationController {
     }
 
     @RequiresAuthentication
-    @RequiresRoles(value = {"user:abll"}, logical = Logical.OR)
+    @RequiresRoles(value = {"user:abll","user:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/delete/{id}",method = RequestMethod.DELETE)
     public @ResponseBody Message delete(@PathVariable("id") Long id){
         Station station = stationService.find(id);
