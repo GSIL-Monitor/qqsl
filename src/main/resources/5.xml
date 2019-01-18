@@ -92,8 +92,8 @@
       <attribute name="b3" unit="m" type="number" alias="ct0065" fieldName="width_puGai"/>  
       <attribute name="l2" unit="m" type="number" alias="ct0066" fieldName="length_puGai"/>  
       <attribute name="h2" unit="m" type="number" alias="ct0067" fieldName="high_puGai"/>  
-      <attribute name="h3" unit="m" type="number" alias="ct0068" fieldName="high_gaiChiQiang"/>  
-      <attribute name="l3" unit="m" type="number" alias="ct0069" fieldName="width_gaiChiQiang"/>  
+      <attribute name="h3" unit="m" type="number" alias="ct0068" fieldName="high_chiQiang2"/>
+      <attribute name="l3" unit="m" type="number" alias="ct0069" fieldName="width_chiQiang2"/>
       <attribute name="i6" unit="?:1" type="number" alias="ct0070" fieldName="ratio_puGai"/>  
       <attribute name="△y1" unit="m" type="number" alias="ct0071" fieldName="offset_puGai"/> 
     </attributeGroup>  
@@ -356,8 +356,8 @@
     </attributeGroup>  
     <attributeGroup name="翼墙"> 
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0242"/>  
-      <attribute name="e1" unit="m" type="number" alias="ct0243" fieldName="high_chiQiang2"/>
-      <attribute name="h1" unit="m" type="number" alias="ct0244" fieldName="width_chiQiang2"/>
+      <attribute name="e1" unit="m" type="number" alias="ct0243" fieldName="thickness_yiQiang"/>
+      <attribute name="h1" unit="m" type="number" alias="ct0244" fieldName="high_yiQiang"/>
     </attributeGroup>  
     <attributeGroup name="伸缩缝"> 
       <attribute name="材质" unit="选择" type="select" select="a,b,c,d" alias="ct0245"/>  
