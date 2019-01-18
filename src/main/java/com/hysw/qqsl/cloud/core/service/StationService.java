@@ -477,10 +477,13 @@ public class StationService extends BaseService<Station, Long> {
             station.setAddress(map.get("address").toString());
         }
         if (map.get("coor") != null && StringUtils.hasText(map.get("coor").toString())) {
-            JSONObject jsonObject = JSONObject.fromObject(map.get("coor").toString());
-            if (jsonObject == null) {
+            String[] coors = map.get("coor").toString().split(",");
+            if (coors.length != 2) {
                 return false;
             }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("lon", coors[0]);
+            jsonObject.put("lat", coors[1]);
             station.setCoor(jsonObject.toString());
         }
         stationDao.save(station);
