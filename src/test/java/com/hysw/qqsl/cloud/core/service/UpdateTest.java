@@ -334,4 +334,17 @@ public class UpdateTest {
         }
     }
 
+//    @Test
+    public void test0002(){
+        List<Station> all = stationService.findAll();
+        for (Station station : all) {
+            JSONObject jsonObject = JSONObject.fromObject(station.getCoor());
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("lat", jsonObject.get("latitude"));
+            jsonObject1.put("lon", jsonObject.get("longitude"));
+            station.setCoor(jsonObject1.toString());
+            stationService.save(station);
+        }
+    }
+
 }
