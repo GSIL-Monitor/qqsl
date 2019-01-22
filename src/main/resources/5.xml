@@ -133,7 +133,7 @@
       <attribute name="e1" unit="m" type="number" alias="ct0095"/>  
       <attribute name="e2" unit="m" type="number" alias="ct0096"/>  
       <attribute name="h4" unit="m" type="number" alias="ct0097"/>  
-      <attribute name="r1" unit="m" type="number" alias="ct0098"/> 
+      <attribute name="r1" unit="m" type="select"  select="是,否" alias="ct0098"/>
     </attributeGroup>  
     <attributeGroup name="闸顶板"> 
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0099"/>  
@@ -167,7 +167,7 @@
       <attribute name="i3" unit="1:?" type="text" alias="ct0121"/> 
     </attributeGroup>  
     <attributeGroup name="拦污栅二期砼"> 
-      <attribute name="材质" unit="选择" type="select" select="a,b,c,d" alias="ct0122"/>  
+      <attribute name="材质" unit="选择" type ="select" select="a,b,c,d" alias="ct0122"/>
       <attribute name="l9" unit="m" type="number" alias="ct0123"/>  
       <attribute name="e3" unit="m" type="number" alias="ct0124"/>  
       <attribute name="二期砼厚c1" unit="m" type="number" alias="ct0125"/>  
