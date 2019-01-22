@@ -15,12 +15,12 @@
         <!--<attribute name="堰上临界水深hc" unit="m" type="number" alias="wr0008"/>-->
     <!--</attributeGroup>-->
     <!--开敞式水闸-->
-    <attributeGroup name="水力要素" buildAlias="b0056" alias="wr" >
-        <attribute name="过闸总流量Q" unit="m3/s" type="number" alias="wr0009"/>
-        <attribute name="堰流流量系数m" unit="" type="number" alias="wr0010"/>
-        <attribute name="侧收缩系数ε" unit="" type="number" alias="wr0011"/>
-        <attribute name="淹没系数σs" unit="" type="number" alias="wr0012"/>
-    </attributeGroup>
+    <!--<attributeGroup name="水力要素" buildAlias="b0056" alias="wr" >-->
+        <!--<attribute name="过闸总流量Q" unit="m3/s" type="number" alias="wr0009"/>-->
+        <!--<attribute name="堰流流量系数m" unit="" type="number" alias="wr0010"/>-->
+        <!--<attribute name="侧收缩系数ε" unit="" type="number" alias="wr0011"/>-->
+        <!--<attribute name="淹没系数σs" unit="" type="number" alias="wr0012"/>-->
+    <!--</attributeGroup>-->
     <!--圆形蓄水池-->
     <attributeGroup name="水力要素" buildAlias="b0060" alias="wr" >
         <attribute name="容积" unit="m³" type="select" select="50,100,150,200,300,400,500,600,800,1000,1500,2000" alias="wr00013"/>

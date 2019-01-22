@@ -9,12 +9,12 @@
         <!--<attribute name="地基应力" unit="Mpa" type="number" alias="gs0002"/>-->
     <!--</attributeGroup>-->
     <!--开敞式水闸-->
-    <attributeGroup name="地基处理" buildAlias="b0056" alias="gs">
-        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0003"/>
-        <attribute name="固结灌浆孔径φ1/深度h1" unit="mm/m" type="number" alias="gs0004"/>
-        <attribute name="固结灌浆孔距b1" unit="m" type="number" alias="gs0005"/>
-        <attribute name="换基材料/厚度c" unit="" type="text" alias="gs0006"/>
-    </attributeGroup>
+    <!--<attributeGroup name="地基处理" buildAlias="b0056" alias="gs">-->
+        <!--<attribute name="地基应力" unit="Mpa" type="number" alias="gs0003"/>-->
+        <!--<attribute name="固结灌浆孔径φ1/深度h1" unit="mm/m" type="number" alias="gs0004"/>-->
+        <!--<attribute name="固结灌浆孔距b1" unit="m" type="number" alias="gs0005"/>-->
+        <!--<attribute name="换基材料/厚度c" unit="" type="text" alias="gs0006"/>-->
+    <!--</attributeGroup>-->
     <!--圆形蓄水池-->
     <attributeGroup name="地基处理" buildAlias="b0060" alias="gs">
         <attribute name="地基应力" unit="Mpa" type="number" alias="gs0007"/>
