@@ -135,52 +135,52 @@
       <attribute name="h4" unit="m" type="number" alias="ct0097"/>  
       <attribute name="r1" unit="m" type="select"  select="是,否" alias="ct0098"/>
     </attributeGroup>  
-    <attributeGroup name="闸顶板"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0099"/>  
-      <attribute name="h5" unit="m" type="number" alias="ct0100"/> 
-    </attributeGroup>  
-    <attributeGroup name="检修闸胸墙"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0101"/>  
-      <attribute name="梁数" unit="个" type="number" alias="ct0102"/>  
-      <attribute name="h6" unit="m" type="number" alias="ct0103"/>  
-      <attribute name="l5" unit="m" type="number" alias="ct0104"/>  
-      <attribute name="l6" unit="m" type="number" alias="ct0105"/>  
-      <attribute name="h7" unit="m" type="number" alias="ct0106"/> 
-    </attributeGroup>  
-    <attributeGroup name="工作闸胸墙"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0107"/>  
-      <attribute name="梁数" unit="个" type="number" alias="ct0108"/>  
-      <attribute name="h8" unit="m" type="number" alias="ct0109"/>  
-      <attribute name="l7" unit="m" type="number" alias="ct0110"/>  
-      <attribute name="l8" unit="m" type="number" alias="ct0111"/>  
-      <attribute name="h9" unit="m" type="number" alias="ct0112"/> 
-    </attributeGroup>  
-    <attributeGroup name="驼峰堰"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0113"/>  
-      <attribute name="r2" unit="m" type="text" alias="ct0114"/>  
-      <attribute name="r3" unit="m" type="text" alias="ct0115"/>  
-      <attribute name="r4" unit="m" type="text" alias="ct0116"/>  
-      <attribute name="α1" unit="°" type="text" alias="ct0117"/>  
-      <attribute name="α2" unit="°" type="text" alias="ct0118"/>  
-      <attribute name="α3" unit="°" type="text" alias="ct0119"/>  
-      <attribute name="α4" unit="°" type="text" alias="ct0120"/>  
-      <attribute name="i3" unit="1:?" type="text" alias="ct0121"/> 
-    </attributeGroup>  
-    <attributeGroup name="拦污栅二期砼"> 
+    <attributeGroup name="闸顶板" display="false">
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0099"/>
+      <attribute name="h5" unit="m" type="number" alias="ct0100"/>
+    </attributeGroup>
+    <attributeGroup name="检修闸胸墙" display="false">
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0101"/>
+      <attribute name="梁数" unit="个" type="number" alias="ct0102"/>
+      <attribute name="h6" unit="m" type="number" alias="ct0103"/>
+      <attribute name="l5" unit="m" type="number" alias="ct0104"/>
+      <attribute name="l6" unit="m" type="number" alias="ct0105"/>
+      <attribute name="h7" unit="m" type="number" alias="ct0106"/>
+    </attributeGroup>
+    <attributeGroup name="工作闸胸墙" display="false">
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0107"/>
+      <attribute name="梁数" unit="个" type="number" alias="ct0108"/>
+      <attribute name="h8" unit="m" type="number" alias="ct0109"/>
+      <attribute name="l7" unit="m" type="number" alias="ct0110"/>
+      <attribute name="l8" unit="m" type="number" alias="ct0111"/>
+      <attribute name="h9" unit="m" type="number" alias="ct0112"/>
+    </attributeGroup>
+    <attributeGroup name="驼峰堰" display="false">
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0113"/>
+      <attribute name="r2" unit="m" type="text" alias="ct0114"/>
+      <attribute name="r3" unit="m" type="text" alias="ct0115"/>
+      <attribute name="r4" unit="m" type="text" alias="ct0116"/>
+      <attribute name="α1" unit="°" type="text" alias="ct0117"/>
+      <attribute name="α2" unit="°" type="text" alias="ct0118"/>
+      <attribute name="α3" unit="°" type="text" alias="ct0119"/>
+      <attribute name="α4" unit="°" type="text" alias="ct0120"/>
+      <attribute name="i3" unit="1:?" type="text" alias="ct0121"/>
+    </attributeGroup>
+    <attributeGroup name="拦污栅二期砼" display="false">
       <attribute name="材质" unit="选择" type ="select" select="a,b,c,d" alias="ct0122"/>
-      <attribute name="l9" unit="m" type="number" alias="ct0123"/>  
-      <attribute name="e3" unit="m" type="number" alias="ct0124"/>  
+      <attribute name="l9" unit="m" type="number" alias="ct0123"/>
+      <attribute name="e3" unit="m" type="number" alias="ct0124"/>
       <attribute name="二期砼厚c1" unit="m" type="number" alias="ct0125"/>  
       <attribute name="l15" unit="m" type="number" alias="ct0126"/> 
     </attributeGroup>  
-    <attributeGroup name="检修闸二期砼"> 
+    <attributeGroup name="检修闸二期砼" display="false">
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0127"/>  
       <attribute name="l10" unit="m" type="number" alias="ct0128"/>  
       <attribute name="e4" unit="m" type="number" alias="ct0129"/>  
       <attribute name="二期砼厚c2" unit="m" type="number" alias="ct0130"/>  
       <attribute name="l16" unit="m" type="number" alias="ct0131"/> 
     </attributeGroup>  
-    <attributeGroup name="工作闸二期砼"> 
+    <attributeGroup name="工作闸二期砼" display="false">
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0132"/>  
       <attribute name="闸门" unit="选型" type="select" select="a,b,c,d" alias="ct0133"/>  
       <attribute name="l11" unit="m" type="number" alias="ct0134"/>  
@@ -188,7 +188,7 @@
       <attribute name="二期砼厚c3" unit="m" type="number" alias="ct0136"/>  
       <attribute name="l17" unit="m" type="number" alias="ct0137"/> 
     </attributeGroup>  
-    <attributeGroup name="弧门支墩"> 
+    <attributeGroup name="弧门支墩" display="false">
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0138"/>  
       <attribute name="l12" unit="m" type="number" alias="ct0139"/>  
       <attribute name="h10" unit="m" type="number" alias="ct0140"/>  

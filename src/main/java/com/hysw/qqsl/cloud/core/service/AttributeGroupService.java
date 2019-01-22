@@ -44,6 +44,7 @@ public class AttributeGroupService {
                 if (element.attributeValue("alias") != null&&!element.attributeValue("alias").equals("")) {
                     attributeGroup.setAlias(element.attributeValue("alias"));
                 }
+                attributeGroup.setDisplay(true);
                 if (element.elements().size() != 0) {
                     initAttribute(element.elements(),attributeGroup,stringAlias);
                 }
@@ -81,6 +82,11 @@ public class AttributeGroupService {
                 }
                 if (element.attributeValue("groupAlias") != null&&!element.attributeValue("groupAlias").equals("")) {
                     child.setGroupAlias(element.attributeValue("groupAlias"));
+                }
+                if (element.attributeValue("display") != null&&!element.attributeValue("display").equals("")) {
+                    child.setDisplay(Boolean.valueOf(element.attributeValue("display")));
+                }else{
+                    child.setDisplay(true);
                 }
                 if (element.attributeValue("alias") != null&&!element.attributeValue("alias").equals("")) {
                     child.setAlias(element.attributeValue("alias"));

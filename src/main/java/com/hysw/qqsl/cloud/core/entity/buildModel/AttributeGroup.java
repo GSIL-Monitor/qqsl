@@ -26,6 +26,7 @@ public class AttributeGroup implements Serializable{
     private boolean dyn;
     /** 动态属性组别名 */
     private String groupAlias;
+    private boolean display;
 
     public String getName() {
         return name;
@@ -81,5 +82,13 @@ public class AttributeGroup implements Serializable{
 
     public void setGroupAlias(String groupAlias) {
         this.groupAlias = groupAlias;
+    }
+
+    public boolean isDisplay() {
+        return display;
+    }
+
+    public void setDisplay(boolean display) {
+        this.display = display;
     }
 }

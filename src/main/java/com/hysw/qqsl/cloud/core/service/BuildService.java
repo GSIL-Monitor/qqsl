@@ -157,6 +157,7 @@ public class BuildService extends BaseService<Build,Long> {
         if (!jsonArray.isEmpty() || attributeGroup.isDyn()) {
             jsonObject.put("name", attributeGroup.getName());
             jsonObject.put("alias", attributeGroup.getAlias());
+            jsonObject.put("display", attributeGroup.isDisplay());
             if (attributeGroup.isDyn()) {
                 jsonObject.put("dyn", attributeGroup.isDyn());
                 jsonObject.put("groupAlias", attributeGroup.getGroupAlias());
