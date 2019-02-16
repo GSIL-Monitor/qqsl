@@ -112,8 +112,8 @@
   <attributeGroup name="构件" buildAlias="b0056" alias="ct"> 
     <attributeGroup name="闸底板"> 
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0080"/>  
-      <attribute name="b1" unit="m" type="number" alias="ct0081"/>  
-      <attribute name="l1" unit="m" type="number" alias="ct0082"/>  
+      <attribute name="b1" unit="m" type="number" alias="ct0081" fieldName="b1"/>
+      <attribute name="l1" unit="m" type="number" alias="ct0082" fieldName="l1"/>
       <attribute name="d1" unit="m" type="number" alias="ct0083"/>  
       <attribute name="d2" unit="m" type="number" alias="ct0084"/>  
       <attribute name="l2" unit="m" type="number" alias="ct0085"/>  

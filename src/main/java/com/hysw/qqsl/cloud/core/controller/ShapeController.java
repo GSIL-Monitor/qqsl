@@ -874,10 +874,10 @@ public class ShapeController {
         if (shapeCoordinate == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        User user = authentService.getUserFromSubject();
-        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
-            return MessageService.message(Message.Type.DATA_REFUSE);
-        }
+//        User user = authentService.getUserFromSubject();
+//        if (!user.getId().equals(shapeCoordinate.getShape().getProject().getUser().getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
         JSONObject jsonObject = shapeCoordinateService.buildJson(shapeCoordinate);
         return MessageService.message(Message.Type.OK,jsonObject);
     }
@@ -1090,8 +1090,8 @@ public class ShapeController {
      * @param id 建筑物id
      * @return OK：请求成功
      */
-//    @RequiresAuthentication
-//    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    //@RequiresAuthentication
+    //@RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
     @RequestMapping(value = "/bim/build/{id}", method = RequestMethod.GET)
     public @ResponseBody Object getBimBuild(@PathVariable("id") Long id) {
         Message message = CommonController.parametersCheck(id);
