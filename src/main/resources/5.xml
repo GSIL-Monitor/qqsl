@@ -128,12 +128,13 @@
       <attribute name="l4" unit="m" type="number" alias="ct0092" fieldName="width_chiQiang2"/>
       <attribute name="h3" unit="m" type="number" alias="ct0093" fieldName="high_chiQiang2"/>
     </attributeGroup>  
-    <attributeGroup name="闸墩"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0094"/>  
+    <attributeGroup name="闸墩">
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0094"/>
       <attribute name="e1" unit="m" type="number" alias="ct0095" fieldName="width_bianDun"/>
       <attribute name="e2" unit="m" type="number" alias="ct0096" fieldName="width_zhongDun"/>
       <attribute name="h4" unit="m" type="number" alias="ct0097" fieldName="high_dun"/>
-      <attribute name="r1" unit="m" type="select"  select="是,否" alias="ct0098" fieldName="radius_dunWei"/>
+      <!--<attribute name="r1" unit="m" type="select"  select="是,否" alias="ct0098" fieldName="radius_dunWei"/>-->
+      <attribute name="r1" unit="m" type="number" alias="ct0098" fieldName="radius_dunWei"/>
     </attributeGroup>  
     <attributeGroup name="闸顶板" display="false">
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0099"/>
