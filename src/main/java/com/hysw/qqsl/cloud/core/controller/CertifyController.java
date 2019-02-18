@@ -129,10 +129,10 @@ public class CertifyController {
         if (certify == null) {
             return MessageService.message(Message.Type.DATA_NOEXIST);
         }
-        if (certify.getPersonalStatus() != CommonEnum.CertifyStatus.PASS) {
-//            个人认证未通过不能进行企业认证
-            return MessageService.message(Message.Type.CERTIFY_NO_PERSONAL);
-        }
+//        if (certify.getPersonalStatus() != CommonEnum.CertifyStatus.PASS) {
+////            个人认证未通过不能进行企业认证
+//            return MessageService.message(Message.Type.CERTIFY_NO_PERSONAL);
+//        }
         if (certify.getCompanyStatus() == CommonEnum.CertifyStatus.PASS||certifyService.findByCompanyLicence(companyLicence.toString())) {
 //            认证已通过，不可更改
             return MessageService.message(Message.Type.CERTIFY_REPEAT);
