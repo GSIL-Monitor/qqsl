@@ -1211,6 +1211,8 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("type", build.getType());
         jsonObject1 = new JSONObject();
         jsonObject.put("center", build.getShapeCoordinate().getLon()+","+build.getShapeCoordinate().getLat());
+        // 控制尺寸
+        getValue(build.getControlSize(),jsonObject,build);
         if (build.getPositionCoor() != null) {
             jsonObject1 = JSONObject.fromObject(build.getPositionCoor());
             jsonObject.put("position", jsonObject1.get("lon")+","+jsonObject1.get("lat"));
@@ -1220,7 +1222,6 @@ public class BuildService extends BaseService<Build,Long> {
         jsonObject.put("childType", build.getChildType() == null ? null : build.getChildType());
 //        getValue(build.getCoordinate(),jsonObject);
         getValue(build.getWaterResource(),jsonObject,build);
-        getValue(build.getControlSize(),jsonObject,build);
         getValue(build.getGroundStress(),jsonObject,build);
         getValue(build.getComponent(),jsonObject,build);
         return jsonObject;
@@ -1233,7 +1234,11 @@ public class BuildService extends BaseService<Build,Long> {
         if (attributeGroup.getBuildAttributes() != null) {
             for (BuildAttribute buildAttribute : attributeGroup.getBuildAttributes()) {
                 if (buildAttribute.getFieldName() != null) {
-                    jsonObject.put(buildAttribute.getFieldName(), buildAttribute.getValue());
+                    if (buildAttribute.getValue()==null) {
+                        jsonObject.put(buildAttribute.getFieldName(), 0);
+                    } else {
+                        jsonObject.put(buildAttribute.getFieldName(), buildAttribute.getValue());
+                    }
                 }
             }
         }
