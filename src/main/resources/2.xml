@@ -70,7 +70,7 @@
         <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0030"/>
     </attributeGroup>
     <!--陡坡-->
-    <attributeGroup name="水力要素" buildAlias="b0066" alias="wr" >
-        <attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0031"/>
-    </attributeGroup>
+    <!--<attributeGroup name="水力要素" buildAlias="b0066" alias="wr" >-->
+        <!--<attribute name="设计流量Q" unit="m3/s" type="number" alias="wr0031"/>-->
+    <!--</attributeGroup>-->
 </waterResources>

@@ -63,9 +63,9 @@
         <!--<attribute name="地基应力" unit="Mpa" type="number" alias="gs0026"/>-->
     <!--</attributeGroup>-->
     <!--陡坡-->
-    <attributeGroup name="地基处理" buildAlias="b0066" alias="gs">
-        <attribute name="地基应力" unit="Mpa" type="number" alias="gs0027"/>
-        <attribute name="换基材料" unit="" type="select" select="0.25,0.5,0.75,1,1.5" alias="gs0028"/>
-        <attribute name="换基厚度c" unit="m" type="number" alias="gs0029"/>
-    </attributeGroup>
+    <!--<attributeGroup name="地基处理" buildAlias="b0066" alias="gs">-->
+        <!--<attribute name="地基应力" unit="Mpa" type="number" alias="gs0027"/>-->
+        <!--<attribute name="换基材料" unit="" type="select" select="0.25,0.5,0.75,1,1.5" alias="gs0028"/>-->
+        <!--<attribute name="换基厚度c" unit="m" type="number" alias="gs0029"/>-->
+    <!--</attributeGroup>-->
 </groundStress>
