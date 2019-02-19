@@ -482,14 +482,14 @@
       <attribute name="l8" unit="m" type="number" alias="ct0323"/>  
       <attribute name="i1" unit="m" type="number" alias="ct0324"/>  
       <attribute name="l9" unit="m" type="number" alias="ct0325"/>  
-      <attribute name="h2" unit="m" type="number" alias="ct0326"/>  
-      <attribute name="e2" unit="m" type="number" alias="ct0327"/>  
-      <attribute name="i2" unit="m" type="number" alias="ct0328"/>  
-      <attribute name="h7" unit="m" type="number" alias="ct0329"/> 
+      <attribute name="e2" unit="m" type="number" alias="ct0326"/>  
+      <attribute name="i2" unit="m" type="number" alias="ct0327"/>  
+      <attribute name="h7" unit="m" type="number" alias="ct0328"/> 
     </attributeGroup>  
     <attributeGroup name="消力池段"> 
-      <attribute name="材质" unit="选择" type="select" select="a,b,c,d" alias="ct0330"/>  
-      <attribute name="l3" unit="m" type="number" alias="ct0331"/>  
+      <attribute name="材质" unit="选择" type="select" select="a,b,c,d" alias="ct0329"/>  
+      <attribute name="l3" unit="m" type="number" alias="ct0330"/>  
+      <attribute name="h2" unit="m" type="number" alias="ct0331"/>  
       <attribute name="d4" unit="m" type="number" alias="ct0332"/>  
       <attribute name="h5" unit="m" type="number" alias="ct0333"/>  
       <attribute name="l10" unit="m" type="number" alias="ct0334"/> 
@@ -500,9 +500,10 @@
       <attribute name="l4" unit="m" type="number" alias="ct0337"/>  
       <attribute name="h6" unit="m" type="number" alias="ct0338"/>  
       <attribute name="l11" unit="m" type="number" alias="ct0339"/>  
-      <attribute name="e3" unit="m" type="number" alias="ct0340"/>  
-      <attribute name="b3" unit="m" type="number" alias="ct0341"/>  
-      <attribute name="△x2" unit="m" type="number" alias="ct0342"/> 
+      <attribute name="d5" unit="m" type="number" alias="ct0340"/>  
+      <attribute name="e3" unit="m" type="number" alias="ct0341"/>  
+      <attribute name="b3" unit="m" type="number" alias="ct0342"/>  
+      <attribute name="△x2" unit="m" type="number" alias="ct0343"/> 
     </attributeGroup> 
   </attributeGroup> 
 </component>
