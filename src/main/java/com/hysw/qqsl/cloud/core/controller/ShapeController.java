@@ -1163,6 +1163,7 @@ public class ShapeController {
             jsonObject.put("remark", shape.getRemark());
             jsonObject.put("type", shape.getCommonType());
             jsonObject.put("typeC", shape.getCommonType().getTypeC());
+            jsonObject.put("AL", shape.getCommonType().getType());
             if (shape.getChildType() != null) {
                 jsonObject.put("childType", shape.getChildType());
                 jsonObject.put("childTypeC", shape.getChildType().getTypeC());
