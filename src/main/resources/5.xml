@@ -43,7 +43,7 @@
       <attribute name="l10" unit="m" type="number" alias="ct0029" fieldName="distanceX"/>  
       <attribute name="b3" unit="m" type="number" alias="ct0030" fieldName="distanceZ"/>  
       <attribute name="b4" unit="m" type="number" alias="ct0031" fieldName="width_dun"/>  
-      <attribute name="b5" unit="m" type="number" alias="ct0032"/>  
+      <attribute name="b5" unit="m" type="number" alias="ct0032" fieldName="startZ"/>
       <attribute name="层数" unit="层" type="number" alias="ct0033" fieldName="layerX"/> 
     </attributeGroup>  
     <attributeGroup name="尾坎"> 
@@ -149,7 +149,7 @@
       <attribute name="h7" unit="m" type="number" alias="ct0103" fieldName="thickness_jianXiuLiang"/> 
     </attributeGroup>  
     <attributeGroup name="工作闸胸墙" display="false"> 
-      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0104"/>  
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0104"/>
       <attribute name="梁数" unit="个" type="number" alias="ct0105" fieldName="number_gongZuoLiang"/>  
       <attribute name="h8" unit="m" type="number" alias="ct0106" fieldName="high_gongZuoBan"/>  
       <attribute name="l7" unit="m" type="number" alias="ct0107" fieldName="thickness_gongZuoBan"/>  
@@ -158,17 +158,17 @@
     </attributeGroup>  
     <attributeGroup name="驼峰堰" display="false"> 
       <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0110"/>  
-      <attribute name="r2" unit="m" type="text" alias="ct0111" fieldName="radius1_tuoFengYan"/>  
-      <attribute name="r3" unit="m" type="text" alias="ct0112" fieldName="radius2_tuoFengYan"/>  
-      <attribute name="r4" unit="m" type="text" alias="ct0113" fieldName="radius3_tuoFengYan"/>  
-      <attribute name="α1" unit="°" type="text" alias="ct0114" fieldName="angle1_tuoFengYan"/>  
-      <attribute name="α2" unit="°" type="text" alias="ct0115" fieldName="angle2_tuoFengYan"/>  
-      <attribute name="α3" unit="°" type="text" alias="ct0116" fieldName="angle3_tuoFengYan"/>  
-      <attribute name="α4" unit="°" type="text" alias="ct0117" fieldName="angle4_tuoFengYan"/>  
-      <attribute name="i3" unit="1:?" type="text" alias="ct0118" fieldName="ratio_tuoFengYan"/> 
+      <attribute name="r2" unit="m" type="number" alias="ct0111" fieldName="radius1_tuoFengYan"/>
+      <attribute name="r3" unit="m" type="number" alias="ct0112" fieldName="radius2_tuoFengYan"/>
+      <attribute name="r4" unit="m" type="number" alias="ct0113" fieldName="radius3_tuoFengYan"/>
+      <attribute name="α1" unit="°" type="number" alias="ct0114" fieldName="angle1_tuoFengYan"/>
+      <attribute name="α2" unit="°" type="number" alias="ct0115" fieldName="angle2_tuoFengYan"/>
+      <attribute name="α3" unit="°" type="number" alias="ct0116" fieldName="angle3_tuoFengYan"/>
+      <attribute name="α4" unit="°" type="number" alias="ct0117" fieldName="angle4_tuoFengYan"/>
+      <attribute name="i3" unit="1:?" type="number" alias="ct0118" fieldName="ratio_tuoFengYan"/>
     </attributeGroup>  
     <attributeGroup name="拦污栅二期砼" display="false"> 
-      <attribute name="材质" unit="选择" type="select" select="a,b,c,d" alias="ct0119"/>  
+      <attribute name="材质" unit="选择" type="select" select="混凝土,浆砌石" alias="ct0119"/>
       <attribute name="l9" unit="m" type="number" alias="ct0120" fieldName="width_lanWu"/>  
       <attribute name="e3" unit="m" type="number" alias="ct0121" fieldName="depth_lanWu"/>  
       <attribute name="二期砼厚c1" unit="m" type="number" alias="ct0122" fieldName="thickness_lanWu"/>  
