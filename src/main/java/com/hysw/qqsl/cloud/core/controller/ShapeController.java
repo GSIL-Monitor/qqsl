@@ -1142,7 +1142,56 @@ public class ShapeController {
         return MessageService.message(Message.Type.PACKAGE_LIMIT);
     }
 
-
+    @RequiresAuthentication
+    @RequiresRoles(value = {"user:simple","account:simple"}, logical = Logical.OR)
+    @RequestMapping(value = "/map/shape/lists/{projectId}", method = RequestMethod.GET)
+    public @ResponseBody Message mapShapeLists(@PathVariable("projectId") Long projectId) {
+        Project project = projectService.find(projectId);
+        if (project == null) {
+            return MessageService.message(Message.Type.DATA_NOEXIST);
+        }
+        User user = authentService.getUserFromSubject();
+//        if (project.getUser().getId().equals(user.getId())) {
+//            return MessageService.message(Message.Type.DATA_REFUSE);
+//        }
+        List<Shape> shapes = shapeService.findByProject(project);
+        JSONArray jsonArray = new JSONArray(),jsonArray1;
+        JSONObject jsonObject,jsonObject1,jsonObject2;
+        for (Shape shape : shapes) {
+            jsonObject = new JSONObject();
+            jsonObject.put("id", shape.getId());
+            jsonObject.put("remark", shape.getRemark());
+            jsonObject.put("type", shape.getCommonType());
+            jsonObject.put("typeC", shape.getCommonType().getTypeC());
+            if (shape.getChildType() != null) {
+                jsonObject.put("childType", shape.getChildType());
+                jsonObject.put("childTypeC", shape.getChildType().getTypeC());
+            }
+            jsonArray1 = new JSONArray();
+            for (ShapeCoordinate shapeCoordinate : shapeCoordinateService.findByShape(shape)) {
+                jsonObject1 = new JSONObject();
+                jsonObject1.put("lon", shapeCoordinate.getLon());
+                jsonObject1.put("lat", shapeCoordinate.getLat());
+                jsonObject2 = new JSONObject();
+                Build build = shapeCoordinate.getBuild();
+                if (build != null) {
+                    jsonObject2.put("id", build.getId());
+                    jsonObject2.put("remark", build.getRemark());
+                    jsonObject2.put("type", build.getType());
+                    jsonObject2.put("typeC", build.getType().getTypeC());
+                    if (build.getChildType() != null) {
+                        jsonObject2.put("childType", build.getChildType());
+                        jsonObject2.put("childTypeC", build.getChildType().getTypeC());
+                    }
+                    jsonObject1.put("build", jsonObject2);
+                }
+                jsonArray1.add(jsonObject1);
+            }
+            jsonObject.put("coors", jsonArray1);
+            jsonArray.add(jsonObject);
+        }
+        return MessageService.message(Message.Type.OK, jsonArray);
+    }
 
 
 }
